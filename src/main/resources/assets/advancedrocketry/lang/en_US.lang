@@ -1,6 +1,5 @@
 itemGroup.advancedRocketry=Advanced Rocketry
 itemGroup.advancedRocketryOres=Advanced Rocketry Ores
-
 death.attack.Vacuum=%1$s was depressurized
 death.attack.Vacuum.player=%1$s was depressurized
 death.attack.OxygenToxicity=%1$s died due to oxygen toxicity
@@ -10,7 +9,6 @@ death.attack.LowOxygen.player=%1$s died due to lack of oxygen
 death.attack.Heat=%1$s died due to overheating
 death.attack.Heat.player=%1$s died due to overheating
 entity.advancedRocketry.rocket.name=Rocket
-
 tile.seat.name=Seat
 tile.launchpad.name=Launch Pad
 tile.structuretower.name=Structure Tower
@@ -114,11 +112,9 @@ tile.spaceElevatorController.name=Space Elevator
 tile.beacon.name=Beacon
 tile.thermiteTorch.name=Thermite Torch
 tile.wirelessTransciever.name=Wireless Transciever
-
+tile.qcrucible.name=Quartz Crucible
 tile.Dilithium.name=Dilithium Ore
-
 tile.coil.dilithium.name=Dilithium Coil
-
 item.lens.0.name=Basic Lens
 item.wafer.0.name=Silicon Wafer
 item.circuitplate.0.name=Basic Circuit Plate
@@ -173,18 +169,15 @@ item.biomeChanger.name=Biome Changer Remote
 item.basicLaserGun.name=Basic Laser Gun
 item.beaconFinder.name=Beacon Finder
 item.thermite.name=Thermite
-
 item.jetPack.name=Jet Pack
 item.pressureTank.0.name=Low Pressure Tank
 item.pressureTank.1.name=Pressure Tank
 item.pressureTank.2.name=High Pressure Tank
 item.pressureTank.3.name=Super High Pressure Tank
 item.elevatorChip.name=Space Elevator Chip
-
 material.Dilithium.name=Dilithium
 material.TitaniumAluminide.name=Titanium Aluminide
 material.TitaniumIridium.name=Titanium Iridium Alloy
-
 container.crystallizer=Crystallizer
 container.cuttingmachine=Cutting Machine
 container.precisionassemblingmachine=Precision Assembling Machine
@@ -192,9 +185,7 @@ container.observatory=Observatory
 container.satellite=Satellite Bay
 container.monitoringstation=Monitoring Station
 container.satelliteMonitor=Satellite Terminal
-
 enchantment.spaceBreathing=Airtight Seal
-
 data.undefined.name=Some Random Data
 data.distance.name=Distance
 data.humidity.name=Humidity
@@ -202,19 +193,15 @@ data.temperature.name=Temperature
 data.composition.name=Composition
 data.atmospheredensity.name=Atmosphere Density
 data.mass.name=Mass
-
 fluid.oxygen=Oxygen
 fluid.hydrogen=Hydrogen
 fluid.nitrogen=Nitrogen
 fluid.rocketFuel=Rocket Fuel
-
 mission.asteroidmining.name=Asteroid Mining
 mission.gascollection.name=Gas Collection
-
 error.rocket.cannotGetThere=Destination Unreachable
 error.rocket.destinationNotExist=Cannot launch: destination does not exist
 error.rocket.notSameSystem=Cannot launch: destination is not in the same planet system
-
 achievement.holographic=Holographic
 achievement.holographic.desc=Craft a Holo-Projector
 achievement.flattening=Flattening
@@ -247,13 +234,10 @@ achievement.beerOnTheSun=Adult Beverages on the sun
 achievement.beerOnTheSun.desc=You'll need more TNT to get to orbit
 achievement.suitedUp=Suited Up
 achievement.suitedUp.desc=Wear a full spacesuit
-
 key.controls.advancedRocketry=Advanced Rocketry
 key.openRocketUI=Open Rocket GUI
 key.toggleJetpack=Toggle Jetpack
-
 enchantment.advancedrocketry.spacebreathing.desc=Allows the piece of armor to form an airtight seal
-
 msg.observetory.scan.tooltip=Scans for new asteroids, consumes 100 distance data
 msg.observetory.scan.button=Scan!
 msg.observetory.text.asteroids=Asteroids
@@ -283,7 +267,7 @@ msg.guidanceComputerHatch.ejectonlanding=Auto Eject Upon Landing
 msg.guidanceComputerHatch.ejectonsatlanding=Allow Ejection of Satellite Chips
 msg.guidanceComputerHatch.ejectonplanetlanding=Allow Ejection of Planet Chips
 msg.guidanceComputerHatch.ejectonstationlanding=Allow Ejection of Station Chips
-msg.guidanceComputerHatch.link=You program the linker with the fluid loader at
+msg.guidanceComputerHatch.link=You program the linker with the guidance computer hatch at
 msg.fluidLoader.loadingState=Loading State: 
 msg.fluidLoader.allowLoading=Allow Loading: 
 msg.fluidLoader.allowredstoneinput=Allow redstone input
@@ -390,7 +374,6 @@ msg.itemplanetidchip.planetname=Planet Name:
 msg.itemplanetidchip.stationid=Station Id: 
 msg.itemplanetidchip.artifacts=Artifacts:
 msg.vent.trace=Oxygen Trace
-
 msg.itemsatellite.pwr=Power Storage: 
 msg.itemsatellite.nopwr=No Power Storage
 msg.itemsatellite.pwrgen=Power Generation: 
@@ -421,7 +404,6 @@ msg.entity.rocket.seldst=Select Dst
 msg.entity.rocket.clear=Clear
 msg.entity.rocket.none=None Selected
 msg.wirelessTransciever.extract=extract
-
 msg.entityDeployedRocket.notGasGiant=No Gas Here
 msg.noOxygen=Warning: No Oxygen detected!
 msg.tooHot=Warning: Atmosphere temperature at critical value!
