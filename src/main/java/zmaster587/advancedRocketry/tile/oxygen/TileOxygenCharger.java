@@ -156,7 +156,7 @@ public class TileOxygenCharger extends TileInventoriedRFConsumerTank implements 
 		if(FluidContainerRegistry.isFilledContainer(stack)) {
 			if( slot == 0
 			 && fluidTank.getFluidAmount() + FluidContainerRegistry.getContainerCapacity(stack) <= fluidTank.getCapacity()
-			&& (fluidTank.getFluid().getFluid().equals(AdvancedRocketryFluids.fluidHydrogen)||fluidTank.getFluid().getFluid().equals(AdvancedRocketryFluids.fluidOxygen))) {
+		 	&& (FluidContainerRegistry.getFluidForFilledItem(stack).getFluid().equals(AdvancedRocketryFluids.fluidHydrogen)||FluidContainerRegistry.getFluidForFilledItem(stack).getFluid().equals(AdvancedRocketryFluids.fluidOxygen))) {
 				ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(stack);
 
 				if(emptyContainer != null && getStackInSlot(1) == null || (emptyContainer.isItemEqual(getStackInSlot(1)) && getStackInSlot(1).stackSize < getStackInSlot(1).getMaxStackSize())) {
