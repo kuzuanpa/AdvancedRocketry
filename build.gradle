@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net/"
         }
         maven {
             name = "sonatype"
@@ -11,14 +11,13 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-    }
+            classpath ('com.anatawa12.forge:ForgeGradle:1.2-1.0.+') {
+            changing = true
+       }
+}
 }
 
 plugins {
-  //id "com.gradle.build-scan" version "1.9"
-  id "com.matthewprenger.cursegradle" version "1.1.0"
-  id "se.bjurr.gitchangelog.git-changelog-gradle-plugin" version "1.50"
 }
 
 apply plugin: 'java'
@@ -55,48 +54,43 @@ apply from: "gradle/scripts/version.gradle"
 repositories {
     maven {
         name = "chickenbones"
-        url = "http://chickenbones.net/maven/"
+        url = "https://chickenbones.net/maven/"
     }
-     ivy {
-		name "CoFHCore"
-		url = "http://addons-origin.cursecdn.com/files/2246/919/"
-		artifactPattern 'http://addons-origin.cursecdn.com/files/2246/919/[module]-[revision].[ext]'
-	}
         ivy {
             name "industrialcraft-2"
-            artifactPattern "http://jenkins.ic2.player.to/job/IC2_experimental/801/artifact/build/libs/[module]-[revision].[ext]"
+            artifactPattern "https://jenkins.ic2.player.to/job/IC2_experimental/801/artifact/build/libs/[module]-[revision].[ext]"
         }
         //ivy {
         //    name "GalacticraftCore"
         //    artifactPattern "https://ci.micdoodle8.com/job/Galacticraft-1.7/484/artifact/Forge/build/libs/[module]-[revision].[ext]"
         //}
-        ivy {
-            name "LibVulpes"
-            artifactPattern "http://65.78.115.159:8080/job/LibVulpes/job/libVulpes/job/unstable1_7/" + project.libVulpesBuildNum +"/artifact/output/[module]-[revision].[ext]"
-        }
+        //ivy {
+        //    name "LibVulpes"
+        //    artifactPattern "http://65.78.115.159:8080/job/LibVulpes/job/libVulpes/job/unstable1_7/" + project.libVulpesBuildNum +"/artifact/output/[module]-[revision].[ext]"
+        //}
 	maven {
 	    name = "gt"
-	    url = "http://gregtech.overminddl1.com/"
+	    url = "https://gregtech.overminddl1.com/"
 	}
 	maven {
 	    name = "OC repo"
-	    url = "http://maven.cil.li/"
+	    url = "https://maven.cil.li/"
 	}
 	maven {
 	    name = "ic2"
-	    url = "http://maven.ic2.player.to/"
+	    url = "https://maven.ic2.player.to/"
 	}
 	maven {
 	    name = "jabba"
-	    url = "http://default.mobiusstrip.eu/maven"
+	    url = "https://default.mobiusstrip.eu/maven"
 	}
 	maven {
 	    name = "chickenbones"
-	    url = "http://chickenbones.net/maven/"
+	    url = "https://chickenbones.net/maven/"
 	}
 	maven {
 	    name = "Apple"
-	    url "http://www.ryanliptak.com/maven/"
+	    url "https://www.ryanliptak.com/maven/"
 	}
 	ivy {
 	    name "BuildCraft"
@@ -109,15 +103,14 @@ dependencies {
     //If for whatever reason gradle complains of "unable to find valid certification path to requested target"
     //Just download https://ci.micdoodle8.com/job/Galacticraft-1.7/lastSuccessfulBuild/artifact/Forge/build/libs/GalacticraftCore-1.7-3.0.12.474.jar and stick in in AdvancedRocketry/libs and comment out the following line
     //compile name: 'GalacticraftCore', version: '1.7-3.0.12.474', ext: 'jar'
-    compile name: 'LibVulpes', version: '1.7.10-' + project.libVulpesVersion  + '-' + project.libVulpesBuildNum + '-deobf', ext: 'jar'
-    compile "mcp.mobius.jabba:Jabba:1.2.2_1.7.10:dev"
-    compile "net.industrial-craft:industrialcraft-2:2.2.828-experimental:api" // 624 // 827 // 828
-    compile "codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev"
-    compile "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
-    compile "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
-    compile "applecore:AppleCore:1.7.10-1.3.9+241.82d7c:deobf"
-    compile name: "buildcraft", version: "7.2.5" // , classifier: "api"
-    compile group: 'com.gregoriust.gregtech', name: 'gregtech_1.7.10', version: '6.07.12', classifier: 'dev'
+    //compile name: 'LibVulpes', version: '1.7.10-' + project.libVulpesVersion  + '-' + project.libVulpesBuildNum + '-deobf', ext: 'jar'
+    //compile "mcp.mobius.jabba:Jabba:1.2.2_1.7.10:dev"
+    //compile "codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev"
+    //compile "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
+    //compile "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
+    //compile "applecore:AppleCore:1.7.10-1.3.9+241.82d7c:deobf"
+    //compile name: "buildcraft", version: "7.2.5" // , classifier: "api"
+   // compile group: 'com.gregoriust.gregtech', name: 'gregtech_1.7.10', version: '6.07.12', classifier: 'dev'
       
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:7.0.20:dev'  // adds buildcraft to the dev env
@@ -132,21 +125,21 @@ dependencies {
 processResources
 {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+   // inputs.property "version", project.version
+   // inputs.property "mcversion", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
+   // from(sourceSets.main.resources.srcDirs) {
+       // include 'mcmod.info'
                 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
+    //    expand 'version':project.version, 'mcversion':project.minecraft.version
+  //  }
         
     // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
+  //  from(sourceSets.main.resources.srcDirs) {
+   //     exclude 'mcmod.info'
+   // }
 }
 
 task deobfJar(type: Jar) {
@@ -161,52 +154,3 @@ task deobfJar(type: Jar) {
     }
      mustRunAfter "jar" 
 }
-
-
-curseforge{
-  if (project.hasProperty("thecursedkey")) {
-        apiKey = project.thecursedkey
-    }
-    else {
-    apiKey = ""
-    }
-  project {
-  //AdvancedRocketry
-    id = "236542"
-    relations {
-        requiredLibrary 'libvulpes'
-    }
-    changelog = file('changelog.html')
-    changelogType = 'html'
-    releaseType = "alpha"
-    addGameVersion minecraft.version
-    mainArtifact(jar) {
-      displayName = "AdvancedRocketry ${project.version}-UNSTABLE build " + project.getBuildNumber() +  " for " + minecraft.version
-    }
-    addArtifact (deobfJar){
-    	 displayName = "AdvancedRocketry ${project.version}-UNSTABLE-deobf build " + project.getBuildNumber() + " for " + minecraft.version
-    }
-   }
-}
-
-task makeChangelog(type: se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask) {
-    //filePath = "changelog.html"
-    file = new File("changelog.html");
-    untaggedName = "Current release ${project.version}"
-    fromCommit = startGitRev
-    toRef =  "HEAD"
-    templateContent = """
-{{#tags}}
-<h1> Highly untested and may break world</h1>
-  <h3>{{name}}</h3>
-  <ul>
-    {{#commits}}
-    <li> <a href="https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}" target=_blank> {{{message}}}</a>
-</li>
-    {{/commits}}
-  </ul>
-{{/tags}}
-"""
-}
-
-tasks.build.dependsOn makeChangelog

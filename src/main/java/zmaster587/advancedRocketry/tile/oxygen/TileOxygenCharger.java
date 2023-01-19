@@ -8,11 +8,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidContainerItem;
+import net.minecraftforge.fluids.*;
 import zmaster587.advancedRocketry.api.AdvancedRocketryFluids;
 import zmaster587.advancedRocketry.armor.ItemSpaceArmor;
 import zmaster587.advancedRocketry.armor.ItemSpaceChest;
@@ -47,6 +43,7 @@ public class TileOxygenCharger extends TileInventoriedRFConsumerTank implements 
 
 		if(resource.getFluid().getUnlocalizedName().contains("oxygen") ||
 				resource.getFluidID() == AdvancedRocketryFluids.fluidHydrogen.getID())
+
 			return super.fill(from, resource, doFill);
 		return 0;
 	}
@@ -152,14 +149,22 @@ public class TileOxygenCharger extends TileInventoriedRFConsumerTank implements 
 	
 	//Yes i was lazy
 	//TODO: make better
+	//kuzuanpa: I'm lazy too
 	private boolean useBucket( int slot, ItemStack stack) {
-
+		FluidTank fluidTank = this.tank;
+		//Fill tank from bucket
 		if(FluidContainerRegistry.isFilledContainer(stack)) {
-			if(slot == 0 && tank.getFluidAmount() + FluidContainerRegistry.getContainerCapacity(stack) <= tank.getCapacity()) {
+			if( slot == 0
+			 && fluidTank.getFluidAmount() + FluidContainerRegistry.getContainerCapacity(stack) <= fluidTank.getCapacity()
+			&& (fluidTank.getFluid().getFluid().equals(AdvancedRocketryFluids.fluidHydrogen)||fluidTank.getFluid().getFluid().equals(AdvancedRocketryFluids.fluidOxygen))) {
 				ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(stack);
 
 				if(emptyContainer != null && getStackInSlot(1) == null || (emptyContainer.isItemEqual(getStackInSlot(1)) && getStackInSlot(1).stackSize < getStackInSlot(1).getMaxStackSize())) {
-					tank.fill(FluidContainerRegistry.getFluidForFilledItem(stack), true);
+					int amtFilled = fluidTank.fill(FluidContainerRegistry.getFluidForFilledItem(stack), true);
+
+					//Handle fluids not being equal
+					if(amtFilled == 0)
+						return false;
 
 					if(getStackInSlot(1) == null)
 						inventory.setInventorySlotContents(1, emptyContainer);
@@ -170,13 +175,14 @@ public class TileOxygenCharger extends TileInventoriedRFConsumerTank implements 
 				}
 			}
 		}
+		//Empty tank into bucket
 		else if(FluidContainerRegistry.isContainer(stack)) {
-			if(slot == 0 && tank.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME) {
-				ItemStack fullContainer = FluidContainerRegistry.fillFluidContainer(tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false), stack);
+			if(slot == 0 && fluidTank.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME) {
+				ItemStack fullContainer = FluidContainerRegistry.fillFluidContainer(fluidTank.drain(FluidContainerRegistry.BUCKET_VOLUME, false), stack);
 
 
 				if(fullContainer != null && (getStackInSlot(1) == null || (fullContainer.isItemEqual(getStackInSlot(1)) && getStackInSlot(1).stackSize < getStackInSlot(1).getMaxStackSize())) ) {
-					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
+					fluidTank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
 
 					if(getStackInSlot(1) == null)
 						inventory.setInventorySlotContents(1, fullContainer);
@@ -187,21 +193,22 @@ public class TileOxygenCharger extends TileInventoriedRFConsumerTank implements 
 				}
 			}
 		}
+		//Empty tank into bucket
 		else if(stack != null && stack.getItem() instanceof IFluidContainerItem) {
 			IFluidContainerItem fluidItem = ((IFluidContainerItem)stack.getItem());
 			FluidStack fluidStack;
 			stack = stack.copy();
 			stack.stackSize = 1;
-			
+
 			//Drain the tank into the item
-			if(fluidItem.getFluid(stack) == null && tank.getFluid() != null) {
-				int amt = fluidItem.fill(stack, tank.getFluid(), true);
-				
-				
+			if(fluidTank.getFluid() != null && fluidItem.getFluid(stack) == null) {
+				int amt = fluidItem.fill(stack, fluidTank.getFluid(), true);
+
+
 				//If the container is full move it down and try again for a new one
 				if(amt != 0 && fluidItem.getCapacity(stack) == fluidItem.getFluid(stack).amount) {
-					
-					
+
+
 					if(getStackInSlot(1) == null) {
 						inventory.setInventorySlotContents(1, stack);
 					}
@@ -211,23 +218,28 @@ public class TileOxygenCharger extends TileInventoriedRFConsumerTank implements 
 					}
 					else
 						return false;
-					tank.drain(amt, true);
+					fluidTank.drain(amt, true);
 					decrStackSize(0, 1);
 
 					return true;
 				}
-				
+
 			}
 			else {
-				fluidStack = fluidItem.drain(stack, tank.getCapacity() - tank.getFluidAmount(), false);
+				fluidStack = fluidItem.drain(stack, fluidTank.getCapacity() - fluidTank.getFluidAmount(), false);
 
-				int amountDrained = tank.fill(fluidStack, true);
+				int amountDrained = fluidTank.fill(fluidStack, false);
+
+				//prevent bucket eating
+				if(amountDrained == 0)
+					return false;
+
 				fluidItem.drain(stack, amountDrained, true);
 				if (fluidItem.getFluid(stack) == null || fluidItem.getFluid(stack).amount == 0) {
 					if(getStackInSlot(1) == null) {
 						inventory.setInventorySlotContents(1, stack);
 					}
-					else if(ItemStack.areItemStackTagsEqual(getStackInSlot(1), stack) && getStackInSlot(1).getItem().equals(stack.getItem()) && getStackInSlot(1).getItemDamage() == stack.getItemDamage() && stack.getItem().getItemStackLimit(stack) < getStackInSlot(1).stackSize) {
+					else if(ItemStack.areItemStackTagsEqual(getStackInSlot(1), stack) && getStackInSlot(1).getItem().equals(stack.getItem()) && getStackInSlot(1).getItemDamage() == stack.getItemDamage() && stack.getItem().getItemStackLimit(stack) > getStackInSlot(1).stackSize) {
 						getStackInSlot(1).stackSize++;
 
 					}
@@ -235,8 +247,10 @@ public class TileOxygenCharger extends TileInventoriedRFConsumerTank implements 
 						return false;
 
 					decrStackSize(0, 1);
+					fluidTank.fill(fluidStack, true);
 
 					return true;
+
 				}
 			}
 		}

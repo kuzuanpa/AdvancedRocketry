@@ -20,7 +20,6 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 
 import org.lwjgl.opengl.GL11;
 
-import zmaster587.advancedRocketry.integration.nei.PositionedFluidStack;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.client.util.ProgressBarImage;
 import zmaster587.libVulpes.interfaces.IRecipe;
@@ -269,7 +268,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
     }
 
     @Override
-    public List<String> handleTooltip(GuiRecipe guiRecipe, List<String> currenttip, int recipe) {
+    public List<String> handleTooltip(GuiRecipe<?> guiRecipe, List<String> currenttip, int recipe) {
         super.handleTooltip(guiRecipe, currenttip, recipe);
         CachedMachineRecipe crecipe = (CachedMachineRecipe) this.arecipes.get(recipe);
         if (GuiContainerManager.shouldShowTooltip(guiRecipe)) {
