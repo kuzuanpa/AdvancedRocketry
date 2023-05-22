@@ -1,1 +1,0 @@
-/home/kuzuanpa/gradle-4.4.1/bin/gradle
