@@ -1,21 +1,18 @@
 package zmaster587.advancedRocketry.client.render.entity;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.WavefrontObject;
+import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.client.render.multiblocks.RendererWarpCore;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.entity.EntityUIPlanet;
-import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.render.RenderHelper;
 
 public class RenderPlanetUIEntity extends Render {
@@ -30,7 +27,6 @@ public class RenderPlanetUIEntity extends Render {
 		} catch(ModelFormatException e) {
 			sphere = null;
 			e.printStackTrace();
-			System.exit(0);
 		}
 	}
 
