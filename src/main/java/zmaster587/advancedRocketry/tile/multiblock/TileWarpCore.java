@@ -7,17 +7,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.libVulpes.api.LibVulpesBlocks;
-import zmaster587.libVulpes.api.material.AllowedProducts;
-import zmaster587.libVulpes.api.material.Material;
-import zmaster587.libVulpes.api.material.MaterialRegistry;
 import zmaster587.libVulpes.block.BlockMeta;
 import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
+
+import java.util.Arrays;
 
 public class TileWarpCore extends TileMultiBlock {
 	private SpaceObject station;
@@ -69,7 +67,7 @@ public class TileWarpCore extends TileMultiBlock {
 			for(int i = 0; i < inv.getSizeInventory(); i++) {
 				ItemStack stack = inv.getStackInSlot(i);
 				int amt = 0;
-				if(stack != null && OreDictionary.itemMatches(MaterialRegistry.getItemStackFromMaterialAndType("Dilithium", AllowedProducts.getProductByName("CRYSTAL")), stack, false)) {
+				if(stack != null && Arrays.stream(OreDictionary.getOreIDs(stack)).anyMatch(id -> id == OreDictionary.getOreID("gemDilithium"))) {
 					int stackSize = stack.stackSize;
 					if(!worldObj.isRemote)
 						amt = getSpaceObject().addFuel(Configuration.fuelPointsPerDilithium*stack.stackSize);
