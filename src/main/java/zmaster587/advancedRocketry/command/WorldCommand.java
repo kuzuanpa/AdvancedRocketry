@@ -1,10 +1,16 @@
 package zmaster587.advancedRocketry.command;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryAPI;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
@@ -25,16 +31,11 @@ import zmaster587.advancedRocketry.world.util.TeleporterNoPortal;
 import zmaster587.advancedRocketry.world.util.TeleporterNoPortalSeekBlock;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.util.BlockPosition;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class WorldCommand implements ICommand {
 
@@ -86,7 +87,8 @@ public class WorldCommand implements ICommand {
 			sender.addChatMessage(new ChatComponentText("giveStation"));
 			sender.addChatMessage(new ChatComponentText("reloadRecipes"));
 			sender.addChatMessage(new ChatComponentText("setGravity"));
-			
+			sender.addChatMessage(new ChatComponentText("showEntityList"));
+
 		}
 		else if(string.length >= 1 && string[0].equalsIgnoreCase("givestation")) {
 			EntityPlayer player = null;
@@ -226,6 +228,13 @@ public class WorldCommand implements ICommand {
 			return;
 		}
 
+		if(string.length >= 1 &&  string[0].equalsIgnoreCase("showEntityList")) {
+			try {
+				sender.addChatMessage(new ChatComponentText("Showing Entity List, Those value can be used in <spawnable> Tag for planets:"));
+				EntityList.stringToClassMapping.keySet().forEach(name->sender.addChatMessage(new ChatComponentText((String) name)));
+			} catch (Exception ignored) {}
+			return;
+		}
 		if(string.length >= 1 && string[0].equalsIgnoreCase("setGravity")) {
 			if(string.length >= 2) {
 				Entity player = null;
@@ -763,6 +772,7 @@ public class WorldCommand implements ICommand {
 			list.add("star");
 			list.add("reloadRecipes");
 			list.add("givestation");
+			list.add("showEntityList");
 		} else if(string.length == 2) {
 			ArrayList<String> list2 = new ArrayList<String>();
 			list2.add("get");

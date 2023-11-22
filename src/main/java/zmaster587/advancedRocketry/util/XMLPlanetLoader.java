@@ -1,31 +1,20 @@
 package zmaster587.advancedRocketry.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.NBTException;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
@@ -33,7 +22,13 @@ import zmaster587.advancedRocketry.api.dimension.solar.IGalaxy;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class XMLPlanetLoader {
 
@@ -351,8 +346,76 @@ public class XMLPlanetLoader {
 				String text = planetPropertyNode.getTextContent();
 				if(text != null && !text.isEmpty() && text.equalsIgnoreCase("true"))
 					properties.setGasGiant(true);
-			}
-			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("isKnown")) {
+			}else if(planetPropertyNode.getNodeName().equalsIgnoreCase("spawnable")) {
+				int weight = 100;
+				int groupMin = 1, groupMax = 1;
+				String nbtString = "";
+				Node weightNode = planetPropertyNode.getAttributes().getNamedItem("weight");
+				Node groupMinNode = planetPropertyNode.getAttributes().getNamedItem("groupMin");
+				Node groupMaxNode = planetPropertyNode.getAttributes().getNamedItem("groupMax");
+				Node nbtNode = planetPropertyNode.getAttributes().getNamedItem("nbt");
+
+				//Get spawn properties
+				if(weightNode != null) {
+					try {
+						weight = Integer.parseInt(weightNode.getTextContent());
+						weight = Math.max(1, weight);
+					} catch(NumberFormatException ignored) {
+					}
+				}
+				if(groupMinNode != null) {
+					try {
+						groupMin = Integer.parseInt(groupMinNode.getTextContent());
+						groupMin = Math.max(1, groupMin);
+					} catch(NumberFormatException ignored) {
+					}
+				}
+				if(groupMaxNode != null) {
+					try {
+						groupMax = Integer.parseInt(groupMaxNode.getTextContent());
+						groupMax = Math.max(1, groupMax);
+					} catch(NumberFormatException ignored) {
+					}
+				}
+
+				if(nbtNode != null) {
+					nbtString = nbtNode.getTextContent();
+				}
+
+				if (groupMax < groupMin) {
+					groupMax = groupMin;
+				}
+
+				Class clazz= (Class) EntityList.stringToClassMapping.get(planetPropertyNode.getTextContent());
+				//If not using string name maybe it's a class name?
+				if(clazz == null) {
+					try {
+						clazz = Class.forName(planetPropertyNode.getTextContent());
+						if(!Entity.class.isAssignableFrom(clazz))
+							clazz = null;
+					} catch (Exception ignored) {}
+				}
+
+				if(clazz != null) {
+					SpawnListEntryNBT entry = new SpawnListEntryNBT(clazz, weight, groupMin, groupMax);
+					if(!nbtString.isEmpty())
+						try {
+							entry.setNbt(nbtString);
+						} catch (DOMException e) {
+							AdvancedRocketry.logger.fatal("===== Configuration Error!  Please check your save's planetDefs.xml config file =====\n"
+									+ e.getLocalizedMessage()
+									+ "\nThe following is not valid JSON:\n" + nbtString);
+						} catch (NBTException e) {
+							AdvancedRocketry.logger.fatal("===== Configuration Error!  Please check your save's planetDefs.xml config file =====\n"
+									+ e.getLocalizedMessage()
+									+ "\nThe following is not valid NBT data:\n" + nbtString);
+						}
+
+					properties.getSpawnListEntries().add(entry);
+				} else
+					AdvancedRocketry.logger.warn("Cannot find " + planetPropertyNode.getTextContent() + " while registering entity for planet spawn");
+
+			} else if(planetPropertyNode.getNodeName().equalsIgnoreCase("isKnown")) {
 				String text = planetPropertyNode.getTextContent();
 				if(text != null && !text.isEmpty() && text.equalsIgnoreCase("true")) {
 					Configuration.initiallyKnownPlanets.add(properties.getId());

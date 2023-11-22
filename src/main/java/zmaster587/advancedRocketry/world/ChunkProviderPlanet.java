@@ -1,29 +1,5 @@
 package zmaster587.advancedRocketry.world;
 
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.CAVE;
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.MINESHAFT;
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.RAVINE;
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.SCATTERED_FEATURE;
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.STRONGHOLD;
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILLAGE;
-import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.ANIMALS;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.event.PlanetEventHandler;
-import zmaster587.advancedRocketry.util.OreGenProperties;
-import zmaster587.advancedRocketry.util.OreGenProperties.OreEntry;
-import zmaster587.advancedRocketry.world.decoration.MapGenCaveExt;
-import zmaster587.advancedRocketry.world.decoration.MapGenCrater;
-import zmaster587.advancedRocketry.world.decoration.MapGenGeode;
-import zmaster587.advancedRocketry.world.gen.CustomizableOreGen;
-import zmaster587.advancedRocketry.world.decoration.MapGenRavineExt;
-import zmaster587.advancedRocketry.world.provider.WorldProviderPlanet;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -38,12 +14,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.MapGenBase;
-import net.minecraft.world.gen.MapGenCaves;
-import net.minecraft.world.gen.MapGenRavine;
-import net.minecraft.world.gen.NoiseGenerator;
-import net.minecraft.world.gen.NoiseGeneratorOctaves;
-import net.minecraft.world.gen.NoiseGeneratorPerlin;
+import net.minecraft.world.gen.*;
 import net.minecraft.world.gen.structure.MapGenMineshaft;
 import net.minecraft.world.gen.structure.MapGenScatteredFeature;
 import net.minecraft.world.gen.structure.MapGenStronghold;
@@ -52,6 +23,23 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import zmaster587.advancedRocketry.api.Configuration;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.event.PlanetEventHandler;
+import zmaster587.advancedRocketry.util.OreGenProperties;
+import zmaster587.advancedRocketry.util.OreGenProperties.OreEntry;
+import zmaster587.advancedRocketry.world.decoration.MapGenCrater;
+import zmaster587.advancedRocketry.world.decoration.MapGenGeode;
+import zmaster587.advancedRocketry.world.decoration.MapGenRavineExt;
+import zmaster587.advancedRocketry.world.gen.CustomizableOreGen;
+import zmaster587.advancedRocketry.world.provider.WorldProviderPlanet;
+
+import java.util.List;
+import java.util.Random;
+
+import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
+import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.ANIMALS;
 
 public class ChunkProviderPlanet implements IChunkProvider {
 	/** RNG. */
@@ -552,7 +540,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
 	public List getPossibleCreatures(EnumCreatureType p_73155_1_, int p_73155_2_, int p_73155_3_, int p_73155_4_)
     {
         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(p_73155_2_, p_73155_4_);
-        return p_73155_1_ == EnumCreatureType.monster && this.scatteredFeatureGenerator.func_143030_a(p_73155_2_, p_73155_3_, p_73155_4_) ? this.scatteredFeatureGenerator.getScatteredFeatureSpawnList() : biomegenbase.getSpawnableList(p_73155_1_);
+        return biomegenbase.getSpawnableList(p_73155_1_);
     }
 
 	public ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)

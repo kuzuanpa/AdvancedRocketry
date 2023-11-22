@@ -1,19 +1,19 @@
 package zmaster587.advancedRocketry.network;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
-import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.libVulpes.network.BasePacket;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.libVulpes.network.BasePacket;
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class PacketDimInfo extends BasePacket {
 
@@ -118,7 +118,6 @@ public class PacketDimInfo extends BasePacket {
 				dimProperties.getRequiredArtifacts().clear();
 				dimProperties.getRequiredArtifacts().addAll(artifacts);
 				dimProperties.customIcon = DimensionManager.getInstance().getDimensionProperties(dimNumber).customIcon;
-				
 				DimensionManager.getInstance().setDimProperties(dimNumber, dimProperties);
 			} else {
 				dimProperties = new DimensionProperties(dimNumber);
