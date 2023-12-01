@@ -1,6 +1,5 @@
 package zmaster587.advancedRocketry.event;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -37,7 +36,6 @@ import net.minecraftforge.event.terraingen.OreGenEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.achievements.ARAchivements;
@@ -154,7 +152,6 @@ public class PlanetEventHandler {
 		World world = event.world;
 		if(world.provider instanceof WorldProviderPlanet)event.list.clear();
 		DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId);
-		FMLLog.log(Level.FATAL,event.type.name());
 		if(properties != null) {
 			List<SpawnListEntryNBT> entries = properties.getSpawnListEntries();
 			if(!entries.isEmpty()) for (SpawnListEntryNBT entry : entries) {

@@ -1,24 +1,8 @@
 package zmaster587.advancedRocketry.world.provider;
 
 
-import java.util.Set;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
-import zmaster587.advancedRocketry.api.IPlanetaryProvider;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
-import zmaster587.advancedRocketry.client.render.planet.RenderPlanetarySky;
-import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
-import zmaster587.advancedRocketry.world.ChunkManagerPlanet;
-import zmaster587.advancedRocketry.world.ChunkProviderCavePlanet;
-import zmaster587.advancedRocketry.world.ChunkProviderPlanet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,6 +14,20 @@ import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.client.IRenderHandler;
+import org.apache.commons.lang3.ArrayUtils;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.Configuration;
+import zmaster587.advancedRocketry.api.IPlanetaryProvider;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
+import zmaster587.advancedRocketry.client.render.planet.RenderPlanetarySky;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
+import zmaster587.advancedRocketry.world.ChunkManagerPlanet;
+import zmaster587.advancedRocketry.world.ChunkProviderCavePlanet;
+import zmaster587.advancedRocketry.world.ChunkProviderPlanet;
+
+import java.util.Set;
 
 public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProvider {
 	private IRenderHandler skyRender;
@@ -112,7 +110,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 			if(Configuration.forcePlayerRespawnInSpace || coords != null && AtmosphereHandler.getOxygenHandler(player.worldObj.provider.dimensionId).getAtmosphereType(coords.posX, coords.posY, coords.posZ).isBreathable())
 				return dimensionId;
 		}
-		return 0;
+		return 11;
 	}
 	
 	@Override
