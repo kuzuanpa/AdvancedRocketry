@@ -372,7 +372,7 @@ public class PlanetEventHandler {
 	public void worldLoadEvent(WorldEvent.Load event) {
 		if(!event.world.isRemote)
 			AtmosphereHandler.registerWorld(event.world.provider.dimensionId);
-		else if(Configuration.skyOverride && event.world.provider.dimensionId == 0)
+		else if(Configuration.skyOverride)
 			event.world.provider.setSkyRenderer(new RenderPlanetarySky());
 	}
 

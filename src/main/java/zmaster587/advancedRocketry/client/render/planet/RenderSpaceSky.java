@@ -1,20 +1,17 @@
 package zmaster587.advancedRocketry.client.render.planet;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
-
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
-import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.libVulpes.render.RenderHelper;
 import zmaster587.libVulpes.util.Vector3F;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class RenderSpaceSky extends RenderPlanetarySky {
 
@@ -23,17 +20,18 @@ public class RenderSpaceSky extends RenderPlanetarySky {
 	public RenderSpaceSky() {
 		super();
 	}
+	float oldRotateX,oldRotateY;
 
 	Minecraft mc = Minecraft.getMinecraft();
 	
 	@Override
-	protected void renderPlanet2(Tessellator tessellator1, ResourceLocation icon, int locationX, int locationY, double zLevel, float planetOrbitalDistance, float alphaMultiplier, double angle, boolean hasAtmosphere, float[] atmColor, float[] ringColor, boolean isGasgiant, boolean hasRings)  {
+	protected void renderPlanet2(Tessellator tessellator1, ResourceLocation icon, int locationX, int locationY, double zLevel, float planetOrbitalDistance, float alphaMultiplier, double angle, boolean hasAtmosphere, float[] atmColor, float[] ringColor, boolean isGasgiant, boolean hasRings, Vec3 sunColor)  {
 
 		ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)mc.thePlayer.posX, (int)mc.thePlayer.posZ);
-		
+
 		if(object == null)
 			return;
-		
+
 		planetOrbitalDistance = object.getOrbitalDistance();
 
 		GL11.glPushMatrix();
@@ -54,7 +52,7 @@ public class RenderSpaceSky extends RenderPlanetarySky {
 		//int i1 = k / 4 % 2;
 
 		//Set planet Orbiting distance; size
-		float f10 = 66f*AstronomicalBodyHelper.getBodySizeMultiplier(planetOrbitalDistance);
+		float f10 = 2F*AstronomicalBodyHelper.getBodySizeMultiplier(planetOrbitalDistance);
 
 		float Xoffset = (float)((System.currentTimeMillis()/1000000d % 1));
 
@@ -87,7 +85,7 @@ public class RenderSpaceSky extends RenderPlanetarySky {
 			tessellator1.startDrawingQuads();
 			mc.renderEngine.bindTexture(DimensionProperties.getAtmosphereLEOResource());
 			double dist = -5D - 4*(planetOrbitalDistance)/200D;
-			double scalingMult = 1D - 0.9*(planetOrbitalDistance)/200D;
+			double scalingMult = 1D - 2*(planetOrbitalDistance)/200D;
 			
 			int maxAmt = 6;
 			float lng = (float) (Minecraft.getSystemTime()/100000d % 1);
@@ -197,15 +195,22 @@ public class RenderSpaceSky extends RenderPlanetarySky {
 		ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)mc.thePlayer.posX, (int)mc.thePlayer.posZ);
 		if(obj != null)
 		{
-		GL11.glRotated(obj.getRotation(ForgeDirection.UP)*360, 0, 1, 0);
-		GL11.glRotated(obj.getRotation(ForgeDirection.EAST)*360, 1, 0, 0);
+			float rotateXToGo= (float) (obj.getRotation(ForgeDirection.UP)*360);
+			float rotateYToGo= (float) (obj.getRotation(ForgeDirection.EAST)*360);
+			if(oldRotateX==0||oldRotateY==0){oldRotateX=rotateXToGo+0.0001f;oldRotateY=rotateYToGo+0.0001f;}
+			if(rotateXToGo==0||rotateYToGo==0){rotateXToGo+=0.0001f;rotateYToGo+=0.0001f;}
+			float rotateX= oldRotateX+2*(rotateXToGo-oldRotateX)/Math.abs(rotateXToGo);
+			float rotateY= oldRotateY+2*(rotateYToGo-oldRotateY)/Math.abs(rotateYToGo);
+			GL11.glRotated(rotateY, 0, 1, 0);
+			GL11.glRotated(rotateX, 1, 0, 0);
+			oldRotateY=rotateY;
+			oldRotateX=rotateX;
 		}
 		
 		//GL11.glRotated(360, obj.getRotation(EnumFacing.EAST), obj.getRotation(EnumFacing.UP), obj.getRotation(EnumFacing.NORTH));
 		
 	}
-	
-	@Override
+		@Override
 	protected ResourceLocation getTextureForPlanet(DimensionProperties properties) {
 		return properties.getPlanetIconLEO();
 	}

@@ -1,19 +1,14 @@
 package zmaster587.advancedRocketry.tile.multiblock;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import org.apache.commons.lang3.ArrayUtils;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.inventory.modules.ModulePlanetSelector;
@@ -27,6 +22,9 @@ import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
 import zmaster587.libVulpes.tile.TilePointer;
 import zmaster587.libVulpes.util.INetworkMachine;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class TilePlanetSelector extends TilePointer implements ISelectionNotify, IModularInventory, IProgressBar, INetworkMachine {
 
@@ -71,7 +69,7 @@ public class TilePlanetSelector extends TilePointer implements ISelectionNotify,
 
 		List<ModuleBase> modules = new LinkedList<ModuleBase>();
 
-		container = new ModulePlanetSelector(0, TextureResources.starryBG, this,true);
+		container = new ModulePlanetSelector(this.worldObj.provider.dimensionId, TextureResources.starryBG, this,false);
 		container.setOffset(1000, 1000);
 		modules.add(container);
 

@@ -22,7 +22,9 @@ public class TextureResources {
 	public static final  ResourceLocation tabPlanetTracking[] = {new ResourceLocation("advancedrocketry", "textures/gui/buttons/tabGuidance.png"), new ResourceLocation("advancedrocketry", "textures/gui/buttons/tabGuidance_hover.png"), null, null};
 
 	public static final  ResourceLocation locationSunPng = new ResourceLocation("advancedrocketry:textures/env/sun.png");
-	public static final  ResourceLocation locationSunNew = new ResourceLocation("advancedrocketry:textures/env/sun2.png");
+	public static final  ResourceLocation locationSunNew = new ResourceLocation("advancedrocketry:textures/env/sun0.png");
+	public static final  ResourceLocation locationSunLEO = new ResourceLocation("advancedrocketry:textures/env/sunLEO.png");
+	public static final  ResourceLocation locationBlackHole = new ResourceLocation("advancedrocketry:textures/env/blackhole.png");
 	public static final  ResourceLocation selectionCircle = new ResourceLocation("advancedrocketry:textures/gui/Selection.png");
 	public static final  ResourceLocation planetSelectorBar = new ResourceLocation("advancedrocketry:textures/gui/progressBars/PlanetSelectorBars.png");
 	public static final  ResourceLocation verticalBar = new ResourceLocation("advancedrocketry:textures/gui/BorderVertical.png");

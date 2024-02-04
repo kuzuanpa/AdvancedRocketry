@@ -1,29 +1,13 @@
 package zmaster587.advancedRocketry.dimension;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import org.apache.commons.io.FileUtils;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
-
-import cpw.mods.fml.common.FMLCommonHandler;
+import org.apache.commons.io.FileUtils;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryAPI;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
@@ -33,15 +17,19 @@ import zmaster587.advancedRocketry.api.dimension.solar.IGalaxy;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.dimension.DimensionProperties.AtmosphereTypes;
 import zmaster587.advancedRocketry.dimension.DimensionProperties.Temps;
 import zmaster587.advancedRocketry.network.PacketDimInfo;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.advancedRocketry.util.XMLPlanetLoader;
+import zmaster587.advancedRocketry.world.provider.WorldProviderSun;
 import zmaster587.libVulpes.network.PacketHandler;
-import net.minecraft.util.MathHelper;
+
+import java.io.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 
 
@@ -386,7 +374,6 @@ public class DimensionManager implements IGalaxy {
 	 */
 	public boolean registerDim(DimensionProperties properties, boolean registerWithForge) {
 		boolean bool = registerDimNoUpdate(properties, registerWithForge);
-
 		if(bool)
 			PacketHandler.sendToAll(new PacketDimInfo(properties.getId(), properties));
 		return bool;
@@ -407,14 +394,14 @@ public class DimensionManager implements IGalaxy {
 
 		//Avoid registering gas giants as dimensions
 		if(registerWithForge && !properties.isGasGiant() && !net.minecraftforge.common.DimensionManager.isDimensionRegistered(dim)) {
-			net.minecraftforge.common.DimensionManager.registerProviderType(properties.getId(), DimensionManager.planetWorldProvider, false);
+			Class<? extends WorldProvider> provider = properties.isSun() ? WorldProviderSun.class : DimensionManager.planetWorldProvider;
+			net.minecraftforge.common.DimensionManager.registerProviderType(properties.getId(), provider, false);
 			net.minecraftforge.common.DimensionManager.registerDimension(dimId, dimId);
 		}
 		dimensionList.put(dimId, properties);
 
 		return true;
 	}
-
 	/**
 	 * Unregisters all dimensions associated with this DimensionManager from both Minecraft and this DimnensionManager
 	 */
@@ -503,6 +490,10 @@ public class DimensionManager implements IGalaxy {
 		//if(star == null)
 		//AdvancedRocketry.logger.warning("Attempted to get null star for ID " + id);
 		return star;
+	}
+	public StellarBody getStarFromPlanet(int planetID) {
+		for(StellarBody star :starList.values())if (star.getPlanets().stream().anyMatch(p -> p.getId() == planetID))return star;
+		return null;
 	}
 
 	/**
@@ -712,7 +703,8 @@ public class DimensionManager implements IGalaxy {
 			if(propeties != null) {
 				int keyInt = Integer.parseInt(keyString);
 				if(!net.minecraftforge.common.DimensionManager.isDimensionRegistered(keyInt) && propeties.isNativeDimension && !propeties.isGasGiant()) {
-					net.minecraftforge.common.DimensionManager.registerProviderType(keyInt, DimensionManager.planetWorldProvider, false);
+					Class<? extends WorldProvider> providor = propeties.getId()==propeties.getStarId()?WorldProviderSun.class:DimensionManager.planetWorldProvider;
+					net.minecraftforge.common.DimensionManager.registerProviderType(keyInt, providor, false);
 					net.minecraftforge.common.DimensionManager.registerDimension(keyInt, keyInt);
 					//propeties.isNativeDimension = true;
 				}

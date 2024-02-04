@@ -1,15 +1,15 @@
 package zmaster587.advancedRocketry.api.dimension.solar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
+import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
+import zmaster587.advancedRocketry.api.stations.DysonSphere;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+
+import java.util.*;
 
 public class StellarBody {
 
@@ -24,6 +24,8 @@ public class StellarBody {
 	float size;
 	public List<StellarBody> subStars;
 	float starSeperation;
+
+	public DysonSphere dysonSphere;
 
 	public StellarBody() {
 		planets = new HashMap<Integer,IDimensionProperties>();
@@ -90,7 +92,7 @@ public class StellarBody {
 	 * @param planet registers this planet to be in orbit around this star
 	 */
 	public void addPlanet(IDimensionProperties planet) {
-		if(!planets.containsKey(planet.getId()))
+		if(!planet.isSun()&&!planets.containsKey(planet.getId()))
 			numPlanets++;
 		planets.put(planet.getId(), planet);
 	}
@@ -124,7 +126,6 @@ public class StellarBody {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
 	/**
 	 * @return the temperature, in kelvin, of the star
 	 */
@@ -195,6 +196,10 @@ public class StellarBody {
 		return name;
 	}
 
+	public DimensionProperties getStarDim(){
+		return DimensionManager.getInstance().getDimensionProperties(this.id);
+	}
+
 	public void setName(String str) {
 		name = str;
 	}
@@ -214,6 +219,7 @@ public class StellarBody {
 		nbt.setShort("posZ", posZ);
 		nbt.setFloat("size", size);
 		nbt.setFloat("seperation", starSeperation);
+		try{if(this.dysonSphere!=null)nbt.setTag("dysonSphere", this.dysonSphere.writeToNBT());}catch (Exception e){e.printStackTrace();}
 		
 		NBTTagList list = new NBTTagList();
 		
@@ -233,7 +239,7 @@ public class StellarBody {
 		name = nbt.getString("name");
 		posX = nbt.getShort("posX");
 		posZ = nbt.getShort("posZ");
-		
+		try{if(nbt.hasKey("dysonSphere"))dysonSphere=new DysonSphere().readFromNBT(nbt.getCompoundTag("dysonSphere"));}catch (Exception e){e.printStackTrace();}
 		if(nbt.hasKey("size"))
 			size = nbt.getFloat("size");
 		

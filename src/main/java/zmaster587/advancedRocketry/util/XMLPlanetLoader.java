@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.dimension.solar.IGalaxy;
@@ -486,9 +487,36 @@ public class XMLPlanetLoader {
 				AdvancedRocketry.logger.warn("Invalid number of planets specified in xml config!");
 			}
 		}
-
-		star.setId(starId++);
 		return star;
+	}
+	public DimensionProperties registerStarDims(Node planetNode,StellarBody star){
+		DimensionProperties properties = new DimensionProperties(DimensionManager.getInstance().getNextFreeDim(offset));
+		offset++;//Increment for dealing with child planets
+		//Set name for dimension if exists
+		if(planetNode.hasAttributes()) {
+			Node nameNode = planetNode.getAttributes().getNamedItem("name");
+			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
+				properties.setName(nameNode.getNodeValue());
+			}
+
+			nameNode = planetNode.getAttributes().getNamedItem("id");
+			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
+				try {
+					if(nameNode.getTextContent().isEmpty()) throw new NumberFormatException();
+					properties.setId(Integer.parseInt(nameNode.getTextContent()));
+					//We're not using the offset so decrement to prepare for next planet
+					offset--;
+				} catch (NumberFormatException e) {
+					AdvancedRocketry.logger.warn("Invalid DIMID specified for star " + properties.getName()); //TODO: more detailed error msg
+					offset--;
+					return null;
+				}
+			}
+		}
+		properties.setStar(star.getId());
+		properties.addBiomes(Collections.singletonList(AdvancedRocketryBiomes.spaceBiome));
+		properties.setSun(true);
+		return properties;
 	}
 	
 	public StellarBody readSubStar(Node planetNode) {
@@ -498,7 +526,14 @@ public class XMLPlanetLoader {
 			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
 				star.setName(nameNode.getNodeValue());
 			}
-
+			nameNode = planetNode.getAttributes().getNamedItem("id");
+			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
+				try {
+					star.setId(Integer.parseInt(nameNode.getNodeValue()));
+				} catch (NumberFormatException e) {
+					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
+				}
+			}
 			nameNode = planetNode.getAttributes().getNamedItem("temp");
 
 			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
@@ -527,7 +562,6 @@ public class XMLPlanetLoader {
 				}
 			}
 		}
-		
 		return star;
 	}
 
@@ -547,6 +581,7 @@ public class XMLPlanetLoader {
 			}
 
 			StellarBody star = readStar(masterNode);
+			coupling.dims.add(registerStarDims(masterNode,star));
 			coupling.stars.add(star);
 
 			NodeList planetNodeList = masterNode.getChildNodes();
@@ -559,6 +594,7 @@ public class XMLPlanetLoader {
 				}
 				if(planetNode.getNodeName().equalsIgnoreCase("star")) {
 					StellarBody star2 = readSubStar(planetNode);
+					coupling.dims.add(registerStarDims(planetNode,star));
 					star.addSubStar(star2);
 				}
 				planetNode = planetNode.getNextSibling();
@@ -576,7 +612,7 @@ public class XMLPlanetLoader {
 		Collection<StellarBody> stars = galaxy.getStars();
 
 		for(StellarBody star : stars) {
-			outputString = outputString + "\t<star name=\"" + star.getName() + "\" temp=\"" + star.getTemperature() + "\" x=\"" + star.getPosX() 
+			outputString = outputString + "\t<star name=\"" + star.getName() +"\" id=\""+star.getId()+"\" temp=\"" + star.getTemperature() + "\" x=\"" + star.getPosX()
 					+ "\" y=\"" + star.getPosZ() + "\" size=\"" + star.getSize() + "\" numPlanets=\"0\" numGasGiants=\"0\">\n";
 
 			for(StellarBody star2 : star.getSubStars()) {
@@ -586,7 +622,7 @@ public class XMLPlanetLoader {
 			}
 			
 			for(IDimensionProperties properties : star.getPlanets()) {
-				if(!properties.isMoon())
+				if(!properties.isMoon()&&!properties.isSun()&&!(properties.getId()==star.getId()))
 					outputString = outputString + writePlanet((DimensionProperties)properties, 2);
 			}
 

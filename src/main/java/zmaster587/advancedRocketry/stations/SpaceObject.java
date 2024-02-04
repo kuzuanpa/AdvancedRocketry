@@ -1,17 +1,15 @@
 package zmaster587.advancedRocketry.stations;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.ForgeDirection;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
@@ -28,13 +26,9 @@ import zmaster587.advancedRocketry.util.StationLandingLocation;
 import zmaster587.libVulpes.block.BlockFullyRotatable;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.util.BlockPosition;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	private int launchPosX, launchPosZ, posX, posZ;
@@ -148,8 +142,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	 * @return rotation of the station in degrees
 	 */
 	public double getRotation(ForgeDirection dir) {
-		
-		return (rotation[getIDFromDir(dir)] + getDeltaRotation(dir)*(getWorldTime() - lastTimeModification)) % (360D);
+		return (rotation[getIDFromDir(dir)] + getDeltaRotation(dir)*(getWorldTime() - lastTimeModification)*10) % (3600);
 	}
 
 	private int getIDFromDir(ForgeDirection facing){

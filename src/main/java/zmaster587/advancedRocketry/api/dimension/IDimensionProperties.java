@@ -1,7 +1,5 @@
 package zmaster587.advancedRocketry.api.dimension;
 
-import java.util.Set;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -9,11 +7,15 @@ import zmaster587.advancedRocketry.api.IAtmosphere;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 
+import java.util.Set;
+
 public interface IDimensionProperties {
 	/**
 	 * @return the DIMID of the planet
 	 */
 	public int getId();
+
+	public boolean isSun();
 	
 	/**
 	 * @return the color of the sun as an array of floats represented as  {r,g,b}

@@ -48,6 +48,8 @@ import java.util.Map.Entry;
 
 public class DimensionProperties implements Cloneable, IDimensionProperties {
 
+
+
 	/**
 	 * Contains standardized temperature ranges for planets
 	 * where 100 is earthlike, larger values are hotter
@@ -232,6 +234,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	private int planetId;
 	private boolean isStation;
 	private boolean isGasGiant;
+	private boolean isSun;
 
 	//Satallites
 	private HashMap<Long,SatelliteBase> satallites;
@@ -259,6 +262,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		isNativeDimension = true;
 		hasOxygen = true;
 		isGasGiant = false;
+		isSun=false;
 		hasRings = false;
 		customIcon = "";
 		harvestableAtmosphere = new LinkedList<Fluid>();
@@ -391,6 +395,12 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		return isGasGiant;
 	}
 
+	public boolean isSun(){
+		return isSun;
+	}
+	public void setSun(boolean value){
+		this.isSun=value;
+	}
 	public void setGasGiant(boolean gas) {
 		this.isGasGiant = gas;
 	}
@@ -1226,6 +1236,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 			originalAtmosphereDensity = atmosphereDensity;
 
 		isGasGiant = nbt.getBoolean("isGasGiant");
+		isSun = nbt.getBoolean("isSun");
 		isTerraformed = nbt.getBoolean("terraformed");
 		orbitalPhi = nbt.getDouble("orbitPhi");
 		rotationalPhi = nbt.getDouble("rotationalPhi");
@@ -1391,6 +1402,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		nbt.setBoolean("isNative", isNativeDimension);
 		nbt.setBoolean("terraformed", isTerraformed);
 		nbt.setBoolean("isGasGiant", isGasGiant);
+		nbt.setBoolean("isSun", isSun);
 		nbt.setDouble("orbitPhi", orbitalPhi);
 		nbt.setDouble("rotationalPhi", rotationalPhi);
 		nbt.setBoolean("hasRings", hasRings);
