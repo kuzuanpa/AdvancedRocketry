@@ -307,7 +307,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 				renderPlanetarySystem(properties, size/2, size/2, (float) zoom,properties.getPathLengthToStar());
 			}
 			else
-				renderStarSystem(DimensionManager.getInstance().getStar(currentSystem), size/2, size/2, (float) zoom, (float)zoom*.3f);
+				renderStarSystem(DimensionManager.getInstance().getStar(currentSystem), size/2, size/2, (float) zoom, (float)zoom*.2f);
 		}
 		else
 			renderGalaxyMap(DimensionManager.getInstance(), size/2, size/2, (float) zoom, (float)zoom*.25f);
@@ -467,7 +467,6 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void onInventoryButtonPressed(int buttonId) {
-
 		//Go Up a level
 		if(buttonId == -1) {
 			DimensionProperties properties =  DimensionManager.getInstance().getDimensionProperties(currentSystem);
@@ -505,6 +504,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 		else {
 			//Zoom into selected system
 			if(selectedSystem == buttonId) {
+				if(buttonId==currentSystem)return;
 				currentSystem = buttonId;
 				currentSystemChanged=true;
 				//Go back to planetary mapping
