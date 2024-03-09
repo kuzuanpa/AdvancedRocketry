@@ -201,12 +201,12 @@ public class DysonSphere implements IDysonSphere{
     public int getNodeBuildingProgress(int nodeX,int nodeY){
         return this.nodesBuildingProgress[nodeY][nodeX];
     }
-    public void drawBehindLayer(int x,int y,int distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier) {
+    public void drawBehindLayer(int x,int y,int distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
         for(int nodeY=0;nodeY<DysonSphere.lengthYFromSize[this.size];nodeY++)for(int nodeX=0;nodeX<DysonSphere.getValidNodesInARow(this.size, nodeY);nodeX++) {
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, z);
             GL11.glRotatef(offsetRotateZ, 0, 0, 1);
-            GL11.glRotatef(-(System.currentTimeMillis() % 36000) / 100F, 0, 1, 0);
+            GL11.glRotatef(-rotate, 0, 1, 0);
 
             float angle=(360.0F / DysonSphere.getValidNodesInARow(this.size, nodeY)) * nodeX;
             if(angle>360){
@@ -233,12 +233,12 @@ public class DysonSphere implements IDysonSphere{
 
         }
     }
-    public void drawFrontLayer(int x,int y,int distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier) {
+    public void drawFrontLayer(int x,int y,int distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
         for(int nodeY=0;nodeY<DysonSphere.lengthYFromSize[this.size];nodeY++)for(int nodeX=0;nodeX<DysonSphere.getValidNodesInARow(this.size, nodeY);nodeX++) {
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, z);
             GL11.glRotatef(offsetRotateZ, 0, 0, 1);
-            GL11.glRotatef(-180-(System.currentTimeMillis() % 36000) / 100F, 0, 1, 0);
+            GL11.glRotatef(-180-rotate, 0, 1, 0);
             float angle=(360.0F / DysonSphere.getValidNodesInARow(this.size, nodeY)) * nodeX;
             if(angle>360){
                 GL11.glPopMatrix();
