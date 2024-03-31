@@ -12,12 +12,11 @@ public class RenderComponents {
 	@SubscribeEvent
 	public void renderPostSpecial(RenderPlayerEvent.Specials.Post event) {
 		//RenderJet pack
-		RenderJetPack pack = new RenderJetPack();
 		ItemStack chest = event.entityLiving.getEquipmentInSlot(3);
 		if(chest != null && chest.getItem() instanceof IModularArmor) {
 			for(ItemStack stack : ((IModularArmor)chest.getItem()).getComponents(chest)) {
 				if(stack.getItem() == AdvancedRocketryItems.itemJetpack)
-					pack.render(event.entityLiving, 0, 0, 0, 0, 0, 0);
+					new RenderJetPack().render(event.entityLiving, 0, 0, 0, 0, 0, 0);
 			}
 		}
 		
