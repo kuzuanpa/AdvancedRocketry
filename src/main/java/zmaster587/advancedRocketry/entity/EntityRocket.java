@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.entity;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -8,6 +9,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.logging.log4j.Level;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.achievements.ARAchivements;
 import zmaster587.advancedRocketry.api.*;
@@ -49,6 +52,7 @@ import zmaster587.advancedRocketry.stations.SpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
 import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
+import zmaster587.advancedRocketry.block.rocket.ILeveledPartsDivider;
 import zmaster587.advancedRocketry.util.AsteroidSmall;
 import zmaster587.advancedRocketry.util.StationLandingLocation;
 import zmaster587.advancedRocketry.util.StorageChunk;
@@ -70,6 +74,7 @@ import zmaster587.libVulpes.util.Vector3F;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EntityRocket extends EntityRocketBase implements INetworkEntity, IDismountHandler, IModularInventory, IProgressBar, IButtonInventory, ISelectionNotify,IPlanetDefiner {
 
@@ -81,6 +86,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	private int lastDimensionFrom = 0;
 	
 	public StorageChunk storage;
+	public ArrayList<LeveledRocketPart> LeveledRocketParts=new ArrayList<>();
 	private String errorStr;
 	private long lastErrorTime = Long.MIN_VALUE;
 	private static long ERROR_DISPLAY_TIME = 100;
@@ -133,9 +139,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		landingPadDisplayText = new ModuleText(256, 16, "", 0x00FF00, 2f);
 		landingPadDisplayText.setColor(0x00ff00);
 	}
-
 	public EntityRocket(World world, StorageChunk storage, StatsRocket stats, double x, double y, double z) {
 		this(world);
+		if(storage==null){super.setDead();throw new IllegalArgumentException("null storage for Rocketry!");}
+		calculateLeveledRocketParts(storage);
 		this.stats = stats;
 		this.setPosition(x, y, z);
 		this.storage = storage;
@@ -149,6 +156,42 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		landingPadDisplayText.setColor(0x00ff00);
 	}
 
+	private final ArrayList<BlockPosition> searchedParts = new ArrayList<>();
+	public void calculateLeveledRocketParts(StorageChunk entireRocket){
+		//search for control computer
+		List<TileEntity> computers = entireRocket.getTileEntityList().stream().filter(tile -> tile instanceof TileGuidanceComputer).collect(Collectors.toList());
+		if (computers.size()>1)throw new IllegalArgumentException("More than one control computer found in Rocket!");
+		findGroups(entireRocket,computers.get(0).xCoord,computers.get(0).yCoord,computers.get(0).zCoord,false);
+
+		FMLLog.log(Level.FATAL,"intervalns");
+
+	}
+
+	private void findGroups(StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
+		final ArrayList<BlockPosition> list = new ArrayList<>();
+		findDividedParts(list,entireRocket, x,y,z,startFromDivide);
+		//if we can't find any new parts, return
+		if(list.size()==0||list.stream().allMatch(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider))return;
+
+		LeveledRocketParts.add(new LeveledRocketPart(StorageChunk.divideStorage(entireRocket, list), 0, false, 1));
+
+		//This is a recursion to collect all possible groups
+		list.stream().filter(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider).forEach(pos-> findGroups(entireRocket, pos.x,pos.y,pos.z,true));
+	}
+
+	private void findDividedParts(ArrayList<BlockPosition> blockList, StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
+		if(searchedParts.contains(new BlockPosition(x, y, z))) return;
+		if(!startFromDivide)blockList.add(new BlockPosition(x, y, z));
+		if(!startFromDivide&&entireRocket.getBlock(x,y,z) instanceof ILeveledPartsDivider) return;
+
+		searchedParts.add(new BlockPosition(x, y, z));
+		if (entireRocket.getBlock(x + 1, y, z) != Blocks.air) findDividedParts(blockList,entireRocket, x + 1, y, z,false);
+		if (entireRocket.getBlock(x - 1, y, z) != Blocks.air) findDividedParts(blockList,entireRocket, x - 1, y, z,false);
+		if (entireRocket.getBlock(x, y + 1, z) != Blocks.air) findDividedParts(blockList,entireRocket, x, y + 1, z,false);
+		if (entireRocket.getBlock(x, y - 1, z) != Blocks.air) findDividedParts(blockList,entireRocket, x, y - 1, z,false);
+		if (entireRocket.getBlock(x, y, z + 1) != Blocks.air) findDividedParts(blockList,entireRocket, x, y, z + 1,false);
+		if (entireRocket.getBlock(x, y, z - 1) != Blocks.air) findDividedParts(blockList,entireRocket, x, y, z - 1,false);
+	}
 	@Override
 	public AxisAlignedBB getBoundingBox() {
 		if(storage != null) {
@@ -290,7 +333,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		return true;
 	}
 
-
+	/**is Rocket in space, orbiting any planet or star.**/
+	public boolean isInTravel(){
+		return false;
+	}
 	/**
 	 * If the rocket is in flight, ie the rocket has taken off and has not touched the ground
 	 * @return true if in flight
@@ -304,7 +350,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 	/**
 	 * Sets the status of flight of the rocket and updates the datawatcher
-	 * @param inflight status of flight
+	 * @param inOrbit status of flight
 	 */
 	public void setInOrbit(boolean inOrbit) {
 		this.isInOrbit = inOrbit;
@@ -1111,7 +1157,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			storage.setEntity(this);
 			this.setSize(Math.max(storage.getSizeX(), storage.getSizeZ()), storage.getSizeY());
 		}
-
+		for (int i=0;i<Integer.MAX_VALUE;i++){
+			if(Objects.equals(nbt.getCompoundTag("part." + i), new NBTTagCompound()))break;
+			this.LeveledRocketParts.add(LeveledRocketPart.readFromNBT(nbt.getCompoundTag("part."+i)));
+		}
 		if(nbt.hasKey("infrastructure")) {
 			NBTTagList tagList = nbt.getTagList("infrastructure", 10);
 			for (int i = 0; i < tagList.tagCount(); i++) {
@@ -1177,7 +1226,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			storage.writeToNBT(blocks);
 			nbt.setTag("data", blocks);
 		}
-		
+		this.LeveledRocketParts.forEach(part->nbt.setTag("part."+part.level,part.writeToNBT()));
 		nbt.setInteger("lastDimensionFrom", lastDimensionFrom);
 
 		//TODO handle non tile Infrastructure

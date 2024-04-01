@@ -63,6 +63,8 @@ import zmaster587.advancedRocketry.block.plant.BlockAlienLeaves;
 import zmaster587.advancedRocketry.block.plant.BlockAlienPlanks;
 import zmaster587.advancedRocketry.block.plant.BlockAlienSapling;
 import zmaster587.advancedRocketry.block.plant.BlockAlienWood;
+import zmaster587.advancedRocketry.block.rocket.BlockDividerAdvRockerMotor;
+import zmaster587.advancedRocketry.block.rocket.BlockDividerRockerMotor;
 import zmaster587.advancedRocketry.command.WorldCommand;
 import zmaster587.advancedRocketry.common.CommonProxy;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
@@ -371,6 +373,8 @@ public class AdvancedRocketry {
 		AdvancedRocketryBlocks.blockGenericSeat = new BlockSeat(Material.cloth).setBlockName("seat").setCreativeTab(tabAdvRocketry).setBlockTextureName("minecraft:wool_colored_silver").setHardness(0.5f);
 		AdvancedRocketryBlocks.blockEngine = new BlockRocketMotor(Material.rock).setBlockName("rocket").setCreativeTab(tabAdvRocketry).setHardness(2f);
 		AdvancedRocketryBlocks.blockAdvEngine = new BlockAdvRocketMotor(Material.rock).setBlockName("advRocket").setCreativeTab(tabAdvRocketry).setHardness(2f);
+		AdvancedRocketryBlocks.blockEngineDivider = new BlockDividerRockerMotor(Material.rock).setBlockName("rocketDivider").setCreativeTab(tabAdvRocketry).setHardness(2f);
+		AdvancedRocketryBlocks.blockAdvEngineDivider = new BlockDividerAdvRockerMotor(Material.rock).setBlockName("advRocketDivider").setCreativeTab(tabAdvRocketry).setHardness(2f);
 		AdvancedRocketryBlocks.blockFuelTank = new BlockFuelTank(Material.rock).setBlockName("fuelTank").setCreativeTab(tabAdvRocketry).setHardness(2f);
 		AdvancedRocketryBlocks.blockSawBlade = new BlockRotatableModel(Material.rock, TileModelRender.models.SAWBLADE.ordinal()).setCreativeTab(tabAdvRocketry).setBlockName("sawBlade").setHardness(2f);
 		AdvancedRocketryBlocks.blockConcrete = new BlockGeneric(Material.rock).setBlockName("concrete").setBlockTextureName("advancedRocketry:rocketPad_noEdge").setCreativeTab(tabAdvRocketry).setHardness(3f).setResistance(16f);
@@ -670,6 +674,8 @@ public class AdvancedRocketry {
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockStructureTower, "structureTower");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockGenericSeat, "seat");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockEngine, "rocketmotor");
+		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockEngineDivider, "rocketmotorDivider");
+		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockAdvEngineDivider, "rocketmotorAdvDivider");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockFuelTank, "fuelTank");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockFuelingStation, "fuelingStation");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockMonitoringStation, "blockMonitoringStation");
@@ -1499,6 +1505,9 @@ public class AdvancedRocketry {
 
 		//Add the overworld as a discovered planet
 		zmaster587.advancedRocketry.api.Configuration.initiallyKnownPlanets.add(0);
+
+		Thread t =new Thread("AR Rocket Structure Computing Thread");
+
 	}
 
 	@EventHandler

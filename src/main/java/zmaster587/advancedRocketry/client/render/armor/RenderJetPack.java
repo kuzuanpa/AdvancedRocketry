@@ -10,12 +10,12 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 public class RenderJetPack extends ModelBiped {
-	IModelCustom model;
+	static IModelCustom model;
 	ResourceLocation texture;
 
 	public RenderJetPack() {
 		texture = new ResourceLocation("advancedrocketry:textures/models/jetpack.png");
-		model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/jetPack.obj"));
+		if(model == null)model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/jetPack.obj"));
 	}
 
 	/**

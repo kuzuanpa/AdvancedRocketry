@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.dimension;
 
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -19,6 +20,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.logging.log4j.Level;
 import scala.util.Random;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
@@ -581,7 +583,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 	/**
 	 * Sets this planet as a moon of the supplied planet's id.
-	 * @param parentId parent planet's DIMID, or -1 for none
+	 * @param parent parent planet's DimensionProperty
 	 */
 	public void setParentPlanet(DimensionProperties parent) {
 		this.setParentPlanet(parent, true);
@@ -589,7 +591,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 	/**
 	 * Sets this planet as a moon of the supplied planet's ID
-	 * @param parentId DIMID of the parent planet
+	 * @param parent DimensionProperty of the parent planet
 	 * @param update true to update the parent's planet to the change
 	 */
 	public void setParentPlanet(DimensionProperties parent, boolean update) {

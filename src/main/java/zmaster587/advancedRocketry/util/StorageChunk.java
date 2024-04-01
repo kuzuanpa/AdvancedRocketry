@@ -7,11 +7,10 @@ package zmaster587.advancedRocketry.util;
 
 import io.netty.buffer.ByteBuf;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiConsumer;
 
+import scala.Int;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
@@ -45,8 +44,8 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class StorageChunk implements IBlockAccess, IStorageChunk {
 
-	Block blocks[][][];
-	short metas[][][];
+	Block[][][] blocks;
+	short[][][] metas;
 	int sizeX, sizeY, sizeZ;
 
 
@@ -94,7 +93,57 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 		world = new WorldDummy(AdvancedRocketry.proxy.getProfiler(), this);
 	}
+	public StorageChunk(Map<BlockPosition, Block> blocks, Map<BlockPosition, Short> metas,ArrayList<TileEntity> tiles){
+		int minX=Integer.MAX_VALUE,minY=Integer.MAX_VALUE,minZ=Integer.MAX_VALUE,maxX=-Integer.MAX_VALUE,maxY=-Integer.MAX_VALUE,maxZ=-Integer.MAX_VALUE;
+		for (BlockPosition pos : blocks.keySet()) {
+			minX=Math.min(minX, pos.x);
+			minY=Math.min(minY, pos.y);
+			minZ=Math.min(minZ, pos.z);
+			maxX=Math.max(maxX, pos.x);
+			maxY=Math.max(maxY, pos.y);
+			maxZ=Math.max(maxZ, pos.z);
+		}
 
+		int finalMinX = minX,finalMinY = minY,finalMinZ = minZ,finalMaxX = maxX,finalMaxY = maxY,finalMaxZ = maxZ;
+
+		sizeX = finalMaxX-finalMinX+1;
+		sizeY = finalMaxY-finalMinY+1;
+		sizeZ = finalMaxZ-finalMinZ+1;
+		this.blocks = new Block[sizeX][sizeY][sizeZ];
+		this.metas = new short[sizeX][sizeY][sizeZ];
+		tileEntities = new ArrayList<TileEntity>();
+		inventoryTiles = new ArrayList<TileEntity>();
+		liquidTiles = new ArrayList<TileEntity>();
+		world = new WorldDummy(AdvancedRocketry.proxy.getProfiler(), this);
+
+		blocks.forEach((pos,block)->this.blocks[pos.x-finalMinX][pos.y-finalMinY][pos.z-finalMinZ]=block);
+		metas.forEach((pos,meta)->this.metas[pos.x-finalMinX][pos.y-finalMinY][pos.z-finalMinZ]=meta);
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		tiles.forEach(entity->{
+			if(entity==null)return;
+			entity.writeToNBT(nbt);
+
+			//Transform tileEntity coords
+			nbt.setInteger("x", nbt.getInteger("x") - finalMinX);
+			nbt.setInteger("y", nbt.getInteger("y") - finalMinY);
+			nbt.setInteger("z", nbt.getInteger("z") - finalMinZ);
+
+			TileEntity newTile = TileEntity.createAndLoadEntity(nbt);
+
+			newTile.setWorldObj(this.world);
+
+			if (isInventoryBlock(newTile)) {
+				this.inventoryTiles.add(newTile);
+			}
+
+			if (isLiquidContainerBlock(newTile)) {
+				this.liquidTiles.add(newTile);
+			}
+
+			this.tileEntities.add(newTile);
+		});
+	}
 	public void setEntity(EntityRocketBase entity) {
 		this.entity = entity;
 		world.isRemote = entity.worldObj.isRemote;
@@ -118,7 +167,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 		return tileEntities;
 	}
-	
+
 	public void rotateBy(ForgeDirection dir) {
 		
 		BlockPosition newSizes = new BlockPosition(getSizeX(), getSizeY(), getSizeZ());
@@ -569,15 +618,13 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 
 	@Override
-	public TileEntity getTileEntity(int x, int y,
-			int z) {
-		for(TileEntity tileE : tileEntities) {
-			if( tileE.xCoord == x &&  tileE.yCoord == y &&  tileE.zCoord == z)
+	public TileEntity getTileEntity(int x, int y, int z) {
+		for (TileEntity tileE : tileEntities) {
+			if (tileE.xCoord == x && tileE.yCoord == y && tileE.zCoord == z)
 				return tileE;
 		}
 		return null;
 	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getLightBrightnessForSkyBlocks(int x, int y,
@@ -842,5 +889,14 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 				e.printStackTrace();
 			}
 		}
+	}
+	public static StorageChunk divideStorage(StorageChunk storageChunkToDivide, ArrayList<BlockPosition> positions){
+		ArrayList<TileEntity> tiles = new ArrayList<>();
+		positions.forEach(pos->tiles.add(storageChunkToDivide.getTileEntity(pos.x,pos.y,pos.z)));
+		HashMap<BlockPosition, Block> blocks = new HashMap<>();
+		positions.forEach(pos->blocks.put(pos,storageChunkToDivide.getBlock(pos.x,pos.y,pos.z)));
+		HashMap<BlockPosition, Short> blockMetas = new HashMap<>();
+		positions.forEach(pos->blockMetas.put(pos, (short) storageChunkToDivide.getBlockMetadata(pos.x,pos.y,pos.z)));
+		return new StorageChunk(blocks,blockMetas,tiles);
 	}
 }
