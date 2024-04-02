@@ -18,6 +18,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -90,6 +91,7 @@ import zmaster587.advancedRocketry.network.*;
 import zmaster587.advancedRocketry.satellite.*;
 import zmaster587.advancedRocketry.stations.SpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
+import zmaster587.advancedRocketry.thread.RocketStructureThread;
 import zmaster587.advancedRocketry.tile.Satellite.TileEntitySatelliteControlCenter;
 import zmaster587.advancedRocketry.tile.Satellite.TileSatelliteBuilder;
 import zmaster587.advancedRocketry.tile.*;
@@ -1505,11 +1507,10 @@ public class AdvancedRocketry {
 
 		//Add the overworld as a discovered planet
 		zmaster587.advancedRocketry.api.Configuration.initiallyKnownPlanets.add(0);
-
-		Thread t =new Thread("AR Rocket Structure Computing Thread");
-
+		rocketStructureDivider.start();
 	}
 
+	public static RocketStructureThread rocketStructureDivider= new RocketStructureThread("AR Rocket Structure Computing Thread");
 	@EventHandler
 	public void serverStarted(FMLServerStartedEvent event) {
 		for (int dimId : DimensionManager.getInstance().getLoadedDimensions()) {

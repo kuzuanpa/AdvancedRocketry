@@ -142,8 +142,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	public EntityRocket(World world, StorageChunk storage, StatsRocket stats, double x, double y, double z) {
 		this(world);
 		if(storage==null){super.setDead();throw new IllegalArgumentException("null storage for Rocketry!");}
-		calculateLeveledRocketParts(storage);
-		this.stats = stats;
+		AdvancedRocketry.rocketStructureDivider.addATask(this.entityUniqueID,storage);
+	    this.stats = stats;
 		this.setPosition(x, y, z);
 		this.storage = storage;
 		this.storage.setEntity(this);
@@ -156,42 +156,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		landingPadDisplayText.setColor(0x00ff00);
 	}
 
-	private final ArrayList<BlockPosition> searchedParts = new ArrayList<>();
-	public void calculateLeveledRocketParts(StorageChunk entireRocket){
-		//search for control computer
-		List<TileEntity> computers = entireRocket.getTileEntityList().stream().filter(tile -> tile instanceof TileGuidanceComputer).collect(Collectors.toList());
-		if (computers.size()>1)throw new IllegalArgumentException("More than one control computer found in Rocket!");
-		findGroups(entireRocket,computers.get(0).xCoord,computers.get(0).yCoord,computers.get(0).zCoord,false);
 
-		FMLLog.log(Level.FATAL,"intervalns");
-
-	}
-
-	private void findGroups(StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
-		final ArrayList<BlockPosition> list = new ArrayList<>();
-		findDividedParts(list,entireRocket, x,y,z,startFromDivide);
-		//if we can't find any new parts, return
-		if(list.size()==0||list.stream().allMatch(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider))return;
-
-		LeveledRocketParts.add(new LeveledRocketPart(StorageChunk.divideStorage(entireRocket, list), 0, false, 1));
-
-		//This is a recursion to collect all possible groups
-		list.stream().filter(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider).forEach(pos-> findGroups(entireRocket, pos.x,pos.y,pos.z,true));
-	}
-
-	private void findDividedParts(ArrayList<BlockPosition> blockList, StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
-		if(searchedParts.contains(new BlockPosition(x, y, z))) return;
-		if(!startFromDivide)blockList.add(new BlockPosition(x, y, z));
-		if(!startFromDivide&&entireRocket.getBlock(x,y,z) instanceof ILeveledPartsDivider) return;
-
-		searchedParts.add(new BlockPosition(x, y, z));
-		if (entireRocket.getBlock(x + 1, y, z) != Blocks.air) findDividedParts(blockList,entireRocket, x + 1, y, z,false);
-		if (entireRocket.getBlock(x - 1, y, z) != Blocks.air) findDividedParts(blockList,entireRocket, x - 1, y, z,false);
-		if (entireRocket.getBlock(x, y + 1, z) != Blocks.air) findDividedParts(blockList,entireRocket, x, y + 1, z,false);
-		if (entireRocket.getBlock(x, y - 1, z) != Blocks.air) findDividedParts(blockList,entireRocket, x, y - 1, z,false);
-		if (entireRocket.getBlock(x, y, z + 1) != Blocks.air) findDividedParts(blockList,entireRocket, x, y, z + 1,false);
-		if (entireRocket.getBlock(x, y, z - 1) != Blocks.air) findDividedParts(blockList,entireRocket, x, y, z - 1,false);
-	}
 	@Override
 	public AxisAlignedBB getBoundingBox() {
 		if(storage != null) {
@@ -493,19 +458,16 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-
+		if(this.LeveledRocketParts.isEmpty()&&AdvancedRocketry.rocketStructureDivider.isTaskCompleted(entityUniqueID))LeveledRocketParts = AdvancedRocketry.rocketStructureDivider.getResult(entityUniqueID);
 		long deltaTime = worldObj.getTotalWorldTime() - lastWorldTickTicked;
 		lastWorldTickTicked = worldObj.getTotalWorldTime();
 
 		if(this.ticksExisted == 20) {
 			//problems with loading on other world then where the infrastructure was set?
-			ListIterator<BlockPosition> itr = (new LinkedList<>(infrastructureCoords)).listIterator();
-			while(itr.hasNext()) {
-				BlockPosition temp = itr.next();
-
+			for (BlockPosition temp : new LinkedList<>(infrastructureCoords)) {
 				TileEntity tile = this.worldObj.getTileEntity(temp.x, temp.y, temp.z);
-				if(tile instanceof IInfrastructure) {
-					this.linkInfrastructure((IInfrastructure)tile);
+				if (tile instanceof IInfrastructure) {
+					this.linkInfrastructure((IInfrastructure) tile);
 				}
 			}
 		}
@@ -525,9 +487,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				//Deorbiting
 				MinecraftForge.EVENT_BUS.post(new RocketEvent.RocketDeOrbitingEvent(this));
 				PacketHandler.sendToNearby(new PacketEntity(this, (byte)PacketType.ROCKETLANDEVENT.ordinal()), worldObj.provider.dimensionId, (int)posX, (int)posY, (int)posZ, 64);
-
-				if(player instanceof EntityPlayer)
-					PacketHandler.sendToPlayer(new PacketEntity((INetworkEntity)this,(byte)PacketType.FORCEMOUNT.ordinal()), player);
+				PacketHandler.sendToPlayer(new PacketEntity((INetworkEntity)this,(byte)PacketType.FORCEMOUNT.ordinal()), player);
 			}
 		}
 
