@@ -27,7 +27,7 @@ public class RocketStructureThread extends Thread{
                 try {
                     sleep(1);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }else {
                 currentTaskID=tasks.keySet().iterator().next();
@@ -74,7 +74,7 @@ public class RocketStructureThread extends Thread{
 
     private void findGroups(ArrayList<LeveledRocketPart> partList,StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
         final ArrayList<BlockPosition> list = new ArrayList<>();
-        findDividedParts(list,entireRocket, x,y,z,startFromDivide);
+        findConnectedParts(list,entireRocket, x,y,z,startFromDivide);
         //if we can't find any new parts, return
         if(list.size()==0||list.stream().allMatch(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider))return;
 
@@ -84,17 +84,17 @@ public class RocketStructureThread extends Thread{
         list.stream().filter(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider).forEach(pos-> findGroups(partList,entireRocket, pos.x,pos.y,pos.z,true));
     }
 
-    private void findDividedParts(ArrayList<BlockPosition> blockList, StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
+    private void findConnectedParts(ArrayList<BlockPosition> blockList, StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
         if(searchedParts.contains(new BlockPosition(x, y, z))) return;
         if(!startFromDivide)blockList.add(new BlockPosition(x, y, z));
         if(!startFromDivide&&entireRocket.getBlock(x,y,z) instanceof ILeveledPartsDivider) return;
 
         searchedParts.add(new BlockPosition(x, y, z));
-        if (entireRocket.getBlock(x + 1, y, z) != Blocks.air) findDividedParts(blockList,entireRocket, x + 1, y, z,false);
-        if (entireRocket.getBlock(x - 1, y, z) != Blocks.air) findDividedParts(blockList,entireRocket, x - 1, y, z,false);
-        if (entireRocket.getBlock(x, y + 1, z) != Blocks.air) findDividedParts(blockList,entireRocket, x, y + 1, z,false);
-        if (entireRocket.getBlock(x, y - 1, z) != Blocks.air) findDividedParts(blockList,entireRocket, x, y - 1, z,false);
-        if (entireRocket.getBlock(x, y, z + 1) != Blocks.air) findDividedParts(blockList,entireRocket, x, y, z + 1,false);
-        if (entireRocket.getBlock(x, y, z - 1) != Blocks.air) findDividedParts(blockList,entireRocket, x, y, z - 1,false);
+        if (entireRocket.getBlock(x + 1, y, z) != Blocks.air) findConnectedParts(blockList,entireRocket, x + 1, y, z,false);
+        if (entireRocket.getBlock(x - 1, y, z) != Blocks.air) findConnectedParts(blockList,entireRocket, x - 1, y, z,false);
+        if (entireRocket.getBlock(x, y + 1, z) != Blocks.air) findConnectedParts(blockList,entireRocket, x, y + 1, z,false);
+        if (entireRocket.getBlock(x, y - 1, z) != Blocks.air) findConnectedParts(blockList,entireRocket, x, y - 1, z,false);
+        if (entireRocket.getBlock(x, y, z + 1) != Blocks.air) findConnectedParts(blockList,entireRocket, x, y, z + 1,false);
+        if (entireRocket.getBlock(x, y, z - 1) != Blocks.air) findConnectedParts(blockList,entireRocket, x, y, z - 1,false);
     }
 }

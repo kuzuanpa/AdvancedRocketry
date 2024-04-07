@@ -1,6 +1,5 @@
 package zmaster587.advancedRocketry.entity;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -22,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.apache.logging.log4j.Level;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.achievements.ARAchivements;
 import zmaster587.advancedRocketry.api.*;
@@ -458,7 +456,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if(this.LeveledRocketParts.isEmpty()&&AdvancedRocketry.rocketStructureDivider.isTaskCompleted(entityUniqueID))LeveledRocketParts = AdvancedRocketry.rocketStructureDivider.getResult(entityUniqueID);
+		if(this.LeveledRocketParts.isEmpty()&&AdvancedRocketry.rocketStructureDivider.isTaskCompleted(entityUniqueID))LeveledRocketParts = AdvancedRocketry.rocketStructureDivider.getResultAndRemove(entityUniqueID);
 		long deltaTime = worldObj.getTotalWorldTime() - lastWorldTickTicked;
 		lastWorldTickTicked = worldObj.getTotalWorldTime();
 
