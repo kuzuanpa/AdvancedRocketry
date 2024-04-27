@@ -179,11 +179,11 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 
 	public void selectSystem(int id) {
 
-		if(id >= EntityUIStar.starIDoffset) {
+		if(DimensionManager.getInstance().getStar(id)!=null) {
 			if(stellarMode) {
 				if(selectedId != id) {
 					for(EntityUIStar entity : starEntities) {
-						if(entity.getPlanetID() + EntityUIStar.starIDoffset == id) {
+						if(entity.getPlanetID() == id) {
 							entity.setSelected(true);
 							selectedPlanet = entity;
 						}
@@ -194,7 +194,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 				}
 				else {
 					stellarMode = false;
-					currentStarBody = DimensionManager.getInstance().getStar(id - EntityUIStar.starIDoffset);
+					currentStarBody = DimensionManager.getInstance().getStar(id);
 					rebuildSystem();
 					selectedId = -1;
 				}
@@ -242,8 +242,8 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 			this.worldObj.spawnEntityInWorld(backButton);
 		}
 
-		if(!stellarMode) {
-			List<IDimensionProperties> planetList = currentStarBody == null ? DimensionManager.getSol().getPlanets() : currentStarBody.getPlanets();
+		if(!stellarMode && currentStarBody!=null) {
+			List<IDimensionProperties> planetList = currentStarBody.getPlanets();
 			if(centeredEntity != null) {
 				planetList = new LinkedList<IDimensionProperties>();
 				planetList.add(centeredEntity.getProperties());

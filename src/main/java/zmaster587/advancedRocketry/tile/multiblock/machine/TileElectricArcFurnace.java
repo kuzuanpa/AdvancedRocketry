@@ -72,8 +72,8 @@ public class TileElectricArcFurnace extends TileMultiblockMachine implements IMo
 	};
 	
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks() {
-		List<BlockMeta> list = super.getAllowableWildCardBlocks();
+	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 		list.add(new BlockMeta(LibVulpesBlocks.blockHatch, 0));
 		list.add(new BlockMeta(LibVulpesBlocks.blockHatch, 1));
 		list.add(new BlockMeta(AdvancedRocketryBlocks.blockBlastBrick, -1));

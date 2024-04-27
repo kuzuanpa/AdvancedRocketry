@@ -77,8 +77,8 @@ public class TileAstrobodyDataProcessor extends TileMultiPowerConsumer implement
 	}
 
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks() {
-		List<BlockMeta> list = super.getAllowableWildCardBlocks();
+	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 		list.add(new BlockMeta(Blocks.iron_block,BlockMeta.WILDCARD));
 		return list;
 	}

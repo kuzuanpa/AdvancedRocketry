@@ -154,15 +154,15 @@ public class TileRailgun extends TileMultiPowerConsumer implements IInventory, I
 	}
 	
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks() {
-		List<BlockMeta> blocks = super.getAllowableWildCardBlocks();
+	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 
-		blocks.addAll(getAllowableBlocks('P'));
-		blocks.addAll(getAllowableBlocks('I'));
-		blocks.addAll(getAllowableBlocks('O'));
-		blocks.add(new BlockMeta(LibVulpesBlocks.blockAdvStructureBlock));
+		list.addAll(getAllowableBlocks('P'));
+		list.addAll(getAllowableBlocks('I'));
+		list.addAll(getAllowableBlocks('O'));
+		list.add(new BlockMeta(LibVulpesBlocks.blockAdvStructureBlock));
 
-		return blocks;
+		return list;
 	}
 	
 	@Override

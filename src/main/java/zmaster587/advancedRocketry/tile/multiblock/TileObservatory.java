@@ -229,8 +229,8 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 	}
 
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks() {
-		List<BlockMeta> list = super.getAllowableWildCardBlocks();
+	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 
 		list.add(new BlockMeta(Blocks.iron_block,BlockMeta.WILDCARD));
 		list.addAll(TileMultiBlock.getMapping('P'));

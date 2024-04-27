@@ -382,8 +382,8 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 	}
 
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks() {
-		List<BlockMeta> list = super.getAllowableWildCardBlocks();
+	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 		list.add(new BlockMeta(Blocks.stone));
 		list.add(new BlockMeta(Blocks.sandstone));
 		list.add(new BlockMeta(Blocks.iron_block));

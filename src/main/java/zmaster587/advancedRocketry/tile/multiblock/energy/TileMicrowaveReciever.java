@@ -85,14 +85,14 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 	}
 
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks() {
-		List<BlockMeta> blocks = super.getAllowableWildCardBlocks();
+	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 
-		blocks.addAll(TileMultiBlock.getMapping('I'));
-		blocks.add(iron_block);
-		blocks.addAll(TileMultiBlock.getMapping('p'));
+		list.addAll(TileMultiBlock.getMapping('I'));
+		list.add(iron_block);
+		list.addAll(TileMultiBlock.getMapping('p'));
 
-		return blocks;
+		return list;
 	}
 
 	@Override

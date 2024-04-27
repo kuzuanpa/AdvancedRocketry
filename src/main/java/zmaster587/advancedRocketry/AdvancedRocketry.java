@@ -141,6 +141,7 @@ import zmaster587.libVulpes.recipe.RecipesMachine;
 import zmaster587.libVulpes.tile.TileMaterial;
 import zmaster587.libVulpes.tile.TileModelRender;
 import zmaster587.libVulpes.tile.TileModelRenderRotatable;
+import zmaster587.libVulpes.tile.multiblock.DummyTileMultiBlock;
 import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 import zmaster587.libVulpes.util.BlockPosition;
 import zmaster587.libVulpes.util.InputSyncHandler;

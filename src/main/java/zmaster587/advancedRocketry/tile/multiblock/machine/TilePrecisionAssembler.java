@@ -102,8 +102,8 @@ public class TilePrecisionAssembler extends TileMultiblockMachine implements IMo
 	}
 	
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks() {
-		List<BlockMeta> list = super.getAllowableWildCardBlocks();
+	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 
 		list.add(new BlockMeta(LibVulpesBlocks.blockStructureBlock, BlockMeta.WILDCARD));
 		list.addAll(TileMultiBlock.getMapping('O'));
