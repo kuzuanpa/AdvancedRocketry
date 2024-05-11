@@ -40,9 +40,6 @@ minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     assetDir = "eclipse/assets"
     replaceIn "src/main/java/zmaster587/advancedRocketry/AdvancedRocketry.java"
-    replace "@MAJOR@", version_major
-    replace "@MINOR@", version_minor
-    replace "@REVIS@", version_revis
     replace "@BUILD@", project.getBuildNumber()
     
     replace "%LIBVULPESVERSION%", "0.2.5"
