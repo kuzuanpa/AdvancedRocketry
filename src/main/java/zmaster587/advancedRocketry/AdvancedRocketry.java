@@ -152,14 +152,14 @@ import java.util.*;
 import java.util.Map.Entry;
 
 
-@Mod(modid="advancedRocketry", name="Advanced Rocketry", version="@MAJOR@.@MINOR@.@REVIS@@BUILD@", dependencies="required-after:libVulpes@[%LIBVULPESVERSION%,)")
+@Mod(modid="advancedRocketry", name="Advanced Rocketry", version="%VERSION%", dependencies="required-after:libVulpes@%LIBVULPESVERSION%")
 public class AdvancedRocketry {
 
 
 	@SidedProxy(clientSide="zmaster587.advancedRocketry.client.ClientProxy", serverSide="zmaster587.advancedRocketry.common.CommonProxy")
 	public static CommonProxy proxy;
 
-	public final static String version = "@MAJOR@.@MINOR@.@REVIS@@BUILD@";
+	public final static String version = "%VERSION%";
 
 	@Instance(value = Constants.modId)
 	public static AdvancedRocketry instance;

@@ -41,8 +41,9 @@ minecraft {
     assetDir = "eclipse/assets"
     replaceIn "src/main/java/zmaster587/advancedRocketry/AdvancedRocketry.java"
     replace "@BUILD@", project.getBuildNumber()
-    
-    replace "%LIBVULPESVERSION%", "0.2.5"
+
+    replace "%LIBVULPESVERSION%", "0.2.10-TFRU"
+    replace "%VERSION%", project.version
 }
 
 
