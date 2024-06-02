@@ -1,9 +1,14 @@
 package zmaster587.advancedRocketry.client.render;
 
+import gregapi.block.multitileentity.MultiTileEntityBlock;
+import gregapi.tileentity.base.TileEntityBase09FacingSingle;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.libVulpes.block.RotatableBlock;
 import zmaster587.libVulpes.render.RenderHelper;
+import zmaster587.libVulpes.tile.TileSchematic;
 import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 import zmaster587.libVulpes.tile.multiblock.TilePlaceholder;
 import net.minecraft.block.Block;
@@ -18,6 +23,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL14.*;
+import static org.lwjgl.opengl.GL20.glBlendEquationSeparate;
+
 public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 
 	private static RenderBlocks renderBlocks = RenderBlocks.getInstance();
@@ -25,13 +34,13 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 	@Override
 	public void renderTileEntityAt(TileEntity tile, double x,
 			double y, double z, float t) {
-
+		if(tile.isInvalid())return;
 		TilePlaceholder tileGhost = (TilePlaceholder)tile;
 		Block block = tileGhost.getReplacedBlock();
 
 		if(tileGhost.getReplacedTileEntity() != null && !(tileGhost.getReplacedTileEntity() instanceof TileMultiBlock) && TileEntityRendererDispatcher.instance.hasSpecialRenderer(tileGhost.getReplacedTileEntity())) {
 			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_SRC_ALPHA);
+			glBlendFunc(GL11.GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA);
 			GL11.glColor4f(1f, 1f, 1f,0.7f);
 			TileEntityRendererDispatcher.instance.renderTileEntityAt(tileGhost.getReplacedTileEntity(), x, y, z, t);
 			GL11.glDisable(GL11.GL_BLEND);
@@ -40,7 +49,8 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 			GL11.glPushMatrix();
 
 			GL11.glTranslated(x,y,z);
-			if(block instanceof RotatableBlock) {
+			GL11.glColor4f(1,1,1,1);
+			if(block instanceof RotatableBlock || (block instanceof MultiTileEntityBlock && ((MultiTileEntityBlock) block).overrideTileEntity!=null && ((MultiTileEntityBlock) block).overrideTileEntity instanceof TileEntityBase09FacingSingle)) {
 				ForgeDirection direction = ForgeDirection.getOrientation(tileGhost.getReplacedBlockMeta());
 				GL11.glTranslated(.5f,.5f,.5f);
 				if(direction.offsetX != 0 ) {
@@ -54,31 +64,37 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 				GL11.glTranslated(-.5f,-.5f,-.5f);
 			}
 
-			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
 			//Render Each block
 			Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+			if(tileGhost instanceof TileSchematic && block instanceof MultiTileEntityBlock && ((TileSchematic) tileGhost).getReplacedGTTile() !=null) {
+				TileEntity tileEntity = ((TileSchematic) tileGhost).getReplacedGTTile();
+				if(!tileEntity.hasWorldObj()){
+					tileEntity.setWorldObj(tileGhost.getWorldObj());
+					tileEntity.xCoord=tileGhost.xCoord;
+					tileEntity.yCoord=tileGhost.yCoord;
+					tileEntity.zCoord=tileGhost.zCoord;
+				}
+				((MultiTileEntityBlock) block).overrideTileEntity=tileEntity;
+			}
 			renderBlocks.blockAccess = tileGhost.getWorldObj();
 			renderBlocks.renderAllFaces = true;
 
+
 			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_SRC_ALPHA);
-			
+			net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+			GL11.glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA);
 			Tessellator.instance.startDrawingQuads();
 
-			if(block.getRenderType() == 0) {
-				block.setBlockBoundsBasedOnState(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
-				renderBlocks.setRenderBoundsFromBlock(block);
-				int l = block.colorMultiplier(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
-
-				float r = (float)(l >> 16 & 255) / 255.0F;
-				float g = (float)(l >> 8 & 255) / 255.0F;
-				float b = (float)(l & 255) / 255.0F;
-				RenderHelper.renderStandardBlockWithColorMultiplier(block, 0,0,0, r, g, b, .3f);
-			}
-			else
-				renderBlocks.renderBlockByRenderType(block, 0, 0, 0);
+			 if(block.getRenderType() == 0) {
+			 	block.setBlockBoundsBasedOnState(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+			 	renderBlocks.setRenderBoundsFromBlock(block);
+			 	RenderHelper.renderStandardBlockWithColorMultiplierAndBrightness(block, 0,0,0, 1,1,1, 0.2f,  (tile.getWorldObj().getLightBrightnessForSkyBlocks(tile.xCoord,tile.yCoord,tile.zCoord,0)/2)+4);
+			 }
+			 else {
+				 net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
+				 renderBlocks.renderBlockByRenderType(block, 0, 0, 0);
+		 	}
 			Tessellator.instance.draw();
-			net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glPopMatrix();
 		}
@@ -87,12 +103,17 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 			//If the player is mousing over this block
 			MovingObjectPosition movingObjPos = Minecraft.getMinecraft().objectMouseOver;
 			if(Minecraft.getMinecraft().objectMouseOver != null && movingObjPos.blockX == tile.xCoord && movingObjPos.blockY == tile.yCoord && movingObjPos.blockZ == tile.zCoord) {
-				ItemStack stack = tile.getWorldObj().getBlock(tile.xCoord, tile.yCoord, tile.zCoord).getPickBlock(movingObjPos, Minecraft.getMinecraft().theWorld, movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ, Minecraft.getMinecraft().thePlayer);
-				if(stack == null)
-					RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), "THIS IS AN ERROR, CONTACT THE DEV!!!", x,y,z, 10);
-				else
-					RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), stack.getDisplayName(), x,y,z, 10);
+				String displayName="";
+				if(tileGhost instanceof TileSchematic && !((TileSchematic) tileGhost).getReplacedBlockOverrideName().equals(""))displayName=((TileSchematic) tileGhost).getReplacedBlockOverrideName();
+				else if(tileGhost.getReplacedBlock() instanceof MultiTileEntityBlock && ((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity instanceof IInventory )displayName= ((IInventory)((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity).getInventoryName();
+				else{
+					ItemStack stack = tile.getWorldObj().getBlock(tile.xCoord, tile.yCoord, tile.zCoord).getPickBlock(movingObjPos, Minecraft.getMinecraft().theWorld, movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ, Minecraft.getMinecraft().thePlayer);
+					if (stack != null) displayName = stack.getDisplayName();
+				}
+				if(displayName.equals(""))return;
+				RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), displayName, x,y,z, 10);
 			}
+			if(tileGhost instanceof TileSchematic && block instanceof MultiTileEntityBlock && ((TileSchematic) tileGhost).getReplacedGTTile() !=null) ((MultiTileEntityBlock) block).overrideTileEntity = null;
 		}
 	}
 }
