@@ -1,7 +1,12 @@
 package zmaster587.advancedRocketry.client.render;
 
 import gregapi.block.multitileentity.MultiTileEntityBlock;
+import gregapi.block.multitileentity.MultiTileEntityRegistry;
+import gregapi.data.LH;
+import gregapi.tileentity.base.TileEntityBase01Root;
+import gregapi.tileentity.base.TileEntityBase04MultiTileEntities;
 import gregapi.tileentity.base.TileEntityBase09FacingSingle;
+import gregapi.tileentity.notick.TileEntityBase03MultiTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import org.lwjgl.opengl.GL11;
@@ -23,6 +28,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import static gregapi.data.CS.OPOS;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL20.glBlendEquationSeparate;
@@ -50,7 +56,7 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 
 			GL11.glTranslated(x,y,z);
 			GL11.glColor4f(1,1,1,1);
-			if(block instanceof RotatableBlock || (block instanceof MultiTileEntityBlock && ((MultiTileEntityBlock) block).overrideTileEntity!=null && ((MultiTileEntityBlock) block).overrideTileEntity instanceof TileEntityBase09FacingSingle)) {
+			if(block instanceof RotatableBlock) {
 				ForgeDirection direction = ForgeDirection.getOrientation(tileGhost.getReplacedBlockMeta());
 				GL11.glTranslated(.5f,.5f,.5f);
 				if(direction.offsetX != 0 ) {
@@ -74,6 +80,7 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 					tileEntity.yCoord=tileGhost.yCoord;
 					tileEntity.zCoord=tileGhost.zCoord;
 				}
+				if(tileEntity instanceof TileEntityBase09FacingSingle)((TileEntityBase09FacingSingle) tileEntity).mFacing= OPOS[(byte) tileGhost.getReplacedBlockMeta()];
 				((MultiTileEntityBlock) block).overrideTileEntity=tileEntity;
 			}
 			renderBlocks.blockAccess = tileGhost.getWorldObj();
@@ -105,12 +112,16 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 			if(Minecraft.getMinecraft().objectMouseOver != null && movingObjPos.blockX == tile.xCoord && movingObjPos.blockY == tile.yCoord && movingObjPos.blockZ == tile.zCoord) {
 				String displayName="";
 				if(tileGhost instanceof TileSchematic && !((TileSchematic) tileGhost).getReplacedBlockOverrideName().equals(""))displayName=((TileSchematic) tileGhost).getReplacedBlockOverrideName();
-				else if(tileGhost.getReplacedBlock() instanceof MultiTileEntityBlock && ((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity instanceof IInventory )displayName= ((IInventory)((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity).getInventoryName();
+				else if(tileGhost.getReplacedBlock() instanceof MultiTileEntityBlock){
+					TileEntity til = ((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity;
+					if(til instanceof TileEntityBase03MultiTileEntities)displayName= LH.get(MultiTileEntityRegistry.getRegistry(((TileEntityBase03MultiTileEntities) til).getMultiTileEntityRegistryID()).mNameInternal+"."+((TileEntityBase03MultiTileEntities) til).getMultiTileEntityID());
+					if(til instanceof TileEntityBase04MultiTileEntities)displayName= LH.get(MultiTileEntityRegistry.getRegistry(((TileEntityBase04MultiTileEntities) til).getMultiTileEntityRegistryID()).mNameInternal+"."+((TileEntityBase04MultiTileEntities) til).getMultiTileEntityID());
+				}
 				else{
 					ItemStack stack = tile.getWorldObj().getBlock(tile.xCoord, tile.yCoord, tile.zCoord).getPickBlock(movingObjPos, Minecraft.getMinecraft().theWorld, movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ, Minecraft.getMinecraft().thePlayer);
 					if (stack != null) displayName = stack.getDisplayName();
 				}
-				if(displayName.equals(""))return;
+				if(displayName==null||displayName.equals(""))return;
 				RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), displayName, x,y,z, 10);
 			}
 			if(tileGhost instanceof TileSchematic && block instanceof MultiTileEntityBlock && ((TileSchematic) tileGhost).getReplacedGTTile() !=null) ((MultiTileEntityBlock) block).overrideTileEntity = null;
