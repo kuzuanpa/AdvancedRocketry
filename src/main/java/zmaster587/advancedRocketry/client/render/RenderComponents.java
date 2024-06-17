@@ -9,6 +9,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 
 public class RenderComponents {
 
+	static RenderJetPack renderJetPack = new RenderJetPack();
 	@SubscribeEvent
 	public void renderPostSpecial(RenderPlayerEvent.Specials.Post event) {
 		//RenderJet pack
@@ -16,7 +17,7 @@ public class RenderComponents {
 		if(chest != null && chest.getItem() instanceof IModularArmor) {
 			for(ItemStack stack : ((IModularArmor)chest.getItem()).getComponents(chest)) {
 				if(stack.getItem() == AdvancedRocketryItems.itemJetpack)
-					new RenderJetPack().render(event.entityLiving, 0, 0, 0, 0, 0, 0);
+					renderJetPack.render(event.entityLiving, 0, 0, 0, 0, 0, 0);
 			}
 		}
 		
