@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.dimension;
 
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -19,6 +20,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.logging.log4j.Level;
 import scala.util.Random;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
@@ -384,6 +386,8 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	public StellarBody getStar() {
 		if(star == null)
 			star = DimensionManager.getInstance().getStar(starId);
+		if(star == null)
+			FMLLog.log(Level.FATAL,"AA");
 		return star;
 	}
 
@@ -1252,7 +1256,10 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 		//Note: parent planet must be set before setting the star otherwise it would cause duplicate planets in the StellarBody's array
 		parentPlanet = nbt.getInteger("parentPlanet");
-		this.setStar( DimensionManager.getInstance().getStar(nbt.getInteger("starId")));
+
+		starId=nbt.getInteger("starId");
+
+		if(DimensionManager.getInstance().getStar(starId)!=null)this.setStar(DimensionManager.getInstance().getStar(starId));
 
 
 		NBTTagList spawnableEntityNbt = nbt.getTagList("spawnableEntities",10);

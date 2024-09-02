@@ -333,8 +333,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 	@SideOnly(Side.CLIENT)
 	public void onMouseClicked(GuiModular gui, int x, int y, int button) {
 
-		if(clickablePlanetList != null)
-			clickablePlanetList.onMouseClicked(gui, x, y, button);
+		if(clickablePlanetList != null) clickablePlanetList.onMouseClicked(gui, x, y, button);
 
 		super.onMouseClicked(gui, x, y, button);
 
@@ -489,7 +488,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 		}
 		//Confirm selection
 		else if(buttonId == -2) {
-			if(isStar(selectedSystem)) {
+			if(!isStar(selectedSystem)) {
 				hostTile.onSelectionConfirmed(this);
 				Minecraft.getMinecraft().thePlayer.closeScreen();
 			}

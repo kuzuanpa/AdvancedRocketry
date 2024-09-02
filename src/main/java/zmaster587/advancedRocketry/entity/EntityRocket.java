@@ -449,14 +449,14 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	}
 
 	public boolean areEnginesRunning() {
-		return (this.motionY > 0 || isDescentPhase() || (riddenByEntity != null && ((EntityPlayer)riddenByEntity).moveForward > 0));
+		return (this.motionY > 0 || isDescentPhase());
 	}
 
 
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if(this.LeveledRocketParts.isEmpty()&&AdvancedRocketry.rocketStructureDivider.isTaskCompleted(entityUniqueID))LeveledRocketParts = AdvancedRocketry.rocketStructureDivider.getResultAndRemove(entityUniqueID);
+		if((this.LeveledRocketParts==null||this.LeveledRocketParts.isEmpty())&&AdvancedRocketry.rocketStructureDivider.isTaskCompleted(entityUniqueID))LeveledRocketParts = AdvancedRocketry.rocketStructureDivider.getResultAndRemove(entityUniqueID);
 		long deltaTime = worldObj.getTotalWorldTime() - lastWorldTickTicked;
 		lastWorldTickTicked = worldObj.getTotalWorldTime();
 
@@ -508,12 +508,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 						AtmosphereHandler handler;
 						//Cycle through engines outputting smoke, increases performance with craft with large number of engines
 						if(worldObj.getTotalWorldTime() % 10 == 0 && (engineNum < 8 || ((worldObj.getTotalWorldTime()/10) % Math.max((stats.getEngineLocations().size()/8),1)) == (engineNum/8)) && ( (handler = AtmosphereHandler.getOxygenHandler(worldObj.provider.dimensionId)) == null || handler.getAtmosphereType(this) == null || handler.getAtmosphereType(this).allowsCombustion()) )
-							AdvancedRocketry.proxy.spawnParticle("rocketSmoke", worldObj, this.posX + vec.x, this.posY + vec.y - 0.75, this.posZ +vec.z,0,0,0);
+							AdvancedRocketry.proxy.spawnParticle("rocketSmoke", worldObj, this.posX + vec.x, this.posY + vec.y - 4.75, this.posZ +vec.z,0,0,0);
 
-						for(int i = 0; i < 4; i++) {
-							AdvancedRocketry.proxy.spawnParticle("rocketFlame", worldObj, this.posX + vec.x, this.posY + vec.y - 0.75, this.posZ +vec.z,(this.rand.nextFloat() - 0.5f)/8f,-.75 ,(this.rand.nextFloat() - 0.5f)/8f);
+						AdvancedRocketry.proxy.spawnParticle("rocketFlame", worldObj, this.posX + vec.x, this.posY + vec.y - 0.75, this.posZ +vec.z,(this.rand.nextFloat() - 0.5f)/8f,-.75 ,(this.rand.nextFloat() - 0.5f)/8f);
 
-						}
 
 						engineNum++;
 					}
@@ -899,7 +897,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		destinationDimId = storage.getDestinationDimId(worldObj.provider.dimensionId, (int)this.posX, (int)this.posZ);
 
 		//TODO: make sure this doesn't break asteroid mining
-		if(!(DimensionManager.getInstance().canTravelTo(destinationDimId) || (destinationDimId == -1 && storage.getSatelliteHatches().size() != 0))) {
+		if(!(DimensionManager.getInstance().canTravelTo(destinationDimId) || (destinationDimId == -1 && !storage.getSatelliteHatches().isEmpty()))) {
 			setError(LibVulpes.proxy.getLocalizedString("error.rocket.cannotGetThere"));
 			return;
 		}
@@ -1184,7 +1182,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			storage.writeToNBT(blocks);
 			nbt.setTag("data", blocks);
 		}
-		this.LeveledRocketParts.forEach(part->nbt.setTag("part."+part.level,part.writeToNBT()));
+		if(this.LeveledRocketParts!=null)this.LeveledRocketParts.forEach(part->nbt.setTag("part."+part.level,part.writeToNBT()));
 		nbt.setInteger("lastDimensionFrom", lastDimensionFrom);
 
 		//TODO handle non tile Infrastructure

@@ -112,7 +112,7 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 			if(Minecraft.getMinecraft().objectMouseOver != null && movingObjPos.blockX == tile.xCoord && movingObjPos.blockY == tile.yCoord && movingObjPos.blockZ == tile.zCoord) {
 				String displayName="";
 				if(tileGhost instanceof TileSchematic && !((TileSchematic) tileGhost).getReplacedBlockOverrideName().equals(""))displayName=((TileSchematic) tileGhost).getReplacedBlockOverrideName();
-				else if(tileGhost.getReplacedBlock() instanceof MultiTileEntityBlock){
+				else if(tileGhost.getReplacedBlock() instanceof MultiTileEntityBlock&&((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity!=null){
 					TileEntity til = ((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity;
 					if(til instanceof TileEntityBase03MultiTileEntities)displayName= LH.get(MultiTileEntityRegistry.getRegistry(((TileEntityBase03MultiTileEntities) til).getMultiTileEntityRegistryID()).mNameInternal+"."+((TileEntityBase03MultiTileEntities) til).getMultiTileEntityID());
 					if(til instanceof TileEntityBase04MultiTileEntities)displayName= LH.get(MultiTileEntityRegistry.getRegistry(((TileEntityBase04MultiTileEntities) til).getMultiTileEntityRegistryID()).mNameInternal+"."+((TileEntityBase04MultiTileEntities) til).getMultiTileEntityID());

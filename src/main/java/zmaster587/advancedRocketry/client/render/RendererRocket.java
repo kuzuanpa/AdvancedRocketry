@@ -88,7 +88,7 @@ public class RendererRocket extends Render {
 			GL11.glPushMatrix();
 			storage.world.glListID  = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(storage.world.glListID, GL11.GL_COMPILE);
-			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+			net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
 
 			//Render Each block
 			RenderBlocks.getInstance().blockAccess = storage;
@@ -109,15 +109,10 @@ public class RendererRocket extends Render {
 				
 			}
 
-			GL11.glPushMatrix();
-			GL11.glTranslatef((float)x - halfx, (float)y, (float)z - halfz);
-			net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
-			GL11.glPopMatrix();
-			
 			GL11.glEndList();
 			GL11.glPopMatrix();
 		}
-		
+
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float)x - halfx, (float)y, (float)z - halfz);
 		GL11.glCallList(storage.world.glListID);

@@ -1314,6 +1314,8 @@ public class AdvancedRocketry {
 		if(zmaster587.advancedRocketry.api.Configuration.enableLaserDrill)
 			((ItemProjector)LibVulpesItems.itemHoloProjector).registerMachine(new TileSpaceLaser(), (BlockTile)AdvancedRocketryBlocks.blockSpaceLaser);
 
+		LibVulpes.dummyMultiBlockRegisterers.forEach(register->register.getDummyMultiBlocks().forEach(d->((ItemProjector) LibVulpesItems.itemHoloProjector).registerDummy(d)));
+
 
 		proxy.registerEventHandlers();
 		proxy.registerKeyBindings();

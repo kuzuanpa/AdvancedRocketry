@@ -190,7 +190,8 @@ public class DimensionManager implements IGalaxy {
 	 * @param properties to set for that dimension
 	 */
 	public void setDimProperties( int dimId, DimensionProperties properties) {
-		dimensionList.put(new Integer(dimId),properties);
+		dimensionList.put(dimId,properties);
+		if(dimId==0)overworldProperties=properties;
 	}
 
 	/**
@@ -398,7 +399,7 @@ public class DimensionManager implements IGalaxy {
 			net.minecraftforge.common.DimensionManager.registerProviderType(properties.getId(), provider, false);
 			net.minecraftforge.common.DimensionManager.registerDimension(dimId, dimId);
 		}
-		dimensionList.put(dimId, properties);
+		setDimProperties(dimId, properties);
 
 		return true;
 	}
@@ -700,21 +701,17 @@ public class DimensionManager implements IGalaxy {
 
 			DimensionProperties propeties = DimensionProperties.createFromNBT(Integer.parseInt(keyString) ,dimListNbt.getCompoundTag(keyString));
 
-			if(propeties != null) {
-				int keyInt = Integer.parseInt(keyString);
-				if(!net.minecraftforge.common.DimensionManager.isDimensionRegistered(keyInt) && propeties.isNativeDimension && !propeties.isGasGiant()) {
-					Class<? extends WorldProvider> providor = propeties.getId()==propeties.getStarId()?WorldProviderSun.class:DimensionManager.planetWorldProvider;
-					net.minecraftforge.common.DimensionManager.registerProviderType(keyInt, providor, false);
-					net.minecraftforge.common.DimensionManager.registerDimension(keyInt, keyInt);
-					//propeties.isNativeDimension = true;
-				}
+            int keyInt = Integer.parseInt(keyString);
+            if(!net.minecraftforge.common.DimensionManager.isDimensionRegistered(keyInt) && propeties.isNativeDimension && !propeties.isGasGiant()) {
+                Class<? extends WorldProvider> providor = propeties.getId()==propeties.getStarId()?WorldProviderSun.class:DimensionManager.planetWorldProvider;
+                net.minecraftforge.common.DimensionManager.registerProviderType(keyInt, providor, false);
+                net.minecraftforge.common.DimensionManager.registerDimension(keyInt, keyInt);
+                //propeties.isNativeDimension = true;
+            }
 
-				dimensionList.put(new Integer(keyInt), propeties);
-			}
-			else{
-				Logger.getLogger("advancedRocketry").warning("Null Dimension Properties Recieved");
-			}
-		}
+            dimensionList.put(keyInt, propeties);
+            if(keyInt==0)overworldProperties = propeties;
+        }
 
 
 		//Check for tag in case old version of Adv rocketry is in use
