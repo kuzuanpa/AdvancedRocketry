@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.client.render;
 
+import cpw.mods.fml.common.FMLLog;
 import gregapi.block.multitileentity.MultiTileEntityBlock;
 import gregapi.block.multitileentity.MultiTileEntityRegistry;
 import gregapi.data.LH;
@@ -9,6 +10,7 @@ import gregapi.tileentity.base.TileEntityBase09FacingSingle;
 import gregapi.tileentity.notick.TileEntityBase03MultiTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
+import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.libVulpes.block.RotatableBlock;
@@ -28,6 +30,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import static gregapi.block.multitileentity.MultiTileEntityRegistry.getRegistry;
 import static gregapi.data.CS.OPOS;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.*;
@@ -38,10 +41,11 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 	private static RenderBlocks renderBlocks = RenderBlocks.getInstance();
 
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x,
+	public void renderTileEntityAt(TileEntity ti, double x,
 			double y, double z, float t) {
-		if(tile.isInvalid())return;
-		TilePlaceholder tileGhost = (TilePlaceholder)tile;
+		if(ti.isInvalid())return;
+
+		TilePlaceholder tileGhost = (TilePlaceholder)ti;
 		Block block = tileGhost.getReplacedBlock();
 
 		if(tileGhost.getReplacedTileEntity() != null && !(tileGhost.getReplacedTileEntity() instanceof TileMultiBlock) && TileEntityRendererDispatcher.instance.hasSpecialRenderer(tileGhost.getReplacedTileEntity())) {
@@ -93,9 +97,9 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 			Tessellator.instance.startDrawingQuads();
 
 			 if(block.getRenderType() == 0) {
-			 	block.setBlockBoundsBasedOnState(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+			 	block.setBlockBoundsBasedOnState(ti.getWorldObj(), ti.xCoord, ti.yCoord, ti.zCoord);
 			 	renderBlocks.setRenderBoundsFromBlock(block);
-			 	RenderHelper.renderStandardBlockWithColorMultiplierAndBrightness(block, 0,0,0, 1,1,1, 0.2f,  (tile.getWorldObj().getLightBrightnessForSkyBlocks(tile.xCoord,tile.yCoord,tile.zCoord,0)/2)+4);
+			 	RenderHelper.renderStandardBlockWithColorMultiplierAndBrightness(block, 0,0,0, 1,1,1, 0.2f,  (ti.getWorldObj().getLightBrightnessForSkyBlocks(ti.xCoord,ti.yCoord,ti.zCoord,0)/2)+4);
 			 }
 			 else {
 				 net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
@@ -109,21 +113,31 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 		if(block != null) {
 			//If the player is mousing over this block
 			MovingObjectPosition movingObjPos = Minecraft.getMinecraft().objectMouseOver;
-			if(Minecraft.getMinecraft().objectMouseOver != null && movingObjPos.blockX == tile.xCoord && movingObjPos.blockY == tile.yCoord && movingObjPos.blockZ == tile.zCoord) {
+			if(Minecraft.getMinecraft().objectMouseOver != null && movingObjPos.blockX == ti.xCoord && movingObjPos.blockY == ti.yCoord && movingObjPos.blockZ == ti.zCoord) {
 				String displayName="";
 				if(tileGhost instanceof TileSchematic && !((TileSchematic) tileGhost).getReplacedBlockOverrideName().equals(""))displayName=((TileSchematic) tileGhost).getReplacedBlockOverrideName();
 				else if(tileGhost.getReplacedBlock() instanceof MultiTileEntityBlock&&((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity!=null){
 					TileEntity til = ((MultiTileEntityBlock)tileGhost.getReplacedBlock()).overrideTileEntity;
-					if(til instanceof TileEntityBase03MultiTileEntities)displayName= LH.get(MultiTileEntityRegistry.getRegistry(((TileEntityBase03MultiTileEntities) til).getMultiTileEntityRegistryID()).mNameInternal+"."+((TileEntityBase03MultiTileEntities) til).getMultiTileEntityID());
-					if(til instanceof TileEntityBase04MultiTileEntities)displayName= LH.get(MultiTileEntityRegistry.getRegistry(((TileEntityBase04MultiTileEntities) til).getMultiTileEntityRegistryID()).mNameInternal+"."+((TileEntityBase04MultiTileEntities) til).getMultiTileEntityID());
+					if(til instanceof TileEntityBase03MultiTileEntities && getRegistry(((TileEntityBase03MultiTileEntities) til).getMultiTileEntityRegistryID()) == null) {
+						FMLLog.log(Level.FATAL,"MultiTileEntity Reg = Null, That should not happen! Checks if your mod list is completed equal to server!");
+						FMLLog.log(Level.FATAL,"MultiTileEntity RegId ="+((TileEntityBase03MultiTileEntities) til).getMultiTileEntityRegistryID());
+
+					}else if(til instanceof TileEntityBase04MultiTileEntities && getRegistry(((TileEntityBase04MultiTileEntities) til).getMultiTileEntityRegistryID()) == null) {
+						FMLLog.log(Level.FATAL,"MultiTileEntity Reg = Null, That should not happen! Checks if your mod list is completed equal to server!");
+						FMLLog.log(Level.FATAL,"MultiTileEntity RegId ="+((TileEntityBase04MultiTileEntities) til).getMultiTileEntityRegistryID());
+					}
+					else {
+					if(til instanceof TileEntityBase03MultiTileEntities)displayName= LH.get(getRegistry(((TileEntityBase03MultiTileEntities) til).getMultiTileEntityRegistryID()).mNameInternal+"."+((TileEntityBase03MultiTileEntities) til).getMultiTileEntityID());
+					if(til instanceof TileEntityBase04MultiTileEntities)displayName= LH.get(getRegistry(((TileEntityBase04MultiTileEntities) til).getMultiTileEntityRegistryID()).mNameInternal+"."+((TileEntityBase04MultiTileEntities) til).getMultiTileEntityID());
+					}
 				}
 				else{
-					ItemStack stack = tile.getWorldObj().getBlock(tile.xCoord, tile.yCoord, tile.zCoord).getPickBlock(movingObjPos, Minecraft.getMinecraft().theWorld, movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ, Minecraft.getMinecraft().thePlayer);
+					ItemStack stack = ti.getWorldObj().getBlock(ti.xCoord, ti.yCoord, ti.zCoord).getPickBlock(movingObjPos, Minecraft.getMinecraft().theWorld, movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ, Minecraft.getMinecraft().thePlayer);
 					if (stack != null) displayName = stack.getDisplayName();
 				}
 				if(displayName!=null&&!displayName.equals(""))RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), displayName, x,y,z, 10);
 			}
 			if(tileGhost instanceof TileSchematic && block instanceof MultiTileEntityBlock && ((TileSchematic) tileGhost).getReplacedGTTile() !=null) ((MultiTileEntityBlock) block).overrideTileEntity = null;
 		}
-	}
-}
+
+}}
