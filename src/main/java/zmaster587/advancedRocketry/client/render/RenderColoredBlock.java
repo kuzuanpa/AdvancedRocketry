@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.client.render;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -10,8 +11,8 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 public class RenderColoredBlock implements ISimpleBlockRenderingHandler {
 
 	@Override
-	public void renderInventoryBlock(Block block, int metadata, int modelId,
-			RenderBlocks renderer) {
+	public void renderInventoryBlock(@NotNull Block block, int metadata, int modelId,
+                                     RenderBlocks renderer) {
 		
 		int color = block.getBlockColor();
 		GL11.glColor3b((byte)(color & 0xFF), (byte)((color << 8) & 0xFF), (byte)((color << 16) & 0xFF));

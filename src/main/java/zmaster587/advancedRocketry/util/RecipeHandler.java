@@ -30,7 +30,7 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 
 public class RecipeHandler {
 	
-	private List<Class<? extends TileMultiblockMachine>> machineList = new ArrayList<Class<? extends TileMultiblockMachine>>();
+	private List<Class<? extends TileMultiblockMachine>> machineList = new ArrayList<>();
 	
 	public void registerMachine(Class<? extends TileMultiblockMachine> clazz) {
 		if(!machineList.contains(clazz))

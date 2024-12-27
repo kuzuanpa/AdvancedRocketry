@@ -14,6 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
@@ -32,11 +34,11 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 
 		//isEmpty check because <init> is called in post init to register for holo projector
 		if(ores == null && !Configuration.standardLaserDrillOres.isEmpty()) {
-			ores = new LinkedList<ItemStack>();
+			ores = new LinkedList<>();
 			for(int i = 0; i < Configuration.standardLaserDrillOres.size(); i++) {
 				String oreDictName = Configuration.standardLaserDrillOres.get(i);
 				
-				String args[] = oreDictName.split(":");
+				String[] args = oreDictName.split(":");
 				
 				List<ItemStack> ores2 = OreDictionary.getOres(args[0]);
 
@@ -52,7 +54,7 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 				}
 				else
 				{
-					String splitStr[] = oreDictName.split(":");
+					String[] splitStr = oreDictName.split(":");
 					String name;
 					try {
 						name = splitStr[0] + ":" + splitStr[1];
@@ -137,7 +139,7 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 	
 	public void performOperation() {
 
-		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> items = new ArrayList<>();
 		if(random.nextInt(10) == 0) {
 			ItemStack item = ores.get(random.nextInt(ores.size()));
 			ItemStack newStack = item.copy();
@@ -150,7 +152,7 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 		//TODO: generate Items
 
 		if(boundChest != null){
-			ItemStack stacks[] = new ItemStack[items.size()];
+			ItemStack[] stacks = new ItemStack[items.size()];
 
 			stacks = items.toArray(stacks);
 
@@ -166,12 +168,12 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 	}
 
 	@Override
-	public String getInfo(World world) {
+	public @Nullable String getInfo(World world) {
 		return null;
 	}
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Laser";
 	}
 
@@ -188,12 +190,12 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		nbt.setBoolean("jammed", jammed);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		jammed = nbt.getBoolean("jammed");
 	}
 

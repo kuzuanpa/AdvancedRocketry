@@ -1,20 +1,21 @@
 package zmaster587.advancedRocketry.block;
 
-import java.util.Random;
-
-import zmaster587.advancedRocketry.tile.multiblock.TileSpaceLaser;
-import zmaster587.libVulpes.block.multiblock.BlockMultiblockMachine;
-import zmaster587.libVulpes.inventory.GuiHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.tile.multiblock.TileSpaceLaser;
+import zmaster587.libVulpes.block.multiblock.BlockMultiblockMachine;
+import zmaster587.libVulpes.inventory.GuiHandler;
+
+import java.util.Random;
 
 public class BlockLaser extends BlockMultiblockMachine {
 
 	public BlockLaser() {
-		super(TileSpaceLaser.class, (int)GuiHandler.guiId.MODULAR.ordinal());
+		super(TileSpaceLaser.class, GuiHandler.guiId.MODULAR.ordinal());
 		setTickRandomly(true).setBlockName("spaceLaser");
 	}
 	
@@ -33,7 +34,7 @@ public class BlockLaser extends BlockMultiblockMachine {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void registerBlockIcons(IIconRegister icon)
+	public void registerBlockIcons(@NotNull IIconRegister icon)
 	{
 		this.top = icon.registerIcon("libvulpes:machineGeneric");
 		this.sides = icon.registerIcon("advancedRocketry:MonitorSide");

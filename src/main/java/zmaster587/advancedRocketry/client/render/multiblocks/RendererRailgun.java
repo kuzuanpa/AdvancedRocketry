@@ -8,25 +8,25 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
-import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.tile.multiblock.TileRailgun;
 import zmaster587.libVulpes.block.RotatableBlock;
-import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 
 public class RendererRailgun extends TileEntitySpecialRenderer {
 	
 	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/railgun.obj"));
 
-	ResourceLocation texture =  new ResourceLocation("advancedRocketry:textures/models/railgun.png");
+	@NotNull
+    ResourceLocation texture =  new ResourceLocation("advancedRocketry:textures/models/railgun.png");
 	
 	public RendererRailgun() {
 	}
 	
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x,
-			double y, double z, float f) {
+	public void renderTileEntityAt(@NotNull TileEntity tile, double x,
+                                   double y, double z, float f) {
 		TileRailgun multiBlockTile = (TileRailgun)tile;
 
 		if(!multiBlockTile.canRender())

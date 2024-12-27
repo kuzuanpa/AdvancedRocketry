@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.network;
 
 import java.io.IOException;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.util.AsteroidSmall;
 import zmaster587.libVulpes.network.BasePacket;
@@ -26,7 +27,7 @@ public class PacketAsteroidInfo extends BasePacket {
 
 	@Override
 	public void write(ByteBuf out) {
-		PacketBuffer packetBuffer = new PacketBuffer(out);
+		@NotNull PacketBuffer packetBuffer = new PacketBuffer(out);
 		NBTTagCompound nbt = new NBTTagCompound();
 		
 		try {

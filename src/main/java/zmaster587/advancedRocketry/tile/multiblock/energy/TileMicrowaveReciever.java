@@ -18,6 +18,7 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
@@ -54,7 +55,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 	int powerMadeLastTick, prevPowerMadeLastTick;
 	ModuleText textModule;
 	public TileMicrowaveReciever() {
-		connectedSatellites = new LinkedList<Long>();
+		connectedSatellites = new LinkedList<>();
 		initialCheck = false;
 		insolationPowerMultiplier = 0;
 		textModule = new ModuleText(40, 20, LibVulpes.proxy.getLocalizedString("msg.microwaverec.notgenerating"), 0x2b2b2b);
@@ -80,7 +81,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 	}
 
 	@Override
-	public Object[][][] getStructure() {
+	public Object[][] @NotNull [] getStructure() {
 		return structure;
 	}
 
@@ -217,7 +218,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt) {
 		NBTTagCompound nbt = pkt.func_148857_g();
 
 		canRender = nbt.getBoolean("canRender");
@@ -255,7 +256,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
 		int[] intArray = new int[connectedSatellites.size()*2];
@@ -273,7 +274,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		int intArray[] = nbt.getIntArray("satilliteList");
+		int[] intArray = nbt.getIntArray("satilliteList");
 		connectedSatellites.clear();
 		for( int i =0; i < intArray.length/2; i+=2 ) {
 			connectedSatellites.add(intArray[i] | (((long)intArray[i+1]) << 32));

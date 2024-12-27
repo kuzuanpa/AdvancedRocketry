@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
 import zmaster587.advancedRocketry.api.IInfrastructure;
@@ -24,8 +25,8 @@ public class MissionOreMining extends MissionResourceCollection {
 		super();
 	}
 
-	public MissionOreMining(long l, EntityRocket entityRocket,
-			LinkedList<IInfrastructure> connectedInfrastructure) {
+	public MissionOreMining(long l, @NotNull EntityRocket entityRocket,
+							LinkedList<IInfrastructure> connectedInfrastructure) {
 		super(l, entityRocket, connectedInfrastructure);
 	}
 
@@ -54,7 +55,7 @@ public class MissionOreMining extends MissionResourceCollection {
 					if(asteroid != null) {
 
 						List<StackEntry> stacks2 = asteroid.getHarvest(((ItemAsteroidChip)stack.getItem()).getUUID(stack));
-						List<ItemStack> totalStacksList = new LinkedList<ItemStack>();
+						List<ItemStack> totalStacksList = new LinkedList<>();
 						for(StackEntry entry : stacks2) {
 
 							if(compositionData/(float)maxData >= Math.random())

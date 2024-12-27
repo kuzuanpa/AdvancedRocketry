@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.inventory;
 
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.integration.CompatibilityMgr;
@@ -135,7 +136,7 @@ public class ContainerSpaceLaser extends Container {
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int slot)
+	public @Nullable ItemStack transferStackInSlot(EntityPlayer player, int slot)
 	{
 		ItemStack stack = null;
 		Slot slotObject = (Slot) inventorySlots.get(slot);

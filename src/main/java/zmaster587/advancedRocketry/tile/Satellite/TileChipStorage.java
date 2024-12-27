@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
 import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
@@ -37,7 +38,7 @@ public class TileChipStorage extends TileMultiPowerConsumer  implements IModular
 		{{'*'}}
 	};
 
-	ItemStack inventory[];
+	ItemStack[] inventory;
 
 	@Override
 	protected void processComplete() {
@@ -72,8 +73,8 @@ public class TileChipStorage extends TileMultiPowerConsumer  implements IModular
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
+		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(new ModulePower(18, 20, getBatteries()));
 		modules.add(new ModuleTexturedSlotArray(58, 16, this, 0, 1, TextureResources.idChip));   // Output

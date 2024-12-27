@@ -13,6 +13,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AreaBlob;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.IAtmosphere;
@@ -37,10 +39,10 @@ public class AtmosphereHandler {
 
 	public static long lastSuffocationTime = Integer.MIN_VALUE;
 	private static final int MAX_BLOB_RADIUS = ((Configuration.atmosphereHandleBitMask & 1) == 1) ? 256 : Configuration.oxygenVentSize;
-	private static HashMap<Integer, AtmosphereHandler> dimensionOxygen = new HashMap<Integer, AtmosphereHandler>();
-	private static HashMap<EntityPlayer, IAtmosphere> prevAtmosphere = new HashMap<EntityPlayer, IAtmosphere>();
+	private static final HashMap<Integer, AtmosphereHandler> dimensionOxygen = new HashMap<>();
+	private static final HashMap<EntityPlayer, IAtmosphere> prevAtmosphere = new HashMap<>();
 
-	private HashMap<IBlobHandler,AreaBlob> blobs;
+	private final HashMap<IBlobHandler,AreaBlob> blobs;
 	int dimId;
 
 	//Stores current Atm on the CLIENT
@@ -77,7 +79,7 @@ public class AtmosphereHandler {
 
 	private AtmosphereHandler(int dimId) {
 		this.dimId = dimId;
-		blobs = new HashMap<IBlobHandler,AreaBlob>();
+		blobs = new HashMap<>();
 	}
 
 	@SubscribeEvent
@@ -135,7 +137,7 @@ public class AtmosphereHandler {
 	public static void onBlockMetaChange(World world, int x , int y, int z) {
 		if(Configuration.enableOxygen && !world.isRemote && world.getChunkFromBlockCoords(x, z).isChunkLoaded) {
 			AtmosphereHandler handler = getOxygenHandler(world.provider.dimensionId);
-			BlockPosition pos = new BlockPosition(x, y, z);
+			@NotNull BlockPosition pos = new BlockPosition(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
 
 
@@ -158,7 +160,7 @@ public class AtmosphereHandler {
 	}
 
 	//Called from setBlock in World.class
-	public static void onBlockChange(World world, int x, int y, int z) {
+	public static void onBlockChange(@NotNull World world, int x, int y, int z) {
 
 		if(Configuration.enableOxygen && !world.isRemote && world.getChunkFromBlockCoords(x, z).isChunkLoaded) {
 			BlockPosition pos = new BlockPosition(x, y, z);
@@ -192,8 +194,8 @@ public class AtmosphereHandler {
 	 * @param radius distance from the position to find blobs within
 	 * @return List of AreaBlobs within the radius from the position
 	 */
-	protected List<AreaBlob> getBlobWithinRadius(BlockPosition pos, int radius) {
-		LinkedList<AreaBlob> list = new LinkedList<AreaBlob>();
+	protected @NotNull List<AreaBlob> getBlobWithinRadius(BlockPosition pos, int radius) {
+		LinkedList<AreaBlob> list = new LinkedList<>();
 		for(AreaBlob blob : blobs.values()) {
 			if(blob.getRootPosition().getDistance(pos) - radius <= 0) {
 				list.add(blob);
@@ -206,7 +208,7 @@ public class AtmosphereHandler {
 	 * @param dimNumber dimension number for which to get the oxygenhandler
 	 * @return the oxygen handler for the planet or null if none exists
 	 */
-	public static AtmosphereHandler getOxygenHandler(int dimNumber) {
+	public @Nullable static AtmosphereHandler getOxygenHandler(int dimNumber) {
 		//Get your oxyclean!
 		return dimensionOxygen.get(dimNumber);
 	}
@@ -224,7 +226,7 @@ public class AtmosphereHandler {
 		if(blob == null) {
 			blob = new AtmosphereBlob(handler);
 			blobs.put(handler, blob);
-			blob.setData(AtmosphereType.PRESSURIZEDAIR);
+			blob.setData(AtmosphereTypes.PRESSURIZEDAIR);
 		}
 	}
 
@@ -241,7 +243,7 @@ public class AtmosphereHandler {
 		if(blob == null) {
 			blob = blob2;
 			blobs.put(handler, blob);
-			blob.setData(AtmosphereType.PRESSURIZEDAIR);
+			blob.setData(AtmosphereTypes.PRESSURIZEDAIR);
 		}
 	}
 
@@ -292,11 +294,11 @@ public class AtmosphereHandler {
 	 * @param z
 	 * @return AtmosphereType at this location
 	 */
-	public IAtmosphere getAtmosphereType(int x, int y, int z) {
+	public @NotNull IAtmosphere getAtmosphereType(int x, int y, int z) {
 		if(Configuration.enableOxygen) {
 			BlockPosition pos = new BlockPosition(x,y,z);
 			for(AreaBlob blob : blobs.values()) {
-				if(blob.contains(pos)) {
+				if(blob.contains(pos) && blob.getData() instanceof IAtmosphere) {
 					return (IAtmosphere)blob.getData();
 				}
 			}
@@ -305,7 +307,7 @@ public class AtmosphereHandler {
 			return DimensionManager.getInstance().getDimensionProperties(dimId).getAtmosphere();
 		}
 
-		return AtmosphereType.AIR;
+		return AtmosphereTypes.AIR;
 	}
 
 	/**
@@ -313,25 +315,25 @@ public class AtmosphereHandler {
 	 * @param entity the entity to check against
 	 * @return The atmosphere type this entity is inside of
 	 */
-	public IAtmosphere getAtmosphereType(Entity entity) {
+	public @NotNull IAtmosphere getAtmosphereType(Entity entity) {
 		if(Configuration.enableOxygen) {
 			BlockPosition pos = new BlockPosition((int)Math.floor(entity.posX), (int)Math.ceil(entity.posY), (int)Math.floor(entity.posZ ));
 			for(AreaBlob blob : blobs.values()) {
-				if(blob.contains(pos)) {
+				if(blob.contains(pos) && blob.getData() instanceof IAtmosphere) {
 					return (IAtmosphere)blob.getData();
 				}
 			}
 
 			return DimensionManager.getInstance().getDimensionProperties(dimId).getAtmosphere();
 		}
-		return AtmosphereType.AIR;
+		return AtmosphereTypes.AIR;
 	}
 
 
 	/**
 	 * @return the default atmosphere type used by this planet
 	 */
-	public IAtmosphere getDefaultAtmosphereType() {
+	public @NotNull IAtmosphere getDefaultAtmosphereType() {
 		return DimensionManager.getInstance().getDimensionProperties(dimId).getAtmosphere();
 	}
 
@@ -360,7 +362,7 @@ public class AtmosphereHandler {
 		if(Configuration.enableOxygen) {
 			BlockPosition pos = new BlockPosition((int)Math.floor(entity.posX), (int)Math.ceil(entity.posY), (int)Math.floor(entity.posZ));
 			for(AreaBlob blob : blobs.values()) {
-				if(blob.contains(pos) && ((IAtmosphere)blob.getData()).isImmune(entity)) {
+				if(blob.contains(pos) && (blob.getData()) instanceof IAtmosphere && ((IAtmosphere)blob.getData()).isImmune(entity)) {
 					return true;
 				}
 			}
@@ -391,7 +393,7 @@ public class AtmosphereHandler {
 	 * Gets the atmosphere type of this blob
 	 * @param handler the handler for the blob
 	 */
-	public IAtmosphere getAtmosphereType(IBlobHandler handler) {
+	public @Nullable IAtmosphere getAtmosphereType(IBlobHandler handler) {
 		return (IAtmosphere)blobs.get(handler).getData();
 	}
 }

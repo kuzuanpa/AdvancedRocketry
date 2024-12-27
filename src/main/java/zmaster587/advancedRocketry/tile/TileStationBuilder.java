@@ -159,7 +159,7 @@ public class TileStationBuilder extends TileRocketBuilder implements IInventory 
 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(new ModulePower(160, 30, this));
 

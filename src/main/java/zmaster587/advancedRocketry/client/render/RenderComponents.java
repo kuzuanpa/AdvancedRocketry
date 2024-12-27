@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.client.render;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.client.render.armor.RenderJetPack;
 import zmaster587.libVulpes.api.IModularArmor;
@@ -11,7 +12,7 @@ public class RenderComponents {
 
 	static RenderJetPack renderJetPack = new RenderJetPack();
 	@SubscribeEvent
-	public void renderPostSpecial(RenderPlayerEvent.Specials.Post event) {
+	public void renderPostSpecial(RenderPlayerEvent.Specials.@NotNull Post event) {
 		//RenderJet pack
 		ItemStack chest = event.entityLiving.getEquipmentInSlot(3);
 		if(chest != null && chest.getItem() instanceof IModularArmor) {

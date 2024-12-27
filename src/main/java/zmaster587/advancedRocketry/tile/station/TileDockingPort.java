@@ -16,6 +16,7 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
@@ -51,7 +52,7 @@ public class TileDockingPort extends TileEntity implements IModularInventory, IG
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 		modules.add(new ModuleText(20, 50, LibVulpes.proxy.getLocalizedString("msg.dockingport.target"), 0x2a2a2a));
 		if(worldObj.isRemote) {
 			myId = new ModuleTextBox(this, 20, 30, 60, 12, 9);
@@ -77,7 +78,7 @@ public class TileDockingPort extends TileEntity implements IModularInventory, IG
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.func_148857_g());
 		if(targetId != null) {
 			targetId.setText(targetIdStr);
@@ -97,7 +98,7 @@ public class TileDockingPort extends TileEntity implements IModularInventory, IG
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		if(!myIdStr.isEmpty())
 			nbt.setString("myId", myIdStr);
@@ -106,7 +107,7 @@ public class TileDockingPort extends TileEntity implements IModularInventory, IG
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		myIdStr = nbt.getString("myId");
 		targetIdStr = nbt.getString("targetId");

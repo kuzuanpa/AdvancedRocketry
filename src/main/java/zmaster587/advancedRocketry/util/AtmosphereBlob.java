@@ -6,6 +6,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AreaBlob;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class AtmosphereBlob extends AreaBlob implements Runnable {
 
 
-	static ThreadPoolExecutor pool = (Configuration.atmosphereHandleBitMask & 1) == 1 ? new ThreadPoolExecutor(3, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(32)) : null;
+	static ThreadPoolExecutor pool = (Configuration.atmosphereHandleBitMask & 1) == 1 ? new ThreadPoolExecutor(3, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(32)) : null;
 
 	boolean executing;
 	BlockPosition blockPos;
@@ -60,7 +61,7 @@ public class AtmosphereBlob extends AreaBlob implements Runnable {
 
 	@Override
 	public boolean isPositionAllowed(World world, BlockPosition pos,  List<AreaBlob> otherBlobs) {
-		for(AreaBlob blob : otherBlobs) {
+		for(@NotNull AreaBlob blob : otherBlobs) {
 			if(blob.contains(pos) && blob != this)
 				return false;
 		}
@@ -69,7 +70,7 @@ public class AtmosphereBlob extends AreaBlob implements Runnable {
 	}
 
 	@Override
-	public void addBlock(BlockPosition blockPos, List<AreaBlob> otherBlobs) {
+	public void addBlock(@NotNull BlockPosition blockPos, List<AreaBlob> otherBlobs) {
 
 		if(blobHandler.canFormBlob()) {
 
@@ -98,11 +99,11 @@ public class AtmosphereBlob extends AreaBlob implements Runnable {
 	@Override
 	public void run() {
 
-		Stack<BlockPosition> stack = new Stack<BlockPosition>();
+		Stack<BlockPosition> stack = new Stack<>();
 		stack.push(blockPos);
 
 		final int maxSize = (Configuration.atmosphereHandleBitMask & 2) != 0 ? (int)(Math.pow(this.getBlobMaxRadius(), 3)*((4f/3f)*Math.PI)) : this.getBlobMaxRadius();
-		final HashSet<BlockPosition> addableBlocks = new HashSet<BlockPosition>();
+		final HashSet<BlockPosition> addableBlocks = new HashSet<>();
 
 		//Breadth first search; non recursive
 		while(!stack.isEmpty()) {
@@ -175,7 +176,7 @@ public class AtmosphereBlob extends AreaBlob implements Runnable {
 			List<BlockPosition> list;
 
 			synchronized (graph) {
-				list = new LinkedList<BlockPosition>(blocks);
+				list = new LinkedList<>(blocks);
 			}
 
 			for(BlockPosition pos : list) {

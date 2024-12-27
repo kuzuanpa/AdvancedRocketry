@@ -1,11 +1,5 @@
 package zmaster587.advancedRocketry.block;
 
-import java.util.List;
-
-import zmaster587.libVulpes.api.material.Material;
-import zmaster587.libVulpes.api.material.MaterialRegistry;
-import zmaster587.libVulpes.interfaces.IRecipe;
-import zmaster587.libVulpes.recipe.RecipesMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,6 +8,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.libVulpes.interfaces.IRecipe;
+import zmaster587.libVulpes.recipe.RecipesMachine;
+
+import java.util.List;
 
 public class BlockPress extends BlockPistonBase {
 
@@ -51,12 +50,23 @@ public class BlockPress extends BlockPistonBase {
 		}
 	}
 
-	protected boolean isIndirectlyPowered(World p_150072_1_, int p_150072_2_, int p_150072_3_, int p_150072_4_, int p_150072_5_)
+	protected boolean isIndirectlyPowered(World world, int x, int y, int z, int p_150072_5_)
 	{
-		return p_150072_5_ != 0 && p_150072_1_.getIndirectPowerOutput(p_150072_2_, p_150072_3_ - 1, p_150072_4_, 0) ? true : (p_150072_5_ != 1 && p_150072_1_.getIndirectPowerOutput(p_150072_2_, p_150072_3_ + 1, p_150072_4_, 1) ? true : (p_150072_5_ != 2 && p_150072_1_.getIndirectPowerOutput(p_150072_2_, p_150072_3_, p_150072_4_ - 1, 2) ? true : (p_150072_5_ != 3 && p_150072_1_.getIndirectPowerOutput(p_150072_2_, p_150072_3_, p_150072_4_ + 1, 3) ? true : (p_150072_5_ != 5 && p_150072_1_.getIndirectPowerOutput(p_150072_2_ + 1, p_150072_3_, p_150072_4_, 5) ? true : (p_150072_5_ != 4 && p_150072_1_.getIndirectPowerOutput(p_150072_2_ - 1, p_150072_3_, p_150072_4_, 4) ? true : (p_150072_1_.getIndirectPowerOutput(p_150072_2_, p_150072_3_, p_150072_4_, 0) ? true : (p_150072_1_.getIndirectPowerOutput(p_150072_2_, p_150072_3_ + 2, p_150072_4_, 1) ? true : (p_150072_1_.getIndirectPowerOutput(p_150072_2_, p_150072_3_ + 1, p_150072_4_ - 1, 2) ? true : (p_150072_1_.getIndirectPowerOutput(p_150072_2_, p_150072_3_ + 1, p_150072_4_ + 1, 3) ? true : (p_150072_1_.getIndirectPowerOutput(p_150072_2_ - 1, p_150072_3_ + 1, p_150072_4_, 4) ? true : p_150072_1_.getIndirectPowerOutput(p_150072_2_ + 1, p_150072_3_ + 1, p_150072_4_, 5)))))))))));
+		return p_150072_5_ != 0 && world.getIndirectPowerOutput(x, y - 1, z, 0)
+				|| (p_150072_5_ != 1 && world.getIndirectPowerOutput(x, y + 1, z, 1)
+				|| (p_150072_5_ != 2 && world.getIndirectPowerOutput(x, y, z - 1, 2)
+				|| (p_150072_5_ != 3 && world.getIndirectPowerOutput(x, y, z + 1, 3)
+				|| (p_150072_5_ != 5 && world.getIndirectPowerOutput(x + 1, y, z, 5)
+				|| (p_150072_5_ != 4 && world.getIndirectPowerOutput(x - 1, y, z, 4)
+				|| (world.getIndirectPowerOutput(x, y, z, 0)
+				|| (world.getIndirectPowerOutput(x, y + 2, z, 1)
+				|| (world.getIndirectPowerOutput(x, y + 1, z - 1, 2)
+				|| (world.getIndirectPowerOutput(x, y + 1, z + 1, 3)
+				|| (world.getIndirectPowerOutput(x - 1, y + 1, z, 4)
+				||  world.getIndirectPowerOutput(x + 1, y + 1, z, 5)))))))))));
 	}
 
-	private ItemStack getRecipe(World world, int x, int y, int z, int meta) {
+	private ItemStack getRecipe(@NotNull World world, int x, int y, int z, int meta) {
 		
 		if(world.isAirBlock(x, y-1, z))
 			return null;
@@ -71,7 +81,7 @@ public class BlockPress extends BlockPistonBase {
 		ItemStack stack = null;
 
 		for(IRecipe recipe : recipes) {
-			for(ItemStack stack2 : recipe.getIngredients().get(0))
+			for(@NotNull ItemStack stack2 : recipe.getIngredients().get(0))
 				if(stack2.isItemEqual(stackInWorld)) {
 					stack = recipe.getOutput().get(0);
 					break;
@@ -88,10 +98,6 @@ public class BlockPress extends BlockPistonBase {
 	protected void updatePistonState(World world, int x, int y, int z) {
 		int l = world.getBlockMetadata(x, y, z);
 		int i1 = 0;
-
-		if (i1 != 7)
-		{
-
 			if (!isExtended(l))
 			{
 				ItemStack output;
@@ -105,11 +111,11 @@ public class BlockPress extends BlockPistonBase {
 					world.addBlockEvent(x, y, z, this, 0, i1);
 				}
 			}
-			else if (isExtended(l))
+			else
 			{
 				world.setBlockMetadataWithNotify(x, y, z, i1, 2);
 			}
-		}
+
 	}
 
 }

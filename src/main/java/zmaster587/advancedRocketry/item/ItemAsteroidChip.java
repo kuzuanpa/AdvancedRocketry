@@ -1,4 +1,5 @@
 package zmaster587.advancedRocketry.item;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.libVulpes.LibVulpes;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -66,7 +67,7 @@ public class ItemAsteroidChip  extends ItemMultiData {
 	
 	
 	@Override
-	public void addInformation(ItemStack stack, net.minecraft.entity.player.EntityPlayer player, java.util.List list, boolean bool) {
+	public void addInformation(@NotNull ItemStack stack, net.minecraft.entity.player.EntityPlayer player, java.util.List list, boolean bool) {
 
 		if(!stack.hasTagCompound()) {
 			list.add(LibVulpes.proxy.getLocalizedString("msg.unprogrammed"));

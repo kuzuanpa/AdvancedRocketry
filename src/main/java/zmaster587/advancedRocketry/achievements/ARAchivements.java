@@ -1,21 +1,20 @@
 package zmaster587.advancedRocketry.achievements;
 
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
-import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
-import zmaster587.libVulpes.LibVulpes;
-import zmaster587.libVulpes.api.LibVulpesItems;
-import zmaster587.libVulpes.api.material.AllowedProducts;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
+import zmaster587.libVulpes.api.LibVulpesItems;
+import zmaster587.libVulpes.api.material.AllowedProducts;
+import zmaster587.libVulpes.api.material.MaterialRegistry;
 
 public class ARAchivements  {
 
 	public static final Achievement moonLanding = new Achievement("achievement.AR.moonLanding", "moonLanding", -5, 1, AdvancedRocketryBlocks.blockMoonTurf, null).initIndependentStat().registerStat();
 	public static final Achievement oneSmallStep = new Achievement("achievement.AR.oneSmallStep", "oneSmallStep", -4, -1, AdvancedRocketryBlocks.blockMoonTurf, moonLanding).setSpecial().registerStat();
 	
-	public static final Achievement dilithiumCrystals = new Achievement("achievement.AR.dilithium", "dilithium", -2, 5, LibVulpes.materialRegistry.getItemStackFromMaterialAndType("Dilithium", AllowedProducts.getProductByName("CRYSTAL")), null).initIndependentStat().registerStat();
+	public static final Achievement dilithiumCrystals = new Achievement("achievement.AR.dilithium", "dilithium", -2, 5, MaterialRegistry.getItemStackFromMaterialAndType("Dilithium", AllowedProducts.getProductByName("CRYSTAL")), null).initIndependentStat().registerStat();
 	public static final Achievement warp = new Achievement("achievement.AR.warp", "warp", -2, 3, AdvancedRocketryBlocks.blockWarpCore, dilithiumCrystals).registerStat();
 	//public static final Achievement spaceStation = new Achievement("achievement.AR.spaceStation", "spaceStation", -2, -5, AdvancedRocketryItems.itemSpaceStation, dilithiumCrystals).registerStat();
 	

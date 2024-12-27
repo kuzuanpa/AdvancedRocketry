@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockCharcoalLog extends BlockLog {
 
@@ -19,7 +20,7 @@ public class BlockCharcoalLog extends BlockLog {
 	}
 	
 	@Override
-	public void registerBlockIcons(IIconRegister icon) {
+	public void registerBlockIcons(@NotNull IIconRegister icon) {
 		topIcon = icon.registerIcon("advancedrocketry:log_charcoal_top");
 		sideIcon = icon.registerIcon("advancedrocketry:log_charcoal");
 	}

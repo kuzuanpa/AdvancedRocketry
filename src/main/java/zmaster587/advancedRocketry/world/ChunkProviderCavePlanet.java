@@ -9,6 +9,8 @@ import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.Ev
 import java.util.List;
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.world.decoration.MapGenHighCaves;
@@ -62,7 +64,8 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 	/** Holds the noise used to determine whether something other than netherrack can be generated at a location */
 	private double[] netherrackExclusivityNoise = new double[256];
 	private MapGenBase netherCaveGenerator = new MapGenCavesHell();
-	MapGenBase genHighCaves = new MapGenHighCaves();
+	@NotNull
+    MapGenBase genHighCaves = new MapGenHighCaves();
 	private MapGenBase genRavines = new MapGenMassiveRavine();
 	double[] noiseData1;
 	double[] noiseData2;
@@ -523,7 +526,7 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 	        return "HellRandomLevelSource";
 	    }
 
-	    public ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
+	    public @Nullable ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
 	    {
 	        return null;
 	    }

@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.network.PacketStationUpdate;
@@ -28,8 +29,8 @@ import zmaster587.libVulpes.util.INetworkMachine;
 
 public class TileStationOrientationControl extends TileEntity implements IModularInventory, INetworkMachine, ISliderBar {
 
-	int numRotationsPerHour[];
-	int progress[];
+	int[] numRotationsPerHour;
+	int[] progress;
 
 	private ModuleText moduleAngularVelocity, numThrusters, maxAngularAcceleration, targetRotations;
 
@@ -47,7 +48,7 @@ public class TileStationOrientationControl extends TileEntity implements IModula
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 		modules.add(moduleAngularVelocity);
 		//modules.add(numThrusters);
 		//modules.add(maxAngularAcceleration);
@@ -93,7 +94,7 @@ public class TileStationOrientationControl extends TileEntity implements IModula
 				boolean update = false;
 
 				if(object != null) {
-					ForgeDirection dirs[] = { ForgeDirection.EAST, ForgeDirection.UP, ForgeDirection.NORTH };
+					ForgeDirection[] dirs = { ForgeDirection.EAST, ForgeDirection.UP, ForgeDirection.NORTH };
 					for(int i = 0; i < 3; i++) {
 						double targetAngularVelocity = numRotationsPerHour[i]/72000D;
 						double angVel = object.getDeltaRotation(dirs[i]);
@@ -128,7 +129,7 @@ public class TileStationOrientationControl extends TileEntity implements IModula
 		}
 	}
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "tile.orientationControl.name";
 	}
 
@@ -171,7 +172,7 @@ public class TileStationOrientationControl extends TileEntity implements IModula
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		numRotationsPerHour[0] = nbt.getShort("numRotationsX");
 		progress[0] = numRotationsPerHour[0] + getTotalProgress(0)/2;

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -70,7 +72,7 @@ public class ClassTransformer implements IClassTransformer {
 	private static final String FIELD_HASMOVED = "net.minecraft.network.NetHandlerPlayServer.hasMoved";
 	private static final String FIELD_RIDINGENTITY = "net.minecraft.entity.Entity.ridingEntity";
 	private static final String FIELD_PROVIDER = CLASS_KEY_WORLD + "provider";
-	private static final HashMap<String, SimpleEntry<String, String>> entryMap = new HashMap<String, SimpleEntry<String, String>>();
+	private static final HashMap<String, SimpleEntry<String, String>> entryMap = new HashMap<>();
 
 
 	private static boolean obf;
@@ -93,49 +95,49 @@ public class ClassTransformer implements IClassTransformer {
 
 		obf = !(boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
 		//TODO: obf names
-		entryMap.put(CLASS_KEY_ENTITYRENDERER, new SimpleEntry<String, String>("net/minecraft/client/renderer/EntityRenderer", "blt"));
-		entryMap.put(CLASS_KEY_ENTITYLIVEINGBASE, new SimpleEntry<String, String>("net/minecraft/entity/EntityLivingBase", "sv"));
-		entryMap.put(CLASS_KEY_ENTITYLIVINGRENDERER, new SimpleEntry<String, String>("net/minecraft/client/renderer/entity/RendererLivingEntity", ""));
-		entryMap.put(CLASS_KEY_ENTITY, new SimpleEntry<String, String>("net/minecraft/entity/Entity","sa"));
-		entryMap.put(CLASS_KEY_ENTITY_PLAYER_SP, new SimpleEntry<String, String>("net/minecraft/client/entity/EntityPlayerSP",""));
-		entryMap.put(CLASS_KEY_ENTITY_PLAYER_MP, new SimpleEntry<String, String>("net/minecraft/entity/player/EntityPlayerMP",""));
-		entryMap.put(CLASS_KEY_ENTITY_PLAYER, new SimpleEntry<String, String>("net/minecraft/entity/player/EntityPlayer","yz"));
-		entryMap.put(CLASS_KEY_ENTITY_ITEM, new SimpleEntry<String, String>("net/minecraft/entity/item/EntityItem","xk"));
-		entryMap.put(CLASS_KEY_NETHANDLERPLAYSERVER, new SimpleEntry<String, String>("net/minecraft/network/NetHandlerPlayServer",""));
-		entryMap.put(CLASS_KEY_C03PACKETPLAYER, new SimpleEntry<String, String>("net/minecraft/network/play/client/C03PacketPlayer",""));
-		entryMap.put(CLASS_KEY_WORLD, new SimpleEntry<String, String>("net/minecraft/world/World","ahb"));
-		entryMap.put(CLASS_KEY_BLOCK, new SimpleEntry<String, String>("net/minecraft/block/Block","aji"));
-		entryMap.put(CLASS_KEY_BLOCK_BED, new SimpleEntry<String, String>("net/minecraft/block/BlockBed","ajh"));
-		entryMap.put(CLASS_KEY_WORLDPROVIDER, new SimpleEntry<String, String>("net/minecraft/world/WorldProvider","aqo"));
+		entryMap.put(CLASS_KEY_ENTITYRENDERER, new SimpleEntry<>("net/minecraft/client/renderer/EntityRenderer", "blt"));
+		entryMap.put(CLASS_KEY_ENTITYLIVEINGBASE, new SimpleEntry<>("net/minecraft/entity/EntityLivingBase", "sv"));
+		entryMap.put(CLASS_KEY_ENTITYLIVINGRENDERER, new SimpleEntry<>("net/minecraft/client/renderer/entity/RendererLivingEntity", ""));
+		entryMap.put(CLASS_KEY_ENTITY, new SimpleEntry<>("net/minecraft/entity/Entity", "sa"));
+		entryMap.put(CLASS_KEY_ENTITY_PLAYER_SP, new SimpleEntry<>("net/minecraft/client/entity/EntityPlayerSP", ""));
+		entryMap.put(CLASS_KEY_ENTITY_PLAYER_MP, new SimpleEntry<>("net/minecraft/entity/player/EntityPlayerMP", ""));
+		entryMap.put(CLASS_KEY_ENTITY_PLAYER, new SimpleEntry<>("net/minecraft/entity/player/EntityPlayer", "yz"));
+		entryMap.put(CLASS_KEY_ENTITY_ITEM, new SimpleEntry<>("net/minecraft/entity/item/EntityItem", "xk"));
+		entryMap.put(CLASS_KEY_NETHANDLERPLAYSERVER, new SimpleEntry<>("net/minecraft/network/NetHandlerPlayServer", ""));
+		entryMap.put(CLASS_KEY_C03PACKETPLAYER, new SimpleEntry<>("net/minecraft/network/play/client/C03PacketPlayer", ""));
+		entryMap.put(CLASS_KEY_WORLD, new SimpleEntry<>("net/minecraft/world/World", "ahb"));
+		entryMap.put(CLASS_KEY_BLOCK, new SimpleEntry<>("net/minecraft/block/Block", "aji"));
+		entryMap.put(CLASS_KEY_BLOCK_BED, new SimpleEntry<>("net/minecraft/block/BlockBed", "ajh"));
+		entryMap.put(CLASS_KEY_WORLDPROVIDER, new SimpleEntry<>("net/minecraft/world/WorldProvider", "aqo"));
 
-		entryMap.put(METHOD_KEY_PROCESSPLAYER, new SimpleEntry<String, String>("processPlayer",""));
-		entryMap.put(METHOD_KEY_MOVEENTITY, new SimpleEntry<String, String>("moveEntity",""));
-		entryMap.put(METHOD_KEY_SETPOSITION, new SimpleEntry<String, String>("setPosition",""));
-		entryMap.put(METHOD_KEY_GETLOOKVEC, new SimpleEntry<String, String>("getLook", ""));
-		entryMap.put(METHOD_KEY_DORENDER, new SimpleEntry<String, String>("doRender",""));
-		entryMap.put(METHOD_KEY_MOVEENTITYWITHHEADING, new SimpleEntry<String, String>("moveEntityWithHeading","e"));
-		entryMap.put(METHOD_KEY_MOVEFLYING, new SimpleEntry<String, String>("moveFlying",""));
-		entryMap.put(METHOD_KEY_ONLIVINGUPDATE, new SimpleEntry<String, String>("onLivingUpdate","e"));
-		entryMap.put(METHOD_KEY_ONUPDATE, new SimpleEntry<String, String>("onUpdate","h"));
-		entryMap.put(METHOD_KEY_MOUNTENTITY, new SimpleEntry<String, String>("mountEntity", "a"));
-		entryMap.put(METHOD_KEY_JUMP, new SimpleEntry<String, String>("jump",""));
-		entryMap.put(METHOD_KEY_SETBLOCK, new SimpleEntry<String, String>("setBlock", "d"));
-		entryMap.put(METHOD_KEY_SETBLOCKMETADATAWITHNOTIFY, new SimpleEntry<String, String>("setBlockMetadataWithNotify", "a"));
-		entryMap.put(METHOD_KEY_ONBLOCKACTIVATED,  new SimpleEntry<String, String>("onBlockActivated", "a"));
+		entryMap.put(METHOD_KEY_PROCESSPLAYER, new SimpleEntry<>("processPlayer", ""));
+		entryMap.put(METHOD_KEY_MOVEENTITY, new SimpleEntry<>("moveEntity", ""));
+		entryMap.put(METHOD_KEY_SETPOSITION, new SimpleEntry<>("setPosition", ""));
+		entryMap.put(METHOD_KEY_GETLOOKVEC, new SimpleEntry<>("getLook", ""));
+		entryMap.put(METHOD_KEY_DORENDER, new SimpleEntry<>("doRender", ""));
+		entryMap.put(METHOD_KEY_MOVEENTITYWITHHEADING, new SimpleEntry<>("moveEntityWithHeading", "e"));
+		entryMap.put(METHOD_KEY_MOVEFLYING, new SimpleEntry<>("moveFlying", ""));
+		entryMap.put(METHOD_KEY_ONLIVINGUPDATE, new SimpleEntry<>("onLivingUpdate", "e"));
+		entryMap.put(METHOD_KEY_ONUPDATE, new SimpleEntry<>("onUpdate", "h"));
+		entryMap.put(METHOD_KEY_MOUNTENTITY, new SimpleEntry<>("mountEntity", "a"));
+		entryMap.put(METHOD_KEY_JUMP, new SimpleEntry<>("jump", ""));
+		entryMap.put(METHOD_KEY_SETBLOCK, new SimpleEntry<>("setBlock", "d"));
+		entryMap.put(METHOD_KEY_SETBLOCKMETADATAWITHNOTIFY, new SimpleEntry<>("setBlockMetadataWithNotify", "a"));
+		entryMap.put(METHOD_KEY_ONBLOCKACTIVATED, new SimpleEntry<>("onBlockActivated", "a"));
 
-		entryMap.put(FIELD_YAW, new SimpleEntry<String, String>("rotationYaw", "blt"));
-		entryMap.put(FIELD_PITCH, new SimpleEntry <String, String>("rotationPitch", "blt"));
-		entryMap.put(FIELD_PREV_YAW, new SimpleEntry<String, String>("prevRotationYaw", "blt"));
-		entryMap.put(FIELD_PREV_PITCH, new SimpleEntry<String, String>("prevRotationPitch", "blt"));
-		entryMap.put(FIELD_PLAYERENTITY, new SimpleEntry<String, String>("playerEntity", ""));
-		entryMap.put(FIELD_HASMOVED, new SimpleEntry<String, String>("hasMoved", ""));
-		entryMap.put(FIELD_RIDINGENTITY, new SimpleEntry<String,String>("ridingEntity", "m"));
-		entryMap.put(FIELD_PROVIDER, new SimpleEntry<String,String>("provider", "t"));
+		entryMap.put(FIELD_YAW, new SimpleEntry<>("rotationYaw", "blt"));
+		entryMap.put(FIELD_PITCH, new SimpleEntry<>("rotationPitch", "blt"));
+		entryMap.put(FIELD_PREV_YAW, new SimpleEntry<>("prevRotationYaw", "blt"));
+		entryMap.put(FIELD_PREV_PITCH, new SimpleEntry<>("prevRotationPitch", "blt"));
+		entryMap.put(FIELD_PLAYERENTITY, new SimpleEntry<>("playerEntity", ""));
+		entryMap.put(FIELD_HASMOVED, new SimpleEntry<>("hasMoved", ""));
+		entryMap.put(FIELD_RIDINGENTITY, new SimpleEntry<>("ridingEntity", "m"));
+		entryMap.put(FIELD_PROVIDER, new SimpleEntry<>("provider", "t"));
 	}
 
 	@Override
-	public byte[] transform(String name, String transformedName,
-			byte[] bytes) {
+	public byte[] transform(@NotNull String name, String transformedName,
+							byte[] bytes) {
 
 
 		//Vanilla deobf
@@ -667,12 +669,12 @@ public class ClassTransformer implements IClassTransformer {
 		if(changedName.equals(getName(CLASS_KEY_ENTITY_ITEM))) {
 			ClassNode cn = startInjection(bytes);
 
-			MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
+			@Nullable MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
 
 			if(onUpdate != null) {
-				final InsnList nodeAdd = new InsnList();
+				final @NotNull InsnList nodeAdd = new InsnList();
 				AbstractInsnNode pos = null;
-				List<AbstractInsnNode> removeNodes = new LinkedList<AbstractInsnNode>();
+				List<AbstractInsnNode> removeNodes = new LinkedList<>();
 				int numALoadsInARow = 0;
 				int firstALoadIndex = 0;
 				AbstractInsnNode ain;
@@ -721,7 +723,7 @@ public class ClassTransformer implements IClassTransformer {
 			if(moveEntityWithHeading != null) {
 				final InsnList nodeAdd = new InsnList();
 				AbstractInsnNode pos = null;
-				List<AbstractInsnNode> removeNodes = new LinkedList<AbstractInsnNode>();
+				List<AbstractInsnNode> removeNodes = new LinkedList<>();
 
 				for(int i = moveEntityWithHeading.instructions.size() - 1; i >= 0; i--) {
 					AbstractInsnNode ain = moveEntityWithHeading.instructions.get(i);
@@ -818,7 +820,7 @@ public class ClassTransformer implements IClassTransformer {
 		return bytes;
 	}
 
-	private ClassNode startInjection(byte[] bytes) {
+	private @NotNull ClassNode startInjection(byte[] bytes) {
 		final ClassNode node = new ClassNode();
 		final ClassReader reader = new ClassReader(bytes);
 		reader.accept(node, 0);
@@ -832,7 +834,7 @@ public class ClassTransformer implements IClassTransformer {
 		return writer.toByteArray();
 	}
 
-	private MethodNode getMethod(ClassNode node, String name, String sig) {
+	private @Nullable MethodNode getMethod(ClassNode node, String name, String sig) {
 		for(MethodNode methodNode : node.methods) {
 			if(methodNode.name.equals(name) && methodNode.desc.equals(sig))
 				return methodNode;

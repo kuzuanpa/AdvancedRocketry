@@ -2,6 +2,8 @@ package zmaster587.advancedRocketry.api.satellite;
 
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.ISatelliteIdItem;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
@@ -28,8 +30,10 @@ public abstract class SatelliteBase {
 		isDead = false;
 	}
 	
-	public boolean acceptsItemInConstruction(ItemStack item) {
-		int flag = SatelliteRegistry.getSatelliteProperty(item).getPropertyFlag();
+	public boolean acceptsItemInConstruction(@NotNull ItemStack item) {
+		SatelliteProperties satelliteProperties = SatelliteRegistry.getSatelliteProperty(item);
+		if(satelliteProperties == null)return false;
+		int flag = satelliteProperties.getPropertyFlag();
 		return SatelliteProperties.Property.MAIN.isOfType(flag);
 	}
 	
@@ -37,7 +41,7 @@ public abstract class SatelliteBase {
 	 * Gets status info eg "Moving into position" or "Ready" or "68% damaged"
 	 * @return Human-readable Information about the satellite (supports \n for newline)
 	 */
-	public abstract String getInfo(World world);
+	public abstract @Nullable String getInfo(World world);
 	
 	/**
 	 * Gets the human-readable display name of the satellite
@@ -106,7 +110,7 @@ public abstract class SatelliteBase {
 	 * Does not currently support dimension change
 	 * @param world World of which to assign to the satellite
 	 */
-	public void setDimensionId(World world) {
+	public void setDimensionId(@NotNull World world) {
 		int newId = world.provider.dimensionId;
 		if(dimId != -1) {
 			//TODO: handle dim change
@@ -160,7 +164,7 @@ public abstract class SatelliteBase {
 		
 	}
 	
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		satelliteProperties.readFromNBT(nbt.getCompoundTag("properties"));
 		dimId = nbt.getInteger("dimId");
 		satellite = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("item"));

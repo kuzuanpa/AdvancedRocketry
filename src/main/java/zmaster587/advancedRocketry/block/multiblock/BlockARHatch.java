@@ -12,6 +12,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.tile.hatch.TileDataBus;
 import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
 import zmaster587.advancedRocketry.tile.infrastructure.TileGuidanceComputerHatch;
@@ -24,7 +25,7 @@ import zmaster587.libVulpes.tile.TilePointer;
 
 public class BlockARHatch extends BlockHatch {
 
-	public BlockARHatch(Material material) {
+	public BlockARHatch(@NotNull Material material) {
 		super(material);
 	}
 
@@ -83,7 +84,7 @@ public class BlockARHatch extends BlockHatch {
 	
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs tab,
-			List list) {
+                             @NotNull List list) {
 		list.add(new ItemStack(item, 1, 0));
 		list.add(new ItemStack(item, 1, 1));
 		list.add(new ItemStack(item, 1, 2));

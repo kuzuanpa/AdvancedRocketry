@@ -31,7 +31,7 @@ public class GenLayerBiomePlanet extends GenLayer {
 
 		this.parent = p_i2122_3_;
 
-		biomeEntries = new ArrayList<BiomeManager.BiomeEntry>();
+		biomeEntries = new ArrayList<>();
 
 	}
 

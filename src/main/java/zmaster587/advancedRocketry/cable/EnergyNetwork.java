@@ -1,16 +1,16 @@
 package zmaster587.advancedRocketry.cable;
 
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Map.Entry;
-
-import zmaster587.libVulpes.api.IUniversalEnergy;
-import zmaster587.libVulpes.util.UniversalBattery;
-import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.libVulpes.api.IUniversalEnergy;
+import zmaster587.libVulpes.util.UniversalBattery;
+
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Random;
 
 public class EnergyNetwork extends CableNetwork implements IUniversalEnergy {
 
@@ -25,14 +25,14 @@ public class EnergyNetwork extends CableNetwork implements IUniversalEnergy {
 	 * Create a new network and get an ID
 	 * @return ID of this new network
 	 */
-	public static EnergyNetwork initNetwork() {
+	public static @NotNull EnergyNetwork initNetwork() {
 		Random random = new Random(System.currentTimeMillis());
 
 		int id = random.nextInt();
 
-		while(usedIds.contains(id)){ id = random.nextInt(); };
+		while(usedIds.contains(id)){ id = random.nextInt(); }
 
-		EnergyNetwork net = new EnergyNetwork();
+        EnergyNetwork net = new EnergyNetwork();
 		usedIds.add(id);
 		net.networkID = id;
 
@@ -69,7 +69,7 @@ public class EnergyNetwork extends CableNetwork implements IUniversalEnergy {
 
 		while(sinkItr.hasNext()) {
 			//Get tile and key
-			Entry<TileEntity,ForgeDirection> obj = (Entry<TileEntity, ForgeDirection>)sinkItr.next();
+			Entry<TileEntity,ForgeDirection> obj = sinkItr.next();
 			IEnergyReceiver dataHandlerSink = (IEnergyReceiver) obj.getKey();
 
 			demand += dataHandlerSink.receiveEnergy(obj.getValue(), amount, true);
@@ -77,7 +77,7 @@ public class EnergyNetwork extends CableNetwork implements IUniversalEnergy {
 
 		while(sourceItr.hasNext()) {
 			//Get tile and key
-			Entry<TileEntity,ForgeDirection> obj = (Entry<TileEntity, ForgeDirection>)sourceItr.next();
+			Entry<TileEntity,ForgeDirection> obj = sourceItr.next();
 			IEnergyProvider dataHandlerSink = (IEnergyProvider) obj.getKey();
 
 			supply += dataHandlerSink.extractEnergy(obj.getValue(),amount, true);
@@ -90,7 +90,7 @@ public class EnergyNetwork extends CableNetwork implements IUniversalEnergy {
 
 
 			//Get tile and key
-			Entry<TileEntity,ForgeDirection> obj = (Entry<TileEntity, ForgeDirection>)sinkItr.next();
+			Entry<TileEntity,ForgeDirection> obj = sinkItr.next();
 			IEnergyReceiver dataHandlerSink = (IEnergyReceiver) obj.getKey();
 
 
@@ -103,7 +103,7 @@ public class EnergyNetwork extends CableNetwork implements IUniversalEnergy {
 		sourceItr = sources.iterator();
 		while(sourceItr.hasNext()) {
 			//Get tile and key
-			Entry<TileEntity,ForgeDirection> obj = (Entry<TileEntity, ForgeDirection>)sourceItr.next();
+			Entry<TileEntity,ForgeDirection> obj = sourceItr.next();
 			IEnergyProvider dataHandlerSink = (IEnergyProvider) obj.getKey();
 
 			amountMoved -= dataHandlerSink.extractEnergy(obj.getValue(),amountMoved, false);

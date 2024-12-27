@@ -5,22 +5,18 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.IRocketEngine;
 import zmaster587.libVulpes.block.BlockRotatableModel;
 import zmaster587.libVulpes.tile.TileModelRender;
-import zmaster587.libVulpes.tile.TileModelRenderRotatable;
-import zmaster587.libVulpes.util.ZUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockRocketMotor extends BlockRotatableModel implements IRocketEngine {
 
-	public BlockRocketMotor(Material mat) {
+	public BlockRocketMotor(@NotNull Material mat) {
 		super(mat,TileModelRender.models.ROCKET.ordinal());	
 	}
 	

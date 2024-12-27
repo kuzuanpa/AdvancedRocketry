@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.world.gen;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.block.BlockCrystal;
 import net.minecraft.block.Block;
@@ -18,8 +19,8 @@ public class WorldGenLargeCrystal extends WorldGenerator {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand,
-			int x, int y, int z) {
+	public boolean generate(@NotNull World world, Random rand,
+                            int x, int y, int z) {
 		Block fillerBlock = world.getBiomeGenForCoords(x, z).fillerBlock;
 
 		int height = rand.nextInt(40) + 10;

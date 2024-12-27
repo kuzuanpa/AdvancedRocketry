@@ -2,16 +2,13 @@ package zmaster587.advancedRocketry.client.render.multiblocks;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.common.util.ForgeDirection;
-
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
-
 import zmaster587.advancedRocketry.client.render.RenderLaser;
 import zmaster587.advancedRocketry.tile.multiblock.TileSpaceElevator;
 import zmaster587.libVulpes.block.RotatableBlock;
@@ -21,7 +18,7 @@ public class RendererSpaceElevator extends TileEntitySpecialRenderer {
 	
 	WavefrontObject model;
 
-	public ResourceLocation baseTexture =  new ResourceLocation("advancedRocketry:textures/models/spaceElevator.jpg");
+	public @NotNull ResourceLocation baseTexture =  new ResourceLocation("advancedRocketry:textures/models/spaceElevator.jpg");
 	RenderLaser laser;
 	
 	public RendererSpaceElevator() {
@@ -34,8 +31,8 @@ public class RendererSpaceElevator extends TileEntitySpecialRenderer {
 	}
 	
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x,
-			double y, double z, float f) {
+	public void renderTileEntityAt(@NotNull TileEntity tile, double x,
+                                   double y, double z, float f) {
 		TileSpaceElevator multiBlockTile = (TileSpaceElevator)tile;
 
 		if(!multiBlockTile.canRender())
@@ -44,7 +41,7 @@ public class RendererSpaceElevator extends TileEntitySpecialRenderer {
 		double renderX = x + multiBlockTile.getLandingLocationX() - multiBlockTile.xCoord;
 		double renderZ = z + multiBlockTile.getLandingLocationZ() - multiBlockTile.zCoord;
 		
-		laser.doRender((Entity)null, renderX - .5, y+2.5, renderZ - .5, 0, f);
+		laser.doRender(null, renderX - .5, y+2.5, renderZ - .5, 0, f);
 
 		GL11.glPushMatrix();
 

@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.util;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.dimension.DimensionProperties.AtmosphereTypes;
 import zmaster587.advancedRocketry.dimension.DimensionProperties.Temps;
@@ -20,7 +21,7 @@ public class OreGenProperties {
 	private static OreGenProperties[][] oreGenPropertyMap = new OreGenProperties[DimensionProperties.AtmosphereTypes.values().length][DimensionProperties.Temps.values().length];
 	
 	public OreGenProperties() {
-		oreEntries = new LinkedList<OreGenProperties.OreEntry>();
+		oreEntries = new LinkedList<>();
 	}
 	
 	public void addEntry(BlockMeta state, int minHeight, int maxHeight, int clumpSize, int chancePerChunk) {
@@ -41,12 +42,12 @@ public class OreGenProperties {
 			oreGenPropertyMap[i][temp.ordinal()] = properties;
 	}
 	
-	public static void setOresForPressure(AtmosphereTypes atmType, OreGenProperties properties) {
+	public static void setOresForPressure(@NotNull AtmosphereTypes atmType, OreGenProperties properties) {
 		for(int i = 0; i < Temps.values().length; i++)
 			oreGenPropertyMap[atmType.ordinal()][i] = properties;
 	}
 	
-	public static void setOresForPressureAndTemp(AtmosphereTypes atmType, Temps temp, OreGenProperties properties) {
+	public static void setOresForPressureAndTemp(AtmosphereTypes atmType, @NotNull Temps temp, OreGenProperties properties) {
 		oreGenPropertyMap[atmType.ordinal()][temp.ordinal()] = properties;
 	}
 	

@@ -89,6 +89,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.jetbrains:annotations:24.0.1'
     
     //If for whatever reason gradle complains of "unable to find valid certification path to requested target"
     //Just download https://ci.micdoodle8.com/job/Galacticraft-1.7/lastSuccessfulBuild/artifact/Forge/build/libs/GalacticraftCore-1.7-3.0.12.474.jar and stick in in AdvancedRocketry/libs and comment out the following line

@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.client.render.entity;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -25,8 +26,8 @@ public class RenderStarUIEntity extends RenderPlanetUIEntity {
 	}
 
 	@Override
-	public void doRender(Entity entity, double x, double y, double z,
-			float entityYaw, float partialTicks) {
+	public void doRender(@NotNull Entity entity, double x, double y, double z,
+                         float entityYaw, float partialTicks) {
 		
 		EntityUIStar starEntity = (EntityUIStar)entity;
 		
@@ -67,7 +68,7 @@ public class RenderStarUIEntity extends RenderPlanetUIEntity {
 
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		float myTime = ((entity.worldObj.getTotalWorldTime() & 0xF)/16f);
+		float myTime;
 		
 		for(int i = 0; i < 4; i++ ) {
 			myTime = ((i*4 + entity.worldObj.getTotalWorldTime() & 0xF)/16f);

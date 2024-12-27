@@ -1,14 +1,13 @@
 package zmaster587.advancedRocketry.entity.fx;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 
 public class OxygenTraceFX extends EntityFX {
 	public static final ResourceLocation icon = new ResourceLocation("advancedrocketry:textures/particle/softround.png");
@@ -27,8 +26,7 @@ public class OxygenTraceFX extends EntityFX {
 	        this.particleGreen = .7F + chroma;
 	        this.particleBlue = .9f;
 	        this.setSize(0.001F, 0.001F);
-	        this.particleScale = (float)(this.rand.nextFloat() * 0.6F + 6F);
-	        this.motionX = motx;
+        this.motionX = motx;
 	        this.motionY = moty;
 	        this.motionZ = motz;
 	        this.particleMaxAge = (int)(100.0D);
@@ -42,9 +40,9 @@ public class OxygenTraceFX extends EntityFX {
 		}
 		
 		@Override
-		public void renderParticle(Tessellator tess, float x1,
-				float y1, float z1, float x2,
-				float y2, float z2) {
+		public void renderParticle(@NotNull Tessellator tess, float x1,
+                                   float y1, float z1, float x2,
+                                   float y2, float z2) {
 			
 			Minecraft.getMinecraft().getTextureManager().bindTexture(icon);
 			
@@ -62,10 +60,10 @@ public class OxygenTraceFX extends EntityFX {
 	        
 	        tess.setColorRGBA_F(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
 	        
-	        tess.addVertexWithUV((double)(f11 - y1 * f10 - y2 * f10), (double)(f12 - z1 * f10), (double)(f13 - x2 * f10 - z2 * f10), 1, 1);
-	        tess.addVertexWithUV((double)(f11 - y1 * f10 + y2 * f10), (double)(f12 + z1 * f10), (double)(f13 - x2 * f10 + z2 * f10), 1, 0);
-	        tess.addVertexWithUV((double)(f11 + y1 * f10 + y2 * f10), (double)(f12 + z1 * f10), (double)(f13 + x2 * f10 + z2 * f10), 0, 0);
-	        tess.addVertexWithUV((double)(f11 + y1 * f10 - y2 * f10), (double)(f12 - z1 * f10), (double)(f13 + x2 * f10 - z2 * f10), 0, 1);
+	        tess.addVertexWithUV(f11 - y1 * f10 - y2 * f10, f12 - z1 * f10, f13 - x2 * f10 - z2 * f10, 1, 1);
+	        tess.addVertexWithUV(f11 - y1 * f10 + y2 * f10, f12 + z1 * f10, f13 - x2 * f10 + z2 * f10, 1, 0);
+	        tess.addVertexWithUV(f11 + y1 * f10 + y2 * f10, f12 + z1 * f10, f13 + x2 * f10 + z2 * f10, 0, 0);
+	        tess.addVertexWithUV(f11 + y1 * f10 - y2 * f10, f12 - z1 * f10, f13 + x2 * f10 - z2 * f10, 0, 1);
 	        //GL11.glEnable(GL11.GL_BLEND);
 	        
 			GL11.glPopMatrix();
@@ -83,7 +81,7 @@ public class OxygenTraceFX extends EntityFX {
 	        this.prevPosZ = this.posZ;
 	        
 	        //Change color and alpha over lifespan
-	        this.particleAlpha = 1f*MathHelper.sin((float)Math.PI*(this.particleAge)/ (float)(this.particleMaxAge));
+	        this.particleAlpha = MathHelper.sin((float) Math.PI * (this.particleAge) / (float) (this.particleMaxAge));
 	        this.particleScale = 0.5f*MathHelper.sin((float)Math.PI*(this.particleAge)/ (float)(this.particleMaxAge));
 	        
 	        this.motionX *= 1.01;

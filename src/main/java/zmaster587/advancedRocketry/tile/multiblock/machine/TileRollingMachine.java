@@ -1,8 +1,5 @@
 package zmaster587.advancedRocketry.tile.multiblock.machine;
 
-import java.util.List;
-import java.util.Set;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -14,25 +11,25 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.api.LibVulpesBlocks;
 import zmaster587.libVulpes.api.material.AllowedProducts;
 import zmaster587.libVulpes.api.material.Material;
 import zmaster587.libVulpes.api.material.MaterialRegistry;
-import zmaster587.libVulpes.block.BlockMeta;
 import zmaster587.libVulpes.interfaces.IRecipe;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
 import zmaster587.libVulpes.inventory.modules.ModuleProgress;
 import zmaster587.libVulpes.recipe.RecipesMachine;
 import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 
+import java.util.List;
+
 public class TileRollingMachine extends TileMultiblockMachine {
 
-	public static final Object structure[][][] = new Object[][][] { 
+	public static final Object[][][] structure = new Object[][][] {
 		{   {'c', null, Blocks.air, Blocks.air},
 			{'I', Blocks.air, LibVulpesBlocks.blockStructureBlock, Blocks.air},
 			{'I', Blocks.air, LibVulpesBlocks.blockStructureBlock, Blocks.air}},
@@ -52,7 +49,7 @@ public class TileRollingMachine extends TileMultiblockMachine {
 	}
 	
 	@Override
-	public Object[][][] getStructure() {
+	public  @NotNull Object[][][] getStructure() {
 		return structure;
 	}
 
@@ -117,12 +114,12 @@ public class TileRollingMachine extends TileMultiblockMachine {
 	}
 
 	@Override
-	public String getMachineName() {
+	public @NotNull String getMachineName() {
 		return "tile.rollingMachine.name";
 	}
 
 	@Override
-	public AxisAlignedBB getRenderBoundingBox() {
+	public @NotNull AxisAlignedBB getRenderBoundingBox() {
 		return AxisAlignedBB.getBoundingBox(xCoord -4, yCoord -4, zCoord -4, xCoord + 4, yCoord + 4, zCoord + 4);
 	}
 

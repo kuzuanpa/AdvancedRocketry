@@ -4,6 +4,7 @@ import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.libVulpes.items.ItemIngredient;
 import net.minecraft.client.resources.I18n;
@@ -34,7 +35,7 @@ public class ItemData extends ItemIngredient {
 		return getDataStorage(stack).getData();
 	}
 	
-	public DataStorage.DataType getDataType(ItemStack stack) {
+	public DataStorage.DataType getDataType(@NotNull ItemStack stack) {
 		return getDataStorage(stack).getDataType();
 	}
 	
@@ -54,7 +55,7 @@ public class ItemData extends ItemIngredient {
 	}
 
 	public int addData(ItemStack item, int amount, DataStorage.DataType dataType) {
-		DataStorage data = getDataStorage(item);
+		@NotNull DataStorage data = getDataStorage(item);
 
 		int amt = data.addData(amount, dataType, true);
 
@@ -65,7 +66,7 @@ public class ItemData extends ItemIngredient {
 		return amt;
 	}
 
-	public int removeData(ItemStack item, int amount, DataStorage.DataType dataType) {
+	public int removeData(@NotNull ItemStack item, int amount, DataStorage.DataType dataType) {
 		DataStorage data = getDataStorage(item);
 
 		int amt = data.removeData(amount, true);
@@ -90,7 +91,7 @@ public class ItemData extends ItemIngredient {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player,
-			List list, boolean bool) {
+                               @NotNull List list, boolean bool) {
 		super.addInformation(stack, player, list, bool);
 
 		DataStorage data = getDataStorage(stack);

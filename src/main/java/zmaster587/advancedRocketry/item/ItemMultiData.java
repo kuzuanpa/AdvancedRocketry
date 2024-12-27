@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.advancedRocketry.world.util.MultiData;
 
@@ -38,7 +39,7 @@ public class ItemMultiData extends Item {
 		return getDataStorage(stack).getDataAmount(type);
 	}
 	
-	public int getMaxData(ItemStack stack) {
+	public int getMaxData(@NotNull ItemStack stack) {
 		return getDataStorage(stack).getMaxData();
 	}
 
@@ -78,7 +79,7 @@ public class ItemMultiData extends Item {
 		return amt;
 	}
 
-	public int removeData(ItemStack item, int amount, DataStorage.DataType dataType) {
+	public int removeData(@NotNull ItemStack item, int amount, DataStorage.DataType dataType) {
 		MultiData data = getDataStorage(item);
 
 		int amt = data.extractData(amount, dataType, ForgeDirection.UNKNOWN, true);
@@ -96,7 +97,7 @@ public class ItemMultiData extends Item {
 	}
 
 	public void setData(ItemStack item, int amount, DataStorage.DataType dataType) {
-		MultiData data = getDataStorage(item);
+		@NotNull MultiData data = getDataStorage(item);
 
 		data.setDataAmount(amount, dataType);
 

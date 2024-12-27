@@ -1,7 +1,5 @@
 package zmaster587.advancedRocketry.entity.fx;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
@@ -54,16 +52,11 @@ public class FxElectricArc  extends EntityFX {
 	private void render(Tessellator tess,float x, float y, float z, float scale,
 			float rotX, float rotXZ, float rotZ,
 			float rotYZ, float rotXY, float shearX) {
-		
-        tess.addVertexWithUV((double)( x - scale * (rotX + rotYZ)), (double)(y - rotXZ * scale), (double)(z - rotZ * scale - rotXY * scale), 1, 1);
-        tess.addVertexWithUV((double)( x + scale * (rotYZ - rotX)), (double)(y + rotXZ * scale), (double)(z - rotZ * scale + rotXY * scale), 1, 0);
-        tess.addVertexWithUV((double)( x + scale * (rotX + rotYZ)), (double)(y + rotXZ * scale), (double)(z + rotZ * scale + rotXY * scale), 0, 0);
-        tess.addVertexWithUV((double)( x + scale * (rotX - rotYZ)), (double)(y - rotXZ * scale), (double)(z + rotZ * scale - rotXY * scale), 0, 1);
-	}
-	
-	@Override
-	public int getFXLayer() {
-		return 0;
+
+		tess.addVertexWithUV(x - scale * (rotX + rotYZ), y - rotXZ * scale, z - rotZ * scale - rotXY * scale, 1, 1);
+		tess.addVertexWithUV(x + scale * (rotYZ - rotX), y + rotXZ * scale, z - rotZ * scale + rotXY * scale, 1, 0);
+		tess.addVertexWithUV(x + scale * (rotX + rotYZ), y + rotXZ * scale, z + rotZ * scale + rotXY * scale, 0, 0);
+		tess.addVertexWithUV(x + scale * (rotX - rotYZ), y - rotXZ * scale, z + rotZ * scale - rotXY * scale, 0, 1);
 	}
 	
 	@Override

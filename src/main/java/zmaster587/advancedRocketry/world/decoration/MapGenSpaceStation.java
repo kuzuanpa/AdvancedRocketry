@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.world.decoration;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -7,7 +8,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class MapGenSpaceStation {
 	
-	public static void generateStation(World world, int blockX, int blockY, int blockZ) {
+	public static void generateStation(@NotNull World world, int blockX, int blockY, int blockZ) {
 		
 		//Center
 		world.setBlock(blockX, blockY, blockZ, AdvancedRocketryBlocks.blockConcrete, 0, 6);

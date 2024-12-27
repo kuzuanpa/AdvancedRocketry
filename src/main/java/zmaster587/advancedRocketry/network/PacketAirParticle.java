@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.entity.fx.FxLaserHeat;
 import zmaster587.advancedRocketry.entity.fx.OxygenCloudFX;
@@ -33,7 +34,7 @@ public class PacketAirParticle extends BasePacket {
 	}
 
 	@Override
-	public void readClient(ByteBuf in) {
+	public void readClient(@NotNull ByteBuf in) {
 		toPos = new BlockPosition(in.readInt(), in.readInt(), in.readInt());
 	}
 

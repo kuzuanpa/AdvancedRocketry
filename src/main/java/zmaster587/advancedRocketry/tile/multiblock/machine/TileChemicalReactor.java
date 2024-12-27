@@ -19,6 +19,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryAPI;
 import zmaster587.advancedRocketry.api.AdvancedRocketryFluids;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
@@ -44,7 +45,7 @@ public class TileChemicalReactor extends TileMultiblockMachine {
 	};
 
 	@Override
-	public boolean shouldHideBlock(World world, int x, int y, int z, Block tile) {
+	public boolean shouldHideBlock(@NotNull World world, int x, int y, int z, Block tile) {
 		TileEntity tileEntity = world.getTileEntity(x, y, z);
 		
 		return !TileMultiBlock.getMapping('P').contains(new BlockMeta(tile, BlockMeta.WILDCARD)) && tileEntity != null && !(tileEntity instanceof TileChemicalReactor);
@@ -80,7 +81,7 @@ public class TileChemicalReactor extends TileMultiblockMachine {
 		if(flag && getOutputs() == null) {
 			if(enabled && (recipe = getRecipe(getMachineRecipeList())) != null && canProcessRecipe(recipe)) {
 				consumeItemsSpecial(recipe);
-				setOutputFluids(new LinkedList<FluidStack>());
+				setOutputFluids(new LinkedList<>());
 				powerPerTick = (int)Math.ceil((getPowerMultiplierForRecipe(recipe)*recipe.getPower()));
 				completionTime = Math.max((int)(getTimeMultiplierForRecipe(recipe)*recipe.getTime()), 1);
 
@@ -120,7 +121,7 @@ public class TileChemicalReactor extends TileMultiblockMachine {
 							if(stack2.getItem() instanceof ItemArmor)
 							{
 								stack2.addEnchantment(AdvancedRocketryAPI.enchantmentSpaceProtection, 1);
-								List<ItemStack> list = new LinkedList<ItemStack>();
+								List<ItemStack> list = new LinkedList<>();
 								list.add(stack2);
 								setOutputs(list);
 							}
@@ -162,7 +163,7 @@ public class TileChemicalReactor extends TileMultiblockMachine {
 	}
 
 	@Override
-	public ResourceLocation getSound() {
+	public @NotNull ResourceLocation getSound() {
 		return TextureResources.sndRollingMachine;
 	}
 
@@ -177,7 +178,7 @@ public class TileChemicalReactor extends TileMultiblockMachine {
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
 		List<ModuleBase> modules = super.getModules(ID, player);
 
 		modules.add(new ModuleProgress(100, 4, 0, TextureResources.crystallizerProgressBar, this));

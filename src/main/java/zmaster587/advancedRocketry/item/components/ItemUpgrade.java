@@ -23,7 +23,7 @@ import zmaster587.libVulpes.items.ItemIngredient;
 
 public class ItemUpgrade extends ItemIngredient implements IArmorComponent {
 
-	ResourceIcon icon[];
+	ResourceIcon[] icon;
 	private int legUpgradeDamage = 2;
 	private int bootsUpgradeDamage = 3;
 	Field walkSpeed;

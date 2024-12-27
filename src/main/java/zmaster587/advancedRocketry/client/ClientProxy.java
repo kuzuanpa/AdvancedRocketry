@@ -15,6 +15,7 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
@@ -99,7 +100,6 @@ import zmaster587.libVulpes.inventory.modules.ModuleContainerPan;
 import zmaster587.libVulpes.tile.TileModelRender;
 import zmaster587.libVulpes.tile.TileModelRenderRotatable;
 import zmaster587.libVulpes.tile.TileSchematic;
-import zmaster587.libVulpes.util.Vector3F;
 
 public class ClientProxy extends CommonProxy {
 
@@ -180,7 +180,7 @@ public class ClientProxy extends CommonProxy {
 	public void fireFogBurst(ISpaceObject station) {
 		try {
 		PlanetEventHandler.runBurst(Minecraft.getMinecraft().theWorld.getTotalWorldTime() + 20, 20);
-		} catch (NullPointerException e) {}
+		} catch (NullPointerException ignored) {}
 	}
 
 	@Override
@@ -201,41 +201,44 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void spawnParticle(String particle, World world, double x, double y, double z, double motionX, double motionY, double motionZ) {
-		if(particle == "rocketFlame") {
-			RocketFx fx = new RocketFx(world, x, y, z, motionX, motionY, motionZ);
-			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-		}
-		else if(particle == "smallRocketFlame") {
-			RocketFx fx = new RocketFx(world, x, y, z, motionX, motionY, motionZ, 0.25f);
-			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-		}
-		else if(particle == "rocketSmoke") {
-			TrailFx fx = new TrailFx(world, x, y, z, motionX, motionY, motionZ);
-			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-		}
-		else if(particle == "rocketSmokeInverse") {
-			InverseTrailFx fx = new InverseTrailFx(world, x, y, z, motionX, motionY, motionZ);
-			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-		}
-		else if(particle == "arc") {
-			FxElectricArc fx = new FxElectricArc(world, x, y, z, motionX);
-			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-		}
-		else if(particle == "smallLazer") {
-			FxSkyLaser fx = new FxSkyLaser(world, x, y, z);
-			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-		}
-		else if(particle == "errorBox") {
-			FxErrorBlock fx = new FxErrorBlock(world, x, y, z);
-			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-		}
-		else if(particle.equals("gravityEffect")) {
-			FxGravityEffect fx = new FxGravityEffect(world, x, y, z, motionX, motionY, motionZ);
-			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
-		}
-		else
-			world.spawnParticle(particle, x, y, z, motionX, motionY, motionZ);
+	public void spawnParticle(@NotNull String particle, World world, double x, double y, double z, double motionX, double motionY, double motionZ) {
+        switch (particle) {
+            case "rocketFlame": {
+                Minecraft.getMinecraft().effectRenderer.addEffect(new RocketFx(world, x, y, z, motionX, motionY, motionZ));
+                break;
+            }
+            case "smallRocketFlame": {
+                Minecraft.getMinecraft().effectRenderer.addEffect(new RocketFx(world, x, y, z, motionX, motionY, motionZ, 0.25f));
+                break;
+            }
+            case "rocketSmoke": {
+                Minecraft.getMinecraft().effectRenderer.addEffect(new TrailFx(world, x, y, z, motionX, motionY, motionZ));
+                break;
+            }
+            case "rocketSmokeInverse": {
+                Minecraft.getMinecraft().effectRenderer.addEffect(new InverseTrailFx(world, x, y, z, motionX, motionY, motionZ));
+                break;
+            }
+            case "arc": {
+                Minecraft.getMinecraft().effectRenderer.addEffect(new FxElectricArc(world, x, y, z, motionX));
+                break;
+            }
+            case "smallLazer": {
+                Minecraft.getMinecraft().effectRenderer.addEffect(new FxSkyLaser(world, x, y, z));
+                break;
+            }
+            case "errorBox": {
+                Minecraft.getMinecraft().effectRenderer.addEffect(new FxErrorBlock(world, x, y, z));
+                break;
+            }
+            case "gravityEffect": {
+                Minecraft.getMinecraft().effectRenderer.addEffect(new FxGravityEffect(world, x, y, z, motionX, motionY, motionZ));
+                break;
+            }
+            default:
+                world.spawnParticle(particle, x, y, z, motionX, motionY, motionZ);
+                break;
+        }
 	}
 
 
@@ -279,7 +282,7 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	@Override
-	public void loadUILayout(Configuration config) {
+	public void loadUILayout(@NotNull Configuration config) {
 		final String CLIENT = "Client";
 		
 		zmaster587.advancedRocketry.api.Configuration.lockUI = config.get(CLIENT, "lockUI", true, "If UI is not locked, the middle mouse can be used to drag certain AR UIs around the screen, positions are saved on hitting quit in the menu").getBoolean();

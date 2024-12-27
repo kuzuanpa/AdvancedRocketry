@@ -3,7 +3,7 @@ package zmaster587.advancedRocketry.api;
 import net.minecraft.entity.EntityLivingBase;
 
 public interface IAtmosphere {
-	
+
 	/**
 	 * @param player living entity inside this atmosphere we are ticking
 	 * @return true if the atmosphere does not affect the entity in any way

@@ -48,23 +48,20 @@ public class EntityLaserNode extends Entity {
 	 */
 	public void cleanUp() {
 		if(!this.worldObj.isRemote)
-			new Thread(cleanThread).run();
+			new Thread(cleanThread).start();
 	}
 
-	Runnable cleanThread = new Runnable() {
-		@Override
-		public void run() {
-			for(int h = 0; h < worldObj.getHeight(); h++) {
-				for(int i = 0; i < 9; i++) {
-					int x = (int)posX + (i % 3) - 1;
-					int z = (int)posZ + (i / 3) - 1;
+	Runnable cleanThread = () -> {
+        for(int h = 0; h < worldObj.getHeight(); h++) {
+            for(int i = 0; i < 9; i++) {
+                int x = (int)posX + (i % 3) - 1;
+                int z = (int)posZ + (i / 3) - 1;
 
-					if(worldObj.getBlock(x, h, z) == AdvancedRocketryBlocks.blockLightSource)
-						worldObj.setBlockToAir(x, h, z);
-				}
-			}
-		}
-	};
+                if(worldObj.getBlock(x, h, z) == AdvancedRocketryBlocks.blockLightSource)
+                    worldObj.setBlockToAir(x, h, z);
+            }
+        }
+    };
 	
 	@Override
 	public void onUpdate() {

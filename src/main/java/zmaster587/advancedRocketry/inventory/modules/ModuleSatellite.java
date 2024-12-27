@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.inventory.modules;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.inventory.modules.ModuleSlotArray;
@@ -14,7 +15,8 @@ import net.minecraft.inventory.Slot;
 public class ModuleSatellite extends ModuleSlotArray {
 
 	SatelliteBase satellite;
-	IconResource satelliteSlot = TextureResources.idChip;
+	@NotNull
+    IconResource satelliteSlot = TextureResources.idChip;
 	boolean needsUpdate = false;
 
 	public ModuleSatellite(int offsetX, int offsetY, IInventory container,
@@ -24,8 +26,8 @@ public class ModuleSatellite extends ModuleSlotArray {
 	}
 
 	@Override
-	public void renderBackground(GuiContainer gui, int x, int y, int mouseX, int mouseY,
-			FontRenderer font) {
+	public void renderBackground(@NotNull GuiContainer gui, int x, int y, int mouseX, int mouseY,
+                                 FontRenderer font) {
 		
 		for(Slot slot : slotList) {
 			gui.drawTexturedModalRect(x + slot.xDisplayPosition - 1, y + slot.yDisplayPosition - 1, satelliteSlot.getxLoc(), satelliteSlot.getyLoc(), satelliteSlot.getxSize(), satelliteSlot.getySize());

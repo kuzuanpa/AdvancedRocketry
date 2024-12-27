@@ -26,8 +26,8 @@ public class WorldGenSwampTree extends MapGenBase {
 	public WorldGenSwampTree(int chancePerChunk) {
 		super();
 		chancePerChunk= 10;
-		cachedCanopy = new HashMap<BlockPosition, BlockMeta>();
-		cachedRoots = new HashMap<BlockPosition, BlockMeta>();
+		cachedCanopy = new HashMap<>();
+		cachedRoots = new HashMap<>();
 		this.chancePerChunk = chancePerChunk;
 		buildCanopy();
 		buildRoots();

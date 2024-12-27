@@ -1,6 +1,7 @@
 package zmaster587.advancedRocketry.entity;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.util.StorageChunk;
 
 public class LeveledRocketPart {
@@ -23,7 +24,7 @@ public class LeveledRocketPart {
         storage.writeToNBT(nbt);
         return nbt;
     }
-    public static LeveledRocketPart readFromNBT(NBTTagCompound nbt) {
+    public static LeveledRocketPart readFromNBT(@NotNull NBTTagCompound nbt) {
         long fuelRemaining = nbt.getLong("fuelRemaining");
         boolean isActived = nbt.getBoolean("isActived");
         int level = nbt.getInteger("level");

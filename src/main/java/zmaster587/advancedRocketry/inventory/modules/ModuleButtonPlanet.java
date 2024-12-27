@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.inventory.GuiPlanetButton;
 import zmaster587.libVulpes.gui.GuiImageButton;
@@ -27,9 +28,9 @@ public class ModuleButtonPlanet extends ModuleButton {
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public List<GuiButton> addButtons(int x, int y) {
+	public @NotNull List<GuiButton> addButtons(int x, int y) {
 
-		List<GuiButton> list = new LinkedList<GuiButton>();
+		List<GuiButton> list = new LinkedList<>();
 
 		button = new GuiPlanetButton(buttonId, x + offsetX, y + offsetY, sizeX, sizeY, properties);
 

@@ -7,6 +7,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.world.util.WorldDummy;
 import zmaster587.libVulpes.tile.multiblock.hatch.TileFluidHatch;
 import zmaster587.libVulpes.util.IAdjBlockUpdate;
@@ -98,15 +100,15 @@ public class TileFluidTank extends TileFluidHatch implements IAdjBlockUpdate {
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource,
-			boolean doDrain) {
+	public @Nullable FluidStack drain(ForgeDirection from, FluidStack resource,
+                                      boolean doDrain) {
 		if(this.fluidTank.getFluid() == null || resource.getFluidID() != this.fluidTank.getFluid().getFluidID())
 			return null;
 
 		return this.drain(from, resource.amount, doDrain);
 	}
 
-	public TileFluidTank getFluidTankInDirection(ForgeDirection direction) {
+	public TileFluidTank getFluidTankInDirection(@NotNull ForgeDirection direction) {
 		TileEntity tile = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
 
 		if(tile instanceof TileFluidTank) {

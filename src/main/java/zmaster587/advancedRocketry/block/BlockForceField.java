@@ -1,19 +1,16 @@
 package zmaster587.advancedRocketry.block;
 
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+import org.jetbrains.annotations.NotNull;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockGlass;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockForceField extends Block {
 
-	public BlockForceField(Material materialIn) {
+	public BlockForceField(@NotNull Material materialIn) {
 		super(materialIn);
 	}
 	
@@ -39,10 +36,10 @@ public class BlockForceField extends Block {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockAccess world,
-			int x, int y, int z, int dir) {
+	public boolean shouldSideBeRendered(@NotNull IBlockAccess world,
+                                        int x, int y, int z, int dir) {
 		ForgeDirection dir2 = ForgeDirection.getOrientation(dir).getOpposite();
-		return world.getBlock(x, y, z ) == this ? false : super.shouldSideBeRendered(world, x, y, z, dir);
+		return world.getBlock(x, y, z) != this && super.shouldSideBeRendered(world, x, y, z, dir);
 	}  
 
 }

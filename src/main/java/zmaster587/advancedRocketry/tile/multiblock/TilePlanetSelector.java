@@ -9,6 +9,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.inventory.modules.ModulePlanetSelector;
@@ -65,9 +66,9 @@ public class TilePlanetSelector extends TilePointer implements ISelectionNotify,
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
 
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		container = new ModulePlanetSelector(this.worldObj.provider.dimensionId, TextureResources.starryBG, this,false);
 		container.setOffset(1000, 1000);
@@ -83,7 +84,7 @@ public class TilePlanetSelector extends TilePointer implements ISelectionNotify,
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "";
 	}
 
@@ -195,8 +196,8 @@ public class TilePlanetSelector extends TilePointer implements ISelectionNotify,
 	}
 
 	@Override
-	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+	public void readDataFromNetwork(@NotNull ByteBuf in, byte packetId,
+									NBTTagCompound nbt) {
 		if(packetId == 0)
 			nbt.setInteger("id", in.readInt());
 	}

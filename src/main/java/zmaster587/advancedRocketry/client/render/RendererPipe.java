@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.client.render;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.advancedRocketry.tile.cables.TilePipe;
@@ -14,7 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class RendererPipe extends TileEntitySpecialRenderer {
 
 
-	private ResourceLocation texture;
+	private final ResourceLocation texture;
 	
 
 	public RendererPipe(ResourceLocation texture) {
@@ -98,8 +99,8 @@ public class RendererPipe extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x, double y,
-			double z, float f) {
+	public void renderTileEntityAt(@NotNull TileEntity tile, double x, double y,
+                                   double z, float f) {
 		
 		Tessellator tessellator = Tessellator.instance;
 

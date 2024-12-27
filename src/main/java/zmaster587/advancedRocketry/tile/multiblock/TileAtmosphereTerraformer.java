@@ -21,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryFluids;
@@ -290,7 +291,7 @@ public class TileAtmosphereTerraformer extends TileMultiPowerConsumer implements
 		text = new ModuleText(10, 100, "", 0x282828);
 		powerPerTick = 1000;
 
-		List<ModuleToggleSwitch> buttons = new LinkedList<ModuleToggleSwitch>();
+		List<ModuleToggleSwitch> buttons = new LinkedList<>();
 		buttons.add(buttonIncrease);
 		buttons.add(buttonDecrease);
 		radioButton = new ModuleRadioButton(this, buttons);
@@ -416,7 +417,7 @@ public class TileAtmosphereTerraformer extends TileMultiPowerConsumer implements
 	}
 
 	@Override
-	public ResourceLocation getSound() {
+	public @NotNull ResourceLocation getSound() {
 		return zmaster587.advancedRocketry.inventory.TextureResources.sndMachineLarge;
 	}
 
@@ -445,14 +446,14 @@ public class TileAtmosphereTerraformer extends TileMultiPowerConsumer implements
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public @NotNull Packet getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writeToNBT(nbt);
 		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, nbt);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt) {
 		NBTTagCompound nbt = pkt.func_148857_g();
 		readFromNBT(nbt);
 		setText();
@@ -487,7 +488,7 @@ public class TileAtmosphereTerraformer extends TileMultiPowerConsumer implements
 	}
 
 	@Override
-	public void writeDataToNetwork(ByteBuf out, byte id) {
+	public void writeDataToNetwork(@NotNull ByteBuf out, byte id) {
 
 		if(id == (byte)TileMultiblockMachine.NetworkPackets.TOGGLE.ordinal()) {
 			out.writeByte(radioButton.getOptionSelected());

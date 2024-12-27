@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.libVulpes.network.BasePacket;
@@ -24,7 +25,7 @@ public class PacketDimInfo extends BasePacket {
 	List<ItemStack> artifacts;
 
 	public PacketDimInfo() {
-		artifacts = new LinkedList<ItemStack>();
+		artifacts = new LinkedList<>();
 	}
 
 	public PacketDimInfo(int dimNumber,DimensionProperties dimProperties) {
@@ -71,7 +72,7 @@ public class PacketDimInfo extends BasePacket {
 	}
 
 	@Override
-	public void readClient(ByteBuf in) {
+	public void readClient(@NotNull ByteBuf in) {
 		PacketBuffer packetBuffer = new PacketBuffer(in);
 		NBTTagCompound nbt;
 		dimNumber = in.readInt();

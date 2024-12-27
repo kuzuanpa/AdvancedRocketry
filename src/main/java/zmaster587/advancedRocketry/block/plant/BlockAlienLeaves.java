@@ -1,22 +1,22 @@
 package zmaster587.advancedRocketry.block.plant;
 
-import java.util.List;
-import java.util.Random;
-
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+
+import java.util.List;
+import java.util.Random;
 
 public class BlockAlienLeaves extends BlockLeaves {
 
@@ -70,7 +70,7 @@ public class BlockAlienLeaves extends BlockLeaves {
      * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
      */
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item item, CreativeTabs tab, List list)
+    public void getSubBlocks(Item item, CreativeTabs tab, @NotNull List list)
     {
     	list.add(new ItemStack(item, 1,0));
     }
@@ -109,7 +109,7 @@ public class BlockAlienLeaves extends BlockLeaves {
     public boolean shouldSideBeRendered(IBlockAccess p_149646_1_, int p_149646_2_, int p_149646_3_, int p_149646_4_, int p_149646_5_)
     {
     	//return super.shouldSideBeRendered(p_149646_1_, p_149646_2_, p_149646_3_, p_149646_4_, p_149646_5_);
-    	return Minecraft.isFancyGraphicsEnabled() ? true : super.shouldSideBeRendered(p_149646_1_, p_149646_2_, p_149646_3_, p_149646_4_, p_149646_5_);// !this.field_150121_P;
+    	return Minecraft.isFancyGraphicsEnabled() || super.shouldSideBeRendered(p_149646_1_, p_149646_2_, p_149646_3_, p_149646_4_, p_149646_5_);// !this.field_150121_P;
     }
 
 }

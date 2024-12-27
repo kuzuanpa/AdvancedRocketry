@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.IToggleButton;
@@ -52,7 +53,7 @@ public class TileDrill extends TileEntity implements IModularInventory, IToggleB
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(toggleSwitch = new ModuleToggleSwitch(160, 5, 0, "", this,  zmaster587.libVulpes.inventory.TextureResources.buttonToggleImage, 11, 26, drillExtended()));
 
@@ -92,7 +93,7 @@ public class TileDrill extends TileEntity implements IModularInventory, IToggleB
 
 	@Override
 	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+									@NotNull NBTTagCompound nbt) {
 		nbt.setBoolean("enabled", in.readBoolean());
 	}
 
@@ -109,7 +110,7 @@ public class TileDrill extends TileEntity implements IModularInventory, IToggleB
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		
 		nbt.setFloat("extendAmt", distanceExtended);

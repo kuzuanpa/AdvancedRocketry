@@ -1,19 +1,13 @@
 package zmaster587.advancedRocketry.cable;
 
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Map.Entry;
-
-import zmaster587.advancedRocketry.api.DataStorage;
-import zmaster587.advancedRocketry.api.DataStorage.DataType;
-import zmaster587.advancedRocketry.api.satellite.IDataHandler;
-import zmaster587.advancedRocketry.util.IDataInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import zmaster587.advancedRocketry.api.DataStorage.DataType;
+import zmaster587.advancedRocketry.api.satellite.IDataHandler;
+
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Random;
 
 public class DataNetwork extends CableNetwork  {
 	/**
@@ -25,9 +19,9 @@ public class DataNetwork extends CableNetwork  {
 
 		int id = random.nextInt();
 
-		while(usedIds.contains(id)){ id = random.nextInt(); };
+		while(usedIds.contains(id)){ id = random.nextInt(); }
 
-		DataNetwork net = new DataNetwork();
+        DataNetwork net = new DataNetwork();
 
 		usedIds.add(id);
 		net.networkID = id;
@@ -58,7 +52,7 @@ public class DataNetwork extends CableNetwork  {
 			
 			while(sinkItr.hasNext()) {
 				//Get tile and key
-				Entry<TileEntity,ForgeDirection> obj = (Entry<TileEntity, ForgeDirection>)sinkItr.next();
+				Entry<TileEntity,ForgeDirection> obj = sinkItr.next();
 				IDataHandler dataHandlerSink = (IDataHandler)obj.getKey();
 
 				demand += dataHandlerSink.addData(amount, data, obj.getValue(), false);
@@ -66,7 +60,7 @@ public class DataNetwork extends CableNetwork  {
 			
 			while(sourceItr.hasNext()) {
 				//Get tile and key
-				Entry<TileEntity,ForgeDirection> obj = (Entry<TileEntity, ForgeDirection>)sourceItr.next();
+				Entry<TileEntity,ForgeDirection> obj = sourceItr.next();
 				IDataHandler dataHandlerSink = (IDataHandler)obj.getKey();
 				
 				supply += dataHandlerSink.extractData(amount, data, obj.getValue(), false);
@@ -79,7 +73,7 @@ public class DataNetwork extends CableNetwork  {
 
 
 				//Get tile and key
-				Entry<TileEntity,ForgeDirection> obj = (Entry<TileEntity, ForgeDirection>)sinkItr.next();
+				Entry<TileEntity,ForgeDirection> obj = sinkItr.next();
 				IDataHandler dataHandlerSink = (IDataHandler)obj.getKey();
 
 
@@ -91,7 +85,7 @@ public class DataNetwork extends CableNetwork  {
 
 
 				//Get tile and key
-				Entry<TileEntity,ForgeDirection> obj = (Entry<TileEntity, ForgeDirection>)sourceItr.next();
+				Entry<TileEntity,ForgeDirection> obj = sourceItr.next();
 				IDataHandler dataHandlerSink = (IDataHandler)obj.getKey();
 
 				amountMoved -= dataHandlerSink.extractData(amountMoved, data, obj.getValue(), true);

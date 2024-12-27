@@ -14,6 +14,8 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
@@ -24,7 +26,7 @@ import zmaster587.libVulpes.util.ZUtils;
 
 public class SatelliteLaser extends SatelliteLaserNoDrill {
 
-	private EntityLaserNode laser;
+	private @Nullable EntityLaserNode laser;
 	private Ticket ticketLaser;
 	protected boolean finished;
 
@@ -147,7 +149,7 @@ public class SatelliteLaser extends SatelliteLaserNoDrill {
 			}*/
 
 			if(boundChest != null){
-				ItemStack stacks[] = new ItemStack[items.size()];
+				ItemStack[] stacks = new ItemStack[items.size()];
 				
 				stacks = items.toArray(stacks);
 
@@ -199,7 +201,7 @@ public class SatelliteLaser extends SatelliteLaserNoDrill {
 	}
 
 	@Override
-	public String getInfo(World world) {
+	public @Nullable String getInfo(World world) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -224,13 +226,13 @@ public class SatelliteLaser extends SatelliteLaserNoDrill {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		nbt.setBoolean("finished", finished);
 		nbt.setBoolean("jammed", jammed);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		finished = nbt.getBoolean("finished");
 		jammed = nbt.getBoolean("jammed");
 	}

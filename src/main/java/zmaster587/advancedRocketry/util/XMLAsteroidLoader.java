@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -57,7 +58,7 @@ public class XMLAsteroidLoader {
 	 */
 	public List<AsteroidSmall> loadPropertyFile() {
 		Node childNode = doc.getFirstChild().getFirstChild();
-		List<AsteroidSmall> mapping = new LinkedList<AsteroidSmall>();
+		List<AsteroidSmall> mapping = new LinkedList<>();
 
 		while(childNode != null) {
 
@@ -198,8 +199,8 @@ public class XMLAsteroidLoader {
 		return mapping;
 	}
 
-	public static ItemStack getStack(String text) {
-		String splitStr[] = text.split(" ");
+	public static ItemStack getStack(@NotNull String text) {
+		String[] splitStr = text.split(" ");
 		int meta = 0;
 		int size = 1;
 		//format: "name meta size"

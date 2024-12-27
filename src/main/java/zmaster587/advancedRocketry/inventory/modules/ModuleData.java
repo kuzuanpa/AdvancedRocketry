@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.inventory.modules;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.advancedRocketry.util.IDataInventory;
 import zmaster587.libVulpes.inventory.TextureResources;
@@ -27,11 +28,12 @@ public class ModuleData extends ModuleBase implements IButtonInventory {
 	static final int textureOffsetX = 0;
 	static final int textureOffsetY = 215;
 
-	DataStorage data[];
-	int prevData[];
+	DataStorage[] data;
+	int[] prevData;
 	int prevDataType;
 	int slot;
 	IDataInventory chipStorage;
+	@NotNull
 	IconResource icon = zmaster587.advancedRocketry.inventory.TextureResources.ioSlot;
 	ModuleButton buttonStore, buttonLoad;
 
@@ -99,8 +101,8 @@ public class ModuleData extends ModuleBase implements IButtonInventory {
 	}
 
 	@Override
-	public void sendChanges(Container container, ICrafting crafter,
-			int variableId, int localId) {
+	public void sendChanges(Container container, @NotNull ICrafting crafter,
+                            int variableId, int localId) {
 		if(localId < data.length)
 			crafter.sendProgressBarUpdate(container, variableId, data[localId].getData());
 		else
@@ -134,7 +136,7 @@ public class ModuleData extends ModuleBase implements IButtonInventory {
 				totalMaxData += datum.getMaxData();
 			}
 
-			List<String> list = new LinkedList<String>();
+			List<String> list = new LinkedList<>();
 			list.add(totalData + " / " + totalMaxData + " Data");
 			list.add("Type: " +  I18n.format(data[0].getDataType().toString(), new Object[0]));
 

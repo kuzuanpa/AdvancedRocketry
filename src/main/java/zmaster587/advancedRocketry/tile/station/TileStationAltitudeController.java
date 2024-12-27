@@ -11,6 +11,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.network.PacketStationUpdate;
@@ -43,7 +44,7 @@ public class TileStationAltitudeController extends TileEntity implements IModula
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 		modules.add(moduleGrav);
 		//modules.add(numThrusters);
 		modules.add(maxGravBuildSpeed);
@@ -65,7 +66,7 @@ public class TileStationAltitudeController extends TileEntity implements IModula
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt) {
 		super.onDataPacket(net, pkt);
 
 		gravity = pkt.func_148857_g().getInteger("gravity");
@@ -143,15 +144,15 @@ public class TileStationAltitudeController extends TileEntity implements IModula
 	}
 
 	@Override
-	public void writeDataToNetwork(ByteBuf out, byte id) {
+	public void writeDataToNetwork(@NotNull ByteBuf out, byte id) {
 		if(id == 0) {
 			out.writeShort(progress);
 		}
 	}
 
 	@Override
-	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+	public void readDataFromNetwork(@NotNull ByteBuf in, byte packetId,
+									NBTTagCompound nbt) {
 		if(packetId == 0) {
 			setProgress(0, in.readShort());
 		}
@@ -170,7 +171,7 @@ public class TileStationAltitudeController extends TileEntity implements IModula
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		gravity = nbt.getShort("numRotations");
 	}

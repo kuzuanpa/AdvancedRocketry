@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTException;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -39,8 +40,8 @@ public class XMLPlanetLoader {
 	int starId;
 	int offset;
 
-	HashMap<StellarBody, Integer> maxPlanetNumber = new HashMap<StellarBody, Integer>();
-	HashMap<StellarBody, Integer> maxGasPlanetNumber = new HashMap<StellarBody, Integer>();
+	HashMap<StellarBody, Integer> maxPlanetNumber = new HashMap<>();
+	HashMap<StellarBody, Integer> maxGasPlanetNumber = new HashMap<>();
 
 	public boolean loadFile(File xmlFile) throws IOException {
 		DocumentBuilder docBuilder;
@@ -79,7 +80,7 @@ public class XMLPlanetLoader {
 	}
 
 	private List<DimensionProperties> readPlanetFromNode(Node planetNode, StellarBody star) {
-		List<DimensionProperties> list = new ArrayList<DimensionProperties>();
+		List<DimensionProperties> list = new ArrayList<>();
 		Node planetPropertyNode = planetNode.getFirstChild();
 
 
@@ -129,7 +130,7 @@ public class XMLPlanetLoader {
 				String[] colors = planetPropertyNode.getTextContent().split(",");
 				try {
 					if(colors.length >= 3) {
-						float rgb[] = new float[3];
+						float[] rgb = new float[3];
 
 
 						for(int j = 0; j < 3; j++)
@@ -139,7 +140,7 @@ public class XMLPlanetLoader {
 					}
 					else if(colors.length == 1) {
 						int cols = Integer.parseUnsignedInt(colors[0].substring(2), 16);
-						float rgb[] = new float[3];
+						float[] rgb = new float[3];
 
 						rgb[0] = ((cols >>> 16) & 0xff) / 255f;
 						rgb[1] = ((cols >>> 8) & 0xff) / 255f;
@@ -188,7 +189,7 @@ public class XMLPlanetLoader {
 				try {
 
 					if(colors.length >= 3) {
-						float rgb[] = new float[3];
+						float[] rgb = new float[3];
 
 						for(int j = 0; j < 3; j++)
 							rgb[j] = Float.parseFloat(colors[j]);
@@ -197,7 +198,7 @@ public class XMLPlanetLoader {
 					}
 					else if(colors.length == 1) {
 						int cols = Integer.parseUnsignedInt(colors[0].substring(2), 16);
-						float rgb[] = new float[3];
+						float[] rgb = new float[3];
 
 						rgb[0] = ((cols >>> 16) & 0xff) / 255f;
 						rgb[1] = ((cols >>> 8) & 0xff) / 255f;
@@ -264,7 +265,7 @@ public class XMLPlanetLoader {
 			}
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("biomeids")) {
 
-				String biomeList[] = planetPropertyNode.getTextContent().split(",");
+				String[] biomeList = planetPropertyNode.getTextContent().split(",");
 				for(int j = 0; j < biomeList.length; j++) {
 					try {
 						int biome =  Integer.parseInt(biomeList[j]);
@@ -314,7 +315,7 @@ public class XMLPlanetLoader {
 				try {
 
 					if(colors.length >= 3) {
-						float rgb[] = new float[3];
+						float[] rgb = new float[3];
 
 						for(int j = 0; j < 3; j++)
 							rgb[j] = Float.parseFloat(colors[j]);
@@ -323,7 +324,7 @@ public class XMLPlanetLoader {
 					}
 					else if(colors.length == 1) {
 						int cols = Integer.parseUnsignedInt(colors[0].substring(2), 16);
-						float rgb[] = new float[3];
+						float[] rgb = new float[3];
 
 						rgb[0] = ((cols >>> 16) & 0xff) / 255f;
 						rgb[1] = ((cols >>> 8) & 0xff) / 255f;
@@ -447,7 +448,7 @@ public class XMLPlanetLoader {
 	}
 
 
-	public StellarBody readStar(Node planetNode) {
+	public StellarBody readStar(@NotNull Node planetNode) {
 		StellarBody star = readSubStar(planetNode);
 		if(planetNode.hasAttributes()) {
 			Node nameNode;
@@ -584,7 +585,7 @@ public class XMLPlanetLoader {
 			coupling.dims.add(registerStarDims(masterNode,star));
 			coupling.stars.add(star);
 
-			NodeList planetNodeList = masterNode.getChildNodes();
+			@NotNull NodeList planetNodeList = masterNode.getChildNodes();
 
 			Node planetNode = planetNodeList.item(0);
 
@@ -605,7 +606,7 @@ public class XMLPlanetLoader {
 		return coupling;
 	}
 
-	public static String writeXML(IGalaxy galaxy) {
+	public static @NotNull String writeXML(IGalaxy galaxy) {
 		//galaxy.
 		String outputString = "<galaxy>\n";
 
@@ -634,9 +635,9 @@ public class XMLPlanetLoader {
 		return outputString;
 	}
 
-	private static String writePlanet(DimensionProperties properties, int numTabs) {
+	private static String writePlanet(@NotNull DimensionProperties properties, int numTabs) {
 		String outputString = "";
-		String tabLen = "";
+		@NotNull String tabLen = "";
 
 		for(int i = 0; i < numTabs; i++) {
 			tabLen += "\t";
@@ -729,15 +730,15 @@ public class XMLPlanetLoader {
 
 	public static class DimensionPropertyCoupling {
 
-		public List<StellarBody> stars = new LinkedList<StellarBody>();
-		public List<DimensionProperties> dims = new LinkedList<DimensionProperties>();
+		public List<StellarBody> stars = new LinkedList<>();
+		public @NotNull List<DimensionProperties> dims = new LinkedList<>();
 
 
 	}
 
 	
-	public static ItemStack getStack(String text) {
-		String splitStr[] = text.split(" ");
+	public static ItemStack getStack(@NotNull String text) {
+		String[] splitStr = text.split(" ");
 		int meta = 0;
 		int size = 1;
 		//format: "name meta size"

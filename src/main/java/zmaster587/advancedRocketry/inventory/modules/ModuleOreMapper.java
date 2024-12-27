@@ -1,9 +1,5 @@
 package zmaster587.advancedRocketry.inventory.modules;
 
-import java.nio.IntBuffer;
-
-import org.lwjgl.opengl.GL11;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -14,10 +10,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.client.render.ClientDynamicTexture;
 import zmaster587.advancedRocketry.satellite.SatelliteOreMapping;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
-import zmaster587.libVulpes.util.VulpineMath;
+
+import java.nio.IntBuffer;
 
 @SideOnly(Side.CLIENT)
 public class ModuleOreMapper extends ModuleBase {
@@ -38,7 +38,7 @@ public class ModuleOreMapper extends ModuleBase {
 	private int radius = 1;
 	private int xSelected, zSelected, xCenter, zCenter;
 	private static final ResourceLocation backdrop = new ResourceLocation("advancedrocketry", "textures/gui/VideoSatallite.png");
-	int[][] oreMap;
+	int[]@Nullable[] oreMap;
 	World world;
 	SatelliteOreMapping tile;
 	ItemStack selectedStack;
@@ -59,7 +59,8 @@ public class ModuleOreMapper extends ModuleBase {
 	}
 
 	//Create separate thread to do this because it takes a while!
-	Runnable mapper = new Runnable() {
+    @NotNull
+    Runnable mapper = new Runnable() {
 		@Override
 		public void run() {
 			oreMap = SatelliteOreMapping.scanChunk(world, xCenter, zCenter, scanSize/2, radius);

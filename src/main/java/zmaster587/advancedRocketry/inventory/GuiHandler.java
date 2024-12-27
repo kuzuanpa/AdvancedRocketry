@@ -1,5 +1,7 @@
 package zmaster587.advancedRocketry.inventory;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.satellite.SatelliteOreMapping;
@@ -19,8 +21,8 @@ public class GuiHandler implements IGuiHandler {
 
 	//X coord is entity ID num if entity
 	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z) {
+	public Object getServerGuiElement(int ID, EntityPlayer player, @NotNull World world,
+                                      int x, int y, int z) {
 
 		Object tile;
 
@@ -51,8 +53,8 @@ public class GuiHandler implements IGuiHandler {
 	}
 
 	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z) {
+	public @Nullable Object getClientGuiElement(int ID, @NotNull EntityPlayer player, World world,
+                                                int x, int y, int z) {
 
 		Object tile;
 		
@@ -73,7 +75,7 @@ public class GuiHandler implements IGuiHandler {
 
 		if(ID == guiId.OreMappingSatellite.ordinal()) {
 			
-			SatelliteBase satellite = DimensionManager.getInstance().getSatellite(y);
+			@Nullable SatelliteBase satellite = DimensionManager.getInstance().getSatellite(y);
 			
 			if(satellite == null || !(satellite instanceof SatelliteOreMapping) || satellite.getDimensionId() != world.provider.dimensionId)
 				satellite = null;

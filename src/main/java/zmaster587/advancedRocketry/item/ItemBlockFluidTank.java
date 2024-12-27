@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.item;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.tile.TileFluidTank;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,8 +24,8 @@ public class ItemBlockFluidTank extends ItemBlock implements IFluidContainerItem
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player,
-			List list, boolean bool) {
+	public void addInformation(@NotNull ItemStack stack, EntityPlayer player,
+                               List list, boolean bool) {
 		super.addInformation(stack, player, list, bool);
 
 		FluidStack fluidStack = ((IFluidContainerItem)stack.getItem()).getFluid(stack); //FluidUtils.getFluidForItem(stack);
@@ -38,9 +39,9 @@ public class ItemBlockFluidTank extends ItemBlock implements IFluidContainerItem
 	}
 
 	@Override
-	public boolean placeBlockAt(ItemStack stack, EntityPlayer player,
-			World world, int x, int y, int z, int side, float hitX, float hitY,
-			float hitZ, int metadata) {
+	public boolean placeBlockAt(@NotNull ItemStack stack, EntityPlayer player,
+                                World world, int x, int y, int z, int side, float hitX, float hitY,
+                                float hitZ, int metadata) {
 		boolean bool = super.placeBlockAt(stack, player, world, x, y, z, side, hitX, hitY,
 				hitZ, metadata);
 

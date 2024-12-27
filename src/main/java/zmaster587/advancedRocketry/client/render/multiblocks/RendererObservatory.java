@@ -1,11 +1,11 @@
 package zmaster587.advancedRocketry.client.render.multiblocks;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.advancedRocketry.tile.multiblock.TileObservatory;
 import zmaster587.advancedRocketry.util.Debugger;
 import zmaster587.libVulpes.block.RotatableBlock;
-import zmaster587.libVulpes.tile.multiblock.TileMultiPowerConsumer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -18,7 +18,8 @@ public class RendererObservatory  extends TileEntitySpecialRenderer {
 
 	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/observatory.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/T1Observatory.png");
+	@NotNull
+    ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/T1Observatory.png");
 
 	private static int bodyList;
 
@@ -59,7 +60,7 @@ public class RendererObservatory  extends TileEntitySpecialRenderer {
 		if(offset != 0f) {
 			if(Debugger.renderList)
 				GL11.glCallList(bodyList);
-			else 
+			else
 				model.renderOnly("Base");
 
 			model.renderPart("Scope");
@@ -79,7 +80,7 @@ public class RendererObservatory  extends TileEntitySpecialRenderer {
 		else {
 			if(Debugger.renderList)
 				GL11.glCallList(bodyList);
-			else 
+			else
 				model.renderOnly("Base");
 			model.renderOnly("CasingXMinus");
 			model.renderOnly("CasingXPlus");

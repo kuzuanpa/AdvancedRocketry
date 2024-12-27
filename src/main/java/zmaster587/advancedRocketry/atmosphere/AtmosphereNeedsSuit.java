@@ -11,7 +11,7 @@ import zmaster587.advancedRocketry.api.armor.IProtectiveArmor;
 import zmaster587.advancedRocketry.entity.EntityElevatorCapsule;
 import zmaster587.advancedRocketry.integration.CompatibilityMgr;
 
-public class AtmosphereNeedsSuit extends AtmosphereType {
+public class AtmosphereNeedsSuit extends AtmosphereBase {
 	
 	static Class powerSuitItem;
 	

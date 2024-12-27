@@ -9,6 +9,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.IInfrastructure;
 import zmaster587.advancedRocketry.api.IMission;
@@ -36,7 +38,7 @@ public abstract class MissionResourceCollection extends SatelliteBase implements
 	protected LinkedList<BlockPosition> infrastructureCoords;
 
 	public MissionResourceCollection(){
-		infrastructureCoords = new LinkedList<BlockPosition>();
+		infrastructureCoords = new LinkedList<>();
 	}
 
 	public MissionResourceCollection(long duration, EntityRocket entity, LinkedList<IInfrastructure> infrastructureCoords) {
@@ -56,7 +58,7 @@ public abstract class MissionResourceCollection extends SatelliteBase implements
 		z = entity.posZ;
 		worldId = entity.worldObj.provider.dimensionId;
 
-		this.infrastructureCoords = new LinkedList<BlockPosition>();
+		this.infrastructureCoords = new LinkedList<>();
 
 		for(IInfrastructure tile : infrastructureCoords)
 			this.infrastructureCoords.add(new BlockPosition(((TileEntity)tile).xCoord, ((TileEntity)tile).yCoord, ((TileEntity)tile).zCoord));
@@ -73,7 +75,7 @@ public abstract class MissionResourceCollection extends SatelliteBase implements
 	}
 
 	@Override
-	public String getInfo(World world) {
+	public @Nullable String getInfo(World world) {
 		return null;
 	}
 
@@ -144,7 +146,7 @@ public abstract class MissionResourceCollection extends SatelliteBase implements
 		nbt.setTag("infrastructure", itemList);
 	}
 
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		
 		missionPersistantNBT = nbt.getCompoundTag("persist" );
@@ -168,7 +170,7 @@ public abstract class MissionResourceCollection extends SatelliteBase implements
 		infrastructureCoords.clear();
 
 		for (int i = 0; i < tagList.tagCount(); i++) {
-			int coords[] = tagList.getCompoundTagAt(i).getIntArray("loc");
+			int[] coords = tagList.getCompoundTagAt(i).getIntArray("loc");
 			infrastructureCoords.add(new BlockPosition(coords[0], coords[1], coords[2]));
 		}
 	}

@@ -4,6 +4,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.MapGenRavine;
+import org.jetbrains.annotations.NotNull;
 
 public class MapGenRavineExt extends MapGenRavine {
 
@@ -31,7 +32,7 @@ public class MapGenRavineExt extends MapGenRavine {
         return false;
     }
     
-    protected void digBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop)
+    protected void digBlock(Block @NotNull [] data, int index, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop)
     {
         BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
         Block top    = (isExceptionBiome(biome) ? Blocks.grass : biome.topBlock);

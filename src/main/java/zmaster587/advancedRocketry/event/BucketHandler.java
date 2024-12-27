@@ -14,7 +14,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 public class BucketHandler {
 	
 	public static final BucketHandler INSTANCE = new BucketHandler();
-	private static Map<Block, Item> bucketMap = new HashMap<Block, Item>();
+	private static Map<Block, Item> bucketMap = new HashMap<>();
 
 	@SubscribeEvent
 	public void onBucketFill(FillBucketEvent event) {

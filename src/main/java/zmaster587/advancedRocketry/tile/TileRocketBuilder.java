@@ -13,6 +13,7 @@ import java.util.List;
 import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.fuel.FuelRegistry.FuelType;
@@ -105,7 +106,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	protected AxisAlignedBB bbCache;
 	protected ErrorCodes status;
 	
-	static final Block viableBlocks[] = {AdvancedRocketryBlocks.blockLaunchpad, AdvancedRocketryBlocks.blockLandingPad};
+	static final Block[] viableBlocks = {AdvancedRocketryBlocks.blockLaunchpad, AdvancedRocketryBlocks.blockLandingPad};
 
 	private List<BlockPosition> blockPos;
 
@@ -136,7 +137,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	public TileRocketBuilder() {
 		super(100000);
 
-		blockPos = new LinkedList<BlockPosition>();
+		blockPos = new LinkedList<>();
 
 		status = ErrorCodes.UNSCANNED;
 		stats = new StatsRocket();
@@ -149,7 +150,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	public void invalidate() {
 		super.invalidate();
 		MinecraftForge.EVENT_BUS.unregister(this);
-		for(BlockPosition pos : blockPos) {
+		for(@NotNull BlockPosition pos : blockPos) {
 			TileEntity tile = worldObj.getTileEntity(pos.x, pos.y, pos.z);
 
 			if(tile instanceof IMultiblock)
@@ -260,7 +261,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 	public boolean isScanning() { return totalProgress > 0; }
 
-	public void scanRocket(World world, int x, int y, int z, AxisAlignedBB bb) {
+	public void scanRocket(@NotNull World world, int x, int y, int z, AxisAlignedBB bb) {
 
 		int thrust = 0;
 		int fuelUse = 0;
@@ -504,7 +505,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	}
 
 
-	protected boolean verifyScan(AxisAlignedBB bb, World world) {
+	protected boolean verifyScan(@NotNull AxisAlignedBB bb, World world) {
 		boolean whole = true;
 
 		boundLoop:
@@ -529,7 +530,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 		return whole;
 	}
 
-	public int getVolume(World world, int x, int y, int z, AxisAlignedBB bb) {
+	public int getVolume(World world, int x, int y, int z, @NotNull AxisAlignedBB bb) {
 		return (int) ((bb.maxX - bb.minX) * (bb.maxY - bb.minY) * (bb.maxZ - bb.minZ));
 	}
 
@@ -593,7 +594,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 		blockPos.clear();
 		if(nbt.hasKey("infrastructureLocations")) {
-			int array[] = nbt.getIntArray("infrastructureLocations");
+			int[] array = nbt.getIntArray("infrastructureLocations");
 
 			for(int counter = 0; counter < array.length; counter += 3) {
 				blockPos.add(new BlockPosition(array[counter], array[counter+1], array[counter+2]));
@@ -654,7 +655,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 	@Override
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+                               @NotNull NBTTagCompound nbt) {
 		if(id == 0) {
 			AxisAlignedBB bb = getRocketPadBounds(worldObj, xCoord, yCoord, zCoord);
 
@@ -712,7 +713,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(new ModulePower(160, 90, this));
 
@@ -749,7 +750,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "";
 	}
 
@@ -865,7 +866,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 	@Override
 	public boolean onLinkComplete(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+								  @NotNull EntityPlayer player, World world) {
 		TileEntity tile = world.getTileEntity(((ItemLinker)item.getItem()).getMasterX(item), ((ItemLinker)item.getItem()).getMasterY(item), ((ItemLinker)item.getItem()).getMasterZ(item));
 
 		if(tile instanceof IInfrastructure) {
@@ -916,7 +917,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	}
 
 	public List<IInfrastructure> getConnectedInfrastructure() {
-		List<IInfrastructure> infrastructure = new LinkedList<IInfrastructure>();
+		@NotNull List<IInfrastructure> infrastructure = new LinkedList<>();
 
 		Iterator<BlockPosition> iter = blockPos.iterator();
 
@@ -948,7 +949,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 			if(rockets.contains(rocket)) {
 				lastRocketID = rocket.getEntityId();
-				for(IInfrastructure infrastructure : getConnectedInfrastructure()) {
+				for(@NotNull IInfrastructure infrastructure : getConnectedInfrastructure()) {
 					rocket.linkInfrastructure(infrastructure);
 				}
 				

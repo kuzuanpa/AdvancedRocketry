@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.tile.multiblock;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.libVulpes.api.LibVulpesBlocks;
@@ -45,7 +46,7 @@ public class TileBeacon extends TileMultiPowerConsumer {
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "tile.beacon.name";
 	}
 

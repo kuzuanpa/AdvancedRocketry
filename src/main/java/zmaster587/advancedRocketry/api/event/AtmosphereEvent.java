@@ -1,6 +1,7 @@
 package zmaster587.advancedRocketry.api.event;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.IAtmosphere;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
@@ -22,7 +23,7 @@ public class AtmosphereEvent  extends EntityEvent {
 	 */
 	@Cancelable
 	public static class AtmosphereTickEvent extends AtmosphereEvent {
-		public AtmosphereTickEvent(Entity entity, IAtmosphere atmosphere) {
+		public AtmosphereTickEvent(@NotNull Entity entity, IAtmosphere atmosphere) {
 			super(entity, atmosphere);
 		}
 	}

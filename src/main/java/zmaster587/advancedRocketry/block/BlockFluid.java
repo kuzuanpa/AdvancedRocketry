@@ -9,6 +9,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockFluid extends BlockFluidClassic {
 
@@ -30,7 +31,7 @@ public class BlockFluid extends BlockFluidClassic {
    
     @SideOnly(Side.CLIENT)
     @Override
-    public void registerBlockIcons(IIconRegister register) {
+    public void registerBlockIcons(@NotNull IIconRegister register) {
             stillIcon = register.registerIcon("advancedrocketry:fluid/oxygen_still");
             flowingIcon = register.registerIcon("advancedrocketry:fluid/oxygen_flow");
             myFluid.setIcons(stillIcon, flowingIcon);

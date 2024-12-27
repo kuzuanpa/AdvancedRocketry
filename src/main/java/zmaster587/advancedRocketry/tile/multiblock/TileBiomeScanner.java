@@ -60,7 +60,7 @@ public class TileBiomeScanner extends TileMultiPowerConsumer {
 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> list = new LinkedList<ModuleBase>();//super.getModules(ID, player);
+		List<ModuleBase> list = new LinkedList<>();//super.getModules(ID, player);
 
 		boolean suitable = true;
 		for(int y = this.yCoord - 4; y > 0; y--) {
@@ -77,7 +77,7 @@ public class TileBiomeScanner extends TileMultiPowerConsumer {
 		ISpaceObject spaceObject = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(this.xCoord, this.zCoord);
 		if(suitable && SpaceObjectManager.WARPDIMID != spaceObject.getOrbitingPlanetId()) {
 			DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(spaceObject.getOrbitingPlanetId());
-			List<ModuleBase> list2 = new LinkedList<ModuleBase>();
+			List<ModuleBase> list2 = new LinkedList<>();
 			if(properties.isGasGiant()) {
 				list2.add(new ModuleText(32, 16, LibVulpes.proxy.getLocalizedString("msg.biomescanner.gas"), 0x202020));
 			} else {
@@ -97,7 +97,7 @@ public class TileBiomeScanner extends TileMultiPowerConsumer {
 					}
 			}
 			//Relying on a bug, is this safe?
-			ModuleContainerPan pan = new ModuleContainerPan(0, 16, list2, new LinkedList<ModuleBase>(), null, 148, 128, 0, -64, 0, 1000);
+			ModuleContainerPan pan = new ModuleContainerPan(0, 16, list2, new LinkedList<>(), null, 148, 128, 0, -64, 0, 1000);
 			list.add(pan);
 		}
 		else

@@ -1,14 +1,14 @@
 package zmaster587.advancedRocketry.entity;
 
-import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.tile.station.TilePlanetaryHologram;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.tile.station.TilePlanetaryHologram;
 
 public class EntityUIPlanet extends Entity {
 
@@ -74,13 +74,7 @@ public class EntityUIPlanet extends Entity {
 	public boolean canBeCollidedWith() {
 		return true;
 	}
-	
-	@Override
-	public boolean canBePushed() {
-		return false;
-	}
-	
-	
+
 	@Override
 	public boolean interactFirst(EntityPlayer p_130002_1_) {
 		if(!worldObj.isRemote && tile != null) {
@@ -95,7 +89,7 @@ public class EntityUIPlanet extends Entity {
 
 	}
 
-	public DimensionProperties getProperties() {
+	public @Nullable DimensionProperties getProperties() {
 		if((properties == null && getPlanetID() != -1) || (properties != null && getPlanetID() != properties.getId())) {
 			properties = DimensionManager.getInstance().getDimensionProperties(getPlanetID());
 		}
@@ -121,7 +115,7 @@ public class EntityUIPlanet extends Entity {
 		return this.dataWatcher.getWatchableObjectInt(PLANET_ID);
 	}
 
-	public void setProperties(DimensionProperties properties) {
+	public void setProperties(@Nullable DimensionProperties properties) {
 		this.properties = properties;
 		if(properties != null)
 			this.dataWatcher.updateObject(PLANET_ID, properties.getId());
@@ -130,11 +124,11 @@ public class EntityUIPlanet extends Entity {
 	}
 	
 	public void setSelected(boolean isSelected) {
-		this.dataWatcher.updateObject(selected, new Byte((byte) (isSelected ? 1 : 0)));
+		this.dataWatcher.updateObject(selected, (byte) (isSelected ? 1 : 0));
 	}
 	
 	public boolean isSelected() {
-		return this.dataWatcher.getWatchableObjectByte(selected) == 1 ? true : false;
+		return this.dataWatcher.getWatchableObjectByte(selected) == 1;
 	}
 	
 	public void setPositionPolar(double originX, double originY, double originZ, double radius, double theta) {

@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
@@ -25,7 +26,7 @@ public class PacketStellarInfo extends BasePacket {
 	}
 
 	@Override
-	public void write(ByteBuf out) {
+	public void write(@NotNull ByteBuf out) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		out.writeInt(starId);
 		out.writeBoolean(star == null);

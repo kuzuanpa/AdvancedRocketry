@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.api.satellite;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -114,7 +115,7 @@ public class SatelliteProperties {
 	 * @param maxData Maximum amount of Data this satellite can store
 	 * @return this
 	 */
-	public SatelliteProperties setMaxData(int maxData) {
+	public @NotNull SatelliteProperties setMaxData(int maxData) {
 		this.maxData = maxData;
 		return this;
 	}
@@ -143,7 +144,7 @@ public class SatelliteProperties {
 	}
 
 
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		nbt.setInteger("powerGeneration", powerGeneration);
 		nbt.setInteger("powerStorage", powerStorage);
 		nbt.setString("dataType", satType);
@@ -151,7 +152,7 @@ public class SatelliteProperties {
 		nbt.setInteger("maxData", maxData);
 	}
 
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		powerGeneration = nbt.getInteger("powerGeneration");
 		powerStorage = nbt.getInteger("powerStorage");
 		satType = nbt.getString("dataType");

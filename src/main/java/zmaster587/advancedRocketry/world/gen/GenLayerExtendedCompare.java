@@ -30,8 +30,8 @@ public abstract class GenLayerExtendedCompare extends GenLayer {
 			{
 				CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Comparing biomes");
 				CrashReportCategory crashreportcategory = crashreport.makeCategory("Biomes being compared");
-				crashreportcategory.addCrashSection("Biome A ID", Integer.valueOf(biomeA));
-				crashreportcategory.addCrashSection("Biome B ID", Integer.valueOf(biomeB));
+				crashreportcategory.addCrashSection("Biome A ID", biomeA);
+				crashreportcategory.addCrashSection("Biome B ID", biomeB);
 				crashreportcategory.addCrashSectionCallable("Biome A", new Callable()
 				{
 					public String call()

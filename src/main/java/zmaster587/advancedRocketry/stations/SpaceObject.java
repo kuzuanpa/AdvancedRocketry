@@ -10,6 +10,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
@@ -45,21 +47,21 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	private HashMap<BlockPosition, String> dockingPoints;
 	private long transitionEta;
 	private ForgeDirection direction;
-	private double rotation[];
-	private double angularVelocity[];
+	private double[] rotation;
+	private double[] angularVelocity;
 	private long lastTimeModification = 0;
 	private DimensionProperties properties;
 	public boolean hasWarpCores = false;
 
 	public SpaceObject() {
 		properties = (DimensionProperties) zmaster587.advancedRocketry.dimension.DimensionManager.defaultSpaceDimensionProperties.clone();
-		spawnLocations = new LinkedList<StationLandingLocation>();
-		warpCoreLocation = new LinkedList<BlockPosition>();
-		dockingPoints = new HashMap<BlockPosition, String>();
+		spawnLocations = new LinkedList<>();
+		warpCoreLocation = new LinkedList<>();
+		dockingPoints = new HashMap<>();
 		transitionEta = -1;
 		destinationDimId = 0;
 		created = false;
-		knownPlanetList = new HashSet<Integer>();
+		knownPlanetList = new HashSet<>();
 		angularVelocity = new double[3];
 		rotation = new double[3];
 	}
@@ -367,7 +369,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	/**
 	 * @return next viable place to land
 	 */
-	public BlockPosition getNextLandingPad(boolean commit) {
+	public @Nullable BlockPosition getNextLandingPad(boolean commit) {
 		for(StationLandingLocation pos : spawnLocations) {
 			if(!pos.getOccupied() && pos.getAllowedForAutoLand()) {
 				if(commit)
@@ -395,7 +397,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	}
 
 
-	public void setPadStatus(BlockPosition pos, boolean full) {
+	public void setPadStatus(@NotNull BlockPosition pos, boolean full) {
 		setPadStatus(pos.x, pos.z, full);
 	}
 
@@ -412,11 +414,11 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 		return null;
 	}
 	
-	public void setPadName(World worldObj, int x, int y, int z, String name) {
+	public void setPadName(@NotNull World worldObj, int x, int y, int z, String name) {
 		setPadName(worldObj, new BlockPosition(x, 0, z), name);
 	}
 	
-	public void setPadName(World worldObj, BlockPosition pos, String name) {
+	public void setPadName(@NotNull World worldObj, BlockPosition pos, String name) {
 		StationLandingLocation loc = getPadAtLocation(pos);
 		if(loc != null)
 			loc.setName(name);
@@ -528,8 +530,8 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 		}
 		else {
 			List<TileEntity> tiles = chunk.getTileEntityList();
-			List<String> targetIds = new LinkedList<String>();
-			List<TileEntity> myPoss = new LinkedList<TileEntity>();
+			List<String> targetIds = new LinkedList<>();
+			List<TileEntity> myPoss = new LinkedList<>();
 			BlockPosition pos = null;
 			TileDockingPort destTile = null;
 			TileDockingPort srcTile = null;
@@ -587,7 +589,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	}
 
 	@Override
-	public void writeToNbt(NBTTagCompound nbt) {
+	public void writeToNbt(@NotNull NBTTagCompound nbt) {
 		properties.writeToNBT(nbt);
 		nbt.setBoolean("created", created);
 		nbt.setInteger("id", getId());
@@ -609,7 +611,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 		nbt.setDouble("deltaRotationZ", angularVelocity[2]);
 
 		//Set known planets
-		int array[] = new int[knownPlanetList.size()];
+		int[] array = new int[knownPlanetList.size()];
 		int j = 0;
 		for(int i : knownPlanetList)
 			array[j++] = i;
@@ -680,7 +682,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 
 		//get known planets
 
-		int array[] = nbt.getIntArray("knownPlanets");
+		int[] array = nbt.getIntArray("knownPlanets");
 		int j = 0;
 		for(int i : array)
 			knownPlanetList.add(i);

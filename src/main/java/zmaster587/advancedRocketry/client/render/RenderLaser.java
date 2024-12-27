@@ -6,15 +6,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
 public class RenderLaser extends Render {
 
 	private static final ResourceLocation flare = new ResourceLocation("advancedrocketry", "textures/entity/Flare.png");
 
-	float color[];
-	float flareColor[];
+	float[] color;
+	float[] flareColor;
 	//float flareColo
 	double size;
 	

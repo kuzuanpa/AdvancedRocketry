@@ -24,7 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 public class TileSuitWorkStation extends TileEntity implements IModularInventory, IInventory {
 
 	EmbeddedInventory inventory;
-	ModuleTexturedLimitedSlotArray slotArray[];
+	ModuleTexturedLimitedSlotArray[] slotArray;
 
 	public TileSuitWorkStation() {
 		inventory = new EmbeddedInventory(getSizeInventory());
@@ -33,7 +33,7 @@ public class TileSuitWorkStation extends TileEntity implements IModularInventory
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(new ModuleSlotArray(15, 15, this, 0, 1));
 		

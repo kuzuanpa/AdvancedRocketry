@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
@@ -29,19 +30,19 @@ public abstract class SatelliteData extends SatelliteBase {
 				"\nData: " + ZUtils.formatNumber((data.getData() + dataCreated(world)));
 	}
 	
-	private int dataCreated(World world) {
+	private int dataCreated(@NotNull World world) {
 		return Math.min(data.getMaxData() - data.getData() , (int)Math.max(0,  (world.getTotalWorldTime() - lastActionTime)/200)); //TODO: change from 10 seconds
 	}
 
 	@Override
-	public boolean acceptsItemInConstruction(ItemStack item) {
+	public boolean acceptsItemInConstruction(@NotNull ItemStack item) {
 		int flag = SatelliteRegistry.getSatelliteProperty(item).getPropertyFlag();
 		
 		return super.acceptsItemInConstruction(item) || SatelliteProperties.Property.DATA.isOfType(flag) || SatelliteProperties.Property.POWER_GEN.isOfType(flag);
 	}
 	
 	@Override
-	public void setProperties(ItemStack satelliteProperties) {
+	public void setProperties(@NotNull ItemStack satelliteProperties) {
 		super.setProperties(satelliteProperties);
 		data.setMaxData(this.satelliteProperties.getMaxDataStorage());
 	}
@@ -72,7 +73,7 @@ public abstract class SatelliteData extends SatelliteBase {
 	}
 	
 	@Override
-	public void setDimensionId(World world) {
+	public void setDimensionId(@NotNull World world) {
 		//TODO: send packet on orbit reached
 		super.setDimensionId(world);
 
@@ -80,7 +81,7 @@ public abstract class SatelliteData extends SatelliteBase {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
 		this.data.readFromNBT(nbt.getCompoundTag("data"));
@@ -88,7 +89,7 @@ public abstract class SatelliteData extends SatelliteBase {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
 		NBTTagCompound data = new NBTTagCompound();
@@ -109,7 +110,7 @@ public abstract class SatelliteData extends SatelliteBase {
 	}
 
 	@Override
-	public void sendChanges(Container container, ICrafting crafter, int variableId, int localId) {
+	public void sendChanges(Container container, @NotNull ICrafting crafter, int variableId, int localId) {
 		crafter.sendProgressBarUpdate(container, variableId, (short)(( lastActionTime >>> (localId*16) ) & 0xffff));
 		
 		if(localId == 3)

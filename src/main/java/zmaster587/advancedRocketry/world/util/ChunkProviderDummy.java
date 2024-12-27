@@ -8,6 +8,7 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import org.jetbrains.annotations.NotNull;
 
 public class ChunkProviderDummy implements IChunkProvider {
 
@@ -25,7 +26,7 @@ public class ChunkProviderDummy implements IChunkProvider {
 	}
 
 	@Override
-	public Chunk provideChunk(int p_73154_1_, int p_73154_2_) {
+	public @NotNull Chunk provideChunk(int p_73154_1_, int p_73154_2_) {
 		return new Chunk(world, p_73154_1_, p_73154_2_);
 	}
 

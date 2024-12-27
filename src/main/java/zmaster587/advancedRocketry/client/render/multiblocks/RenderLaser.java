@@ -10,7 +10,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
-import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.block.RotatableBlock;
 import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 

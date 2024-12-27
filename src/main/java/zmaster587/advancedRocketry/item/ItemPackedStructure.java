@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.item;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.util.StorageChunk;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,7 @@ public class ItemPackedStructure extends Item {
 		setHasSubtypes(true);
 	}
 	
-	public void setStructure(ItemStack stack, StorageChunk chunk) {
+	public void setStructure(ItemStack stack, @NotNull StorageChunk chunk) {
 		NBTTagCompound nbt;
 		if(stack.hasTagCompound())
 			nbt = stack.getTagCompound();

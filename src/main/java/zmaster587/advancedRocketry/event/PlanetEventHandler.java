@@ -36,16 +36,14 @@ import net.minecraftforge.event.terraingen.OreGenEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.achievements.ARAchivements;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
-import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.api.IPlanetaryProvider;
+import zmaster587.advancedRocketry.api.*;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereType;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
 import zmaster587.advancedRocketry.client.render.planet.RenderPlanetarySky;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
@@ -73,7 +71,7 @@ public class PlanetEventHandler {
 
 	public static long time = 0;
 	private static long endTime, duration;
-	private static Map<Long,TransitionEntity> transitionMap = new HashMap<Long,TransitionEntity>();
+	private static @NotNull Map<Long,TransitionEntity> transitionMap = new HashMap<>();
 
 	public static void addDelayedTransition(long tick, TransitionEntity entity) {
 		transitionMap.put(tick, entity);
@@ -167,7 +165,7 @@ public class PlanetEventHandler {
 			RocketEventHandler.destroyOrbitalTextures(event.entity.worldObj);
 		}
 		if(event.entity.isInWater()) {
-			if(AtmosphereType.LOWOXYGEN.isImmune(event.entityLiving))
+			if(AtmosphereTypes.LOWOXYGEN.isImmune(event.entityLiving))
 				event.entity.setAir(300);
 		}
 
@@ -180,7 +178,7 @@ public class PlanetEventHandler {
 	}
 
 	@SubscribeEvent
-	public void blockPlaceEvent(PlayerInteractEvent event) {
+	public void blockPlaceEvent(@NotNull PlayerInteractEvent event) {
 		ForgeDirection direction = ForgeDirection.getOrientation(event.face);
 		if(!event.world.isRemote && Action.RIGHT_CLICK_BLOCK == event.action && event.entityPlayer != null  && AtmosphereHandler.getOxygenHandler(event.world.provider.dimensionId) != null &&
 				!AtmosphereHandler.getOxygenHandler(event.world.provider.dimensionId).getAtmosphereType(event.x + direction.offsetX, event.y + direction.offsetY, event.z + direction.offsetZ).allowsCombustion()) {
@@ -221,7 +219,7 @@ public class PlanetEventHandler {
 
 	//TODO move
 	//Has weak refs so if the player gets killed/logsout etc the entry doesnt stay trapped in RAM
-	private static HashSet<WeakReference<EntityPlayer>> inventoryCheckPlayerBypassMap = new HashSet<WeakReference<EntityPlayer>>();
+	private static @NotNull HashSet<WeakReference<EntityPlayer>> inventoryCheckPlayerBypassMap = new HashSet<>();
 
 	public static void addPlayerToInventoryBypass(EntityPlayer player) {
 		inventoryCheckPlayerBypassMap.add(new WeakReference<>(player));
@@ -285,7 +283,7 @@ public class PlanetEventHandler {
 	}
 
 	@SubscribeEvent
-	public void tickClient(TickEvent.ClientTickEvent event) {
+	public void tickClient(TickEvent.@NotNull ClientTickEvent event) {
 		if(event.phase == event.phase.END)
 			DimensionManager.getInstance().tickDimensionsClient();
 	}
@@ -377,7 +375,7 @@ public class PlanetEventHandler {
 	}
 
 	@SubscribeEvent
-	public void worldUnloadEvent(WorldEvent.Unload event) {
+	public void worldUnloadEvent(WorldEvent.@NotNull Unload event) {
 		if(!event.world.isRemote)
 			AtmosphereHandler.unregisterWorld(event.world.provider.dimensionId);
 	}
@@ -456,7 +454,7 @@ public class PlanetEventHandler {
 	}
 
 	@SubscribeEvent
-	public void chunkLoadEvent(PopulateChunkEvent.Post event) {
+	public void chunkLoadEvent(PopulateChunkEvent.@NotNull Post event) {
 		if(zmaster587.advancedRocketry.api.Configuration.allowTerraforming && event.world.provider.getClass() == WorldProviderPlanet.class) {
 
 			if(DimensionManager.getInstance().getDimensionProperties(event.world.provider.dimensionId).isTerraformed()) {
@@ -470,7 +468,7 @@ public class PlanetEventHandler {
 	public void chunkLoadEvent(ChunkEvent.Load event) {
 	}
 
-	public static void modifyChunk(World world ,WorldProviderPlanet provider, Chunk chunk) {
+	public static void modifyChunk(World world , WorldProviderPlanet provider, @NotNull Chunk chunk) {
 		for(int x = 0; x < 16; x++) {
 			for(int z = 0; z < 16; z++) {
 
@@ -505,7 +503,7 @@ public class PlanetEventHandler {
 			ItemStack armor = Minecraft.getMinecraft().thePlayer.getCurrentArmor(3);
 
 			if(armor != null && armor.getItem() instanceof IModularArmor) {
-				for(ItemStack i : ((IModularArmor)armor.getItem()).getComponents(armor)) {
+				for(@NotNull ItemStack i : ((IModularArmor)armor.getItem()).getComponents(armor)) {
 					if(i.isItemEqual(component)) {
 						atmosphere = Math.min(atmosphere, 100);
 						break;

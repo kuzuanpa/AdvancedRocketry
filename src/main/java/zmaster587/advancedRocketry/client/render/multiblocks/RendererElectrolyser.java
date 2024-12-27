@@ -11,6 +11,7 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.libVulpes.block.RotatableBlock;
@@ -21,11 +22,12 @@ public class RendererElectrolyser extends TileEntitySpecialRenderer{
 
 	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/electrolyser.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/electrolyser.png");
+	@NotNull
+    ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/electrolyser.png");
 
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x,
-			double y, double z, float f) {
+	public void renderTileEntityAt(@NotNull TileEntity tile, double x,
+                                   double y, double z, float f) {
 		TileMultiblockMachine multiBlockTile = (TileMultiblockMachine)tile;
 
 		if(!multiBlockTile.canRender())
@@ -50,7 +52,7 @@ public class RendererElectrolyser extends TileEntitySpecialRenderer{
 		//Lightning effect
 
 		if(multiBlockTile.isRunning()) {
-			Tessellator tess = Tessellator.instance;
+			@NotNull Tessellator tess = Tessellator.instance;
 
 			double width = 0.01;
 

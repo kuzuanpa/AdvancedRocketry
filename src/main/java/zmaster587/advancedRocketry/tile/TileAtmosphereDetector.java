@@ -3,18 +3,16 @@ package zmaster587.advancedRocketry.tile;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
-import zmaster587.advancedRocketry.AdvancedRocketry;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.IAtmosphere;
 import zmaster587.advancedRocketry.api.atmosphere.AtmosphereRegister;
 import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereType;
-import zmaster587.advancedRocketry.inventory.TextureResources;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.inventory.modules.IButtonInventory;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
@@ -35,7 +33,7 @@ public class TileAtmosphereDetector extends TileEntity implements IModularInvent
 	IAtmosphere atmosphereToDetect;
 
 	public TileAtmosphereDetector() {
-		atmosphereToDetect = AtmosphereType.AIR;
+		atmosphereToDetect = AtmosphereTypes.AIR;
 	}
 
 	@Override
@@ -51,7 +49,7 @@ public class TileAtmosphereDetector extends TileEntity implements IModularInvent
 
 			//TODO: Galacticcraft support
 			if(AtmosphereHandler.getOxygenHandler(worldObj.provider.dimensionId) == null) {
-				detectedAtm = atmosphereToDetect == AtmosphereType.AIR;
+				detectedAtm = atmosphereToDetect == AtmosphereTypes.AIR;
 			}
 			else {
 				for(int i = 1; i < ForgeDirection.values().length; i++) {
@@ -68,9 +66,9 @@ public class TileAtmosphereDetector extends TileEntity implements IModularInvent
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
-		List<ModuleBase> btns = new LinkedList<ModuleBase>();
+	public @NotNull List<ModuleBase> getModules(int id, EntityPlayer player) {
+		List<ModuleBase> modules = new LinkedList<>();
+		List<ModuleBase> btns = new LinkedList<>();
 
 		Iterator<IAtmosphere> atmIter = AtmosphereRegister.getInstance().getAtmosphereList().iterator();
 
@@ -81,13 +79,13 @@ public class TileAtmosphereDetector extends TileEntity implements IModularInvent
 			i++;
 		}
 
-		ModuleContainerPan panningContainer = new ModuleContainerPan(5, 20, btns, new LinkedList<ModuleBase>(), zmaster587.libVulpes.inventory.TextureResources.starryBG, 165, 120, 0, 500);
+		ModuleContainerPan panningContainer = new ModuleContainerPan(5, 20, btns, new LinkedList<>(), zmaster587.libVulpes.inventory.TextureResources.starryBG, 165, 120, 0, 500);
 		modules.add(panningContainer);
 		return modules;
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "atmosphereDetector";
 	}
 
@@ -132,7 +130,7 @@ public class TileAtmosphereDetector extends TileEntity implements IModularInvent
 
 	@Override
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+							   @NotNull NBTTagCompound nbt) {
 		if(id == 0) {
 			String name = nbt.getString("uName");
 			atmosphereToDetect = AtmosphereRegister.getInstance().getAtmosphere(name);
@@ -140,7 +138,7 @@ public class TileAtmosphereDetector extends TileEntity implements IModularInvent
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
 		nbt.setString("atmName", atmosphereToDetect.getUnlocalizedName());

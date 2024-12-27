@@ -24,12 +24,12 @@ public class MapGenGeode extends MapGenBase {
 
 	private static List<BlockMeta> ores;//= {new BlockMeta(Blocks.iron_ore), new BlockMeta(Blocks.gold_ore), new BlockMeta(Blocks.redstone_ore), new BlockMeta(Blocks.lapis_ore)};
 
-	private HashMap<BlockPosition, Byte> metaPos = new HashMap<BlockPosition, Byte>();
+	private HashMap<BlockPosition, Byte> metaPos = new HashMap<>();
 
 	public MapGenGeode(int chancePerChunk) {
 		this.chancePerChunk = chancePerChunk;
 		if(ores == null) {
-			ores = new LinkedList<BlockMeta>();
+			ores = new LinkedList<>();
 			for(int i = 0; i < Configuration.standardGeodeOres.size(); i++) {
 				String oreDictName = Configuration.standardGeodeOres.get(i);
 				List<ItemStack> ores2 = OreDictionary.getOres(oreDictName);

@@ -14,6 +14,7 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.libVulpes.block.RotatableBlock;
@@ -64,7 +65,7 @@ public class RendererCuttingMachine extends TileEntitySpecialRenderer {
 			List<ItemStack> outputList = multiBlockTile.getOutputs();
 			if(outputList != null && !outputList.isEmpty()) {
 				ItemStack stack = outputList.get(0);
-				EntityItem entity = new EntityItem(tile.getWorldObj());
+				@NotNull EntityItem entity = new EntityItem(tile.getWorldObj());
 
 				entity.setEntityItemStack(stack);
 				entity.hoverStart = 0;

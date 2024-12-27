@@ -7,6 +7,7 @@ package zmaster587.advancedRocketry.inventory;
 
 import java.util.LinkedList;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 
 import zmaster587.advancedRocketry.tile.multiblock.TileSpaceLaser;
@@ -23,7 +24,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class GuiSpaceLaser extends GuiContainer {
 
-	private ResourceLocation backdrop = new ResourceLocation("advancedrocketry", "textures/gui/LaserTile.png");
+	private @NotNull ResourceLocation backdrop = new ResourceLocation("advancedrocketry", "textures/gui/LaserTile.png");
 	private TileSpaceLaser laserTile;
 	private int prevX, prevZ;
 
@@ -141,7 +142,7 @@ public class GuiSpaceLaser extends GuiContainer {
 		int x = (width - xSize) / 2, y = (height - ySize) / 2;
 		
 		if(a > x + 11 && a < x + 27 && b < y + 85 && b > y + 43) {
-			LinkedList<String> text = new LinkedList<String>();
+			LinkedList<String> text = new LinkedList<>();
 			text.add(laserTile.getBatteries().getEnergyStored() + " / " + laserTile.getBatteries().getMaxEnergyStored() + " RF");
 			this.drawHoveringText(text, a, b, this.fontRendererObj);
 		}

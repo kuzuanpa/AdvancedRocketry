@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.item;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.ISatelliteIdItem;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
@@ -76,7 +77,7 @@ public class ItemSatelliteIdentificationChip extends Item implements ISatelliteI
 	 * @param stack itemStack
 	 * @param satellite properties of satellite to set info with
 	 */
-	public void setSatellite(ItemStack stack, SatelliteProperties satellite) {
+	public void setSatellite(@NotNull ItemStack stack, SatelliteProperties satellite) {
 		erase(stack);
 		SatelliteBase satellite2 = SatelliteRegistry.getSatallite(satellite.getSatelliteType());
 		if(satellite2 != null) {
@@ -94,11 +95,11 @@ public class ItemSatelliteIdentificationChip extends Item implements ISatelliteI
 		}
 	}
 
-	public void erase(ItemStack stack) {
+	public void erase(@NotNull ItemStack stack) {
 		stack.setTagCompound(null);
 	}
 
-	public void setDim(ItemStack stack, int dimId) {
+	public void setDim(@NotNull ItemStack stack, int dimId) {
 		NBTTagCompound nbt;
 		if(stack.hasTagCompound())
 			nbt = stack.getTagCompound();

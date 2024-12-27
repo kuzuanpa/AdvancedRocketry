@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.item.components;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
@@ -55,7 +56,7 @@ public class ItemJetpack extends Item implements IArmorComponent, IJetPack {
 
 	@Override
 	public void onTick(World world, EntityPlayer player,
-			ItemStack armorStack, IInventory inv, ItemStack componentStack) {
+                       ItemStack armorStack, @NotNull IInventory inv, ItemStack componentStack) {
 
 		if(player.capabilities.isCreativeMode) {
 			return;
@@ -217,7 +218,7 @@ public class ItemJetpack extends Item implements IArmorComponent, IJetPack {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public ResourceIcon getComponentIcon(ItemStack armorStack) {
+	public @NotNull ResourceIcon getComponentIcon(ItemStack armorStack) {
 		return isEnabled(armorStack) ? getMode(armorStack) == MODES.HOVER ? jetpackHover : jetpackEnabled : jetpackDisabled;
 	}
 
@@ -232,7 +233,7 @@ public class ItemJetpack extends Item implements IArmorComponent, IJetPack {
 		if(stack.hasTagCompound())
 			stack.getTagCompound().setFloat("height", height);
 		else {
-			NBTTagCompound nbt = new NBTTagCompound();
+			@NotNull NBTTagCompound nbt = new NBTTagCompound();
 			nbt.setFloat("height", height);
 			stack.setTagCompound(nbt);
 		}
@@ -283,7 +284,7 @@ public class ItemJetpack extends Item implements IArmorComponent, IJetPack {
 			setHeight(stack, (float)player.posY + player.height);
 	}
 	
-	private void flagModeSwitched(ItemStack stack) {
+	private void flagModeSwitched(@NotNull ItemStack stack) {
 		NBTTagCompound nbt;
 		if(stack.hasTagCompound()) {
 			nbt = stack.getTagCompound();

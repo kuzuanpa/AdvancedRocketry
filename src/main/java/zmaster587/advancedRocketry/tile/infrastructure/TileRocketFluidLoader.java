@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.api.IInfrastructure;
@@ -188,7 +189,7 @@ public class TileRocketFluidLoader extends TileFluidHatch  implements IInfrastru
 
 	@Override
 	public boolean onLinkComplete(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+                                  @NotNull EntityPlayer player, World world) {
 		if(player.worldObj.isRemote)
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage((new ChatComponentText(LibVulpes.proxy.getLocalizedString("msg.linker.error.firstMachine"))));
 		return false;
@@ -291,7 +292,7 @@ public class TileRocketFluidLoader extends TileFluidHatch  implements IInfrastru
 		nbt.setByte("state", in.readByte());
 		nbt.setByte("inputstate", in.readByte());
 
-		byte bytes[] = new byte[6];
+		byte[] bytes = new byte[6];
 		for(int i = 0; i < 6; i++)
 			bytes[i] = in.readByte();
 		nbt.setByteArray("bytes", bytes);
@@ -303,7 +304,7 @@ public class TileRocketFluidLoader extends TileFluidHatch  implements IInfrastru
 		state = RedstoneState.values()[nbt.getByte("state")];
 		inputstate = RedstoneState.values()[nbt.getByte("inputstate")];
 
-		byte bytes[] = nbt.getByteArray("bytes");
+		byte[] bytes = nbt.getByteArray("bytes");
 		for(int i = 0; i < 6; i++)
 			sideSelectorModule.setStateForSide(i, bytes[i]);
 

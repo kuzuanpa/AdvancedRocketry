@@ -4,6 +4,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class EnchantmentSpaceBreathing extends Enchantment {
 	   
@@ -18,7 +19,7 @@ public class EnchantmentSpaceBreathing extends Enchantment {
 	}
 
 	@Override
-	public boolean canApply(ItemStack stack) {
+	public boolean canApply(@Nullable ItemStack stack) {
 		return stack != null && stack.getItem() instanceof ItemArmor;
 	}
 	

@@ -8,6 +8,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
@@ -22,8 +24,8 @@ public class ItemOreScanner extends Item implements IModularInventory {
 
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player,
-			List list, boolean arg5) {
+	public void addInformation(@NotNull ItemStack stack, EntityPlayer player,
+							   @NotNull List list, boolean arg5) {
 		
 		SatelliteBase sat = DimensionManager.getInstance().getSatellite(this.getSatelliteID(stack));
 		
@@ -68,8 +70,8 @@ public class ItemOreScanner extends Item implements IModularInventory {
 	}
 	
 	@Override
-	public ItemStack onItemRightClick(ItemStack stack, World world,
-			EntityPlayer player) {
+	public ItemStack onItemRightClick(@NotNull ItemStack stack, World world,
+									  EntityPlayer player) {
 
 		if(!player.worldObj.isRemote)
 			player.openGui(AdvancedRocketry.instance, GuiHandler.guiId.OreMappingSatellite.ordinal(), world, (int)player.posX, (int)getSatelliteID(stack), (int)player.posZ);
@@ -88,19 +90,19 @@ public class ItemOreScanner extends Item implements IModularInventory {
 	}
 
 
-	public void interactSatellite(SatelliteBase satellite,EntityPlayer player, World world, int x, int y, int z) {
+	public void interactSatellite(@NotNull SatelliteBase satellite, EntityPlayer player, World world, int x, int y, int z) {
 		satellite.performAction(player, world,x,y,z);
 	}
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 		modules.add(new ModuleOreMapper(0, 0));
 		return modules;
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @Nullable String getModularInventoryName() {
 		return null;
 	}
 

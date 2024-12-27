@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.network;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
@@ -28,7 +29,7 @@ public class PacketSpaceStationInfo extends BasePacket {
 	}
 
 	@Override
-	public void write(ByteBuf out) {
+	public void write(@NotNull ByteBuf out) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		out.writeInt(stationNumber);
 		boolean flag = false; //TODO //dimProperties == null;

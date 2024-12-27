@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemFluid extends ItemBlock {
 
@@ -17,7 +18,7 @@ public class ItemFluid extends ItemBlock {
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public int getColorFromItemStack(ItemStack stack, int meta) {
+	public int getColorFromItemStack(@NotNull ItemStack stack, int meta) {
 		return Block.getBlockFromItem(stack.getItem()).getRenderColor(meta);
 	}
 	

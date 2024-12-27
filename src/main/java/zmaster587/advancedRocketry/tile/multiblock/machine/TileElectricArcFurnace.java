@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.api.LibVulpesBlocks;
@@ -91,7 +92,7 @@ public class TileElectricArcFurnace extends TileMultiblockMachine implements IMo
 	}
 	
 	@Override
-	public ResourceLocation getSound() {
+	public @NotNull ResourceLocation getSound() {
 		return TextureResources.sndElectricArcFurnace;
 	}
 	
@@ -152,7 +153,7 @@ public class TileElectricArcFurnace extends TileMultiblockMachine implements IMo
 	}
 	
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
 		// TODO Auto-generated method stub
 		List<ModuleBase> modules = super.getModules(ID, player);
 		

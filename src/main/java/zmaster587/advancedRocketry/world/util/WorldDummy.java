@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.world.util;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.network.PacketStorageTileUpdate;
 import zmaster587.advancedRocketry.util.StorageChunk;
 import zmaster587.libVulpes.network.PacketHandler;
@@ -152,7 +153,7 @@ public class WorldDummy extends World {
 	}
 
 	@Override
-	protected IChunkProvider createChunkProvider() {
+	protected @Nullable IChunkProvider createChunkProvider() {
 		if(this.isRemote)
 			return new ChunkProviderClient(this);
 		else 
@@ -172,7 +173,7 @@ public class WorldDummy extends World {
 
 	//No entities exist
 	@Override
-	public Entity getEntityByID(int p_73045_1_) {
+	public @Nullable Entity getEntityByID(int p_73045_1_) {
 		return null;
 	}
 

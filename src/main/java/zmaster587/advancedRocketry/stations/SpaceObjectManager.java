@@ -47,11 +47,11 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 	private final static SpaceObjectManager spaceObjectManager = new SpaceObjectManager();
 
 	private SpaceObjectManager() {
-		stationLocations = new HashMap<Integer,ISpaceObject>();
-		spaceStationOrbitMap = new HashMap<Integer, List<ISpaceObject>>();
-		nameToClass = new HashMap<String, Class>();
-		classToString = new HashMap<Class, String>();
-		temporaryDimensions = new HashMap<Integer, Long>();
+		stationLocations = new HashMap<>();
+		spaceStationOrbitMap = new HashMap<>();
+		nameToClass = new HashMap<>();
+		classToString = new HashMap<>();
+		temporaryDimensions = new HashMap<>();
 		AdvancedRocketryAPI.spaceObjectManager = this;
 	}
 
@@ -374,7 +374,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 		}
 
 		if(spaceStationOrbitMap.get(dimId) == null)
-			spaceStationOrbitMap.put(dimId,new LinkedList<ISpaceObject>());
+			spaceStationOrbitMap.put(dimId, new LinkedList<>());
 
 		if(!spaceStationOrbitMap.get(dimId).contains(station))
 			spaceStationOrbitMap.get(dimId).add(station);
@@ -401,7 +401,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 		}
 
 		if(spaceStationOrbitMap.get(WARPDIMID) == null)
-			spaceStationOrbitMap.put(WARPDIMID,new LinkedList<ISpaceObject>());
+			spaceStationOrbitMap.put(WARPDIMID, new LinkedList<>());
 
 		if(!spaceStationOrbitMap.get(WARPDIMID).contains(station))
 			spaceStationOrbitMap.get(WARPDIMID).add(station);

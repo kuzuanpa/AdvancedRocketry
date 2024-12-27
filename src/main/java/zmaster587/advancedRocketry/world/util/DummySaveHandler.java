@@ -9,11 +9,12 @@ import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import org.jetbrains.annotations.Nullable;
 
 public class DummySaveHandler implements ISaveHandler {
 
 	@Override
-	public WorldInfo loadWorldInfo() {
+	public @Nullable WorldInfo loadWorldInfo() {
 		return null;
 	}
 
@@ -39,7 +40,7 @@ public class DummySaveHandler implements ISaveHandler {
 	}
 
 	@Override
-	public IPlayerFileData getSaveHandler() {
+	public @Nullable IPlayerFileData getSaveHandler() {
 		return null;
 	}
 

@@ -17,6 +17,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.api.IInfrastructure;
@@ -40,7 +42,8 @@ import zmaster587.libVulpes.util.ZUtils.RedstoneState;
 
 public class TileRocketLoader extends TileInventoryHatch implements IInfrastructure, IButtonInventory, INetworkMachine, IGuiCallback {
 
-	EntityRocket rocket;
+	@Nullable
+    EntityRocket rocket;
 	ModuleRedstoneOutputButton redstoneControl;
 	RedstoneState state;
 	ModuleRedstoneOutputButton inputRedstoneControl;
@@ -68,7 +71,7 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 }
 	
 	@Override
-	public boolean allowRedstoneOutputOnSide(ForgeDirection facing) {
+	public boolean allowRedstoneOutputOnSide(@NotNull ForgeDirection facing) {
 		return sideSelectorModule.getStateForSide(facing.getOpposite()) == 1;
 	}
 
@@ -109,7 +112,7 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
 		List<ModuleBase> list = super.getModules(ID, player);
 		list.add(redstoneControl);
 		list.add(inputRedstoneControl);
@@ -175,7 +178,7 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public @NotNull Packet getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setByte("state", (byte)state.ordinal());
 		nbt.setByte("inputRedstoneState", (byte) inputstate.ordinal());
@@ -215,7 +218,7 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 
 	@Override
 	public boolean onLinkComplete(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+                                  @NotNull EntityPlayer player, World world) {
 		if(player.worldObj.isRemote)
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage((new ChatComponentText(LibVulpes.proxy.getLocalizedString("msg.linker.error.firstMachine"))));
 		return false;
@@ -270,7 +273,7 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
 		state = RedstoneState.values()[nbt.getByte("redstoneState")];
@@ -308,12 +311,12 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 	}
 
 	@Override
-	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+	public void readDataFromNetwork(@NotNull ByteBuf in, byte packetId,
+                                    NBTTagCompound nbt) {
 		nbt.setByte("state", in.readByte());
 		nbt.setByte("inputstate", in.readByte());
 
-		byte bytes[] = new byte[6];
+		byte[] bytes = new byte[6];
 		for(int i = 0; i < 6; i++)
 			bytes[i] = in.readByte();
 		nbt.setByteArray("bytes", bytes);
@@ -325,7 +328,7 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 		state = RedstoneState.values()[nbt.getByte("state")];
 		inputstate = RedstoneState.values()[nbt.getByte("inputstate")];
 
-		byte bytes[] = nbt.getByteArray("bytes");
+		byte[] bytes = nbt.getByteArray("bytes");
 		for(int i = 0; i < 6; i++)
 			sideSelectorModule.setStateForSide(i, bytes[i]);
 

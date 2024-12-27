@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
 import zmaster587.advancedRocketry.api.satellite.IDataHandler;
@@ -59,7 +60,7 @@ public class TileEntitySatelliteControlCenter extends TileInventoriedRFConsumer 
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "container.satelliteMonitor";
 	}
 
@@ -163,7 +164,7 @@ public class TileEntitySatelliteControlCenter extends TileInventoriedRFConsumer 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
 
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 		modules.add(new ModulePower(18, 20, this.energy));
 		modules.add(new ModuleButton(116, 70, 0, LibVulpes.proxy.getLocalizedString("msg.satctrlcenter.connect"), this,  zmaster587.libVulpes.inventory.TextureResources.buttonBuild));
 		modules.add(new ModuleButton(173, 3, 1, "", this, TextureResources.buttonKill, LibVulpes.proxy.getLocalizedString("msg.satctrlcenter.destroysat"), 24, 24));
@@ -219,7 +220,7 @@ public class TileEntitySatelliteControlCenter extends TileInventoriedRFConsumer 
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
 		NBTTagCompound data = nbt.getCompoundTag("data");

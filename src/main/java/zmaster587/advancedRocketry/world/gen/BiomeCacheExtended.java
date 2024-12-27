@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.world.gen;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.LongHashMap;
@@ -15,7 +16,7 @@ public class BiomeCacheExtended {
     /** The last time this BiomeCache was cleaned, in milliseconds. */
     private long lastCleanupTime;
     /** The map of keys to BiomeCacheBlocks. Keys are based on the chunk x, z coordinates as (x | z << 32). */
-    private LongHashMap cacheMap = new LongHashMap();
+    private @NotNull LongHashMap cacheMap = new LongHashMap();
     /** The list of cached BiomeCacheBlocks */
     private List cache = new ArrayList();
     private static final String __OBFID = "CL_00000162";

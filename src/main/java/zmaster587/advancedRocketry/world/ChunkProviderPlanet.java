@@ -23,6 +23,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
@@ -268,7 +270,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
 	 * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
 	 * specified chunk from the map seed and chunk seed
 	 */
-	public BlockMetacoupling getChunkPrimer(int p_73154_1_, int p_73154_2_)
+	public @NotNull BlockMetacoupling getChunkPrimer(int p_73154_1_, int p_73154_2_)
 	{
 		BlockMetacoupling ablock = new BlockMetacoupling();
 		this.func_147424_a(p_73154_1_, p_73154_2_, ablock.ablock);
@@ -543,7 +545,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
         return biomegenbase.getSpawnableList(p_73155_1_);
     }
 
-	public ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
+	public @Nullable ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
 	{
 		return null;
 	}
@@ -563,7 +565,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
 	
 	public static class BlockMetacoupling
 	{
-		public Block[] ablock = new Block[65536];
+		public Block @NotNull [] ablock = new Block[65536];
 		public byte[] abyte = new byte[65536];
 	}
 

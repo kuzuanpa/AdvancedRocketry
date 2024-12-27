@@ -4,6 +4,7 @@ import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.world.gen.WorldGenCharredTree;
 import zmaster587.advancedRocketry.world.gen.WorldGenFlowerLike;
@@ -33,8 +34,8 @@ public class BiomeGenStormland extends BiomeGenBase {
 	}
 
 	@Override
-	public void decorate(World world, Random rand, int chunkX,
-			int chunkZ) {
+	public void decorate(World world, @NotNull Random rand, int chunkX,
+                         int chunkZ) {
 		super.decorate(world, rand, chunkX, chunkZ);
 		
         int x = chunkX + rand.nextInt(16);

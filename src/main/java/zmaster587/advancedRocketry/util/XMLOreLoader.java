@@ -13,6 +13,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import net.minecraft.block.Block;
 import net.minecraft.util.MathHelper;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -28,6 +30,7 @@ import zmaster587.libVulpes.util.SingleEntry;
 
 public class XMLOreLoader {
 
+	@Nullable
 	Document doc;
 
 	public boolean loadFile(File xmlFile) throws IOException {
@@ -57,9 +60,9 @@ public class XMLOreLoader {
 	 * @param propertyFile
 	 * @return  list of singleEntry (order MUST be preserved)
 	 */
-	public List<SingleEntry<BlockPosition, OreGenProperties>> loadPropertyFile() {
+	public @NotNull List<SingleEntry<BlockPosition, OreGenProperties>> loadPropertyFile() {
 		Node childNode = doc.getFirstChild().getFirstChild();
-		List<SingleEntry<BlockPosition, OreGenProperties>> mapping = new LinkedList<SingleEntry<BlockPosition, OreGenProperties>>();
+		@NotNull List<SingleEntry<BlockPosition, OreGenProperties>> mapping = new LinkedList<>();
 		OreGenProperties properties = new OreGenProperties();
 
 		while(childNode != null) {
@@ -129,7 +132,7 @@ public class XMLOreLoader {
 		return mapping;
 	}
 
-	public static OreGenProperties loadOre(Node rootNode) {
+	public static @Nullable OreGenProperties loadOre(Node rootNode) {
 		OreGenProperties oreGen = new OreGenProperties();
 		Node childNode = rootNode.getFirstChild();
 

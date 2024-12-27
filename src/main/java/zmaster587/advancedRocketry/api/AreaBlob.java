@@ -1,30 +1,33 @@
 package zmaster587.advancedRocketry.api;
 
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import zmaster587.advancedRocketry.api.util.IBlobHandler;
+import zmaster587.libVulpes.util.AdjacencyGraph;
+import zmaster587.libVulpes.util.BlockPosition;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import zmaster587.advancedRocketry.api.util.IBlobHandler;
-import zmaster587.libVulpes.util.BlockPosition;
-import zmaster587.libVulpes.util.AdjacencyGraph;
-
 public class AreaBlob {
 	//Graph containing the acutal area enclosed
-	protected AdjacencyGraph<BlockPosition> graph;
+	protected final AdjacencyGraph<BlockPosition> graph;
 	//Object to call back to when events happen, usually a tileentity
 	protected IBlobHandler blobHandler;
 	//Data stored by this blob
+	@Nullable
 	Object data;
 
 	public AreaBlob(IBlobHandler blobHandler) {
 		this.blobHandler = blobHandler;
-		graph = new AdjacencyGraph<BlockPosition>();
+		graph = new AdjacencyGraph<>();
 		data = null;
 	}
 
-	public void setData(Object obj) {
+	public void setData(@Nullable Object obj) {
 		data = obj;
 	}
 	
@@ -32,7 +35,7 @@ public class AreaBlob {
 		return true;
 	}
 	
-	public Object getData() {
+	public @Nullable Object getData() {
 		return data;
 	}
 	
@@ -55,7 +58,7 @@ public class AreaBlob {
 	 * Adds a block to the graph
 	 * @param blockPos block to add
 	 */
-	public void addBlock(BlockPosition blockPos,  List<AreaBlob> otherBlobs) {
+	public void addBlock(@NotNull BlockPosition blockPos, List<AreaBlob> otherBlobs) {
 		if(!graph.contains(blockPos) && blobHandler.canFormBlob()) {
 			graph.add(blockPos, getPositionsToAdd(blockPos));
 		}
@@ -74,7 +77,7 @@ public class AreaBlob {
 	 * @return list containing valid adjacent blocks
 	 */
 	protected HashSet<BlockPosition> getPositionsToAdd(BlockPosition blockPos) {
-		HashSet<BlockPosition> set = new HashSet<BlockPosition>();
+		HashSet<BlockPosition> set = new HashSet<>();
 		
 		for(ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			
@@ -126,7 +129,7 @@ public class AreaBlob {
 	 * @param z
 	 */
 	public void removeBlock(int x, int y, int z) {
-		BlockPosition blockPos = new BlockPosition(x, y, z);
+		@NotNull BlockPosition blockPos = new BlockPosition(x, y, z);
 		graph.remove(blockPos);
 		
 		for(ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {

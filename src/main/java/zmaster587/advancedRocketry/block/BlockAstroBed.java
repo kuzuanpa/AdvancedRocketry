@@ -1,9 +1,5 @@
 package zmaster587.advancedRocketry.block;
 
-import java.util.Iterator;
-
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
-import zmaster587.advancedRocketry.world.provider.WorldProviderPlanet;
 import net.minecraft.block.BlockBed;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +7,8 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+import zmaster587.advancedRocketry.world.provider.WorldProviderPlanet;
 
 public class BlockAstroBed extends BlockBed {
 	/**
@@ -52,18 +50,14 @@ public class BlockAstroBed extends BlockBed {
                 if (func_149976_c(i1))
                 {
                     EntityPlayer entityplayer1 = null;
-                    Iterator iterator = p_149727_1_.playerEntities.iterator();
 
-                    while (iterator.hasNext())
-                    {
-                        EntityPlayer entityplayer2 = (EntityPlayer)iterator.next();
+                    for (Object o : p_149727_1_.playerEntities) {
+                        EntityPlayer entityplayer2 = (EntityPlayer) o;
 
-                        if (entityplayer2.isPlayerSleeping())
-                        {
+                        if (entityplayer2.isPlayerSleeping()) {
                             ChunkCoordinates chunkcoordinates = entityplayer2.playerLocation;
 
-                            if (chunkcoordinates.posX == p_149727_2_ && chunkcoordinates.posY == p_149727_3_ && chunkcoordinates.posZ == p_149727_4_)
-                            {
+                            if (chunkcoordinates.posX == p_149727_2_ && chunkcoordinates.posY == p_149727_3_ && chunkcoordinates.posZ == p_149727_4_) {
                                 entityplayer1 = entityplayer2;
                             }
                         }
@@ -71,7 +65,7 @@ public class BlockAstroBed extends BlockBed {
 
                     if (entityplayer1 != null)
                     {
-                        p_149727_5_.addChatComponentMessage(new ChatComponentTranslation("tile.bed.occupied", new Object[0]));
+                        p_149727_5_.addChatComponentMessage(new ChatComponentTranslation("tile.bed.occupied"));
                         return true;
                     }
 
@@ -83,21 +77,20 @@ public class BlockAstroBed extends BlockBed {
                 if (enumstatus == EntityPlayer.EnumStatus.OK)
                 {
                     func_149979_a(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_, true);
-                    return true;
                 }
                 else
                 {
                     if (enumstatus == EntityPlayer.EnumStatus.NOT_POSSIBLE_NOW)
                     {
-                        p_149727_5_.addChatComponentMessage(new ChatComponentTranslation("tile.bed.noSleep", new Object[0]));
+                        p_149727_5_.addChatComponentMessage(new ChatComponentTranslation("tile.bed.noSleep"));
                     }
                     else if (enumstatus == EntityPlayer.EnumStatus.NOT_SAFE)
                     {
-                        p_149727_5_.addChatComponentMessage(new ChatComponentTranslation("tile.bed.notSafe", new Object[0]));
+                        p_149727_5_.addChatComponentMessage(new ChatComponentTranslation("tile.bed.notSafe"));
                     }
 
-                    return true;
                 }
+                return true;
             }
         }
 		return false;

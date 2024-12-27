@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.tile.cables;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.cable.HandlerCableNetwork;
 import zmaster587.advancedRocketry.cable.NetworkRegistry;
 import net.minecraft.tileentity.TileEntity;
@@ -10,7 +11,7 @@ public class TilePipe extends TileEntity {
 	int networkID;
 	boolean initialized, destroyed;
 
-	boolean connectedSides[];
+	boolean[] connectedSides;
 
 	public TilePipe() {
 		initialized = false;
@@ -70,7 +71,7 @@ public class TilePipe extends TileEntity {
 
 			if(tile != null) {
 				if(tile instanceof TilePipe && tile.getClass() == this.getClass()) {
-					TilePipe pipe = (TilePipe)tile;
+					@NotNull TilePipe pipe = (TilePipe)tile;
 					if(this.destroyed)
 						continue;
 
@@ -201,7 +202,7 @@ public class TilePipe extends TileEntity {
 		}
 		else if(worldObj.isRemote) {
 			
-			ForgeDirection dir = ForgeDirection.UNKNOWN;
+			@NotNull ForgeDirection dir = ForgeDirection.UNKNOWN;
 			for(ForgeDirection dir2 : ForgeDirection.VALID_DIRECTIONS) {
 				if(dir2.offsetX == x - xCoord && dir2.offsetY == y - yCoord && dir2.offsetZ == z - zCoord)
 					dir = dir2;

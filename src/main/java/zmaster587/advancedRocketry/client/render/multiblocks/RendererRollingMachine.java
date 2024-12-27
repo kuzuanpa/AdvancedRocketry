@@ -9,11 +9,10 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.util.Debugger;
-import zmaster587.libVulpes.api.material.Material;
 import zmaster587.libVulpes.api.material.MaterialRegistry;
 import zmaster587.libVulpes.block.RotatableBlock;
 import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
@@ -21,7 +20,8 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 public class RendererRollingMachine extends TileEntitySpecialRenderer {
 	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/rollingMachine.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/rollingMachine.png");
+	@NotNull
+    ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/rollingMachine.png");
 	ResourceLocation coilSide = new ResourceLocation("libvulpes:textures/blocks/coilSide.png");
 	static int i = MaterialRegistry.getMaterialFromName("Copper").getColor();
 	private static int bodyList;

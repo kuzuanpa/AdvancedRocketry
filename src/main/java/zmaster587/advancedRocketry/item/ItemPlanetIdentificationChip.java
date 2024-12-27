@@ -2,6 +2,8 @@ package zmaster587.advancedRocketry.item;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.libVulpes.LibVulpes;
@@ -27,7 +29,7 @@ public class ItemPlanetIdentificationChip extends ItemIdWithName {
 	 * @param stack itemStack of this item-type
 	 * @return the DimensionProperties of the dimId stored on the item or null if invalid
 	 */
-	public DimensionProperties getDimension(ItemStack stack) {
+	public @Nullable DimensionProperties getDimension(ItemStack stack) {
 		if(stack.hasTagCompound()) {
 			return DimensionManager.getInstance().getDimensionProperties(stack.getTagCompound().getInteger(dimensionIdIdentifier));
 		}
@@ -90,7 +92,7 @@ public class ItemPlanetIdentificationChip extends ItemIdWithName {
 	 * @param stack stack to get the dimId from
 	 * @return id of the dimension stored or -1 if invalid
 	 */
-	public int getDimensionId(ItemStack stack) {
+	public int getDimensionId(@NotNull ItemStack stack) {
 		if(stack.hasTagCompound())
 			return stack.getTagCompound().getInteger(dimensionIdIdentifier);
 		return -1;
@@ -101,13 +103,13 @@ public class ItemPlanetIdentificationChip extends ItemIdWithName {
 	 * @param stack stack to get the DimensionProperties object from
 	 * @return DimensionProperties Object of the relevent dimension or null if invalid
 	 */
-	public DimensionProperties getDimensionProperties(ItemStack stack) {
+	public @Nullable DimensionProperties getDimensionProperties(@NotNull ItemStack stack) {
 		if(stack.hasTagCompound())
 			return DimensionManager.getInstance().getDimensionProperties(stack.getTagCompound().getInteger(dimensionIdIdentifier));
 		return null;
 	}
 
-	public Long getUUID(ItemStack stack) {
+	public Long getUUID(@NotNull ItemStack stack) {
 		if(stack.hasTagCompound())
 			return stack.getTagCompound().getLong(uuidIdentifier);
 		return null;
@@ -125,7 +127,7 @@ public class ItemPlanetIdentificationChip extends ItemIdWithName {
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, net.minecraft.entity.player.EntityPlayer player, java.util.List list, boolean bool) {
+	public void addInformation(@NotNull ItemStack stack, net.minecraft.entity.player.EntityPlayer player, java.util.@NotNull List list, boolean bool) {
 
 		if(!stack.hasTagCompound()) {
 			list.add(LibVulpes.proxy.getLocalizedString("msg.unprogrammed"));

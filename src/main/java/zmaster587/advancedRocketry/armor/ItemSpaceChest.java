@@ -6,6 +6,8 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryFluids;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.IAtmosphere;
@@ -36,7 +38,7 @@ public class ItemSpaceChest extends ItemSpaceArmor implements IFillableArmor {
 	}
 
 	@Override
-	public IconResource getResourceForSlot(int slot) {
+	public @Nullable IconResource getResourceForSlot(int slot) {
 		if(slot < 2)
 			return TextureResources.slotO2;
 		return null;
@@ -106,7 +108,7 @@ public class ItemSpaceChest extends ItemSpaceArmor implements IFillableArmor {
 		if(stack.hasTagCompound()) {
 			EmbeddedInventory inv = new EmbeddedInventory(getNumSlots(stack));
 			inv.readFromNBT(stack.getTagCompound());
-			List<ItemStack> list = new LinkedList<ItemStack>();
+			List<ItemStack> list = new LinkedList<>();
 
 			for(int i = 0; i < inv.getSizeInventory(); i++) {
 				if(inv.getStackInSlot(i) != null)
@@ -164,7 +166,7 @@ public class ItemSpaceChest extends ItemSpaceArmor implements IFillableArmor {
 		if(stack.hasTagCompound()) {
 			EmbeddedInventory inv = new EmbeddedInventory(getNumSlots(stack));
 			inv.readFromNBT(stack.getTagCompound());
-			List<ItemStack> list = new LinkedList<ItemStack>();
+			List<ItemStack> list = new LinkedList<>();
 
 			for(int i = 0; i < inv.getSizeInventory(); i++) {
 				if(inv.getStackInSlot(i) != null && 
@@ -218,12 +220,12 @@ public class ItemSpaceChest extends ItemSpaceArmor implements IFillableArmor {
 	 * @return the maximum amount of air allowed in this suit
 	 */
 	@Override
-	public int getMaxAir(ItemStack stack) {
+	public int getMaxAir(@NotNull ItemStack stack) {
 
 		if(stack.hasTagCompound()) {
 			EmbeddedInventory inv = new EmbeddedInventory(getNumSlots(stack));
 			inv.readFromNBT(stack.getTagCompound());
-			List<ItemStack> list = new LinkedList<ItemStack>();
+			List<ItemStack> list = new LinkedList<>();
 
 			for(int i = 0; i < inv.getSizeInventory(); i++) {
 				//Check the stack if its in an O2 slot or if it's a container with O2 in it

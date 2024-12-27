@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
@@ -57,7 +59,7 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 	private static Field fBiomeCacheMap;
 	private static Field fBiomeCache;
 	
-	public ChunkManagerPlanet(long seed, WorldType default1, DimensionProperties properties) {
+	public ChunkManagerPlanet(long seed, @NotNull WorldType default1, DimensionProperties properties) {
 
 		this.biomeCache = new BiomeCache(this);//new BiomeCacheExtended(this);
 		//TODO: more biomes
@@ -75,7 +77,7 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 	}
 
 	
-	public ChunkManagerPlanet(World world, List biomes)
+	public ChunkManagerPlanet(@NotNull World world, List biomes)
 	{
 		this(world.getSeed(), (WorldTypePlanetGen)world.getWorldInfo().getTerrainType(), DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId));
 		//Note: world MUST BE REGISTERED WITH THE DIMENSION MANAGER
@@ -167,7 +169,7 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 			}
 		}
 
-		GenLayerSmooth genlayersmooth1 = new GenLayerSmooth(1000L, (GenLayer)object);
+		@NotNull GenLayerSmooth genlayersmooth1 = new GenLayerSmooth(1000L, (GenLayer)object);
 		GenLayerVoronoiExtended genlayervoronoizoom;
 		if(hasRivers) {
 			GenLayerRiverMix genlayerrivermix = new GenLayerRiverMix(100L, genlayersmooth1, genlayersmooth);
@@ -219,12 +221,12 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 			{
 				CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Invalid Biome id");
 				CrashReportCategory crashreportcategory = crashreport.makeCategory("DownfallBlock");
-				crashreportcategory.addCrashSection("biome id", Integer.valueOf(i1));
-				crashreportcategory.addCrashSection("downfalls[] size", Integer.valueOf(p_76936_1_.length));
-				crashreportcategory.addCrashSection("x", Integer.valueOf(p_76936_2_));
-				crashreportcategory.addCrashSection("z", Integer.valueOf(p_76936_3_));
-				crashreportcategory.addCrashSection("w", Integer.valueOf(p_76936_4_));
-				crashreportcategory.addCrashSection("h", Integer.valueOf(p_76936_5_));
+				crashreportcategory.addCrashSection("biome id", i1);
+				crashreportcategory.addCrashSection("downfalls[] size", p_76936_1_.length);
+				crashreportcategory.addCrashSection("x", p_76936_2_);
+				crashreportcategory.addCrashSection("z", p_76936_3_);
+				crashreportcategory.addCrashSection("w", p_76936_4_);
+				crashreportcategory.addCrashSection("h", p_76936_5_);
 				throw new ReportedException(crashreport);
 			}
 		}
@@ -256,7 +258,7 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 		}
 	}
 
-	public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] p_76937_1_, int p_76937_2_, int p_76937_3_, int p_76937_4_, int p_76937_5_,  DimensionProperties properties)
+	public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase @Nullable [] p_76937_1_, int p_76937_2_, int p_76937_3_, int p_76937_4_, int p_76937_5_, DimensionProperties properties)
 	{
 		GenLayerBiomePlanet.setupBiomesForUse(biomes);
 		//return super.getBiomesForGeneration(p_76937_1_, p_76937_2_, p_76937_3_, p_76937_4_, p_76937_5_);
@@ -284,11 +286,11 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 		{
 			CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Invalid Biome id");
 			CrashReportCategory crashreportcategory = crashreport.makeCategory("RawBiomeBlock");
-			crashreportcategory.addCrashSection("biomes[] size", Integer.valueOf(p_76937_1_.length));
-			crashreportcategory.addCrashSection("x", Integer.valueOf(p_76937_2_));
-			crashreportcategory.addCrashSection("z", Integer.valueOf(p_76937_3_));
-			crashreportcategory.addCrashSection("w", Integer.valueOf(p_76937_4_));
-			crashreportcategory.addCrashSection("h", Integer.valueOf(p_76937_5_));
+			crashreportcategory.addCrashSection("biomes[] size", p_76937_1_.length);
+			crashreportcategory.addCrashSection("x", p_76937_2_);
+			crashreportcategory.addCrashSection("z", p_76937_3_);
+			crashreportcategory.addCrashSection("w", p_76937_4_);
+			crashreportcategory.addCrashSection("h", p_76937_5_);
 			throw new ReportedException(crashreport);
 		}
 	}
@@ -306,7 +308,7 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 	 * don't check biomeCache to avoid infinite loop in BiomeCacheBlock)
 	 */
 	@Override
-	public BiomeGenBase[] getBiomeGenAt(BiomeGenBase[] biomeGenBase, int x, int y, int width, int length, boolean p_76931_6_ )
+	public BiomeGenBase[] getBiomeGenAt(BiomeGenBase @Nullable [] biomeGenBase, int x, int y, int width, int length, boolean p_76931_6_ )
 	{
 
 		GenLayerBiomePlanet.setupBiomesForUse(biomes);

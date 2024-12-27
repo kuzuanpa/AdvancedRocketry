@@ -16,6 +16,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.api.IInfrastructure;
@@ -47,6 +49,7 @@ import zmaster587.libVulpes.util.ZUtils.RedstoneState;
 public class TileEntityMoniteringStation extends TileEntity  implements IModularInventory, IAdjBlockUpdate, IInfrastructure, ILinkableTile, INetworkMachine, IButtonInventory, IProgressBar  {
 
 	EntityRocketBase linkedRocket;
+	@Nullable
 	IMission mission;
 	ModuleText missionText;
 	RedstoneState state;
@@ -102,8 +105,8 @@ public class TileEntityMoniteringStation extends TileEntity  implements IModular
 	}
 
 	@Override
-	public boolean onLinkStart(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+	public boolean onLinkStart(@NotNull ItemStack item, TileEntity entity,
+                               EntityPlayer player, World world) {
 
 		ItemLinker.setMasterCoords(item, this.xCoord, this.yCoord, this.zCoord);
 
@@ -114,7 +117,7 @@ public class TileEntityMoniteringStation extends TileEntity  implements IModular
 
 	@Override
 	public boolean onLinkComplete(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+								  @NotNull EntityPlayer player, World world) {
 		if(player.worldObj.isRemote)
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage((new ChatComponentText(LibVulpes.proxy.getLocalizedString("msg.linker.error.firstMachine"))));
 		return false;
@@ -173,8 +176,8 @@ public class TileEntityMoniteringStation extends TileEntity  implements IModular
 	}
 
 	@Override
-	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+	public void readDataFromNetwork(@NotNull ByteBuf in, byte packetId,
+									NBTTagCompound nbt) {
 
 		if(packetId == 1) {
 			nbt.setLong("id", in.readLong());
@@ -229,7 +232,7 @@ public class TileEntityMoniteringStation extends TileEntity  implements IModular
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
 
-		LinkedList<ModuleBase> modules = new LinkedList<ModuleBase>();
+		LinkedList<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(new ModuleButton(20, 40, 0, "Launch!", this,  zmaster587.libVulpes.inventory.TextureResources.buttonBuild));
 		modules.add(new ModuleProgress(98, 4, 0, new IndicatorBarImage(2, 7, 12, 81, 17, 0, 6, 6, 1, 0, ForgeDirection.UP, TextureResources.rocketHud), this));

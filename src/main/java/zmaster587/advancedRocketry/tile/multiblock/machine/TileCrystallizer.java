@@ -33,7 +33,7 @@ public class TileCrystallizer extends TileMultiblockMachine implements IModularI
 
 	};
 
-	Material coil[];
+	Material[] coil;
 
 	public TileCrystallizer() {
 		coil = new Material[2];

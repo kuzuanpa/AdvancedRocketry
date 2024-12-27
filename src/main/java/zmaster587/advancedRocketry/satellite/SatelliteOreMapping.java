@@ -14,6 +14,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.oredict.OreDictionary;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
@@ -24,7 +26,7 @@ import zmaster587.advancedRocketry.item.ItemOreScanner;
 public class SatelliteOreMapping extends SatelliteBase  {
 
 	int blockCenterX, blockCenterZ;
-	public static ArrayList<Integer> oreList = new ArrayList<Integer>();
+	public static ArrayList<Integer> oreList = new ArrayList<>();
 
 	ItemStack inv;
 
@@ -42,13 +44,13 @@ public class SatelliteOreMapping extends SatelliteBase  {
 		return "Operational";
 	}
 
-	public boolean acceptsItemInConstruction(ItemStack item) {
+	public boolean acceptsItemInConstruction(@NotNull ItemStack item) {
 		int flag = SatelliteRegistry.getSatelliteProperty(item).getPropertyFlag();
 		return SatelliteProperties.Property.MAIN.isOfType(flag) || SatelliteProperties.Property.POWER_GEN.isOfType(flag) || SatelliteProperties.Property.DATA.isOfType(flag);
 	}
 
 	@Override
-	public boolean isAcceptableControllerItemStack(ItemStack stack) {
+	public boolean isAcceptableControllerItemStack(@Nullable ItemStack stack) {
 		return stack != null && stack.getItem() instanceof ItemOreScanner;
 	}
 
@@ -70,7 +72,7 @@ public class SatelliteOreMapping extends SatelliteBase  {
 	}
 
 
-	public static int[][] scanChunk(World world, int offsetX, int offsetZ, int radius, int blocksPerPixel, ItemStack block) {
+	public static int[][] scanChunk(@NotNull World world, int offsetX, int offsetZ, int radius, int blocksPerPixel, ItemStack block) {
 		blocksPerPixel = Math.max(blocksPerPixel, 1);
 		int[][] ret = new int[(radius*2)/blocksPerPixel][(radius*2)/blocksPerPixel];
 
@@ -137,7 +139,7 @@ public class SatelliteOreMapping extends SatelliteBase  {
 
 		if(oreList.isEmpty()) {
 			String[] strings = OreDictionary.getOreNames();
-			for(String str : strings) {
+			for(@NotNull String str : strings) {
 				if(str.startsWith("ore") || str.startsWith("dust") || str.startsWith("gem"))
 					oreList.add(OreDictionary.getOreID(str));
 			}
@@ -192,7 +194,7 @@ public class SatelliteOreMapping extends SatelliteBase  {
 	public double failureChance() { return 0D;}
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Ore Mapper";
 	}
 

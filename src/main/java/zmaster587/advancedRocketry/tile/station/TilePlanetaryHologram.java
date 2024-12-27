@@ -14,6 +14,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
@@ -41,9 +43,9 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 
 	private List<EntityUIPlanet> entities;
 	private List<EntityUIStar> starEntities;
-	private EntityUIPlanet centeredEntity;
+	private @Nullable EntityUIPlanet centeredEntity;
 	private EntityUIPlanet selectedPlanet;
-	private EntityUIStar currentStar;
+	private @Nullable EntityUIStar currentStar;
 	private EntityUIButton backButton;
 	private StellarBody currentStarBody;
 
@@ -59,8 +61,8 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 	private boolean stellarMode;
 
 	public TilePlanetaryHologram() {
-		entities = new LinkedList<EntityUIPlanet>();
-		starEntities = new LinkedList<EntityUIStar>();
+		entities = new LinkedList<>();
+		starEntities = new LinkedList<>();
 		targetGrav = new ModuleText(6, 45, LibVulpes.proxy.getLocalizedString("msg.planetholo.size"), 0x202020);
 		selectedPlanet = null;
 		stellarMode = false;
@@ -79,7 +81,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 	}
 
 	private void cleanup() {
-		for(EntityUIPlanet planet : entities) {
+		for(@NotNull EntityUIPlanet planet : entities) {
 			planet.setDead();
 		}
 		entities.clear();
@@ -245,7 +247,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 		if(!stellarMode && currentStarBody!=null) {
 			List<IDimensionProperties> planetList = currentStarBody.getPlanets();
 			if(centeredEntity != null) {
-				planetList = new LinkedList<IDimensionProperties>();
+				planetList = new LinkedList<>();
 				planetList.add(centeredEntity.getProperties());
 
 				for(int id : centeredEntity.getProperties().getChildPlanets())
@@ -316,7 +318,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(targetGrav);
 		modules.add(new ModuleSlider(6, 60, 0, TextureResources.doubleWarningSideBarIndicator, (ISliderBar)this));
@@ -343,7 +345,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "tile.planetHoloSelector.name";
 	}
 
@@ -386,7 +388,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 	}
 
 	@Override
-	public void writeDataToNetwork(ByteBuf out, byte id) {
+	public void writeDataToNetwork(@NotNull ByteBuf out, byte id) {
 		if(id == SCALEPACKET) {
 			out.writeFloat(size);
 		}
@@ -442,7 +444,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 	}
 	
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt) {
 		super.onDataPacket(net, pkt);
 		
 		

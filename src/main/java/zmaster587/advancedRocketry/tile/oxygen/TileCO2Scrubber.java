@@ -1,6 +1,7 @@
 package zmaster587.advancedRocketry.tile.oxygen;
 
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.libVulpes.tile.multiblock.hatch.TileInventoryHatch;
 
@@ -10,7 +11,7 @@ public class TileCO2Scrubber extends TileInventoryHatch {
 	}
 	
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "tile.scrubber.name";
 	}
 	

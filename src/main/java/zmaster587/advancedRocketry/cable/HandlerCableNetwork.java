@@ -1,24 +1,15 @@
 package zmaster587.advancedRocketry.cable;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import zmaster587.advancedRocketry.tile.cables.TilePipe;
-import zmaster587.libVulpes.util.BlockPosition;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.tile.cables.TilePipe;
+
+import java.util.Hashtable;
+import java.util.Map.Entry;
 
 public class HandlerCableNetwork {
-	protected Hashtable<Integer,CableNetwork> networks = new Hashtable<Integer,CableNetwork>();
+	protected Hashtable<Integer,CableNetwork> networks = new Hashtable<>();
 
 	//private static final String FILENAME = "/data/insanityCraft.dat";
 	
@@ -82,10 +73,9 @@ public class HandlerCableNetwork {
 	}
 
 	public void tickAllNetworks() {
-		Iterator<Entry<Integer, CableNetwork>> iter = networks.entrySet().iterator();
-		while(iter.hasNext()) {
-			iter.next().getValue().tick();
-		}
+        for (Entry<Integer, CableNetwork> integerCableNetworkEntry : networks.entrySet()) {
+            integerCableNetworkEntry.getValue().tick();
+        }
 	}
 
 	public boolean doesNetworkExist(int id) {
@@ -98,7 +88,7 @@ public class HandlerCableNetwork {
 	 * @param tile The source to be added
 	 * @param dir Direction of the source from the pipe
 	 */
-	public void addSource(TilePipe tilePipe, TileEntity tile, ForgeDirection dir) {
+	public void addSource(TilePipe tilePipe, @NotNull TileEntity tile, ForgeDirection dir) {
 		networks.get(tilePipe.getNetworkID()).addSource(tile, dir.getOpposite());
 	}
 
@@ -108,7 +98,7 @@ public class HandlerCableNetwork {
 	 * @param tile The sink to be added
 	 * @param dir Direction of the sink from the pipe
 	 */
-	public void addSink(TilePipe tilePipe, TileEntity tile, ForgeDirection dir) {
+	public void addSink(@NotNull TilePipe tilePipe, TileEntity tile, ForgeDirection dir) {
 		networks.get(tilePipe.getNetworkID()).addSink(tile, dir.getOpposite());
 	}
 	
@@ -125,7 +115,7 @@ public class HandlerCableNetwork {
 	 * @param pipe pipe that belongs to a network
 	 * @param tile tile to be removed from the sinks and sources list
 	 */
-	public void removeFromAllTypes(TilePipe pipe, TileEntity tile) {
+	public void removeFromAllTypes(@NotNull TilePipe pipe, TileEntity tile) {
 		if(pipe.isInitialized())
 			networks.get(pipe.getNetworkID()).removeFromAll(tile);
 	}

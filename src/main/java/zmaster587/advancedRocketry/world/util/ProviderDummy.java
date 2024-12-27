@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.world.util;
 
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -7,7 +8,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 public class ProviderDummy extends WorldProvider {
 
 	@Override
-	public String getDimensionName() {
+	public @Nullable String getDimensionName() {
 		return null;
 	}
 	

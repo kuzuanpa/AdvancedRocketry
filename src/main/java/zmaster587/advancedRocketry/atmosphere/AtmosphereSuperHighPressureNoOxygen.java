@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.network.PacketOxygenState;
 import zmaster587.libVulpes.LibVulpes;
@@ -31,7 +32,7 @@ public class AtmosphereSuperHighPressureNoOxygen extends AtmosphereNeedsSuit {
 	}
 	
 	@Override
-	public void onTick(EntityLivingBase player) {
+	public void onTick(@NotNull EntityLivingBase player) {
 		if(player.worldObj.getTotalWorldTime() % 10  == 0 && !isImmune(player)) {
 			player.attackEntityFrom(AtmosphereHandler.lowOxygenDamage, 1);
 			player.addPotionEffect(new PotionEffect(Potion.digSlowdown.id, 40, 4));

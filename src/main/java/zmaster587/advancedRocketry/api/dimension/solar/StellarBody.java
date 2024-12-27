@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.stations.DysonSphere;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
@@ -14,10 +15,10 @@ import java.util.*;
 public class StellarBody {
 
 	private int temperature;
-	private HashMap<Integer,IDimensionProperties> planets;
+	private final HashMap<Integer,IDimensionProperties> planets;
 	int numPlanets;
 	int discoveredPlanets;
-	float color[];
+	float[] color;
 	int id;
 	String name;
 	short posX, posZ;
@@ -28,9 +29,9 @@ public class StellarBody {
 	public DysonSphere dysonSphere;
 
 	public StellarBody() {
-		planets = new HashMap<Integer,IDimensionProperties>();
+		planets = new HashMap<>();
 		size = 1f;
-		subStars = new LinkedList<StellarBody>();
+		subStars = new LinkedList<>();
 		starSeperation = 5f;
 	}
 	
@@ -91,7 +92,7 @@ public class StellarBody {
 	/**
 	 * @param planet registers this planet to be in orbit around this star
 	 */
-	public void addPlanet(IDimensionProperties planet) {
+	public void addPlanet(@NotNull IDimensionProperties planet) {
 		if(!planet.isSun()&&!planets.containsKey(planet.getId()))
 			numPlanets++;
 		planets.put(planet.getId(), planet);
@@ -151,7 +152,7 @@ public class StellarBody {
 	public float[] getColor() {
 
 			//Define
-			float color[] = new float[3];
+			float[] color = new float[3];
 			float temperature = ((getTemperature() * .477f) + 10f); //0 -> 10 100 -> 57.7
 
 			//Find red
@@ -208,10 +209,10 @@ public class StellarBody {
 	 * @return List of {@link DimensionProperties} of planets orbiting this star
 	 */
 	public List<IDimensionProperties> getPlanets() {
-		return new ArrayList<IDimensionProperties>(planets.values());
+		return new ArrayList<>(planets.values());
 	}
 	
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		nbt.setInteger("id", this.id);
 		nbt.setInteger("temperature", temperature);
 		nbt.setString("name", name);

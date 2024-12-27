@@ -7,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 public class EntityItemAbducted extends Entity {
 
@@ -41,7 +42,7 @@ public class EntityItemAbducted extends Entity {
         this.getDataWatcher().addObjectByDataType(10, 5);
     }
 	
-    public EntityItem getItemEntity() {
+    public @NotNull EntityItem getItemEntity() {
     	if(itemEntity == null) {
     		itemEntity = new EntityItem(worldObj, this.posX, this.posY, this.posZ, getEntityItem());
     	}
@@ -115,7 +116,7 @@ public class EntityItemAbducted extends Entity {
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound p_70037_1_)
+    public void readEntityFromNBT(@NotNull NBTTagCompound p_70037_1_)
     {
         this.age = p_70037_1_.getShort("Age");
 

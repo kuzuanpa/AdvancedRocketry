@@ -1,9 +1,5 @@
 package zmaster587.advancedRocketry.block;
 
-import java.util.Random;
-
-import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockCauldron;
@@ -12,6 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
+
+import java.util.Random;
 
 public class BlockQuartzCrucible extends BlockCauldron {
 
@@ -25,17 +24,17 @@ public class BlockQuartzCrucible extends BlockCauldron {
     @Override
     public void registerBlockIcons(IIconRegister par1IconRegister)
     {
-        this.innerIcon = par1IconRegister.registerIcon("advancedRocketry:" + this.getTextureName() + "_inner");
-        this.topIcon = par1IconRegister.registerIcon("advancedRocketry:" + this.getTextureName() + "_top");
-        this.bottomIcon = par1IconRegister.registerIcon("advancedRocketry:" + this.getTextureName() + "_bottom");
-        this.blockIcon = par1IconRegister.registerIcon("advancedRocketry:" + this.getTextureName() + "_side");
+       innerIcon = par1IconRegister.registerIcon("advancedRocketry:" + this.getTextureName() + "_inner");
+       topIcon = par1IconRegister.registerIcon("advancedRocketry:" + this.getTextureName() + "_top");
+       bottomIcon = par1IconRegister.registerIcon("advancedRocketry:" + this.getTextureName() + "_bottom");
+       blockIcon = par1IconRegister.registerIcon("advancedRocketry:" + this.getTextureName() + "_side");
     }
     
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int par1, int par2)
     {
-        return par1 == 1 ? this.topIcon : (par1 == 0 ? this.bottomIcon : this.blockIcon);
+        return par1 == 1 ? topIcon : (par1 == 0 ? bottomIcon : this.blockIcon);
     }
     
     @Override

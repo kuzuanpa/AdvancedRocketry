@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
 import zmaster587.advancedRocketry.item.ItemBiomeChanger;
@@ -35,8 +37,8 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 
 	public SatelliteBiomeChanger() {
 		radius = 4;
-		toChangeList = new LinkedList<BlockPosition>();
-		discoveredBiomes = new HashSet<Byte>();
+		toChangeList = new LinkedList<>();
+		discoveredBiomes = new HashSet<>();
 	}
 
 	public void setBiome(int biomeId) {
@@ -77,7 +79,7 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 	}
 
 	@Override
-	public boolean isAcceptableControllerItemStack(ItemStack stack) {
+	public boolean isAcceptableControllerItemStack(@Nullable ItemStack stack) {
 		return stack != null && stack.getItem() instanceof ItemBiomeChanger;
 	}
 
@@ -115,11 +117,11 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 	}
 
 	@Override
-	public boolean performAction(EntityPlayer player, World world, int x,
-			int y, int z) {
+	public boolean performAction(EntityPlayer player, @NotNull World world, int x,
+                                 int y, int z) {
 		if(world.isRemote)
 			return false;
-		Set<Chunk> set = new HashSet<Chunk>();
+		Set<Chunk> set = new HashSet<>();
 		radius = 16;
 		MAX_SIZE = 1024;
 		for(int xx = -radius + x; xx < radius + x; xx++) {
@@ -160,11 +162,11 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setInteger("biomeId", biomeId);
 
-		int array[] = new int[toChangeList.size()*3];
+		int @NotNull [] array = new int[toChangeList.size()*3];
 		Iterator<BlockPosition> itr = toChangeList.iterator();
 		for(int i = 0; i < toChangeList.size(); i+=3) {
 			BlockPosition pos = itr.next();
@@ -186,11 +188,11 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		biomeId = nbt.getInteger("biomeId");
 
-		int array[] = nbt.getIntArray("posList");
+		int[] array = nbt.getIntArray("posList");
 
 		toChangeList.clear();
 		for(int i = 0; i < array.length; i +=3) {

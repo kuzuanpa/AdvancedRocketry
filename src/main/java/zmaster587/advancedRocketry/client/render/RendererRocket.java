@@ -1,16 +1,14 @@
 package zmaster587.advancedRocketry.client.render;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.advancedRocketry.api.IInfrastructure;
 import zmaster587.advancedRocketry.entity.EntityRocket;
 import zmaster587.advancedRocketry.util.StorageChunk;
-import zmaster587.libVulpes.render.RenderHelper;
-import zmaster587.libVulpes.util.BlockPosition;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
@@ -60,7 +58,7 @@ public class RendererRocket extends Render {
 		if(!((EntityRocket)entity).isInFlight()) {
 			for(IInfrastructure inf : ((EntityRocket)entity).getConnectedInfrastructure()) {
 				if(inf.canRenderConnection()) {
-					TileEntity tile = (TileEntity)inf;
+					@NotNull TileEntity tile = (TileEntity)inf;
 
 					Tessellator.instance.startDrawing(GL11.GL_LINE_LOOP);
 					Tessellator.instance.addVertex(0, storage.getSizeY()/2f, 0);

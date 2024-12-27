@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.achievements.ARAchivements;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
@@ -73,12 +75,12 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 	ModuleText srcPlanetText, dstPlanetText, warpFuel, status, warpCapacity;
 	int warpCost = -1;
 	int dstPlanet, srcPlanet;
-	private ModuleTab tabModule;
+	private final ModuleTab tabModule;
 	private static final byte TAB_SWITCH = 4, STORE_DATA = 10, LOAD_DATA = 20, SEARCH = 5, PROGRAMFROMCHIP = 6;
-	private MultiData data;
-	private EmbeddedInventory inv;
+	private final @NotNull MultiData data;
+	private final EmbeddedInventory inv;
 	private static final int DISTANCESLOT = 0, MASSSLOT = 1, COMPOSITION = 2, PLANETSLOT = 3, MAX_PROGRESS = 1000;
-	private ModuleProgress programmingProgress;
+	private final ModuleProgress programmingProgress;
 	private int progress;
 
 	public TileWarpShipMonitor() {
@@ -151,7 +153,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		if(ID == guiId.MODULARNOINV.ordinal()) {
 
@@ -169,7 +171,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 				modules.add(sync2);
 				modules.add(sync3);
 
-				ISpaceObject station = getSpaceObject();
+				@Nullable ISpaceObject station = getSpaceObject();
 				boolean isOnStation = station != null;
 				if(worldObj.isRemote)
 					setPlanetModuleInfo();
@@ -203,7 +205,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 				//Status text
 				modules.add(new ModuleText(baseX, baseY + sizeY + 20, LibVulpes.proxy.getLocalizedString("msg.warpmon.corestatus"), 0x1b1b1b));
 				boolean flag = isOnStation && getSpaceObject().getFuelAmount() >= getTravelCost() && getSpaceObject().hasUsableWarpCore();
-				flag = flag && !(isOnStation && (getSpaceObject().getDestOrbitingBody() == -1 || getSpaceObject().getOrbitingPlanetId() == getSpaceObject().getDestOrbitingBody()));
+				flag = flag && !(getSpaceObject().getDestOrbitingBody() == -1 || getSpaceObject().getOrbitingPlanetId() == getSpaceObject().getDestOrbitingBody());
 				boolean artifactFlag = (dimCache != null && meetsArtifactReq(dimCache));
 				canWarp = new ModuleText(baseX, baseY + sizeY + 30, (isOnStation && (getSpaceObject().getDestOrbitingBody() == -1 || getSpaceObject().getOrbitingPlanetId() == getSpaceObject().getDestOrbitingBody())) ? LibVulpes.proxy.getLocalizedString("msg.warpmon.nowhere") : 
 					(!artifactFlag ? LibVulpes.proxy.getLocalizedString("msg.warpmon.missingart") : (flag ? LibVulpes.proxy.getLocalizedString("msg.warpmon.ready") : LibVulpes.proxy.getLocalizedString("msg.warpmon.notready"))), flag && artifactFlag ? 0x1baa1b : 0xFF1b1b);
@@ -280,8 +282,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 			//Open planet selector menu
 			SpaceObject station = getSpaceObject();
 			int starId = 0;
-			if(station != null)
-				starId = station.getProperties().getParentProperties().getStar().getId();
+			if(station != null) starId = station.getProperties().getParentProperties().getStar().getId();
 			container = new ModulePlanetSelector(starId, zmaster587.libVulpes.inventory.TextureResources.starryBG, this, this, true);
 			container.setOffset(1000, 1000);
 			modules.add(container);
@@ -291,7 +292,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 
 	private void setPlanetModuleInfo() {
 
-		ISpaceObject station = getSpaceObject();
+		SpaceObject station = getSpaceObject();
 		boolean isOnStation = station != null;
 		DimensionProperties location;
 		boolean hasAtmo = true;
@@ -314,7 +315,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 		boolean flag = isOnStation && getSpaceObject().getFuelAmount() >= warpCost && getSpaceObject().hasUsableWarpCore();
 
 		if(canWarp != null) {
-			flag = flag && !(isOnStation && (getSpaceObject().getDestOrbitingBody() == -1 || getSpaceObject().getOrbitingPlanetId() == getSpaceObject().getDestOrbitingBody()));
+			flag = flag && !(getSpaceObject().getDestOrbitingBody() == -1 || getSpaceObject().getOrbitingPlanetId() == getSpaceObject().getDestOrbitingBody());
 			boolean artifactFlag = (dimCache != null && meetsArtifactReq(dimCache));
 			canWarp.setText(isOnStation && (getSpaceObject().getDestOrbitingBody() == -1 || getSpaceObject().getOrbitingPlanetId() == getSpaceObject().getDestOrbitingBody()) ? LibVulpes.proxy.getLocalizedString("msg.warpmon.nowhere") : 
 				(!artifactFlag ? LibVulpes.proxy.getLocalizedString("msg.warpmon.missingart") : (flag ? LibVulpes.proxy.getLocalizedString("msg.warpmon.ready") : LibVulpes.proxy.getLocalizedString("msg.warpmon.notready"))));
@@ -352,7 +353,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 
 
 			warpFuel.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuelcost") + (warpCost < Integer.MAX_VALUE ? String.valueOf(warpCost) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
-			warpCapacity.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuel") + (isOnStation ? ((SpaceObject)station).getFuelAmount() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
+			warpCapacity.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuel") + (isOnStation ? station.getFuelAmount() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 
 
 
@@ -380,7 +381,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "tile.stationmonitor.name";
 	}
 
@@ -407,7 +408,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 	}
 
 	@Override
-	public void writeDataToNetwork(ByteBuf out, byte id) {
+	public void writeDataToNetwork(@NotNull ByteBuf out, byte id) {
 		if(id == 1 || id == 3)
 			out.writeInt(container.getSelectedSystem());
 		else if(id == TAB_SWITCH)
@@ -439,7 +440,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 
 	@Override
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+							   @NotNull NBTTagCompound nbt) {
 		if(id == 0)
 			player.openGui(LibVulpes.instance, guiId.MODULARFULLSCREEN.ordinal(), worldObj, this.xCoord, this.yCoord, this.zCoord);
 		else if(id == 1 || id == 3) {
@@ -477,7 +478,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 
 				for(BlockPosition vec : station.getWarpCoreLocations()) {
 					TileEntity tile = worldObj.getTileEntity(vec.x, vec.y, vec.z);
-					if(tile != null && tile instanceof TileWarpCore) {
+					if(tile instanceof TileWarpCore) {
 						((TileWarpCore)tile).onInventoryUpdated();
 					}
 				}
@@ -503,7 +504,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 			SpaceObject obj = getSpaceObject();
 			if(obj != null) {
 				ItemStack stack = getStackInSlot(PLANETSLOT);
-				if(stack != null && stack.getItem() instanceof ItemPlanetIdentificationChip) {
+				if(stack != null && stack.getItem() instanceof ItemPlanetIdentificationChip) {//todo: identify what did AR author do actually
 					if(DimensionManager.getInstance().isDimensionCreated(((ItemPlanetIdentificationChip)stack.getItem()).getDimensionId(stack)));
 					obj.discoverPlanet(((ItemPlanetIdentificationChip)stack.getItem()).getDimensionId(stack));
 				}
@@ -512,7 +513,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	public void writeToNBT(@NotNull NBTTagCompound compound) {
 		inv.writeToNBT(compound);
 		data.writeToNBT(compound);
 		compound.setInteger("progress", progress);
@@ -646,7 +647,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 		if(id == 2)
 			return getTravelCost();
 
-		ISpaceObject station = getSpaceObject();
+		@Nullable ISpaceObject station = getSpaceObject();
 		boolean isOnStation = station != null;
 		if(isOnStation) {
 			if(id == 1)
@@ -796,23 +797,18 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 		}
 	}
 
-	private boolean meetsArtifactReq(DimensionProperties properties) {
+	private boolean meetsArtifactReq(@NotNull DimensionProperties properties) {
 		//Make sure we have all the artifacts
 		
 		if(properties.getRequiredArtifacts().isEmpty())
 			return true;
 		
-		List<ItemStack> list = new LinkedList<ItemStack>(properties.getRequiredArtifacts());
+		List<ItemStack> list = new LinkedList<>(properties.getRequiredArtifacts());
 		for(int i = ARTIFACT_BEGIN_RANGE; i <= ARTIFACT_END_RANGE; i++) {
 			ItemStack stack2 = getStackInSlot(i);
 			if(stack2 != null) {
-				Iterator<ItemStack> itr = list.iterator();
-				while(itr.hasNext()) {
-					ItemStack stackInList = itr.next();
-					if(stackInList.getItem().equals(stack2.getItem()) && stackInList.getItemDamage() == stack2.getItemDamage()
-							&& ItemStack.areItemStackTagsEqual(stackInList, stack2) && stack2.stackSize >= stackInList.stackSize)
-						itr.remove();
-				}
+                list.removeIf(stackInList -> stackInList.getItem().equals(stack2.getItem()) && stackInList.getItemDamage() == stack2.getItemDamage()
+                        && ItemStack.areItemStackTagsEqual(stackInList, stack2) && stack2.stackSize >= stackInList.stackSize);
 			}
 		}
 		
@@ -830,7 +826,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 					ItemStack stack = getStackInSlot(PLANETSLOT);
 					if(stack != null && stack.getItem() instanceof ItemPlanetIdentificationChip) {
 						ItemPlanetIdentificationChip item = (ItemPlanetIdentificationChip)stack.getItem();
-						List<Integer> unknownPlanets = new LinkedList<Integer>();
+						List<Integer> unknownPlanets = new LinkedList<>();
 						
 						//Check to see if any planets with artifacts can be discovered
 						for(int id : DimensionManager.getInstance().getLoadedDimensions()) {

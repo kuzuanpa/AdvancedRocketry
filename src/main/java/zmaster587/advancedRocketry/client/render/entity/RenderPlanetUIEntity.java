@@ -9,6 +9,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.WavefrontObject;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.client.render.multiblocks.RendererWarpCore;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
@@ -31,8 +32,8 @@ public class RenderPlanetUIEntity extends Render {
 	}
 
 	@Override
-	public void doRender(Entity entity, double x, double y, double z,
-			float entityYaw, float partialTicks) {
+	public void doRender(@NotNull Entity entity, double x, double y, double z,
+                         float entityYaw, float partialTicks) {
 
 		DimensionProperties properties = ((EntityUIPlanet)entity).getProperties();
 		if(properties == null)
@@ -122,7 +123,7 @@ public class RenderPlanetUIEntity extends Render {
 		
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		float myTime = ((entity.worldObj.getTotalWorldTime() & 0xF)/16f);
+		float myTime;
 
 		for(int i = 0; i < 4; i++ ) {
 			myTime = ((i*4 + entity.worldObj.getTotalWorldTime() & 0xF)/16f);

@@ -6,14 +6,16 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockActiveState extends Block {
 
 	public IIcon activeIcon;
 	String activeTextureString;
-	Class tileClass;
+	@Nullable Class<? extends TileEntity> tileClass;
 	
-	public BlockActiveState(Material mat, TileEntity tile) {
+	public BlockActiveState(@NotNull Material mat, @Nullable TileEntity tile) {
 		super(mat);
 		tileClass = tile == null ? null : tile.getClass();
 	}
@@ -29,13 +31,13 @@ public class BlockActiveState extends Block {
 	}
 	
 	@Override
-	public IIcon getIcon(IBlockAccess access, int x,
-			int y, int z, int p_149673_5_) {
+	public IIcon getIcon(@NotNull IBlockAccess access, int x,
+                         int y, int z, int p_149673_5_) {
 		return access.getBlockMetadata(x, y, z) == 1 ? activeIcon : super.getIcon(access, x, y, z, p_149673_5_);
 	}
 	
 	@Override
-	public void registerBlockIcons(IIconRegister iicon) {
+	public void registerBlockIcons(@NotNull IIconRegister iicon) {
 		super.registerBlockIcons(iicon);
 		activeIcon = iicon.registerIcon(activeTextureString);
 	}

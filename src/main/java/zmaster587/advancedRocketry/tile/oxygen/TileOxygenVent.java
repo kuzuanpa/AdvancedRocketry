@@ -12,15 +12,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
-import zmaster587.advancedRocketry.api.AdvancedRocketryFluids;
-import zmaster587.advancedRocketry.api.Configuration;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.api.*;
 import zmaster587.advancedRocketry.api.util.IBlobHandler;
 import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereType;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.inventory.TextureResources;
-import zmaster587.advancedRocketry.api.AreaBlob;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.api.IToggleableMachine;
 import zmaster587.libVulpes.client.RepeatingSound;
@@ -28,7 +26,6 @@ import zmaster587.libVulpes.inventory.modules.IButtonInventory;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.IToggleButton;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
-import zmaster587.libVulpes.inventory.modules.ModuleButton;
 import zmaster587.libVulpes.inventory.modules.ModuleLiquidIndicator;
 import zmaster587.libVulpes.inventory.modules.ModulePower;
 import zmaster587.libVulpes.inventory.modules.ModuleRedstoneOutputButton;
@@ -74,7 +71,7 @@ public class TileOxygenVent extends TileInventoriedRFConsumerTank implements IBl
 		soundInit = false;
 		allowTrace = false;
 		numScrubbers = 0;
-		scrubbers = new LinkedList<TileCO2Scrubber>();
+		scrubbers = new LinkedList<>();
 		
 		state = RedstoneState.ON;
 		redstoneControl = new ModuleRedstoneOutputButton(174, 4, PACKET_REDSTONE_ID, "", this);
@@ -88,7 +85,7 @@ public class TileOxygenVent extends TileInventoriedRFConsumerTank implements IBl
 		hasFluid = true;
 		soundInit = false;
 		allowTrace = false;
-		scrubbers = new LinkedList<TileCO2Scrubber>();
+		scrubbers = new LinkedList<>();
 		
 		state = RedstoneState.ON;
 		redstoneControl = new ModuleRedstoneOutputButton(174, 4, 0, "", this);
@@ -299,7 +296,7 @@ public class TileOxygenVent extends TileInventoriedRFConsumerTank implements IBl
 
 						activateAdjblocks();
 
-						AtmosphereHandler.getOxygenHandler(this.worldObj.provider.dimensionId).setAtmosphereType(this, AtmosphereType.PRESSURIZEDAIR);
+						AtmosphereHandler.getOxygenHandler(this.worldObj.provider.dimensionId).setAtmosphereType(this, AtmosphereTypes.PRESSURIZEDAIR);
 					}
 				}
 				else if(hasFluid){
@@ -375,7 +372,7 @@ public class TileOxygenVent extends TileInventoriedRFConsumerTank implements IBl
 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		ArrayList<ModuleBase> modules = new ArrayList<ModuleBase>();
+		ArrayList<ModuleBase> modules = new ArrayList<>();
 
 		modules.add(new ModulePower(18, 20, this));
 		modules.add(new ModuleLiquidIndicator(32, 20, this));
@@ -387,7 +384,7 @@ public class TileOxygenVent extends TileInventoriedRFConsumerTank implements IBl
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "OxygenVent";
 	}
 
@@ -458,7 +455,7 @@ public class TileOxygenVent extends TileInventoriedRFConsumerTank implements IBl
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setByte("redstoneState", (byte) state.ordinal());
 		nbt.setBoolean("allowtrace", allowTrace);

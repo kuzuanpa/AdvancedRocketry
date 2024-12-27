@@ -9,6 +9,7 @@ import java.util.List;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.EntityRocketBase;
@@ -57,7 +58,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	public TileLandingPad() {
 		super(1);
 		MinecraftForge.EVENT_BUS.register(this);
-		blockPos = new LinkedList<BlockPosition>();
+		blockPos = new LinkedList<>();
 		moduleNameTextbox = new ModuleTextBox(this, 40, 30, 60, 12, 9);
 		name = "";
 	}
@@ -109,12 +110,12 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	@Override
-	public boolean onLinkComplete(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+	public boolean onLinkComplete(@NotNull ItemStack item, TileEntity entity,
+								  EntityPlayer player, @NotNull World world) {
 		TileEntity tile = world.getTileEntity(((ItemLinker)item.getItem()).getMasterX(item), ((ItemLinker)item.getItem()).getMasterY(item), ((ItemLinker)item.getItem()).getMasterZ(item));
 
 		if(tile instanceof IInfrastructure) {
-			BlockPosition pos = new BlockPosition(tile.xCoord, tile.yCoord, tile.zCoord);
+			@NotNull BlockPosition pos = new BlockPosition(tile.xCoord, tile.yCoord, tile.zCoord);
 			if(!blockPos.contains(pos)) {
 				blockPos.add(pos);
 			}
@@ -142,7 +143,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	@SubscribeEvent
-	public void onRocketLand(RocketLandedEvent event) {
+	public void onRocketLand(@NotNull RocketLandedEvent event) {
 		EntityRocketBase rocket = (EntityRocketBase)event.entity;
 		AxisAlignedBB bbCache = AxisAlignedBB.getBoundingBox(this.xCoord - 1, this.yCoord, this.zCoord - 1, this.xCoord + 1, this.yCoord + 2, this.zCoord + 1);
 		if(this.hasWorldObj())
@@ -169,7 +170,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	@SubscribeEvent
-	public void onRocketLaunch(RocketPreLaunchEvent event) {
+	public void onRocketLaunch(@NotNull RocketPreLaunchEvent event) {
 
 		ItemStack stack = getStackInSlot(0);
 		if(stack != null && stack.getItem() == LibVulpesItems.itemLinker && ItemLinker.getDimId(stack) != -1) {
@@ -282,7 +283,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	public List<IInfrastructure> getConnectedInfrastructure() {
-		List<IInfrastructure> infrastructure = new LinkedList<IInfrastructure>();
+		List<IInfrastructure> infrastructure = new LinkedList<>();
 
 		Iterator<BlockPosition> iter = blockPos.iterator();
 
@@ -325,7 +326,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	@Override
-	public S35PacketUpdateTileEntity getDescriptionPacket() {
+	public @NotNull S35PacketUpdateTileEntity getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writeToNBT(nbt);
 		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, getBlockMetadata(), nbt);
@@ -364,7 +365,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 		super.readFromNBT(nbt);
 		blockPos.clear();
 		if(nbt.hasKey("infrastructureLocations")) {
-			int array[] = nbt.getIntArray("infrastructureLocations");
+			int[] array = nbt.getIntArray("infrastructureLocations");
 
 			for(int counter = 0; counter < array.length; counter += 3) {
 				blockPos.add(new BlockPosition(array[counter], array[counter+1], array[counter+2]));
@@ -374,7 +375,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
 		if(!blockPos.isEmpty()) {

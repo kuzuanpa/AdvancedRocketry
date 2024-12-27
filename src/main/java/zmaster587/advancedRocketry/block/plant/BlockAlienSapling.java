@@ -1,22 +1,21 @@
 package zmaster587.advancedRocketry.block.plant;
 
-import java.util.List;
-import java.util.Random;
-
-import zmaster587.advancedRocketry.world.gen.WorldGenAlienTree;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.world.gen.WorldGenAlienTree;
+
+import java.util.List;
+import java.util.Random;
 
 public class BlockAlienSapling extends BlockSapling {
 
@@ -25,7 +24,7 @@ public class BlockAlienSapling extends BlockSapling {
 	public IIcon[] icons = new IIcon[names.length];
 
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list)
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, @NotNull List list)
 	{
 		list.add(new ItemStack(item, 1, 0));
 	}
@@ -56,11 +55,11 @@ public class BlockAlienSapling extends BlockSapling {
 			return;
 
 		int l = world.getBlockMetadata(x, y, z) & 7;
-		Object object = new WorldGenAlienTree(true);
+		WorldGenerator object = new WorldGenAlienTree(true);
 		int i1 = 0;
 		int j1 = 0;
 
-		if (!((WorldGenerator)object).generate(world, random, x + i1, y, z + j1))
+		if (!object.generate(world, random, x + i1, y, z + j1))
 		{
 			world.setBlock(x, y, z, this, l, 4);
 		}

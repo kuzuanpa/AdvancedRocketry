@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.IFuelTank;
 import zmaster587.libVulpes.tile.TileModelRender;
 import cpw.mods.fml.relauncher.Side;
@@ -15,7 +16,7 @@ import net.minecraft.world.World;
 public class BlockFuelTank extends Block implements IFuelTank{
 
 	
-	public BlockFuelTank(Material mat) {
+	public BlockFuelTank(@NotNull Material mat) {
 		super(mat);
 	}
 	
@@ -79,7 +80,7 @@ public class BlockFuelTank extends Block implements IFuelTank{
 	
 	
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
+	public @NotNull TileEntity createTileEntity(World world, int metadata) {
 		return new TileModelRender(TileModelRender.models.TANKMIDDLE.ordinal() + metadata);
 	}
 	

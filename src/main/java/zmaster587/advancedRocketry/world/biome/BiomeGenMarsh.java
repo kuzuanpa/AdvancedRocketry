@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraft.world.gen.feature.WorldGenShrub;
+import org.jetbrains.annotations.NotNull;
 
 public class BiomeGenMarsh extends BiomeGenBase {
 
@@ -57,7 +58,7 @@ public class BiomeGenMarsh extends BiomeGenBase {
     }
 
 
-	public BiomeGenBase.TempCategory getTempCategory()
+	public BiomeGenBase.@NotNull TempCategory getTempCategory()
 	{
 		return BiomeGenBase.TempCategory.OCEAN;
 	}

@@ -1,17 +1,7 @@
 package zmaster587.advancedRocketry.block;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
-import zmaster587.advancedRocketry.tile.TileFluidTank;
-import zmaster587.libVulpes.LibVulpes;
-import zmaster587.libVulpes.inventory.GuiHandler.guiId;
-import zmaster587.libVulpes.tile.multiblock.hatch.TileFluidHatch;
-import zmaster587.libVulpes.util.IAdjBlockUpdate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -20,12 +10,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+import zmaster587.advancedRocketry.tile.TileFluidTank;
+import zmaster587.libVulpes.LibVulpes;
+import zmaster587.libVulpes.inventory.GuiHandler.guiId;
+import zmaster587.libVulpes.util.IAdjBlockUpdate;
+
+import java.util.ArrayList;
 
 public class BlockPressurizedFluidTank extends Block {
 
@@ -47,7 +43,7 @@ public class BlockPressurizedFluidTank extends Block {
 	@Override
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z,
 			int metadata, int fortune) {
-		return new ArrayList<ItemStack>();
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -61,7 +57,7 @@ public class BlockPressurizedFluidTank extends Block {
 		if(!world.isRemote && !player.capabilities.isCreativeMode) {
 			TileEntity tile = world.getTileEntity(x,y,z);
 
-			if(tile != null && tile instanceof TileFluidTank) {
+			if(tile instanceof TileFluidTank) {
 				TileFluidTank fluid = ((TileFluidTank)tile);
 
 
@@ -77,11 +73,11 @@ public class BlockPressurizedFluidTank extends Block {
 				float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
 				itemstack.stackSize = 1;
-				entityitem = new EntityItem(world, (double)((float)x + f), (double)((float)y + f1), (double)((float)z + f2), new ItemStack(itemstack.getItem(), 1, 0));
+				entityitem = new EntityItem(world, (float)x + f, (float)y + f1, (float)z + f2, new ItemStack(itemstack.getItem(), 1, 0));
 				float f3 = 0.05F;
-				entityitem.motionX = (double)((float)world.rand.nextGaussian() * f3);
-				entityitem.motionY = (double)((float)world.rand.nextGaussian() * f3 + 0.2F);
-				entityitem.motionZ = (double)((float)world.rand.nextGaussian() * f3);
+				entityitem.motionX = (float)world.rand.nextGaussian() * f3;
+				entityitem.motionY = (float)world.rand.nextGaussian() * f3 + 0.2F;
+				entityitem.motionZ = (float)world.rand.nextGaussian() * f3;
 
 				if (itemstack.hasTagCompound())
 				{

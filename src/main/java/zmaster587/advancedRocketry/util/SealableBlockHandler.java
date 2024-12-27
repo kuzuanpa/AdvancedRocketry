@@ -6,6 +6,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidBlock;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.atmosphere.IAtmosphereSealHandler;
 import zmaster587.libVulpes.util.BlockPosition;
@@ -30,7 +31,7 @@ public final class SealableBlockHandler implements IAtmosphereSealHandler
     /** List of block materials that are allowed regardless of properties. */
     private List<Material> materialAllowList = new ArrayList();
     
-    private HashSet<BlockPosition> doorPositions = new HashSet<BlockPosition>();
+    private @NotNull HashSet<BlockPosition> doorPositions = new HashSet<>();
     //TODO add meta support
     //TODO add complex logic support threw API interface
     //TODO add complex logic handler for integration support
@@ -139,7 +140,7 @@ public final class SealableBlockHandler implements IAtmosphereSealHandler
      * @param pos   - location
      * @return true if full block
      */
-    public static boolean isFulBlock(World world, BlockPosition pos)
+    public static boolean isFulBlock(World world, @NotNull BlockPosition pos)
     {
         return isFulBlock(world, world.getBlock(pos.x, pos.y, pos.z), pos);
     }
@@ -152,7 +153,7 @@ public final class SealableBlockHandler implements IAtmosphereSealHandler
      * @param block - block to compare
      * @return true if full block
      */
-    public static boolean isFulBlock(World world, Block block, BlockPosition pos)
+    public static boolean isFulBlock(World world, Block block, @NotNull BlockPosition pos)
     {
     	AxisAlignedBB bb = block.getCollisionBoundingBoxFromPool(world, pos.x, pos.y, pos.z);
     	
@@ -184,7 +185,7 @@ public final class SealableBlockHandler implements IAtmosphereSealHandler
     }
 
     //TODO unit test, document, cleanup
-    private boolean checkDoorSeal(World world, BlockPosition pos, int meta)
+    private boolean checkDoorSeal(World world, @NotNull BlockPosition pos, int meta)
     {
         Block otherBlock = world.getBlock(pos.x, pos.y, pos.z);
         int otherMeta = world.getBlockMetadata(pos.x, pos.y, pos.z);

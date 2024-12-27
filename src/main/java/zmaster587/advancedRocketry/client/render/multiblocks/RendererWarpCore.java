@@ -1,28 +1,24 @@
 package zmaster587.advancedRocketry.client.render.multiblocks;
 
-import org.lwjgl.opengl.GL11;
-
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.api.stations.ISpaceObject;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.stations.SpaceObject;
-import zmaster587.advancedRocketry.stations.SpaceObjectManager;
-import zmaster587.advancedRocketry.world.provider.WorldProviderSpace;
-import zmaster587.libVulpes.block.RotatableBlock;
-import zmaster587.libVulpes.render.RenderHelper;
-import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
+import zmaster587.advancedRocketry.api.stations.ISpaceObject;
+import zmaster587.advancedRocketry.stations.SpaceObject;
+import zmaster587.advancedRocketry.stations.SpaceObjectManager;
+import zmaster587.advancedRocketry.world.provider.WorldProviderSpace;
+import zmaster587.libVulpes.block.RotatableBlock;
+import zmaster587.libVulpes.render.RenderHelper;
+import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 
 public class RendererWarpCore extends TileEntitySpecialRenderer {
 
@@ -37,8 +33,8 @@ public class RendererWarpCore extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x,
-			double y, double z, float f) {
+	public void renderTileEntityAt(@NotNull TileEntity tile, double x,
+                                   double y, double z, float f) {
 		TileMultiBlock multiBlockTile = (TileMultiBlock)tile;
 
 		if(!multiBlockTile.canRender())
@@ -81,7 +77,7 @@ public class RendererWarpCore extends TileEntitySpecialRenderer {
 			ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(tile.xCoord, tile.zCoord);
 			if(obj instanceof SpaceObject && ((SpaceObject)obj).getFuelAmount() > 50) {
 
-				double speedMult = ((DimensionProperties)obj.getProperties()).getParentPlanet() == SpaceObjectManager.WARPDIMID ? 1.5d : 0.1d;
+				double speedMult = obj.getProperties().getParentPlanet() == SpaceObjectManager.WARPDIMID ? 1.5d : 0.1d;
 				
 				double speedRotate = speedMult*0.25d;
 				

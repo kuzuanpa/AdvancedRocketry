@@ -1,13 +1,11 @@
 package zmaster587.advancedRocketry.integration.nei;
 
-import static codechicken.lib.gui.GuiDraw.changeTexture;
-import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
-
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
-
+import codechicken.lib.gui.GuiDraw;
+import codechicken.nei.NEIServerUtils;
+import codechicken.nei.PositionedStack;
+import codechicken.nei.guihook.GuiContainerManager;
+import codechicken.nei.recipe.GuiRecipe;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
@@ -17,43 +15,43 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
-
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
-
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.client.util.ProgressBarImage;
 import zmaster587.libVulpes.interfaces.IRecipe;
 import zmaster587.libVulpes.recipe.RecipesMachine;
 import zmaster587.libVulpes.recipe.RecipesMachine.Recipe;
 import zmaster587.libVulpes.util.ZUtils;
-import codechicken.lib.gui.GuiDraw;
-import codechicken.nei.NEIServerUtils;
-import codechicken.nei.PositionedStack;
-import codechicken.nei.guihook.GuiContainerManager;
-import codechicken.nei.recipe.GuiRecipe;
-import codechicken.nei.recipe.TemplateRecipeHandler;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static codechicken.lib.gui.GuiDraw.changeTexture;
+import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 
 public abstract class TemplateNEI extends TemplateRecipeHandler {
 
 
 	public class CachedMachineRecipe extends CachedRecipe {
-		private ArrayList<PositionedStack> ingredients;
-		private ArrayList<PositionedStack> result;
-		private ArrayList<PositionedFluidStack> fluids;
-		private int energy, time;
+		private final ArrayList<PositionedStack> ingredients;
+		private final ArrayList<PositionedStack> result;
+		private final ArrayList<PositionedFluidStack> fluids;
+		private final int energy, time;
 
 
 		CachedMachineRecipe(IRecipe rec) {
 			//TODO: multiple outputs
-			result  = new ArrayList<PositionedStack>();
-			fluids = new ArrayList<PositionedFluidStack>();
+			result  = new ArrayList<>();
+			fluids = new ArrayList<>();
 			int inputIndex = 0;
 			int outputIndex = 0;
 			for(int i = 0; i < rec.getOutput().size(); i++, outputIndex++ ) {
 				result.add(new PositionedStack(rec.getOutput().get(i), 112+ 18*(i%3), 4 + 18*(i/3)));
 			}
 			
-			ingredients = new ArrayList<PositionedStack>();
+			ingredients = new ArrayList<>();
 			for(int i = 0; i < rec.getIngredients().size(); i++, inputIndex++ ) {
 				ingredients.add(new PositionedStack(rec.getIngredients().get(i), 4 + 18*(i%3), 4 + 18*(i/3)));
 			}
@@ -124,11 +122,9 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
 	public void loadCraftingRecipes(ItemStack result) {
 		super.loadCraftingRecipes(result);
 		
-		for(IRecipe i : RecipesMachine.getInstance().getRecipes(getMachine())) {
-			IRecipe newRecipe = i;
-			
-			boolean match = false;
-			for(ItemStack stack : i.getOutput() ) {
+		for(IRecipe recipe1 : RecipesMachine.getInstance().getRecipes(getMachine())) {
+            boolean match = false;
+			for(ItemStack stack : recipe1.getOutput() ) {
 				match = NEIServerUtils.areStacksSameTypeCrafting(stack, result) || ZUtils.areOresSameTypeOreDict(stack, result);
 				if(match)
 					break;
@@ -144,7 +140,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
 				else if(FluidContainerRegistry.isFilledContainer(result) && FluidContainerRegistry.isFilledContainer(result))
 					fluidStack = FluidContainerRegistry.getFluidForFilledItem(result);
 					
-				for(FluidStack stack : ((Recipe)i).getFluidOutputs() ) {
+				for(FluidStack stack : (recipe1).getFluidOutputs() ) {
 					if((fluidStack != null && fluidStack.getFluid() == stack.getFluid()) ||
 							(Block.getBlockFromItem(result.getItem()) != Blocks.air && FluidRegistry.lookupFluidForBlock(Block.getBlockFromItem(result.getItem())) == stack.getFluid() )) {
 						match = true;
@@ -154,18 +150,17 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
 			}
 
 			if(match) {
-				CachedMachineRecipe recipe = new CachedMachineRecipe(((Recipe)i));
+				CachedMachineRecipe recipe = new CachedMachineRecipe(recipe1);
 				recipe.computeVisuals();
 				arecipes.add(recipe);
-				match = false;
 			}
 		}
 	}
 
 
 	public void loadAllRecipes() {
-		for(IRecipe i : RecipesMachine.getInstance().getRecipes(getMachine())) {
-			arecipes.add(new CachedMachineRecipe((Recipe)i));
+		for(IRecipe recipe : RecipesMachine.getInstance().getRecipes(getMachine())) {
+			arecipes.add(new CachedMachineRecipe(recipe));
 		}
 	}
 
@@ -247,7 +242,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
 		drawProgressBar(65 + progressBar.getInsetX(), 3 +  + progressBar.getInsetY(), progressBar.getForeOffsetX(), progressBar.getForeOffsetY(), progressBar.getForeWidth(),  progressBar.getForeHeight(), 50, progressBar.getDirection().getRotation(ForgeDirection.SOUTH).ordinal());
 	}
 	
-    public void drawFluidTanks(CachedMachineRecipe r) {
+    public void drawFluidTanks(@NotNull CachedMachineRecipe r) {
         if (r.getFluids() != null) {
             for (PositionedFluidStack fluidTank : r.getFluids()) {
                 fluidTank.draw();
@@ -255,7 +250,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
         }
     }
     
-    public List<String> provideTooltip(GuiRecipe guiRecipe, List<String> currenttip, CachedMachineRecipe crecipe, Point relMouse) {
+    public List<String> provideTooltip(GuiRecipe guiRecipe, List<String> currenttip, CachedMachineRecipe crecipe, @NotNull Point relMouse) {
         if (crecipe.getFluids() != null) {
             for (PositionedFluidStack tank : crecipe.getFluids()) {
                 if (relMouse.x > tank.posX && relMouse.x < tank.posX + PositionedFluidStack.size && 
@@ -268,7 +263,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
     }
 
     @Override
-    public List<String> handleTooltip(GuiRecipe guiRecipe, List<String> currenttip, int recipe) {
+    public List<String> handleTooltip(@NotNull GuiRecipe guiRecipe, List<String> currenttip, int recipe) {
         super.handleTooltip(guiRecipe, currenttip, recipe);
         CachedMachineRecipe crecipe = (CachedMachineRecipe) this.arecipes.get(recipe);
         if (GuiContainerManager.shouldShowTooltip(guiRecipe)) {
@@ -282,7 +277,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
 }
     
 	@Override
-	public String getGuiTexture() {
+	public @NotNull String getGuiTexture() {
 		return "advancedrocketry:textures/gui/GenericNeiBackground.png";
 	}
 }

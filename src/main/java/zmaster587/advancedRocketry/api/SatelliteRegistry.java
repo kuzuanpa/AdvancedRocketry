@@ -1,18 +1,19 @@
 package zmaster587.advancedRocketry.api;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
+import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
+
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
-import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
-
 public class SatelliteRegistry {
-	static HashMap<String, Class<? extends SatelliteBase>> registry = new HashMap<String, Class<? extends SatelliteBase>>();
+	static HashMap<String, Class<? extends SatelliteBase>> registry = new HashMap<>();
 
-	static HashMap<ItemStack, SatelliteProperties> itemPropertiesRegistry = new HashMap<ItemStack, SatelliteProperties>();
+	static HashMap<ItemStack, SatelliteProperties> itemPropertiesRegistry = new HashMap<>();
 
 	/**
 	 * Registers an itemStack with a satellite property, this is used in the Satellite Builder to determine the effect of a component
@@ -33,7 +34,7 @@ public class SatelliteRegistry {
 	 * @param stack ItemStack to get the SatelliteProperties of, stacksize insensative 
 	 * @return the registered SatelliteProperties of the stack, or null if not registered
 	 */
-	public static SatelliteProperties getSatelliteProperty(ItemStack stack) {
+	public static SatelliteProperties getSatelliteProperty(@NotNull ItemStack stack) {
 		
 		for(ItemStack keyStack : itemPropertiesRegistry.keySet()) {
 			if(keyStack.getItem() == stack.getItem() && ( !keyStack.getHasSubtypes() || keyStack.getItemDamage() == stack.getItemDamage()) ) {
@@ -72,8 +73,10 @@ public class SatelliteRegistry {
 	 * @param nbt NBT to create a satellite Object from
 	 * @return Satellite constructed from the passed NBT
 	 */
-	public static SatelliteBase createFromNBT(NBTTagCompound nbt) {
+	public static SatelliteBase createFromNBT(@NotNull NBTTagCompound nbt) {
 		SatelliteBase satellite = getSatallite(nbt.getString("dataType"));
+
+		if(satellite == null) return null;
 
 		satellite.readFromNBT(nbt);
 

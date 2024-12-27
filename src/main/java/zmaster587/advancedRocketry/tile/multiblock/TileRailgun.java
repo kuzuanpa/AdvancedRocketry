@@ -23,6 +23,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.entity.EntityItemAbducted;
 import zmaster587.libVulpes.LibVulpes;
@@ -395,8 +396,8 @@ public class TileRailgun extends TileMultiPowerConsumer implements IInventory, I
 	}
 
 	@Override
-	public boolean onLinkStart(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+	public boolean onLinkStart(@NotNull ItemStack item, TileEntity entity,
+                               EntityPlayer player, World world) {
 		ItemLinker.setMasterCoords(item, this.xCoord, this.yCoord, this.zCoord);
 		ItemLinker.setDimId(item, world.provider.dimensionId);
 		if(!world.isRemote)
@@ -450,8 +451,8 @@ public class TileRailgun extends TileMultiPowerConsumer implements IInventory, I
 	}
 
 	@Override
-	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+	public void useNetworkData(EntityPlayer player, @NotNull Side side, byte id,
+                               NBTTagCompound nbt) {
 		if(side.isClient()) {
 			if(id == 3) {
 				ForgeDirection dir = RotatableBlock.getFront(this.getBlockMetadata());

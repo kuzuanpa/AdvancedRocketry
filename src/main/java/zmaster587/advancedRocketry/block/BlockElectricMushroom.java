@@ -2,7 +2,6 @@ package zmaster587.advancedRocketry.block;
 
 import java.util.Random;
 
-import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.entity.fx.FxSystemElectricArc;
@@ -10,7 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockMushroom;
 import net.minecraft.block.IGrowable;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 

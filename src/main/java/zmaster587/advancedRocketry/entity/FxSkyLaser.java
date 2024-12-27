@@ -1,6 +1,7 @@
 package zmaster587.advancedRocketry.entity;
 
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.advancedRocketry.client.render.RenderLaser;
@@ -13,7 +14,7 @@ import net.minecraft.world.World;
 public class FxSkyLaser extends EntityFX {
 	
 	
-	static RenderLaser render = new RenderLaser(0.75, new float[] { 0.2f, 0.2f, 0.8f, 0.0f}, new float[] { 0.2f, 0.2f, 0.8f, 0.9f});
+	static @NotNull RenderLaser render = new RenderLaser(0.75, new float[] { 0.2f, 0.2f, 0.8f, 0.0f}, new float[] { 0.2f, 0.2f, 0.8f, 0.9f});
 	
 	public FxSkyLaser(World world, double x,
 			double y, double z) {
@@ -38,12 +39,7 @@ public class FxSkyLaser extends EntityFX {
 		Tessellator.instance.startDrawingQuads();
 	}
 
-	@Override
-	public int getFXLayer() {
-		return 0;
-	}
-
-	@Override
+    @Override
 	public void onUpdate() {
 
 		if (this.particleAge++ >= this.particleMaxAge)

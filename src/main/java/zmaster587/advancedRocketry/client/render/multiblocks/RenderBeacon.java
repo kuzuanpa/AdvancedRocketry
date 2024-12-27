@@ -7,6 +7,7 @@ import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.advancedRocketry.client.render.RenderLaser;
@@ -30,8 +31,8 @@ public class RenderBeacon extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x,
-			double y, double z, float f) {
+	public void renderTileEntityAt(@NotNull TileEntity tile, double x,
+                                   double y, double z, float f) {
 		TileMultiPowerConsumer multiBlockTile = (TileMultiPowerConsumer)tile;
 
 		if(!multiBlockTile.canRender())

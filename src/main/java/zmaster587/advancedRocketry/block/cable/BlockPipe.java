@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.block.cable;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.tile.cables.TilePipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -66,13 +67,13 @@ public class BlockPipe extends Block {
 	}
 
 	@Override
-	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ) {
+	public void onNeighborChange(@NotNull IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ) {
 		((TilePipe)world.getTileEntity(x, y, z)).onNeighborTileChange(tileX, tileY, tileZ);
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x,
-			int y, int z, Block block) {
+	public void onNeighborBlockChange(@NotNull World world, int x,
+                                      int y, int z, Block block) {
 		if(!world.isRemote)
 			((TilePipe)world.getTileEntity(x, y, z)).onPlaced();
 	}

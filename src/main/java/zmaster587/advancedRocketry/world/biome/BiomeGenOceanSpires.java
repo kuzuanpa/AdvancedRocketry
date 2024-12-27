@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.world.biome;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.world.decoration.MapGenInvertedPillar;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -46,7 +47,7 @@ public class BiomeGenOceanSpires extends BiomeGenBase {
 			oceanSpire.func_151539_a(null, world, x/16, z/16, block);
 	}
 
-    public WorldGenAbstractTree func_150567_a(Random rand) {
+    public @NotNull WorldGenAbstractTree func_150567_a(Random rand) {
         return new WorldGenShrub(3, 0);
     }
 

@@ -2,15 +2,16 @@ package zmaster587.advancedRocketry.item;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereType;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereBase;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.event.RocketEventHandler;
-import zmaster587.advancedRocketry.event.RocketEventHandler.GuiBox;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.api.IArmorComponent;
@@ -35,7 +36,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 public class ItemAtmosphereAnalzer extends Item implements IArmorComponent {
 
 	private static ResourceIcon icon;
-	private static ResourceLocation eyeCandySpinner = new ResourceLocation("advancedrocketry:textures/gui/eyeCandy/spinnyThing.png");
+	private static @NotNull ResourceLocation eyeCandySpinner = new ResourceLocation("advancedrocketry:textures/gui/eyeCandy/spinnyThing.png");
 	
 	private static String breathable = LibVulpes.proxy.getLocalizedString("msg.atmanal.canbreathe");
 	private static String atmtype = LibVulpes.proxy.getLocalizedString("msg.atmanal.atmType");
@@ -48,11 +49,11 @@ public class ItemAtmosphereAnalzer extends Item implements IArmorComponent {
 
 	}
 
-	private String[] getAtmosphereReadout(ItemStack stack, AtmosphereType atm, World world) {
+	private String[] getAtmosphereReadout(ItemStack stack, AtmosphereBase atm, World world) {
 		if(atm == null)
-			atm = AtmosphereType.AIR;
+			atm = AtmosphereTypes.AIR;
 
-		String str[] = new String[2];
+		String[] str = new String[2];
 
 		str[0] = atmtype + LibVulpes.proxy.getLocalizedString(atm.getUnlocalizedName()) + " @ " + (AtmosphereHandler.currentPressure == -1 ? ((DimensionManager.getInstance().isDimensionCreated(world.provider.dimensionId)) ? DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId).getAtmosphereDensity()/100f : 1) : AtmosphereHandler.currentPressure/100f) + " atm";
 		str[1] = breathable + (atm.isBreathable() ? yes : no);
@@ -64,7 +65,7 @@ public class ItemAtmosphereAnalzer extends Item implements IArmorComponent {
 	public ItemStack onItemRightClick(ItemStack stack, World world,
 			EntityPlayer player) {
 		if(!world.isRemote) {
-			String str[] = getAtmosphereReadout(stack, (AtmosphereType) AtmosphereHandler.getOxygenHandler(world.provider.dimensionId).getAtmosphereType(player), world);
+			String[] str = getAtmosphereReadout(stack, (AtmosphereBase) AtmosphereHandler.getOxygenHandler(world.provider.dimensionId).getAtmosphereType(player), world);
 			for(String str1 : str)
 					player.addChatMessage(new ChatComponentText(str1));
 		}
@@ -101,7 +102,7 @@ public class ItemAtmosphereAnalzer extends Item implements IArmorComponent {
 		int screenX = RocketEventHandler.atmBar.getRenderX();//8;
 		int screenY = RocketEventHandler.atmBar.getRenderY();//event.getResolution().getScaledHeight() - fontRenderer.FONT_HEIGHT*3;
 
-		String str[] = getAtmosphereReadout(componentStack, (AtmosphereType) AtmosphereHandler.currentAtm, Minecraft.getMinecraft().theWorld);
+		String[] str = getAtmosphereReadout(componentStack, (AtmosphereBase) AtmosphereHandler.currentAtm, Minecraft.getMinecraft().theWorld);
 		//Draw BG
 		gui.drawString(fontRenderer, str[0], screenX, screenY, 0xaaffff);
 		gui.drawString(fontRenderer, str[1], screenX, screenY + fontRenderer.FONT_HEIGHT*4/3, 0xaaffff);

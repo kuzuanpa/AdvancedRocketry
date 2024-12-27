@@ -1,6 +1,7 @@
 package zmaster587.advancedRocketry.tile.hatch;
 
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
@@ -22,7 +23,7 @@ public class TileSatelliteHatch extends TileInventoryHatch {
 		return "container.satellite";
 	}
 
-	public SatelliteBase getSatellite() {
+	public @Nullable SatelliteBase getSatellite() {
 
 		ItemStack itemStack = inventory.getStackInSlot(0);
 		if(itemStack != null && itemStack.getItem() instanceof ItemSatellite) {

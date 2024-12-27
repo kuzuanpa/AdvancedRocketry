@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.tile;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.libVulpes.block.BlockFullyRotatable;
 import net.minecraft.nbt.NBTTagCompound;
@@ -75,7 +76,7 @@ public class TileForceFieldProjector extends TileEntity{
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		nbt.setShort("ext", extensionRange);
 		super.writeToNBT(nbt);
 	}

@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.ChunkEvent;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.cable.NetworkRegistry;
 import zmaster587.advancedRocketry.tile.cables.TilePipe;
@@ -37,7 +38,7 @@ public class CableTickHandler {
 	public void chunkLoadedEvent(ChunkEvent.Load event) {
 
 		Map map = event.getChunk().chunkTileEntityMap;
-		Iterator<Entry> iter = map.entrySet().iterator();
+		@NotNull Iterator<Entry> iter = map.entrySet().iterator();
 
 		try {
 			while(iter.hasNext()) {

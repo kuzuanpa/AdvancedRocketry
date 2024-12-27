@@ -5,24 +5,9 @@
 
 package zmaster587.advancedRocketry.util;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.*;
-import java.util.function.BiConsumer;
-
-import scala.Int;
-import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.advancedRocketry.api.EntityRocketBase;
-import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
-import zmaster587.advancedRocketry.api.stations.IStorageChunk;
-import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
-import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
-import zmaster587.advancedRocketry.tile.multiblock.TileWarpCore;
-import zmaster587.advancedRocketry.world.util.WorldDummy;
-import zmaster587.libVulpes.util.BlockPosition;
-import zmaster587.libVulpes.util.Vector3F;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -41,6 +26,19 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.EntityRocketBase;
+import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
+import zmaster587.advancedRocketry.api.stations.IStorageChunk;
+import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
+import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
+import zmaster587.advancedRocketry.tile.multiblock.TileWarpCore;
+import zmaster587.advancedRocketry.world.util.WorldDummy;
+import zmaster587.libVulpes.util.BlockPosition;
+import zmaster587.libVulpes.util.Vector3F;
+
+import java.util.*;
 
 public class StorageChunk implements IBlockAccess, IStorageChunk {
 
@@ -57,7 +55,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 	public WorldDummy world;
 	private Entity entity;
-	private static List<Class> invBlackList = new LinkedList<Class>();
+	private static final List<Class> invBlackList = new LinkedList<>();
 	
 	static {
 		try {
@@ -72,9 +70,9 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		sizeX = 0;
 		sizeY = 0;
 		sizeZ = 0;
-		tileEntities = new ArrayList<TileEntity>();
-		inventoryTiles = new ArrayList<TileEntity>();
-		liquidTiles = new ArrayList<TileEntity>();
+		tileEntities = new ArrayList<>();
+		inventoryTiles = new ArrayList<>();
+		liquidTiles = new ArrayList<>();
 
 		world = new WorldDummy(AdvancedRocketry.proxy.getProfiler(), this);
 	}
@@ -87,9 +85,9 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		sizeY = ySize;
 		sizeZ = zSize;
 
-		tileEntities = new ArrayList<TileEntity>();
-		inventoryTiles = new ArrayList<TileEntity>();
-		liquidTiles = new ArrayList<TileEntity>();
+		tileEntities = new ArrayList<>();
+		inventoryTiles = new ArrayList<>();
+		liquidTiles = new ArrayList<>();
 
 		world = new WorldDummy(AdvancedRocketry.proxy.getProfiler(), this);
 	}
@@ -111,9 +109,9 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		sizeZ = finalMaxZ-finalMinZ+1;
 		this.blocks = new Block[sizeX][sizeY][sizeZ];
 		this.metas = new short[sizeX][sizeY][sizeZ];
-		tileEntities = new ArrayList<TileEntity>();
-		inventoryTiles = new ArrayList<TileEntity>();
-		liquidTiles = new ArrayList<TileEntity>();
+		tileEntities = new ArrayList<>();
+		inventoryTiles = new ArrayList<>();
+		liquidTiles = new ArrayList<>();
 		world = new WorldDummy(AdvancedRocketry.proxy.getProfiler(), this);
 
 		blocks.forEach((pos,block)->this.blocks[pos.x-finalMinX][pos.y-finalMinY][pos.z-finalMinZ]=block);
@@ -168,15 +166,15 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		return tileEntities;
 	}
 
-	public void rotateBy(ForgeDirection dir) {
+	public void rotateBy(@NotNull ForgeDirection dir) {
 		
 		BlockPosition newSizes = new BlockPosition(getSizeX(), getSizeY(), getSizeZ());
 		
 		BlockPosition newerSize = remapCoord(newSizes, dir);
 		newSizes = remapCoord(newSizes, dir);
 		
-		Block blocks[][][] = new Block[newSizes.x][newSizes.y][newSizes.z];
-		short metas[][][] = new short[newSizes.x][newSizes.y][newSizes.z];
+		Block[][][] blocks = new Block[newSizes.x][newSizes.y][newSizes.z];
+		short[][] @NotNull [] metas = new short[newSizes.x][newSizes.y][newSizes.z];
 		
 		for(int y = 0; y < getSizeY(); y++) {
 			for(int z = 0; z < getSizeZ(); z++) {
@@ -203,7 +201,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		this.sizeZ = newerSize.z;
 	}
 	
-	private BlockPosition remapCoord(BlockPosition in, ForgeDirection dir) {
+	private BlockPosition remapCoord(BlockPosition in, @NotNull ForgeDirection dir) {
 		
 		BlockPosition out = new BlockPosition(0, 0, 0);
 		
@@ -295,7 +293,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 	}
 
 	public List<TileEntity> getGUItiles() {
-		List<TileEntity> list = new LinkedList<TileEntity>(inventoryTiles);
+		List<TileEntity> list = new LinkedList<>(inventoryTiles);
 
 		TileEntity guidanceComputer = getGuidanceComputer();
 		if(guidanceComputer != null)
@@ -305,11 +303,8 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 	@Override
 	public Block getBlock(int x, int y, int z) {
-		if(x < 0 || x >= sizeX || y < 0 || y >= sizeY || z < 0 || z >= sizeZ)
-			return Blocks.air;
+		if(x < 0 || x >= sizeX || y < 0 || y >= sizeY || z < 0 || z >= sizeZ) return Blocks.air;
 
-		if(blocks[x][y][z] != Blocks.air)
-			return blocks[x][y][z];
 		return blocks[x][y][z];
 	}
 
@@ -330,7 +325,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 
 		Iterator<TileEntity> tileEntityIterator = tileEntities.iterator();
-		NBTTagList tileList = new NBTTagList();
+		@NotNull NBTTagList tileList = new NBTTagList();
 		while(tileEntityIterator.hasNext()) {
 			TileEntity tile = tileEntityIterator.next();
 			try {
@@ -345,13 +340,13 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 			}
 		}
 
-		int[] blockId = new int[sizeX*sizeY*sizeZ];
+		int @NotNull [] blockId = new int[sizeX*sizeY*sizeZ];
 		int[] metasId = new int[sizeX*sizeY*sizeZ];
 		for(int x = 0; x < sizeX; x++) {
 			for(int y = 0; y < sizeY; y++) {
 				for(int z = 0; z < sizeZ; z++) {
 					blockId[z + (sizeZ*y) + (sizeZ*sizeY*x)] = Block.getIdFromBlock(blocks[x][y][z]);
-					metasId[z + (sizeZ*y) + (sizeZ*sizeY*x)] = (int)metas[x][y][z];
+					metasId[z + (sizeZ*y) + (sizeZ*sizeY*x)] = metas[x][y][z];
 				}
 			}
 		}
@@ -494,7 +489,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 	}
 
-	public static StorageChunk copyWorldBB(World world, AxisAlignedBB bb) {
+	public static @NotNull StorageChunk copyWorldBB(World world, AxisAlignedBB bb) {
 		int actualMinX = (int)bb.maxX,
 				actualMinY = (int)bb.maxY,
 				actualMinZ = (int)bb.maxZ,
@@ -545,7 +540,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 					TileEntity entity = world.getTileEntity(x, y, z);
 					if(entity != null) {
-						NBTTagCompound nbt = new NBTTagCompound();
+						@NotNull NBTTagCompound nbt = new NBTTagCompound();
 						entity.writeToNBT(nbt);
 
 						//Transform tileEntity coords
@@ -591,7 +586,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 		//Set tiles for each block
 		for(TileEntity tile : tileEntities) {
-			NBTTagCompound nbt = new NBTTagCompound();
+			@NotNull NBTTagCompound nbt = new NBTTagCompound();
 			tile.writeToNBT(nbt);
 			int x = nbt.getInteger("x");
 			int y = nbt.getInteger("y");
@@ -679,7 +674,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		return blocks[x + side.offsetX][y + side.offsetY][z + side.offsetZ].isBlockSolid(this, x, y, z, metas[x][y][z]);
 	}
 
-	public static StorageChunk cutWorldBB(World worldObj, AxisAlignedBB bb) {
+	public static @NotNull StorageChunk cutWorldBB(World worldObj, AxisAlignedBB bb) {
 		StorageChunk chunk = StorageChunk.copyWorldBB(worldObj, bb);
 		for(int x = (int)bb.minX; x <= bb.maxX; x++) {
 			for(int z = (int)bb.minZ; z <= bb.maxZ; z++) {
@@ -710,31 +705,25 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 
 	public List<TileSatelliteHatch> getSatelliteHatches() {
-		LinkedList<TileSatelliteHatch> satelliteHatches = new LinkedList<TileSatelliteHatch>();
-		Iterator<TileEntity> iterator = getTileEntityList().iterator();
-		while(iterator.hasNext()) {
-			TileEntity tile = iterator.next();
-
-			if(tile instanceof TileSatelliteHatch) {
-				satelliteHatches.add((TileSatelliteHatch) tile);
-			}
-		}
+		@NotNull LinkedList<TileSatelliteHatch> satelliteHatches = new LinkedList<>();
+        for (TileEntity tile : getTileEntityList()) {
+            if (tile instanceof TileSatelliteHatch) {
+                satelliteHatches.add((TileSatelliteHatch) tile);
+            }
+        }
 
 		return satelliteHatches;
 	}
 
 	@Deprecated
 	public List<SatelliteBase> getSatellites() {
-		LinkedList<SatelliteBase> satellites = new LinkedList<SatelliteBase>();
-		LinkedList<TileSatelliteHatch> satelliteHatches = new LinkedList<TileSatelliteHatch>();
-		Iterator<TileEntity> iterator = getTileEntityList().iterator();
-		while(iterator.hasNext()) {
-			TileEntity tile = iterator.next();
-
-			if(tile instanceof TileSatelliteHatch) {
-				satelliteHatches.add((TileSatelliteHatch) tile);
-			}
-		}
+		LinkedList<SatelliteBase> satellites = new LinkedList<>();
+		LinkedList<TileSatelliteHatch> satelliteHatches = new LinkedList<>();
+        for (TileEntity tile : getTileEntityList()) {
+            if (tile instanceof TileSatelliteHatch) {
+                satelliteHatches.add((TileSatelliteHatch) tile);
+            }
+        }
 
 
 		for(TileSatelliteHatch tile : satelliteHatches) {
@@ -747,66 +736,61 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 	@Deprecated
 	public TileGuidanceComputer getGuidanceComputer() {
-		Iterator<TileEntity> iterator = getTileEntityList().iterator();
-		while(iterator.hasNext()) {
-			TileEntity tile = iterator.next();
-
-			if(tile instanceof TileGuidanceComputer) {
-				return (TileGuidanceComputer)tile;
-			}
-		}
+        for (TileEntity tile : getTileEntityList()) {
+            if (tile instanceof TileGuidanceComputer) {
+                return (TileGuidanceComputer) tile;
+            }
+        }
 
 		return null;
 	}
 
+	@Deprecated
 	public boolean hasWarpCore() {
-		Iterator<TileEntity> iterator = getTileEntityList().iterator();
-		while(iterator.hasNext()) {
-			TileEntity tile = iterator.next();
-
-			if(tile instanceof TileWarpCore) {
-				return true;
-			}
-		}
+        for (TileEntity tile : getTileEntityList()) {
+            if (tile instanceof TileWarpCore) {
+                return true;
+            }
+        }
 
 		return false;
+	}
+
+	public <T extends TileEntity> T getFirstTileEntity(Class<T> clazz) {
+		for (TileEntity tile : getTileEntityList()) {
+			if (clazz.isInstance(tile)) return (T) tile;
+		}
+		return null;
 	}
 	
 	/**
 	 * @return destination ID or -1 if none
 	 */
 	public int getDestinationDimId(int currentDimId, int x, int z) {
-		Iterator<TileEntity> iterator = getTileEntityList().iterator();
-		while(iterator.hasNext()) {
-			TileEntity tile = iterator.next();
-
-			if(tile instanceof TileGuidanceComputer) {
-				return ((TileGuidanceComputer)tile).getDestinationDimId(currentDimId,x,z);
-			}
-		}
+        for (TileEntity tile : getTileEntityList()) {
+            if (tile instanceof TileGuidanceComputer) {
+                return ((TileGuidanceComputer) tile).getDestinationDimId(currentDimId, x, z);
+            }
+        }
 
 		return -1;
 	}
 
 	public Vector3F<Float> getDestinationCoordinates(int destDimID, boolean commit) {
-		Iterator<TileEntity> iterator = getTileEntityList().iterator();
-		while(iterator.hasNext()) {
-			TileEntity tile = iterator.next();
-			if(tile instanceof TileGuidanceComputer) {
-				return ((TileGuidanceComputer)tile).getLandingLocation(destDimID,commit);
-			}
-		}
+        for (TileEntity tile : getTileEntityList()) {
+            if (tile instanceof TileGuidanceComputer) {
+                return ((TileGuidanceComputer) tile).getLandingLocation(destDimID, commit);
+            }
+        }
 		return null;
 	}
 
 	public void setDestinationCoordinates(Vector3F<Float> vec, int dimid) {
-		Iterator<TileEntity> iterator = getTileEntityList().iterator();
-		while(iterator.hasNext()) {
-			TileEntity tile = iterator.next();
-			if(tile instanceof TileGuidanceComputer) {
-				((TileGuidanceComputer)tile).setReturnPosition(vec, dimid);
-			}
-		}
+        for (TileEntity tile : getTileEntityList()) {
+            if (tile instanceof TileGuidanceComputer) {
+                ((TileGuidanceComputer) tile).setReturnPosition(vec, dimid);
+            }
+        }
 	}
 
 	public void writeToNetwork(ByteBuf out) {
@@ -890,7 +874,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 			}
 		}
 	}
-	public static StorageChunk divideStorage(StorageChunk storageChunkToDivide, ArrayList<BlockPosition> positions){
+	public static @NotNull StorageChunk divideStorage(StorageChunk storageChunkToDivide, ArrayList<BlockPosition> positions){
 		ArrayList<TileEntity> tiles = new ArrayList<>();
 		positions.forEach(pos->tiles.add(storageChunkToDivide.getTileEntity(pos.x,pos.y,pos.z)));
 		HashMap<BlockPosition, Block> blocks = new HashMap<>();

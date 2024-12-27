@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.libVulpes.block.BlockMeta;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -28,8 +29,8 @@ public class AsteroidSmall {
 	
 	
 	public AsteroidSmall() {
-		stackProbabilites = new LinkedList<Float>();
-		itemStacks = new LinkedList<ItemStack>();
+		stackProbabilites = new LinkedList<>();
+		itemStacks = new LinkedList<>();
 	}
 	
 	public String getName() {return ID;}
@@ -50,7 +51,7 @@ public class AsteroidSmall {
 	 */
 	public List<StackEntry> getHarvest(long seed, float uncertainty) {
 		
-		List<StackEntry> entries = new LinkedList<StackEntry>();
+		@NotNull List<StackEntry> entries = new LinkedList<>();
 		rand.setSeed(seed);
 		
 		int myMass = (int)(mass + ((rand.nextFloat()*massVariability)*mass) - massVariability*mass/2f);
@@ -67,7 +68,7 @@ public class AsteroidSmall {
 			entry.midpoint += myMass - numOres;
 		entries.add(entry);
 		
-		int ores[] = new int[itemStacks.size()];
+		int[] ores = new int[itemStacks.size()];
 		
 		float normFactor = 0;
 		for(Float prob : stackProbabilites)

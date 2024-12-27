@@ -9,8 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.tile.station.TileDockingPort;
-import zmaster587.advancedRocketry.tile.station.TileLandingPad;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.block.BlockFullyRotatable;
 import zmaster587.libVulpes.inventory.GuiHandler;
@@ -35,7 +35,7 @@ public class BlockStationModuleDockingPort extends BlockFullyRotatable {
 	}
 	
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
+	public @NotNull TileEntity createTileEntity(World world, int metadata) {
 		return new TileDockingPort();
 	}
 	
@@ -60,13 +60,13 @@ public class BlockStationModuleDockingPort extends BlockFullyRotatable {
 	}
 	
 	@Override
-	public void onBlockPreDestroy(World world, int x,
-			int y, int z, int oldMeta) {
+	public void onBlockPreDestroy(@NotNull World world, int x,
+                                  int y, int z, int oldMeta) {
 		super.onBlockPreDestroy(world, x, y, z,
 				oldMeta);
 		
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if(tile instanceof TileLandingPad) {
+		if(tile instanceof TileDockingPort) {
 			((TileDockingPort) tile).unregisterTileWithStation(world, x, y, z);
 		}
 	}

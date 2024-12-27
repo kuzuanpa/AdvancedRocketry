@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.atmosphere;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.libVulpes.LibVulpes;
 
 public class AtmosphereSuperheated extends AtmosphereNeedsSuit {
@@ -25,7 +26,7 @@ public class AtmosphereSuperheated extends AtmosphereNeedsSuit {
 		}
 	
 	@Override
-	public void onTick(EntityLivingBase player) {
+	public void onTick(@NotNull EntityLivingBase player) {
 		if(player.worldObj.getTotalWorldTime() % 20  == 0 && !isImmune(player)) {
 			player.setFire(1);
 			player.attackEntityFrom(AtmosphereHandler.heatDamage, 4);

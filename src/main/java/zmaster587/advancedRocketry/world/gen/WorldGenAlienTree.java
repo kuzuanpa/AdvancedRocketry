@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.world.gen;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import net.minecraft.block.Block;
@@ -28,7 +29,7 @@ public class WorldGenAlienTree extends WorldGenAbstractTree {
 
 
 
-	public boolean generate(World world, Random random, int x, int y, int z)
+	public boolean generate(@NotNull World world, Random random, int x, int y, int z)
 	{
 		int treeHeight = random.nextInt(10) + 20;
 		boolean flag = true;
@@ -248,7 +249,7 @@ public class WorldGenAlienTree extends WorldGenAbstractTree {
 			return false;
 	}
 	
-	private void replaceAirWithLeaves(World p_150526_1_, int p_150526_2_, int p_150526_3_, int p_150526_4_)
+	private void replaceAirWithLeaves(@NotNull World p_150526_1_, int p_150526_2_, int p_150526_3_, int p_150526_4_)
 	{
 		Block block = p_150526_1_.getBlock(p_150526_2_, p_150526_3_, p_150526_4_);
 

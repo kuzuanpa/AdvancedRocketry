@@ -15,6 +15,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.client.IRenderHandler;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.IPlanetaryProvider;
@@ -46,8 +47,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 	}*/
 
 	@Override
-
-	public IChunkProvider createChunkGenerator() {
+	public @NotNull IChunkProvider createChunkGenerator() {
 		if(DimensionManager.getInstance().getDimensionProperties(worldObj.provider.dimensionId).getGenType() == 1)
 		{
 			return new ChunkProviderCavePlanet(this.worldObj,this.worldObj.getSeed());
@@ -92,7 +92,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 	@Override
 	public boolean canDoRainSnowIce(Chunk chunk) {
 		// TODO Auto-generated method stub
-		return getAtmosphereDensity(0,0) > 75 ? super.canDoRainSnowIce(chunk) : false;
+		return getAtmosphereDensity(0, 0) > 75 && super.canDoRainSnowIce(chunk);
 	}
 	@Override
 	public void updateWeather() {
@@ -127,7 +127,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 		if(colors == null)
 			return super.calcSunriseSunsetColors(p_76560_1_, p_76560_2_);
 
-		float finalColors[] = new float[4];
+		float @NotNull [] finalColors = new float[4];
 
 		float f2 = 0.4F;
 		float f3 = MathHelper.cos(p_76560_1_ * (float)Math.PI * 2.0F) - 0.0F;
@@ -158,7 +158,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 
 		//This is inaccurate at times, moreso for atmosphere, but I am NOT doing the required math for the realistic counterpart
 		float atmosphere = getAtmosphereDensity(0,0);
-		Math.abs(1-atmosphere);
+		//Math.abs(1-atmosphere);
 		//calculateCelestialAngle(p_76563_1_, p_76563_3_)
         float f1 = worldObj.getCelestialAngle(partialTicks);
         float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.2F) - atmosphere/4f;
@@ -204,7 +204,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 		float difference = solarDistance/(200-planetaryDistance + 0.00001f);
 		
 		
-		float phiMuliplier = (float) (Math.max(Math.abs(MathHelper.cos((float)(properties.orbitalPhi * Math.PI/180)))-0.95f, 0)*20);
+		float phiMuliplier = Math.max(Math.abs(MathHelper.cos((float)(properties.orbitalPhi * Math.PI/180)))-0.95f, 0)*20;
 
 		int offset = (int)((200-planetaryDistance)/2f);
 
@@ -243,7 +243,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Vec3 getFogColor(float p_76562_1_, float p_76562_2_) {
+	public @NotNull Vec3 getFogColor(float p_76562_1_, float p_76562_2_) {
 
 		Vec3 superVec = super.getFogColor(p_76562_1_, p_76562_2_);
 		//float multiplier = getAtmosphereDensityFromHeight(Minecraft.getMinecraft().renderViewEntity.posY);
@@ -323,7 +323,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 
 	@Override
 	public float getAtmosphereDensity(int x, int z) {
-		return (float)(getDimensionProperties(x,z).getAtmosphereDensity()/100f);
+		return getDimensionProperties(x,z).getAtmosphereDensity()/100f;
 	}
 
 	@Override
@@ -357,7 +357,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 	}
 
 	@Override
-	public Vec3 getSunColor(int x, int z) {
+	public @NotNull Vec3 getSunColor(int x, int z) {
 		float[] vec = getDimensionProperties(x,z).getSunColor();
 		return Vec3.createVectorHelper(vec[0],vec[1],vec[2]);
 	}
@@ -367,8 +367,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 	}
 
 	@Override
-	public DimensionProperties getDimensionProperties(int x, int z) {
-		DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(this.dimensionId);
-		return properties == null ? new DimensionProperties(this.dimensionId) : properties;
+	public @NotNull DimensionProperties getDimensionProperties(int x, int z) {
+        return DimensionManager.getInstance().getDimensionProperties(this.dimensionId);
 	}
 }

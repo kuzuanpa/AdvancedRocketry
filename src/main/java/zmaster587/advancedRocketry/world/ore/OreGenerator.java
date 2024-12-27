@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.world.ore;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
@@ -36,8 +37,8 @@ public class OreGenerator extends WorldGenerator implements IWorldGenerator {
 	}
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world,
-			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+	public void generate(@NotNull Random random, int chunkX, int chunkZ, World world,
+                         IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 
 		OreGenEvent event = new OreGenEvent.GenerateMinable(world, random, this, chunkX, chunkZ, EventType.CUSTOM);
 		MinecraftForge.ORE_GEN_BUS.post(event);

@@ -4,9 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 
-import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Constants;
 import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.entity.EntityRocket;
@@ -45,7 +45,7 @@ public class KeyBindings {
 				rocket.launch();
 			}*/
 			
-			if(player.ridingEntity != null && player.ridingEntity instanceof EntityRocket) {
+			if(player.ridingEntity instanceof EntityRocket) {
 				EntityRocket rocket = (EntityRocket)player.ridingEntity;
 				if(!rocket.isInFlight() && Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 					if(Minecraft.getMinecraft().inGameHasFocus && player.equals(Minecraft.getMinecraft().thePlayer)) {
@@ -64,7 +64,7 @@ public class KeyBindings {
 			
 			if(openRocketUI.isPressed()) {
 				if(player.ridingEntity instanceof EntityRocketBase) {
-					PacketHandler.sendToServer(new PacketEntity((INetworkEntity) player.ridingEntity, (byte)EntityRocket.PacketType.OPENGUI.ordinal()));
+					PacketHandler.sendToServer(new PacketEntity((INetworkEntity) player.ridingEntity, (byte)EntityRocket.PacketType.OPEN_GUI.ordinal()));
 				}
 			}
 			
@@ -77,9 +77,9 @@ public class KeyBindings {
 		
 		//static KeyBinding launch = new KeyBinding("Launch", Keyboard.KEY_SPACE, "key.controls." + Constants.modId);
 		static KeyBinding toggleJetpack = new KeyBinding(LibVulpes.proxy.getLocalizedString("key.toggleJetpack"), Keyboard.KEY_X, LibVulpes.proxy.getLocalizedString("key.controls." + Constants.modId));
-		static KeyBinding openRocketUI	= new KeyBinding(LibVulpes.proxy.getLocalizedString("key.openRocketUI"), Keyboard.KEY_C, LibVulpes.proxy.getLocalizedString("key.controls." + Constants.modId));
+		static @NotNull KeyBinding openRocketUI	= new KeyBinding(LibVulpes.proxy.getLocalizedString("key.openRocketUI"), Keyboard.KEY_C, LibVulpes.proxy.getLocalizedString("key.controls." + Constants.modId));
 		
-		public static final void init() {
+		public static void init() {
 			//ClientRegistry.registerKeyBinding(launch);
 			ClientRegistry.registerKeyBinding(toggleJetpack);
 			ClientRegistry.registerKeyBinding(openRocketUI);

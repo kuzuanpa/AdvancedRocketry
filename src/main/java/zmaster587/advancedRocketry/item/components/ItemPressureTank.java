@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.api.IArmorComponent;
 import zmaster587.libVulpes.client.ResourceIcon;
@@ -86,7 +87,7 @@ public class ItemPressureTank extends ItemIngredient implements IArmorComponent,
 	}
 
 	@Override
-	public int fill(ItemStack container, FluidStack resource, boolean doFill) {
+	public int fill(@NotNull ItemStack container, FluidStack resource, boolean doFill) {
 		
 		if(container.hasTagCompound()) {
 			FluidStack stack = FluidStack.loadFluidStackFromNBT(container.getTagCompound());

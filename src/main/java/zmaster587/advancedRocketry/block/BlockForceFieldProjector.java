@@ -5,12 +5,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.tile.TileForceFieldProjector;
 import zmaster587.libVulpes.block.BlockFullyRotatable;
 
 public class BlockForceFieldProjector extends BlockFullyRotatable {
 
-	public BlockForceFieldProjector(Material par2Material) {
+	public BlockForceFieldProjector(@NotNull Material par2Material) {
 		super(par2Material);
 	}
 	
@@ -20,7 +21,7 @@ public class BlockForceFieldProjector extends BlockFullyRotatable {
 	}
 
 	@Override
-	public void registerBlockIcons(IIconRegister icon) {
+	public void registerBlockIcons(@NotNull IIconRegister icon) {
 		//super.registerBlockIcons(icon);
 		front= icon.registerIcon("advancedrocketry:forceFieldProjectorFront");
 		top = bottom = sides = icon.registerIcon("advancedrocketry:forcefieldProjector");
@@ -29,8 +30,8 @@ public class BlockForceFieldProjector extends BlockFullyRotatable {
 	
 	
 	@Override
-	public void breakBlock(World worldIn, int x, int y,
-			int z, Block block, int meta) {
+	public void breakBlock(@NotNull World worldIn, int x, int y,
+                           int z, Block block, int meta) {
 		TileEntity tile = worldIn.getTileEntity(x,y,z);
 		
 		if(tile instanceof TileForceFieldProjector)

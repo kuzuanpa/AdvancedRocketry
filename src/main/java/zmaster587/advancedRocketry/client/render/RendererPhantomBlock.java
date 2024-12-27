@@ -2,22 +2,10 @@ package zmaster587.advancedRocketry.client.render;
 
 import cpw.mods.fml.common.FMLLog;
 import gregapi.block.multitileentity.MultiTileEntityBlock;
-import gregapi.block.multitileentity.MultiTileEntityRegistry;
 import gregapi.data.LH;
-import gregapi.tileentity.base.TileEntityBase01Root;
 import gregapi.tileentity.base.TileEntityBase04MultiTileEntities;
 import gregapi.tileentity.base.TileEntityBase09FacingSingle;
 import gregapi.tileentity.notick.TileEntityBase03MultiTileEntities;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
-import org.apache.logging.log4j.Level;
-import org.lwjgl.opengl.GL11;
-
-import zmaster587.libVulpes.block.RotatableBlock;
-import zmaster587.libVulpes.render.RenderHelper;
-import zmaster587.libVulpes.tile.TileSchematic;
-import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
-import zmaster587.libVulpes.tile.multiblock.TilePlaceholder;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -29,16 +17,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.logging.log4j.Level;
+import org.lwjgl.opengl.GL11;
+import zmaster587.libVulpes.block.RotatableBlock;
+import zmaster587.libVulpes.render.RenderHelper;
+import zmaster587.libVulpes.tile.TileSchematic;
+import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
+import zmaster587.libVulpes.tile.multiblock.TilePlaceholder;
 
 import static gregapi.block.multitileentity.MultiTileEntityRegistry.getRegistry;
 import static gregapi.data.CS.OPOS;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL14.*;
-import static org.lwjgl.opengl.GL20.glBlendEquationSeparate;
 
 public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 
-	private static RenderBlocks renderBlocks = RenderBlocks.getInstance();
+	private static final RenderBlocks renderBlocks = RenderBlocks.getInstance();
 
 	@Override
 	public void renderTileEntityAt(TileEntity ti, double x,
@@ -114,7 +107,7 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 				MovingObjectPosition movingObjPos = Minecraft.getMinecraft().objectMouseOver;
 				if (Minecraft.getMinecraft().objectMouseOver != null && movingObjPos.blockX == ti.xCoord && movingObjPos.blockY == ti.yCoord && movingObjPos.blockZ == ti.zCoord) {
 					String displayName = "";
-					if (tileGhost instanceof TileSchematic && !((TileSchematic) tileGhost).getReplacedBlockOverrideName().equals(""))
+					if (tileGhost instanceof TileSchematic && !((TileSchematic) tileGhost).getReplacedBlockOverrideName().isEmpty())
 						displayName = ((TileSchematic) tileGhost).getReplacedBlockOverrideName();
 					else if (tileGhost.getReplacedBlock() instanceof MultiTileEntityBlock && ((MultiTileEntityBlock) tileGhost.getReplacedBlock()).overrideTileEntity != null) {
 						TileEntity til = ((MultiTileEntityBlock) tileGhost.getReplacedBlock()).overrideTileEntity;
@@ -135,7 +128,7 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 						ItemStack stack = ti.getWorldObj().getBlock(ti.xCoord, ti.yCoord, ti.zCoord).getPickBlock(movingObjPos, Minecraft.getMinecraft().theWorld, movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ, Minecraft.getMinecraft().thePlayer);
 						if (stack != null) displayName = stack.getDisplayName();
 					}
-					if (displayName != null && !displayName.equals(""))
+					if (displayName != null && !displayName.isEmpty())
 						RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), displayName, x, y, z, 10);
 				}
 				if (tileGhost instanceof TileSchematic && block instanceof MultiTileEntityBlock && ((TileSchematic) tileGhost).getReplacedGTTile() != null)

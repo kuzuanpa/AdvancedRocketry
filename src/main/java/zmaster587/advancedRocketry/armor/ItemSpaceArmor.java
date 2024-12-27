@@ -1,25 +1,7 @@
 package zmaster587.advancedRocketry.armor;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import zmaster587.advancedRocketry.achievements.ARAchivements;
-import zmaster587.advancedRocketry.api.AdvancedRocketryFluids;
-import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.api.IAtmosphere;
-import zmaster587.advancedRocketry.api.armor.IFillableArmor;
-import zmaster587.advancedRocketry.api.armor.IProtectiveArmor;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereType;
-import zmaster587.advancedRocketry.client.render.armor.RenderJetPack;
-import zmaster587.libVulpes.LibVulpes;
-import zmaster587.libVulpes.api.IArmorComponent;
-import zmaster587.libVulpes.api.IModularArmor;
-import zmaster587.libVulpes.util.EmbeddedInventory;
-import zmaster587.libVulpes.util.IconResource;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
@@ -30,16 +12,27 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidContainerItem;
-import net.minecraftforge.fluids.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import zmaster587.advancedRocketry.achievements.ARAchivements;
+import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
+import zmaster587.advancedRocketry.api.IAtmosphere;
+import zmaster587.advancedRocketry.api.armor.IProtectiveArmor;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
+import zmaster587.libVulpes.LibVulpes;
+import zmaster587.libVulpes.api.IArmorComponent;
+import zmaster587.libVulpes.api.IModularArmor;
+import zmaster587.libVulpes.util.EmbeddedInventory;
+import zmaster587.libVulpes.util.IconResource;
+
+import java.util.LinkedList;
+import java.util.List;
 /**
  * Space Armor
  * Any class that extends this will gain the ability to store oxygen and will protect players from the vacuum atmosphere type
@@ -49,7 +42,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 
 	private final static String componentNBTName = "componentName";
 	private IIcon overlayIcon;
-	private int numModules;
+	private final int numModules;
 
 	public ItemSpaceArmor(ArmorMaterial material, int component, int numModules) {
 		super(material, 0, component);
@@ -72,7 +65,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 	 * Return the color for the specified armor ItemStack.
 	 */
 	@Override
-	public int getColor(ItemStack p_82814_1_)
+	public int getColor(@NotNull ItemStack p_82814_1_)
 	{
 		if (this.getArmorMaterial() != ItemArmor.ArmorMaterial.CLOTH)
 		{
@@ -105,7 +98,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer p_77624_2_,
-			List list, boolean p_77624_4_) {
+							   @NotNull List list, boolean p_77624_4_) {
 		super.addInformation(stack, p_77624_2_, list, p_77624_4_);
 
 		list.add(LibVulpes.proxy.getLocalizedString("msg.modules"));
@@ -123,7 +116,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 		return new ArmorProperties(0, 0, 0);
 	}
 
-	private EmbeddedInventory loadEmbeddedInventory(ItemStack stack) {
+	private @NotNull EmbeddedInventory loadEmbeddedInventory(@NotNull ItemStack stack) {
 		if(stack.hasTagCompound()) {
 			EmbeddedInventory inv = new EmbeddedInventory(numModules);
 			inv.readFromNBT(stack.getTagCompound());
@@ -146,7 +139,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 			inv.writeToNBT(stack.getTagCompound());
 		}
 		else {
-			NBTTagCompound nbt = new NBTTagCompound();
+			@NotNull NBTTagCompound nbt = new NBTTagCompound();
 			inv.writeToNBT(nbt);
 			stack.setTagCompound(nbt);
 		}
@@ -154,7 +147,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 
 	@Override
 	public void onArmorTick(World world, EntityPlayer player,
-			ItemStack armor) {
+							@NotNull ItemStack armor) {
 		super.onArmorTick(world, player, armor);
 
 		if(armor.hasTagCompound()) {
@@ -182,8 +175,8 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 	}
 
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity,
-			int slot, String type) {
+	public @NotNull String getArmorTexture(@NotNull ItemStack stack, Entity entity,
+										   int slot, String type) {
 
 		if(type != null) {
 			if(stack.getItem() == AdvancedRocketryItems.itemSpaceSuit_Leggings)
@@ -222,7 +215,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 	}
 
 	@Override
-	public void addArmorComponent(World world, ItemStack armor, ItemStack component, int slot) {
+	public void addArmorComponent(World world, @NotNull ItemStack armor, ItemStack component, int slot) {
 
 		EmbeddedInventory inv = loadEmbeddedInventory(armor);
 
@@ -233,7 +226,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 		}
 	}
 
-	public ItemStack removeComponent(World world, ItemStack armor, int index) {
+	public @Nullable ItemStack removeComponent(World world, @NotNull ItemStack armor, int index) {
 		NBTTagCompound nbt;
 		NBTTagList componentList;
 
@@ -245,7 +238,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 			return null;
 		}
 
-		EmbeddedInventory inv = loadEmbeddedInventory(armor);
+		@NotNull EmbeddedInventory inv = loadEmbeddedInventory(armor);
 		ItemStack stack = inv.getStackInSlot(index);
 		inv.setInventorySlotContents(index, null);
 
@@ -260,9 +253,9 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 		return stack;
 	}
 
-	public List<ItemStack> getComponents(ItemStack armor) {
+	public List<ItemStack> getComponents(@NotNull ItemStack armor) {
 
-		List<ItemStack> list = new LinkedList<ItemStack>();
+		List<ItemStack> list = new LinkedList<>();
 		NBTTagCompound nbt;
 		NBTTagList componentList;
 
@@ -280,7 +273,7 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 
 	@Override
 	public boolean protectsFromSubstance(IAtmosphere atmosphere, ItemStack stack, boolean commitProtection) {
-		return (atmosphere == AtmosphereType.SUPERHIGHPRESSURE || atmosphere == AtmosphereType.HIGHPRESSURE || atmosphere == AtmosphereType.VACUUM || atmosphere == AtmosphereType.VERYHOT || atmosphere == AtmosphereType.SUPERHEATED || atmosphere == AtmosphereType.LOWOXYGEN || atmosphere == AtmosphereType.SUPERHIGHPRESSURENOO2 || atmosphere == AtmosphereType.HIGHPRESSURENOO2 || atmosphere == AtmosphereType.VERYHOTNOO2|| atmosphere == AtmosphereType.SUPERHEATEDNOO2  || atmosphere == AtmosphereType.NOO2);
+		return (atmosphere == AtmosphereTypes.SUPERHIGHPRESSURE || atmosphere == AtmosphereTypes.HIGHPRESSURE || atmosphere == AtmosphereTypes.VACUUM || atmosphere == AtmosphereTypes.VERYHOT || atmosphere == AtmosphereTypes.SUPERHEATED || atmosphere == AtmosphereTypes.LOWOXYGEN || atmosphere == AtmosphereTypes.SUPERHIGHPRESSURENOO2 || atmosphere == AtmosphereTypes.HIGHPRESSURENOO2 || atmosphere == AtmosphereTypes.VERYHOTNOO2|| atmosphere == AtmosphereTypes.SUPERHEATEDNOO2  || atmosphere == AtmosphereTypes.NOO2);
 	}
 
 
@@ -290,12 +283,12 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 	}
 
 	@Override
-	public ItemStack getComponentInSlot(ItemStack stack, int slot) {
+	public ItemStack getComponentInSlot(@NotNull ItemStack stack, int slot) {
 		return loadEmbeddedInventory(stack).getStackInSlot(slot);
 	}
 
 	@Override
-	public IInventory loadModuleInventory(ItemStack stack) {
+	public IInventory loadModuleInventory(@NotNull ItemStack stack) {
 		return loadEmbeddedInventory(stack);
 	}
 

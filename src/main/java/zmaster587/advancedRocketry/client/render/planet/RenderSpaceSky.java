@@ -67,10 +67,10 @@ public class RenderSpaceSky extends RenderPlanetarySky {
 
 		tessellator1.setColorRGBA_F(1f, 1f, 1f, alphaMultiplier);
 
-		tessellator1.addVertexWithUV((double)(-f10), -10.0D, (double)f10, (double)f16, (double)f17);
-		tessellator1.addVertexWithUV((double)f10, -10.0D, (double)f10, (double)f14, (double)f17);
-		tessellator1.addVertexWithUV((double)f10, -10.0D, (double)(-f10), (double)f14, (double)f15);
-		tessellator1.addVertexWithUV((double)(-f10), -10.0D, (double)(-f10), (double)f16, (double)f15);
+		tessellator1.addVertexWithUV(-f10, -10.0D, f10, f16, f17);
+		tessellator1.addVertexWithUV(f10, -10.0D, f10, f14, f17);
+		tessellator1.addVertexWithUV(f10, -10.0D, -f10, f14, f15);
+		tessellator1.addVertexWithUV(-f10, -10.0D, -f10, f16, f15);
 
 
 

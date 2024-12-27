@@ -1,7 +1,6 @@
 package zmaster587.advancedRocketry.integration;
 
 import cpw.mods.fml.common.Loader;
-import net.minecraft.item.ItemStack;
 
 public class CompatibilityMgr {
 
@@ -23,7 +22,7 @@ public class CompatibilityMgr {
 	
 	public static void initCompatRecipies() {
 		if(gregtechLoaded) {
-			
+
 		}
 	}
 }

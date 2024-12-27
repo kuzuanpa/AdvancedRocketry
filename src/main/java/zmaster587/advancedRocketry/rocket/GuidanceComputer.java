@@ -3,6 +3,8 @@ package zmaster587.advancedRocketry.rocket;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
 import zmaster587.libVulpes.inventory.modules.ModuleSlotArray;
@@ -13,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class GuidanceComputer implements IInventory, IModularInventory {
 
+	@Nullable
 	ItemStack inv;
 	private static final String destinationSlot = "destinationSlot";
 	
@@ -95,7 +98,7 @@ public class GuidanceComputer implements IInventory, IModularInventory {
 		return true;
 	}
 	
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		if(inv != null) {
 			NBTTagCompound itemNbt = new NBTTagCompound();
 			inv.writeToNBT(itemNbt);
@@ -110,7 +113,7 @@ public class GuidanceComputer implements IInventory, IModularInventory {
 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 		
 		modules.add(new ModuleSlotArray(8, 17, this, 0, 1));
 		

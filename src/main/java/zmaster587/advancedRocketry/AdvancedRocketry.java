@@ -44,6 +44,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.achievements.ARAchivements;
 import zmaster587.advancedRocketry.api.*;
 import zmaster587.advancedRocketry.api.atmosphere.AtmosphereRegister;
@@ -183,9 +184,9 @@ public class AdvancedRocketry {
 	String[] sealableBlockWhiteList, breakableTorches, blackListRocketBlocks, harvestableGasses, entityList, geodeOres, orbitalLaserOres,liquidRocketFuel;
 
 
-	public MaterialRegistry materialRegistry = new MaterialRegistry(); 
+	public @NotNull MaterialRegistry materialRegistry = new MaterialRegistry();
 
-	public static HashMap<AllowedProducts, HashSet<String>> modProducts = new HashMap<AllowedProducts, HashSet<String>>();
+	public static HashMap<AllowedProducts, HashSet<String>> modProducts = new HashMap<>();
 
 
 	private static CreativeTabs tabAdvRocketry = new CreativeTabs("advancedRocketry") {
@@ -322,7 +323,7 @@ public class AdvancedRocketry {
 		//Satellite config
 		zmaster587.advancedRocketry.api.Configuration.microwaveRecieverMulitplier = 10*(float)config.get(Configuration.CATEGORY_GENERAL, "MicrowaveRecieverMultiplier", 1f, "Multiplier for the amount of energy produced by the microwave reciever").getDouble();
 
-		String str[] = config.getStringList("spaceLaserDimIdBlackList", Configuration.CATEGORY_GENERAL, new String[] {}, "Laser drill will not mine these dimension");
+		String[] str = config.getStringList("spaceLaserDimIdBlackList", Configuration.CATEGORY_GENERAL, new String[] {}, "Laser drill will not mine these dimension");
 
 		//Load laser dimid blacklists
 		for(String s : str) {
@@ -1002,14 +1003,14 @@ public class AdvancedRocketry {
 	{
 		zmaster587.advancedRocketry.cable.NetworkRegistry.registerFluidNetwork();
 		ItemStack userInterface = new ItemStack(AdvancedRocketryItems.itemMisc, 1,0);
-		ItemStack basicCircuit = new ItemStack(AdvancedRocketryItems.itemIC, 1,0);
+		@NotNull ItemStack basicCircuit = new ItemStack(AdvancedRocketryItems.itemIC, 1,0);
 		ItemStack advancedCircuit = new ItemStack(AdvancedRocketryItems.itemIC, 1,2);
-		ItemStack controlCircuitBoard =  new ItemStack(AdvancedRocketryItems.itemIC,1,3);
+		@NotNull ItemStack controlCircuitBoard =  new ItemStack(AdvancedRocketryItems.itemIC,1,3);
 		ItemStack itemIOBoard = new ItemStack(AdvancedRocketryItems.itemIC,1,4);
 		ItemStack liquidIOBoard = new ItemStack(AdvancedRocketryItems.itemIC,1,5);
 		ItemStack trackingCircuit = new ItemStack(AdvancedRocketryItems.itemIC,1,1);
 		ItemStack opticalSensor = new ItemStack(AdvancedRocketryItems.itemSatellitePrimaryFunction, 1, 0);
-		ItemStack massDetector = new ItemStack(AdvancedRocketryItems.itemSatellitePrimaryFunction, 1, 2);
+		@NotNull ItemStack massDetector = new ItemStack(AdvancedRocketryItems.itemSatellitePrimaryFunction, 1, 2);
 		ItemStack biomeChanger = new ItemStack(AdvancedRocketryItems.itemSatellitePrimaryFunction, 1, 5);
 		ItemStack smallSolarPanel =  new ItemStack(AdvancedRocketryItems.itemSatellitePowerSource,1,0); 
 		ItemStack largeSolarPanel = new ItemStack(AdvancedRocketryItems.itemSatellitePowerSource,1,1);
@@ -1025,7 +1026,7 @@ public class AdvancedRocketry {
 
 		GameRegistry.addShapelessRecipe(new ItemStack(AdvancedRocketryBlocks.blockBlastBrick,16), new ItemStack(Items.potionitem,1,8195), new ItemStack(Items.potionitem,1,8201), Blocks.brick_block, Blocks.brick_block, Blocks.brick_block, Blocks.brick_block);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(AdvancedRocketryBlocks.blockArcFurnace), "aga","ice", "aba", 'a', Items.netherbrick, 'g', userInterface, 'i', itemIOBoard, 'e',controlCircuitBoard, 'c', AdvancedRocketryBlocks.blockBlastBrick, 'b', "ingotCopper"));
-		GameRegistry.addShapedRecipe(new ItemStack(AdvancedRocketryItems.itemQuartzCrucible), " a ", "aba", " a ", Character.valueOf('a'), Items.quartz, Character.valueOf('b'), Items.cauldron);
+		GameRegistry.addShapedRecipe(new ItemStack(AdvancedRocketryItems.itemQuartzCrucible), " a ", "aba", " a ", 'a', Items.quartz, 'b', Items.cauldron);
 		GameRegistry.addRecipe(new ShapedOreRecipe(AdvancedRocketryBlocks.blockPlatePress, "   ", " a ", "iii", 'a', Blocks.piston, 'i', Items.iron_ingot));
 		GameRegistry.addRecipe(new ShapedOreRecipe(MaterialRegistry.getItemStackFromMaterialAndType("Iron", AllowedProducts.getProductByName("STICK"), 4), "x  ", " x ", "  x", 'x', "ingotIron"));
 		GameRegistry.addSmelting(MaterialRegistry.getMaterialFromName("Dilithium").getProduct(AllowedProducts.getProductByName("ORE")), MaterialRegistry.getMaterialFromName("Dilithium").getProduct(AllowedProducts.getProductByName("DUST")), 0);
@@ -1273,7 +1274,7 @@ public class AdvancedRocketry {
 		//Add mappings for multiblockmachines
 		//Data mapping 'D'
 
-		List<BlockMeta> list = new LinkedList<BlockMeta>();
+		List<BlockMeta> list = new LinkedList<>();
 		list.add(new BlockMeta(AdvancedRocketryBlocks.blockLoader, 0));
 		list.add(new BlockMeta(AdvancedRocketryBlocks.blockLoader, 8));
 		TileMultiBlock.addMapping('D', list);
@@ -1284,7 +1285,7 @@ public class AdvancedRocketry {
 
 
 	@EventHandler
-	public void postInit(FMLPostInitializationEvent event)
+	public void postInit(@NotNull FMLPostInitializationEvent event)
 	{
 		//Need to raise the Max Entity Radius to allow player interaction with rockets
 		World.MAX_ENTITY_RADIUS = 20;
@@ -1517,7 +1518,7 @@ public class AdvancedRocketry {
 	@EventHandler
 	public void serverStarted(FMLServerStartedEvent event) {
 		for (int dimId : DimensionManager.getInstance().getLoadedDimensions()) {
-			DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(dimId);
+			@NotNull DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(dimId);
 			if(!properties.isNativeDimension) {
 				//if(properties.getId() != zmaster587.advancedRocketry.api.Configuration.MoonId)
 				//DimensionManager.getInstance().deleteDimension(properties.getId());
@@ -1645,7 +1646,7 @@ public class AdvancedRocketry {
 					
 					//File cannot exist due to if check #42
 					if((dir.exists() || dir.mkdir()) && localFile.createNewFile()) {
-						char buffer[] = new char[1024];
+						char[] buffer = new char[1024];
 
 						FileReader reader = new FileReader(file);
 						FileWriter writer = new FileWriter(localFile);
@@ -1700,7 +1701,7 @@ public class AdvancedRocketry {
 					DimensionManager.getInstance().addStar(star);
 				}
 
-				for(DimensionProperties properties : dimCouplingList.dims) {
+				for(@NotNull DimensionProperties properties : dimCouplingList.dims) {
 					DimensionManager.getInstance().registerDimNoUpdate(properties, properties.isNativeDimension);
 					properties.setStar(properties.getStarId());
 				}
@@ -1820,8 +1821,7 @@ public class AdvancedRocketry {
 
 			//Register new stars
 			for(StellarBody star : dimCouplingList.stars) {
-				if(DimensionManager.getInstance().getStar(star.getId()) == null)
-					DimensionManager.getInstance().addStar(star);
+				if(!DimensionManager.getInstance().isStar(star.getId())) DimensionManager.getInstance().addStar(star);
 				
 				DimensionManager.getInstance().getStar(star.getId()).setName(star.getName());
 				DimensionManager.getInstance().getStar(star.getId()).setPosX(star.getPosX());
@@ -1903,13 +1903,13 @@ public class AdvancedRocketry {
 				if(DimensionManager.getInstance().isDimensionCreated(properties.getId())) {
 					DimensionProperties loadedProps;
 					loadedProps = DimensionManager.getInstance().getDimensionProperties(properties.getId());
-					List<ItemStack> list = new LinkedList<ItemStack>(properties.getRequiredArtifacts());
+					List<ItemStack> list = new LinkedList<>(properties.getRequiredArtifacts());
 					loadedProps.getRequiredArtifacts().clear();
 					loadedProps.getRequiredArtifacts().addAll(list);
 				}
 
 				if(properties.oreProperties != null) {
-					DimensionProperties loadedProps = DimensionManager.getInstance().getDimensionProperties(properties.getId());
+					@NotNull DimensionProperties loadedProps = DimensionManager.getInstance().getDimensionProperties(properties.getId());
 
 					if(loadedProps != null)
 						loadedProps.oreProperties = properties.oreProperties;
@@ -1932,7 +1932,7 @@ public class AdvancedRocketry {
 			}
 			
 			//Remove stars not in the XML
-			for(int i : new HashSet<Integer>(DimensionManager.getInstance().getStarIds())) {
+			for(int i : new HashSet<>(DimensionManager.getInstance().getStarIds())) {
 				boolean found = false;
 				for(StellarBody properties : dimCouplingList.stars) {
 					if(properties.getId() == i) {
@@ -1966,7 +1966,7 @@ public class AdvancedRocketry {
 	}
 
 	private List<DimensionProperties> generateRandomPlanets(StellarBody star, int numRandomGeneratedPlanets, int numRandomGeneratedGasGiants) {
-		List<DimensionProperties> dimPropList = new LinkedList<DimensionProperties>();
+		List<DimensionProperties> dimPropList = new LinkedList<>();
 		
 		Random random = new Random(System.currentTimeMillis());
 
@@ -2061,7 +2061,7 @@ public class AdvancedRocketry {
 			if(event.Name.startsWith(product.name().toLowerCase(Locale.ENGLISH))) {
 				HashSet<String> list = modProducts.get(product);
 				if(list == null) {
-					list = new HashSet<String>();
+					list = new HashSet<>();
 					modProducts.put(product, list);
 				}
 				list.add(event.Name.substring(product.name().length()));
@@ -2072,7 +2072,7 @@ public class AdvancedRocketry {
 		if(event.Name.startsWith("rod")) {
 			HashSet<String> list = modProducts.get(AllowedProducts.getProductByName("STICK"));
 			if(list == null) {
-				list = new HashSet<String>();
+				list = new HashSet<>();
 				modProducts.put(AllowedProducts.getProductByName("STICK"), list);
 			}
 			list.add(event.Name.substring("rod".length()));

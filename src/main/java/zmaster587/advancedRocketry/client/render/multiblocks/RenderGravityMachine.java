@@ -1,7 +1,6 @@
 package zmaster587.advancedRocketry.client.render.multiblocks;
 
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -9,6 +8,7 @@ import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.advancedRocketry.tile.multiblock.TileGravityController;
@@ -29,8 +29,8 @@ public class RenderGravityMachine extends TileEntitySpecialRenderer {
 	}
 	
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x,
-			double y, double z, float f) {
+	public void renderTileEntityAt(@NotNull TileEntity tile, double x,
+                                   double y, double z, float f) {
 		TileGravityController multiBlockTile = (TileGravityController)tile;
 
 		if(!multiBlockTile.canRender())
@@ -84,7 +84,7 @@ public class RenderGravityMachine extends TileEntitySpecialRenderer {
 		
 		GL11.glRotated(multiBlockTile.getArmRotation(), 0, 1, 0);
 		for(int i = 0; i < maxSize; i++) {
-			GL11.glRotated(360/maxSize, 0, 1, 0);
+			GL11.glRotated(360f/maxSize, 0, 1, 0);
 			model.renderOnly("Arm");
 		}
 		GL11.glEnable(GL11.GL_LIGHTING);

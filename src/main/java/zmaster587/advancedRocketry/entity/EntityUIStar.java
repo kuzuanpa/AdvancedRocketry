@@ -1,7 +1,6 @@
 package zmaster587.advancedRocketry.entity;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
@@ -24,13 +23,13 @@ public class EntityUIStar extends EntityUIPlanet {
 	
 	public EntityUIStar(World worldIn, StellarBody properties, int subStar, TilePlanetaryHologram tile, double x, double y, double z) {
 		this(worldIn, properties, tile, x,y,z);
-		this.dataWatcher.updateObject(subStarData, new Integer((this.subStar = subStar)));
+		this.dataWatcher.updateObject(subStarData, this.subStar = subStar);
 	}
 	
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		this.dataWatcher.addObject(subStarData, new Integer(-1));
+		this.dataWatcher.addObject(subStarData, -1);
 	}
 	
 	public EntityUIStar(World worldIn) {

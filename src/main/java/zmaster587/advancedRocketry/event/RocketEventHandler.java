@@ -1,9 +1,10 @@
 package zmaster587.advancedRocketry.event;
 
-import java.nio.IntBuffer;
-import java.util.List;
-import java.util.Random;
-
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
@@ -21,13 +22,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IRenderHandler;
-import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.IPlanetaryProvider;
 import zmaster587.advancedRocketry.api.RocketEvent;
@@ -43,11 +43,10 @@ import zmaster587.libVulpes.api.IModularArmor;
 import zmaster587.libVulpes.client.ResourceIcon;
 import zmaster587.libVulpes.render.RenderHelper;
 import zmaster587.libVulpes.util.ZUtils;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.InputEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.nio.IntBuffer;
+import java.util.List;
+import java.util.Random;
 
 public class RocketEventHandler extends Gui {
 
@@ -58,13 +57,13 @@ public class RocketEventHandler extends Gui {
 	private static final int outerImgSize = getImgSize/8;
 	private static boolean mapReady = false;
 	private static boolean mapNeedsBinding = false;
-	private static IRenderHandler prevRenderHanlder = null;
+	private static @Nullable IRenderHandler prevRenderHanlder = null;
 	private static IntBuffer table,outerBoundsTable;
-	public static GuiBox suitPanel = new GuiBox(8,8,24,24);
-	public static GuiBox oxygenBar = new GuiBox(8,-57, 80, 48);
-	public static GuiBox hydrogenBar = new GuiBox(8,-74, 80, 48);
-	public static GuiBox atmBar = new GuiBox(8, 27, 200, 48);
-	private static GuiBox currentlySelectedBox = null;
+	public static @NotNull GuiBox suitPanel = new GuiBox(8,8,24,24);
+	public static @NotNull GuiBox oxygenBar = new GuiBox(8,-57, 80, 48);
+	public static @NotNull GuiBox hydrogenBar = new GuiBox(8,-74, 80, 48);
+	public static @NotNull GuiBox atmBar = new GuiBox(8, 27, 200, 48);
+	private static @Nullable GuiBox currentlySelectedBox = null;
 
 
 	private static final int numTicksToDisplay = 100;
@@ -142,7 +141,7 @@ public class RocketEventHandler extends Gui {
 		}
 
 		//Multi thread texture creation b/c it can be expensive
-		final World worldObj = event.world;
+		final @NotNull World worldObj = event.world;
 		final Entity entity = event.entity;
 		new Thread(new Runnable() {
 			@Override
@@ -153,7 +152,7 @@ public class RocketEventHandler extends Gui {
 				outerBoundsTable = outerBounds.getByteBuffer();
 
 				//Get the average of each edge RGB
-				long topEdge[], bottomEdge[], leftEdge[], rightEdge[], total[];
+				long[] topEdge, bottomEdge, leftEdge, rightEdge, total;
 				total = topEdge = bottomEdge = leftEdge = rightEdge = new long[] {0,0,0};
 
 				int numChunksLoaded = 0;

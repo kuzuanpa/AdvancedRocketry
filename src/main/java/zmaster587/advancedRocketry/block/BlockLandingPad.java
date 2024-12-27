@@ -1,15 +1,13 @@
 package zmaster587.advancedRocketry.block;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import zmaster587.advancedRocketry.tile.station.TileLandingPad;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.inventory.GuiHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class BlockLandingPad extends Block {
 
@@ -35,15 +33,8 @@ public class BlockLandingPad extends Block {
 		return true;
 	}
 
-	@Override
-	public void onBlockPlacedBy(World world, int x,
-			int y, int z, EntityLivingBase player,
-			ItemStack items) {
 
-	}
-	
-
-	@Override
+    @Override
 	public void onBlockAdded(World world, int x,
 			int y, int z) {
 		super.onBlockAdded(world, x, y, z);

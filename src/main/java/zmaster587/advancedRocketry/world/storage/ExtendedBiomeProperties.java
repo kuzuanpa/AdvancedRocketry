@@ -17,7 +17,7 @@ public class ExtendedBiomeProperties {
 	
 	public ExtendedBiomeProperties(World world) {
 		this.world = world;
-		chunkPropertyMap = new HashMap<ChunkCoordIntPair, ExtendedBiomeProperties.ChunkProperties>();
+		chunkPropertyMap = new HashMap<>();
 	}
 	
 	public ChunkProperties getChunkPropertiesFromChunkCoords(int x, int z) {

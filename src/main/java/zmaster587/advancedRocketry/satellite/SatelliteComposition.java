@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.satellite;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 
 public class SatelliteComposition extends SatelliteData{
@@ -10,7 +11,7 @@ public class SatelliteComposition extends SatelliteData{
 	}
 	
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Composition Scanner";
 	}
 

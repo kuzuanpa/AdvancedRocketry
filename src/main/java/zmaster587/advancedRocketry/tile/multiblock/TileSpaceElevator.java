@@ -20,6 +20,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.entity.EntityElevatorCapsule;
 import zmaster587.advancedRocketry.inventory.modules.ModuleStellarBackground;
@@ -97,6 +99,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 		};
 
 	EmbeddedInventory inv;
+	@Nullable
 	EntityElevatorCapsule capsule;
 	boolean firstTick;
 	DimensionBlockPosition dimBlockPos;
@@ -161,11 +164,11 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 			modules.clear();
 			modules.add(new ModuleStellarBackground(0, 0, zmaster587.libVulpes.inventory.TextureResources.starryBG));
 
-			List<ModuleBase> list2 = new LinkedList<ModuleBase>();
+			List<ModuleBase> list2 = new LinkedList<>();
 			ModuleButton button = new ModuleButton(0, 0, BUTTON_ID_OFFSET, LibVulpes.proxy.getLocalizedString("msg.label.clear"), this, zmaster587.advancedRocketry.inventory.TextureResources.buttonGeneric, 256, 18);
 			list2.add(button);
 
-			ItemStack stack = getChip();
+			@Nullable ItemStack stack = getChip();
 
 			if(stack != null) {
 				List<DimensionBlockPosition> list;
@@ -184,7 +187,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 				}
 			}
 
-			ModuleContainerPan pan = new ModuleContainerPan(25, 25, list2, new LinkedList<ModuleBase>(), null, 512, 256, 0, -48, 258, 256);
+			ModuleContainerPan pan = new ModuleContainerPan(25, 25, list2, new LinkedList<>(), null, 512, 256, 0, -48, 258, 256);
 			modules.add(pan);
 
 			landingPadDisplayText.setText(dimBlockPos != null ? dimBlockPos.toString() : LibVulpes.proxy.getLocalizedString("msg.label.noneSelected"));
@@ -194,7 +197,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 		return modules;
 	}
 
-	public static boolean isDstValid(World worldObj, DimensionBlockPosition pos, BlockPosition myPos) {
+	public static boolean isDstValid(World worldObj, @Nullable DimensionBlockPosition pos, BlockPosition myPos) {
 		
 		if(pos == null || pos.pos == null)
 			return false;
@@ -226,7 +229,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 		super.onInventoryButtonPressed(buttonId);
 	}
 
-	public void notifyLanded(EntityElevatorCapsule e) {
+	public void notifyLanded(@NotNull EntityElevatorCapsule e) {
 		if(capsule != null && capsule != e && !capsule.isDead)
 			e.setDead();
 		else {
@@ -264,8 +267,8 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 	}
 
 	@Override
-	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+	public void useNetworkData(@NotNull EntityPlayer player, Side side, byte id,
+                               NBTTagCompound nbt) {
 
 		if(id == SUMMON_PACKET) {
 			summonCapsule();
@@ -382,7 +385,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 	}
 
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+	public @NotNull List<BlockMeta> getAllowableWildCardBlocks(Character c) {
 		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 		list.add(new BlockMeta(Blocks.stone));
 		list.add(new BlockMeta(Blocks.sandstone));
@@ -395,7 +398,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 
 	@Override
 	public boolean onLinkStart(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+							   @NotNull EntityPlayer player, @NotNull World world) {
 		ItemLinker.setMasterCoords(item, xCoord, yCoord, zCoord);
 		ItemLinker.setDimId(item, world.provider.dimensionId);
 		if(!world.isRemote)
@@ -515,7 +518,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 	}
 
 	@Override
-	public void writeNetworkData(NBTTagCompound nbt) {
+	public void writeNetworkData(@NotNull NBTTagCompound nbt) {
 
 
 		if(dimBlockPos != null)
@@ -551,7 +554,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
+	public @Nullable ItemStack getStackInSlotOnClosing(int p_70304_1_) {
 		// TODO Auto-generated method stub
 		return null;
 	}

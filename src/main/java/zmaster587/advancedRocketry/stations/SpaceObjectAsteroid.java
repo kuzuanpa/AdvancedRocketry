@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.stations;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
@@ -65,7 +66,7 @@ public class SpaceObjectAsteroid extends SpaceObjectBase implements IDataHandler
 	}
 	
 	@Override
-	public void writeToNbt(NBTTagCompound nbt) {
+	public void writeToNbt(@NotNull NBTTagCompound nbt) {
 		super.writeToNbt(nbt);
 		
 		NBTTagList list = new NBTTagList();

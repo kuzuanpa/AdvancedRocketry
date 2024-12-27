@@ -8,6 +8,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class Debugger implements ICommand {
 	
@@ -22,12 +23,12 @@ public class Debugger implements ICommand {
 	}
 
 	@Override
-	public String getCommandName() {
+	public @NotNull String getCommandName() {
 		return "changeRender";
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender sender) {
+	public @NotNull String getCommandUsage(ICommandSender sender) {
 		return "mute help";
 	}
 
@@ -50,7 +51,7 @@ public class Debugger implements ICommand {
 	@Override
 	public List addTabCompletionOptions(ICommandSender p_71516_1_,
 			String[] p_71516_2_) {
-		List <String> list = new ArrayList<String>();
+		List <String> list = new ArrayList<>();
 		list.add("changeRender");
 		return list;
 	}

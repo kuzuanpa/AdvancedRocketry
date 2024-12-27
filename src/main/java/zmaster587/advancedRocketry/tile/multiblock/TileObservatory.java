@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.DataStorage;
@@ -59,7 +60,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileObservatory extends TileMultiPowerConsumer implements IModularInventory, IDataInventory, IGuiCallback {
 
-	private static final Block lens[] = { AdvancedRocketryBlocks.blockLens, Blocks.glass };
+	private static final Block[] lens = { AdvancedRocketryBlocks.blockLens, Blocks.glass };
 	
 	private static final Object[][][] structure = new Object[][][]{
 
@@ -107,9 +108,10 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 	int openProgress;
 	private LinkedList<TileDataBus> dataCables;
 	private boolean isOpen;
-	private HashMap<Integer, String> buttonType  = new HashMap<Integer, String>();
+	private HashMap<Integer, String> buttonType  = new HashMap<>();
 	private ModuleTab tabModule;
 	private int dataConsumedPerRefresh = 100;
+	@NotNull
 	EmbeddedInventory inv = new EmbeddedInventory(3);
 
 	public TileObservatory() {
@@ -118,7 +120,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 		lastSeed = -1;
 		viewDistance = 0;
 		completionTime = observationtime;
-		dataCables = new LinkedList<TileDataBus>();
+		dataCables = new LinkedList<>();
 		tabModule = new ModuleTab(4,0,0,this, 2, new String[]{LibVulpes.proxy.getLocalizedString("msg.tooltip.data"), LibVulpes.proxy.getLocalizedString("msg.tooltip.asteroidselection")}, new ResourceLocation[][] { TextureResources.tabData, TextureResources.tabAsteroid} );
 	}
 
@@ -229,7 +231,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 	}
 
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+	public @NotNull List<BlockMeta> getAllowableWildCardBlocks(Character c) {
 		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 
 		list.add(new BlockMeta(Blocks.iron_block,BlockMeta.WILDCARD));
@@ -265,7 +267,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 	}
 	
 	@Override
-	public void writeDataToNetwork(ByteBuf out, byte id) {
+	public void writeDataToNetwork(@NotNull ByteBuf out, byte id) {
 		super.writeDataToNetwork(out, id);
 
 		if(id == TAB_SWITCH)
@@ -276,7 +278,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 
 	@Override
 	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+									@NotNull NBTTagCompound nbt) {
 		super.readDataFromNetwork(in, packetId, nbt);
 
 		if(packetId == TAB_SWITCH)
@@ -332,7 +334,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(tabModule);
 
@@ -352,8 +354,8 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 			modules.add(scanButton);
 
 
-			List<ModuleBase> list2 = new LinkedList<ModuleBase>();
-			List<ModuleBase> buttonList = new LinkedList<ModuleBase>();
+			List<ModuleBase> list2 = new LinkedList<>();
+			List<ModuleBase> buttonList = new LinkedList<>();
 			buttonType.clear();
 
 
@@ -378,7 +380,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 			//Calculate Types
 			int totalAmountAllowed = 10;
 			float totalWeight = 0;
-			List<AsteroidSmall> viableTypes = new LinkedList<AsteroidSmall>();
+			List<AsteroidSmall> viableTypes = new LinkedList<>();
 			for(String str :  Configuration.asteroidTypes.keySet()) {
 				AsteroidSmall asteroid = Configuration.asteroidTypes.get(str);
 				if(asteroid.distance <= getMaxDistance()) {
@@ -388,7 +390,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 			}
 
 			//Yeah, eww
-			List<AsteroidSmall> finalList = new LinkedList<AsteroidSmall>();
+			List<AsteroidSmall> finalList = new LinkedList<>();
 			Random rand = new Random(lastSeed);
 			for(AsteroidSmall asteroid : viableTypes) {
 				for(int i = 0; i < totalAmountAllowed; i++) {
@@ -430,7 +432,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 
 			//Relying on a bug, is this safe?
 			if(lastSeed != -1) {
-				ModuleContainerPan pan = new ModuleContainerPan(baseX, baseY, list2, new LinkedList<ModuleBase>(), null, sizeX -2, sizeY, 0, -48, 0, 72);
+				ModuleContainerPan pan = new ModuleContainerPan(baseX, baseY, list2, new LinkedList<>(), null, sizeX -2, sizeY, 0, -48, 0, 72);
 				modules.add(pan);
 			}
 
@@ -447,14 +449,14 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 				modules.add(new ModuleScaledImage(baseX, 2*baseY + sizeY ,sizeX,-3, TextureResources.horizontalBar));
 			}
 
-			ModuleContainerPan pan2 = new ModuleContainerPan(baseX, baseY, buttonList, new LinkedList<ModuleBase>(), null, 40, 48, 0, 0, 0, 72);
+			ModuleContainerPan pan2 = new ModuleContainerPan(baseX, baseY, buttonList, new LinkedList<>(), null, 40, 48, 0, 0, 0, 72);
 			modules.add(pan2);
 		} else if(tabModule.getTab() == 0) {
 			modules.add(new ModulePower(18, 20, getBatteries()));
 			modules.add(toggleSwitch = new ModuleToggleSwitch(160, 5, 0, "", this,  zmaster587.libVulpes.inventory.TextureResources.buttonToggleImage, 11, 26, getMachineEnabled()));
-			List<DataStorage> distanceStorage = new LinkedList<DataStorage>();
-			List<DataStorage> compositionStorage = new LinkedList<DataStorage>();
-			List<DataStorage> massStorage = new LinkedList<DataStorage>();
+			List<DataStorage> distanceStorage = new LinkedList<>();
+			List<DataStorage> compositionStorage = new LinkedList<>();
+			List<DataStorage> massStorage = new LinkedList<>();
 			for(int i = 0; i < dataCables.size(); i++) {
 
 				DataStorage storage = dataCables.get(i).getDataObject();
@@ -518,7 +520,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 
 	@Override
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+							   @NotNull NBTTagCompound nbt) {
 		super.useNetworkData(player, side, id, nbt);
 		
 		if(id == -1)

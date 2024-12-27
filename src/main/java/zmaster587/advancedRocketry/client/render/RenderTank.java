@@ -3,7 +3,6 @@ package zmaster587.advancedRocketry.client.render;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.libVulpes.render.RenderHelper;
-import zmaster587.libVulpes.tile.multiblock.hatch.TileFluidHatch;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;

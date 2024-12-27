@@ -1,13 +1,11 @@
 package zmaster587.advancedRocketry.entity.fx;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 
 public class RocketFx extends EntityFX {
 
@@ -58,10 +56,10 @@ public class RocketFx extends EntityFX {
         
         tess.setColorRGBA_F(this.particleRed, this.particleGreen, this.particleBlue, 1f);
         
-        tess.addVertexWithUV((double)(f11 - y1 * f10 - y2 * f10), (double)(f12 - z1 * f10), (double)(f13 - x2 * f10 - z2 * f10), 1, 1);
-        tess.addVertexWithUV((double)(f11 - y1 * f10 + y2 * f10), (double)(f12 + z1 * f10), (double)(f13 - x2 * f10 + z2 * f10), 1, 0);
-        tess.addVertexWithUV((double)(f11 + y1 * f10 + y2 * f10), (double)(f12 + z1 * f10), (double)(f13 + x2 * f10 + z2 * f10), 0, 0);
-        tess.addVertexWithUV((double)(f11 + y1 * f10 - y2 * f10), (double)(f12 - z1 * f10), (double)(f13 + x2 * f10 - z2 * f10), 0, 1);
+        tess.addVertexWithUV(f11 - y1 * f10 - y2 * f10, f12 - z1 * f10, f13 - x2 * f10 - z2 * f10, 1, 1);
+        tess.addVertexWithUV(f11 - y1 * f10 + y2 * f10, f12 + z1 * f10, f13 - x2 * f10 + z2 * f10, 1, 0);
+        tess.addVertexWithUV(f11 + y1 * f10 + y2 * f10, f12 + z1 * f10, f13 + x2 * f10 + z2 * f10, 0, 0);
+        tess.addVertexWithUV(f11 + y1 * f10 - y2 * f10, f12 - z1 * f10, f13 + x2 * f10 - z2 * f10, 0, 1);
         //GL11.glEnable(GL11.GL_BLEND);
         
 		GL11.glPopMatrix();

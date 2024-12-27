@@ -1,25 +1,25 @@
 package zmaster587.advancedRocketry.block;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AreaBlob;
 import zmaster587.advancedRocketry.api.util.IBlobHandler;
 import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
 import zmaster587.advancedRocketry.tile.oxygen.TileSeal;
 import zmaster587.libVulpes.util.BlockPosition;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class BlockSeal extends Block {
 
-	private HashMap<BlockPosition,BlobHandler> blobList = new HashMap<BlockPosition,BlobHandler>();
+	private final HashMap<BlockPosition,BlobHandler> blobList = new HashMap<>();
 	
-	public BlockSeal(Material materialIn) {
+	public BlockSeal(@NotNull Material materialIn) {
 		super(materialIn);
 	}
 	
@@ -45,7 +45,7 @@ public class BlockSeal extends Block {
 		if(atmhandler == null)
 			return;
 		
-		for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for(@NotNull ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			BlobHandler handler = blobList.remove(new BlockPosition(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ));
 			if (handler != null) atmhandler.unregisterBlob(handler);
 			
@@ -114,7 +114,7 @@ public class BlockSeal extends Block {
 			blobList.put(hashPos, handler);
 			
 			AreaBlob blob = new AreaBlob(handler);
-			blob.addBlock(hashPos, new LinkedList<AreaBlob>());
+			blob.addBlock(hashPos, new LinkedList<>());
 			atmhandler.registerBlob(handler, x, y, z, blob);
 			
 			return true;
@@ -131,8 +131,8 @@ public class BlockSeal extends Block {
 			BlobHandler handler = new BlobHandler(worldIn, hashPos);
 			blobList.put(hashPos, handler);
 			
-			AreaBlob blob = new AreaBlob(handler);
-			blob.addBlock(hashPos, new LinkedList<AreaBlob>());
+			@NotNull AreaBlob blob = new AreaBlob(handler);
+			blob.addBlock(hashPos, new LinkedList<>());
 			atmhandler.registerBlob(handler, x,y,z, blob);
 			return true;
 		}

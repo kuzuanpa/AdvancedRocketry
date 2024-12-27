@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.item;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.util.DimensionBlockPosition;
 import zmaster587.advancedRocketry.util.NBTStorableListList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,8 +32,8 @@ public class ItemSpaceElevatorChip extends Item {
 		return list.getList();
 	}
 	
-	public void setBlockPositions(ItemStack stack, List<DimensionBlockPosition> listToStore) {
-		NBTStorableListList list = new NBTStorableListList(listToStore);
+	public void setBlockPositions(ItemStack stack, @NotNull List<DimensionBlockPosition> listToStore) {
+		@NotNull NBTStorableListList list = new NBTStorableListList(listToStore);
 		
 		if(stack.hasTagCompound()) {
 			
@@ -51,8 +52,8 @@ public class ItemSpaceElevatorChip extends Item {
 	}
 	
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player,
-			List list, boolean bool) {
+	public void addInformation(@NotNull ItemStack stack, EntityPlayer player,
+                               @NotNull List list, boolean bool) {
 		
 		int numPos = getBlockPositions(stack).size();
 		

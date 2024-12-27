@@ -9,6 +9,8 @@ import java.util.ListIterator;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.IInfrastructure;
@@ -53,7 +55,7 @@ public class EntityStationDeployedRocket extends EntityRocket {
 	private ModuleText atmText;
 	private short gasId;
 	boolean coastMode;
-	private Ticket ticket;
+	private @Nullable Ticket ticket;
 
 	public EntityStationDeployedRocket(World world) {
 		super(world);
@@ -124,7 +126,7 @@ public class EntityStationDeployedRocket extends EntityRocket {
 
 		if(this.ticksExisted == 20) {
 			//problems with loading on other world then where the infrastructure was set?
-			ListIterator<BlockPosition> itr = (new LinkedList<BlockPosition>(infrastructureCoords)).listIterator();
+			ListIterator<BlockPosition> itr = (new LinkedList<>(infrastructureCoords)).listIterator();
 			while(itr.hasNext()) {
 				BlockPosition temp = itr.next();
 
@@ -259,7 +261,7 @@ public class EntityStationDeployedRocket extends EntityRocket {
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
 		List<ModuleBase> modules;
 		//If the rocket is flight don't load the interface
 		modules = super.getModules(ID, player);
@@ -368,7 +370,7 @@ public class EntityStationDeployedRocket extends EntityRocket {
 
 
 	@Override
-	protected void writeNetworkableNBT(NBTTagCompound nbt) {
+	protected void writeNetworkableNBT(@NotNull NBTTagCompound nbt) {
 		super.writeNetworkableNBT(nbt);
 
 	}
@@ -379,7 +381,7 @@ public class EntityStationDeployedRocket extends EntityRocket {
 
 	}
 	@Override
-	public void writeDataToNetwork(ByteBuf out, byte id) {
+	public void writeDataToNetwork(@NotNull ByteBuf out, byte id) {
 		super.writeDataToNetwork(out, id);
 
 		if(id == PacketType.MENU_CHANGE.ordinal()) {
@@ -402,8 +404,8 @@ public class EntityStationDeployedRocket extends EntityRocket {
 	}
 
 	@Override
-	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+	public void useNetworkData(@NotNull EntityPlayer player, Side side, byte id,
+                               @NotNull NBTTagCompound nbt) {
 
 
 		if(id == PacketType.MENU_CHANGE.ordinal()) {

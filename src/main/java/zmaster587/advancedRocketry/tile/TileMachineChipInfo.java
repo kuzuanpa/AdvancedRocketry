@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
@@ -24,8 +25,8 @@ public class TileMachineChipInfo extends TileEntity implements IModularInventory
 	}
 	
 	@Override
-	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+	public @NotNull List<ModuleBase> getModules(int id, EntityPlayer player) {
+		List<ModuleBase> modules = new LinkedList<>();
 		if(worldObj.isRemote) {
 			//Source planet
 			int baseX = 10;

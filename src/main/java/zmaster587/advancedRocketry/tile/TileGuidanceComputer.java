@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
@@ -41,9 +42,9 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 
 	public TileGuidanceComputer() {
 		super(1);
-		landingPos = new Vector3F<Float>(0f, 0f, 0f);
+		landingPos = new Vector3F<>(0f, 0f, 0f);
 		destinationId = -1;
-		landingLoc = new HashMap<Integer, BlockPosition>();
+		landingLoc = new HashMap<>();
 	}
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
@@ -117,7 +118,7 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 			}
 			else if(itemType instanceof ItemAsteroidChip) {
 				destinationId = currentDimension;
-				landingPos = new Vector3F<Float>((float)x,1000f, (float)z);
+				landingPos = new Vector3F<>((float) x, 1000f, (float) z);
 				return currentDimension;
 			}
 			else if(itemType instanceof ItemSatelliteIdentificationChip) {
@@ -165,7 +166,7 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 				if(vec == null)
 					vec = object.getSpawnLocation();
 
-				return new Vector3F<Float>(new Float(vec.x), new Float(vec.y), new Float(vec.z));
+				return new Vector3F<>((float) vec.x, (float) vec.y, (float) vec.z);
 			}
 			else {
 				return chip.getTakeoffCoords(stack, landingDimension);
@@ -183,7 +184,7 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setInteger("destDimId", destinationId);
 
@@ -217,7 +218,7 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 
 		for(int i = 0; i < stationList.tagCount(); i++) {
 			NBTTagCompound tag = stationList.getCompoundTagAt(i);
-			int pos[];
+			int[] pos;
 			pos = tag.getIntArray("pos");
 			int id = tag.getInteger("id");
 			landingLoc.put(id, new BlockPosition(pos[0], pos[1], pos[2]));

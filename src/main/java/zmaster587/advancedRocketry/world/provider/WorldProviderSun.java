@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.world.biome.WorldChunkManagerHell;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.client.IRenderHandler;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.Configuration;
@@ -34,7 +35,7 @@ public class WorldProviderSun extends WorldProviderPlanet {
 	}
 	
 	@Override
-	public IChunkProvider createChunkGenerator() {
+	public @NotNull IChunkProvider createChunkGenerator() {
 		return new ChunkProviderSpace(this.worldObj, this.worldObj.getSeed());
 	}
 	
@@ -65,7 +66,7 @@ public class WorldProviderSun extends WorldProviderPlanet {
 	}
 	
 	@Override
-	public DimensionProperties getDimensionProperties(int x , int z) {
+	public @NotNull DimensionProperties getDimensionProperties(int x , int z) {
 		DimensionProperties properties = (DimensionProperties) DimensionManager.defaultSpaceDimensionProperties.clone();
 		properties.setParentPlanet(DimensionManager.getInstance().getDimensionProperties(this.dimensionId),false);
 		return properties;

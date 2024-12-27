@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.world.biome.BiomeGenBase;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Stores information relating to the biomes and biome registry of AdvancedRocketry
  */
@@ -27,10 +29,10 @@ public class AdvancedRocketryBiomes {
 	public static BiomeGenBase oceanSpires;
 	public static BiomeGenBase moonBiomeDark;
 	private AdvancedRocketryBiomes() {
-		registeredBiomes = new ArrayList<BiomeGenBase>();
-		registeredHighPressureBiomes = new LinkedList<BiomeGenBase>();
-		blackListedBiomeIds = new ArrayList<Integer>();
-		registeredSingleBiome = new ArrayList<BiomeGenBase>();
+		registeredBiomes = new ArrayList<>();
+		registeredHighPressureBiomes = new LinkedList<>();
+		blackListedBiomeIds = new ArrayList<>();
+		registeredSingleBiome = new ArrayList<>();
 	
 	}
 	
@@ -47,7 +49,7 @@ public class AdvancedRocketryBiomes {
 	/**
 	 * Registers biomes you don't want to spawn on any planet unless registered with highpressure or similar feature
 	 */
-	public void registerBlackListBiome(BiomeGenBase biome) {
+	public void registerBlackListBiome(@NotNull BiomeGenBase biome) {
 		blackListedBiomeIds.add(biome.biomeID);
 	}
 	

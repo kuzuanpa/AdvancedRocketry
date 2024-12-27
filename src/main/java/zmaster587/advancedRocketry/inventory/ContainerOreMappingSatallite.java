@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.inventory;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.satellite.SatelliteOreMapping;
 import codechicken.lib.inventory.InventorySimple;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +29,7 @@ public class ContainerOreMappingSatallite extends Container {
 	}
 
 	@Override
-	public ItemStack slotClick(int slot, int p_75144_2_, int p_75144_3_, EntityPlayer player)
+	public ItemStack slotClick(int slot, int p_75144_2_, int p_75144_3_, @NotNull EntityPlayer player)
 	{
 		//Check if slot exists
 		ItemStack stack;

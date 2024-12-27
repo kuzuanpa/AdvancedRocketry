@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.inventory.TextureResources;
@@ -38,7 +39,7 @@ public class TileCuttingMachine extends TileMultiblockMachine implements IModula
 	
 
 	@Override
-	public Object[][][] getStructure() {
+	public Object[][] @NotNull [] getStructure() {
 		return structure;
 	}
 	
@@ -88,7 +89,7 @@ public class TileCuttingMachine extends TileMultiblockMachine implements IModula
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
 		List<ModuleBase> modules = super.getModules(ID, player);
 		modules.add(new ModuleProgress(80, 20, 0, TextureResources.cuttingMachineProgressBar, this));
 		

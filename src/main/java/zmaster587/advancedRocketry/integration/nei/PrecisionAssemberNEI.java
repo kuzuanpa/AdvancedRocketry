@@ -1,17 +1,12 @@
 package zmaster587.advancedRocketry.integration.nei;
 
-import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainer;
-
-import java.awt.Rectangle;
-import java.util.LinkedList;
-import java.util.List;
-
+import net.minecraft.client.resources.I18n;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.tile.multiblock.machine.TilePrecisionAssembler;
 import zmaster587.libVulpes.client.util.ProgressBarImage;
-import zmaster587.libVulpes.inventory.GuiModular;
+
+import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 
 public class PrecisionAssemberNEI extends TemplateNEI {
 
@@ -20,7 +15,7 @@ public class PrecisionAssemberNEI extends TemplateNEI {
 	
 	@Override
 	public String getRecipeName() {
-		return "Precision Assembler";
+		return I18n.format("gui.nei.PrecisionAssember");
 	}
 	
 	

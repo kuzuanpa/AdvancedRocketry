@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.item;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
@@ -28,7 +29,7 @@ public class ItemStationChip extends ItemIdWithName {
 		setTakeoffCoords(stack, pos.x, pos.y, pos.z, dimid);
 	}
 
-	public void setTakeoffCoords(ItemStack stack, float x, float y, float z, int dimid) {
+	public void setTakeoffCoords(@NotNull ItemStack stack, float x, float y, float z, int dimid) {
 		NBTTagCompound nbt;
 
 		if(stack.hasTagCompound()) 
@@ -61,7 +62,7 @@ public class ItemStationChip extends ItemIdWithName {
 			NBTTagCompound nbt = stack.getTagCompound();
 			if(nbt.hasKey("dimid" + dimid)) {
 				nbt = nbt.getCompoundTag("dimid" + dimid);
-				return new Vector3F<Float>(nbt.getFloat("x"), nbt.getFloat("y"),nbt.getFloat("z"));
+				return new Vector3F<>(nbt.getFloat("x"), nbt.getFloat("y"), nbt.getFloat("z"));
 			}
 		}
 		return null;
@@ -85,8 +86,8 @@ public class ItemStationChip extends ItemIdWithName {
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list,
-			boolean bool) {
+	public void addInformation(ItemStack stack, EntityPlayer player, @NotNull List list,
+                               boolean bool) {
 		if(getUUID(stack) == 0)
 			list.add(EnumChatFormatting.GRAY + LibVulpes.proxy.getLocalizedString("msg.unprogrammed"));
 		else {

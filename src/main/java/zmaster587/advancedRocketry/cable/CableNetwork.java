@@ -1,5 +1,11 @@
 package zmaster587.advancedRocketry.cable;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+import zmaster587.advancedRocketry.tile.cables.TilePipe;
+import zmaster587.libVulpes.util.SingleEntry;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -7,19 +13,12 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-import zmaster587.advancedRocketry.tile.cables.TilePipe;
-import zmaster587.libVulpes.util.BlockPosition;
-import zmaster587.libVulpes.util.SingleEntry;
-
 public class CableNetwork {
 
 	int networkID;
 	protected int numCables = 0;
 
-	protected static HashSet<Integer> usedIds = new HashSet<Integer>();
+	protected static HashSet<Integer> usedIds = new HashSet<>();
 
 	CopyOnWriteArraySet<Entry<TileEntity, ForgeDirection>> sources;
 
@@ -27,8 +26,8 @@ public class CableNetwork {
 
 	protected CableNetwork() {
 
-		sources = new CopyOnWriteArraySet<Entry<TileEntity, ForgeDirection>>();
-		sinks = new CopyOnWriteArraySet<Entry<TileEntity, ForgeDirection>>();
+		sources = new CopyOnWriteArraySet<>();
+		sinks = new CopyOnWriteArraySet<>();
 	}
 
 	public Set<Entry<TileEntity, ForgeDirection>> getSources() {
@@ -41,40 +40,34 @@ public class CableNetwork {
 
 	public void addSource(TileEntity tile, ForgeDirection dir) {
 
-		Iterator<Entry<TileEntity, ForgeDirection>> iter = sources.iterator();
+        for (Entry<TileEntity, ForgeDirection> entry : sources) {
+            TileEntity tile2 = entry.getKey();
+            if (tile2.equals(tile)) {
+                return;
+            }
+            if (tile2.xCoord == tile.xCoord && tile2.yCoord == tile.yCoord && tile2.zCoord == tile.zCoord) {
+                sources.remove(entry);
+                break;
+            }
+        }
 
-		while(iter.hasNext()) {
-			Entry<TileEntity, ForgeDirection> entry = iter.next();
-			TileEntity tile2 =  entry.getKey();
-			if(tile2.equals(tile)) {
-				return;
-			}
-			if(tile2.xCoord == tile.xCoord && tile2.yCoord == tile.yCoord && tile2.zCoord == tile.zCoord) {
-				sources.remove(entry);
-				break;
-			}
-		}
-
-		sources.add(new SingleEntry(tile, dir));
+		sources.add(new SingleEntry<>(tile, dir));
 	}
 
 	public void addSink(TileEntity tile, ForgeDirection dir) {
 
-		Iterator<Entry<TileEntity, ForgeDirection>> iter = sinks.iterator();
+        for (Entry<TileEntity, ForgeDirection> entry : sinks) {
+            TileEntity tile2 = entry.getKey();
+            if (tile2.equals(tile)) {
+                return;
+            }
+            if (tile2.xCoord == tile.xCoord && tile2.yCoord == tile.yCoord && tile2.zCoord == tile.zCoord) {
+                sinks.remove(entry);
+                break;
+            }
+        }
 
-		while(iter.hasNext()) {
-			Entry<TileEntity, ForgeDirection> entry = iter.next();
-			TileEntity tile2 =  entry.getKey();
-			if(tile2.equals(tile)) {
-				return;
-			}
-			if(tile2.xCoord == tile.xCoord && tile2.yCoord == tile.yCoord && tile2.zCoord == tile.zCoord) {
-				sinks.remove(entry);
-				break;
-			}
-		}
-
-		sinks.add(new SingleEntry(tile, dir));
+		sinks.add(new SingleEntry<>(tile, dir));
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
@@ -98,9 +91,9 @@ public class CableNetwork {
 
 		int id = random.nextInt();
 
-		while(usedIds.contains(id)){ id = random.nextInt(); };
+		while(usedIds.contains(id)){ id = random.nextInt(); }
 
-		CableNetwork net = new CableNetwork();
+        CableNetwork net = new CableNetwork();
 
 		usedIds.add(id);
 		net.networkID = id;
@@ -137,18 +130,18 @@ public class CableNetwork {
 
 	@Override 
 	public String toString() {
-		String output = "Sources: ";
+		StringBuilder output = new StringBuilder("Sources: ");
 		for(Entry<TileEntity, ForgeDirection> obj : sources) {
-			TileEntity tile = (TileEntity)obj.getKey();
-			output += tile.xCoord + "," + tile.yCoord + "," + tile.zCoord + " ";
+			TileEntity tile = obj.getKey();
+			output.append(tile.xCoord).append(",").append(tile.yCoord).append(",").append(tile.zCoord).append(" ");
 		}
 
-		output += "    Sinks: ";
+		output.append("    Sinks: ");
 		for(Entry<TileEntity, ForgeDirection> obj : sinks) {
-			TileEntity tile = (TileEntity)obj.getKey();
-			output += tile.xCoord + "," + tile.yCoord + "," + tile.zCoord + " ";
+			TileEntity tile = obj.getKey();
+			output.append(tile.xCoord).append(",").append(tile.yCoord).append(",").append(tile.zCoord).append(" ");
 		}
-		return output;
+		return output.toString();
 	}
 
 	/**
@@ -159,30 +152,21 @@ public class CableNetwork {
 		sinks.addAll(cableNetwork.getSinks());
 
 		for(Entry<TileEntity, ForgeDirection> obj : cableNetwork.getSinks()) {
-			boolean canMerge = true;
 			for(Entry<TileEntity, ForgeDirection> obj2 : sinks) {
 				if(obj.getKey().xCoord == obj2.getKey().xCoord && obj.getKey().yCoord == obj2.getKey().yCoord && obj.getKey().zCoord == obj2.getKey().zCoord && obj.getValue() == obj2.getValue()) {
 					return false;
 				}
 			}
-
-			if(canMerge) {
-				sinks.add(obj);
-			}
-		}
+			sinks.add(obj);
+        }
 
 		for(Entry<TileEntity, ForgeDirection> obj : cableNetwork.getSources()) {
-			boolean canMerge = true;
 			for(Entry<TileEntity, ForgeDirection> obj2 : sources) {
 				if(obj.getKey().xCoord == obj2.getKey().xCoord && obj.getKey().yCoord == obj2.getKey().yCoord && obj.getKey().zCoord == obj2.getKey().zCoord && obj.getValue() == obj2.getValue()) {
-					canMerge = false;
 					return false;
 				}
 			}
-
-			if(canMerge) {
-				sources.add(obj);
-			}
+			sources.add(obj);
 		}
 		return true;
 	}

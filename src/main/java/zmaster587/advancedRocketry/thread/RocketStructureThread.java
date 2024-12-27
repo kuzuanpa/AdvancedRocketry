@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.thread;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.block.rocket.ILeveledPartsDivider;
 import zmaster587.advancedRocketry.entity.LeveledRocketPart;
 import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
@@ -72,7 +73,7 @@ public class RocketStructureThread extends Thread{
         tasks.remove(currentTaskID);
     }
 
-    private void findGroups(ArrayList<LeveledRocketPart> partList,StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
+    private void findGroups(ArrayList<LeveledRocketPart> partList, @NotNull StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
         final ArrayList<BlockPosition> list = new ArrayList<>();
         findConnectedParts(list,entireRocket, x,y,z,startFromDivide);
         //if we can't find any new parts, return
@@ -84,7 +85,7 @@ public class RocketStructureThread extends Thread{
         list.stream().filter(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider).forEach(pos-> findGroups(partList,entireRocket, pos.x,pos.y,pos.z,true));
     }
 
-    private void findConnectedParts(ArrayList<BlockPosition> blockList, StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
+    private void findConnectedParts(@NotNull ArrayList<BlockPosition> blockList, StorageChunk entireRocket, int x, int y, int z, boolean startFromDivide){
         if(searchedParts.contains(new BlockPosition(x, y, z))) return;
         if(!startFromDivide)blockList.add(new BlockPosition(x, y, z));
         if(!startFromDivide&&entireRocket.getBlock(x,y,z) instanceof ILeveledPartsDivider) return;

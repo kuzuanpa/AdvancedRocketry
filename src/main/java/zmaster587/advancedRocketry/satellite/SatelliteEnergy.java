@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
@@ -22,14 +23,14 @@ public class SatelliteEnergy extends SatelliteBase implements IUniversalEnergyTr
 	}
 
 	@Override
-	public boolean acceptsItemInConstruction(ItemStack item) {
+	public boolean acceptsItemInConstruction(@NotNull ItemStack item) {
 		int flag = SatelliteRegistry.getSatelliteProperty(item).getPropertyFlag();
 		
 		return super.acceptsItemInConstruction(item) || SatelliteProperties.Property.BATTERY.isOfType(flag) || (SatelliteProperties.Property.POWER_GEN.isOfType(flag));
 	}
 	
 	@Override
-	public void setProperties(ItemStack satelliteProperties) {
+	public void setProperties(@NotNull ItemStack satelliteProperties) {
 		super.setProperties(satelliteProperties);
 		battery = new UniversalBattery(Math.max(this.satelliteProperties.getPowerStorage(),1));
 	}
@@ -71,7 +72,7 @@ public class SatelliteEnergy extends SatelliteBase implements IUniversalEnergyTr
 	}
 
 	@Override
-	public void setDimensionId(World world) {
+	public void setDimensionId(@NotNull World world) {
 		super.setDimensionId(world);
 		lastActionTime = world.getTotalWorldTime();
 	}
@@ -90,7 +91,7 @@ public class SatelliteEnergy extends SatelliteBase implements IUniversalEnergyTr
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
 		battery.writeToNBT(nbt);
@@ -99,7 +100,7 @@ public class SatelliteEnergy extends SatelliteBase implements IUniversalEnergyTr
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
 		if(battery == null)

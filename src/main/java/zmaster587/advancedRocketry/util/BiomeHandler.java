@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.util;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.network.PacketBiomeIDChange;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.util.BlockPosition;
@@ -40,7 +41,7 @@ public class BiomeHandler {
 		PacketHandler.sendToNearby(new PacketBiomeIDChange(chunk, world, new BlockPosition(x, y, z)), world.provider.dimensionId, x, y, z, 256);
 	}
 	
-	public static void changeBiome(World world, int biomeId, Chunk chunk, int x, int z) {
+	public static void changeBiome(@NotNull World world, int biomeId, Chunk chunk, int x, int z) {
 
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 		BiomeGenBase biomeTo = BiomeGenBase.getBiome(biomeId);

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
 import zmaster587.advancedRocketry.api.satellite.IDataHandler;
@@ -58,7 +59,7 @@ public class TileWirelessTransciever extends TileEntity implements INetworkMachi
 
 
 	@Override
-	public boolean onLinkStart(ItemStack item, TileEntity entity, EntityPlayer player, World worldObj) {
+	public boolean onLinkStart(@NotNull ItemStack item, TileEntity entity, EntityPlayer player, @NotNull World worldObj) {
 
 		ItemLinker.setMasterCoords(item, this.xCoord, this.yCoord, this.zCoord);
 
@@ -183,7 +184,7 @@ public class TileWirelessTransciever extends TileEntity implements INetworkMachi
 	}
 
 	@Override
-	public void writeDataToNetwork(ByteBuf out, byte id) {
+	public void writeDataToNetwork(@NotNull ByteBuf out, byte id) {
 		if(id == 0)
 			out.writeBoolean(toggle.getState());
 		else if(id == 1)
@@ -191,8 +192,8 @@ public class TileWirelessTransciever extends TileEntity implements INetworkMachi
 	}
 
 	@Override
-	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+	public void readDataFromNetwork(@NotNull ByteBuf in, byte packetId,
+                                    NBTTagCompound nbt) {
 		nbt.setBoolean("state", in.readBoolean());
 
 	}

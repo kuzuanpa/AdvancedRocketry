@@ -5,6 +5,7 @@ import java.util.Map;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
+import org.jetbrains.annotations.NotNull;
 
 @TransformerExclusions(value = {"zmaster587.advancedRocketry.asm.ClassTransformer"})
 @MCVersion("1.7.10")
@@ -15,7 +16,7 @@ public class AdvancedRocketryPlugin implements IFMLLoadingPlugin {
 	}
 
 	@Override
-	public String[] getASMTransformerClass() {
+	public String @NotNull [] getASMTransformerClass() {
 		return new String[] {ClassTransformer.class.getName()};
 	}
 

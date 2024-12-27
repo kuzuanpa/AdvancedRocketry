@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.util.GravityHandler;
@@ -76,7 +77,7 @@ public class TileGravityController extends TileMultiPowerConsumer implements ISl
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();//super.getModules(id, player);
+		List<ModuleBase> modules = new LinkedList<>();//super.getModules(id, player);
 		modules.add(toggleSwitch = new ModuleToggleSwitch(160, 5, 0, "", this,  zmaster587.libVulpes.inventory.TextureResources.buttonToggleImage, 11, 26, getMachineEnabled()));
 		modules.add(new ModulePower(18, 20, getBatteries()));
 		modules.add(sideSelectorModule);
@@ -250,7 +251,7 @@ public class TileGravityController extends TileMultiPowerConsumer implements ISl
 	}
 
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "tile.gravityMachine.name";
 	}
 
@@ -284,7 +285,7 @@ public class TileGravityController extends TileMultiPowerConsumer implements ISl
 			nbt.setShort("radius", in.readShort());
 		}
 		else if(packetId == 4) {
-			byte bytes[] = new byte[6];
+			byte[] bytes = new byte[6];
 			for(int i = 0; i < 6; i++)
 				bytes[i] = in.readByte();
 			nbt.setByteArray("bytes", bytes);
@@ -304,7 +305,7 @@ public class TileGravityController extends TileMultiPowerConsumer implements ISl
 			setProgress(1, nbt.getShort("radius"));
 		}
 		else if(id == 4) {
-			byte bytes[] = nbt.getByteArray("bytes");
+			byte[] bytes = nbt.getByteArray("bytes");
 			for(int i = 0; i < 6; i++)
 				sideSelectorModule.setStateForSide(i, bytes[i]);
 		}

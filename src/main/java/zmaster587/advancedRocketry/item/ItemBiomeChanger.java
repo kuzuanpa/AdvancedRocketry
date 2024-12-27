@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.network.PacketSatellite;
@@ -35,15 +36,15 @@ import zmaster587.libVulpes.network.PacketItemModifcation;
 public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements IModularInventory, IButtonInventory, INetworkItem {
 
 	@Override
-	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> list = new LinkedList<ModuleBase>();
+	public @NotNull List<ModuleBase> getModules(int id, EntityPlayer player) {
+		List<ModuleBase> list = new LinkedList<>();
 
 		SatelliteBiomeChanger sat = (SatelliteBiomeChanger) getSatellite(player.getCurrentEquippedItem());
 		if(player.worldObj.isRemote) {
 			list.add(new ModuleImage(24, 14, zmaster587.advancedRocketry.inventory.TextureResources.earthCandyIcon));
 		}
 
-		List<ModuleBase> list2 = new LinkedList<ModuleBase>();
+		List<ModuleBase> list2 = new LinkedList<>();
 		int j = 0;
 		for(byte biomeByte : sat.discoveredBiomes()) {
 			BiomeGenBase biome = BiomeGenBase.getBiome(biomeByte);
@@ -51,7 +52,7 @@ public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements
 		}
 
 		//Relying on a bug, is this safe?
-		ModuleContainerPan pan = new ModuleContainerPan(32, 16, list2, new LinkedList<ModuleBase>(), null, 128, 128, 0, -64, 0, 1000);
+		ModuleContainerPan pan = new ModuleContainerPan(32, 16, list2, new LinkedList<>(), null, 128, 128, 0, -64, 0, 1000);
 
 		list.add(pan);
 		list.add(new ModuleButton(120, 124, -1, LibVulpes.proxy.getLocalizedString("msg.biomechanger.scan"), this, TextureResources.buttonScan));
@@ -61,8 +62,8 @@ public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player,
-			List list, boolean arg5) {
+	public void addInformation(@NotNull ItemStack stack, EntityPlayer player,
+							   List list, boolean arg5) {
 
 		SatelliteBase sat = DimensionManager.getInstance().getSatellite(this.getSatelliteId(stack));
 
@@ -87,8 +88,8 @@ public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements
 
 
 	@Override
-	public ItemStack onItemRightClick(ItemStack stack, World world,
-			EntityPlayer player) {
+	public ItemStack onItemRightClick(@NotNull ItemStack stack, World world,
+									  EntityPlayer player) {
 		if(!world.isRemote) {
 			SatelliteBase sat = DimensionManager.getInstance().getSatellite(this.getSatelliteId(stack));
 			if(sat != null) {
@@ -154,8 +155,8 @@ public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements
 	}
 
 	@Override
-	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt, ItemStack stack) {
+	public void readDataFromNetwork(@NotNull ByteBuf in, byte packetId,
+									@NotNull NBTTagCompound nbt, ItemStack stack) {
 		if(packetId == 0) {
 			nbt.setInteger("biome", in.readInt());
 		}

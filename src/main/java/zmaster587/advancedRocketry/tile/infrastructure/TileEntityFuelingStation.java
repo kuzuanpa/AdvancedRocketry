@@ -19,6 +19,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.fuel.FuelRegistry;
 import zmaster587.advancedRocketry.api.fuel.FuelRegistry.FuelType;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
@@ -50,6 +52,7 @@ import zmaster587.libVulpes.util.IconResource;
 import zmaster587.libVulpes.util.ZUtils.RedstoneState;
 
 public class TileEntityFuelingStation extends TileInventoriedRFConsumerTank implements IModularInventory, IMultiblock, IInfrastructure, ILinkableTile, IButtonInventory, INetworkMachine {
+	@Nullable
 	EntityRocketBase linkedRocket;
 	BlockPosition masterBlock;
 	ModuleRedstoneOutputButton redstoneControl;
@@ -98,7 +101,7 @@ public class TileEntityFuelingStation extends TileInventoriedRFConsumerTank impl
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public @NotNull Packet getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setByte("state", (byte)state.ordinal());
 		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, nbt);
@@ -236,8 +239,8 @@ public class TileEntityFuelingStation extends TileInventoriedRFConsumerTank impl
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> list = new ArrayList<ModuleBase>();
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
+		List<ModuleBase> list = new ArrayList<>();
 		
 		list.add(new ModulePower(156, 12, this));
 		list.add(redstoneControl);
@@ -332,8 +335,8 @@ public class TileEntityFuelingStation extends TileInventoriedRFConsumerTank impl
 	}
 
 	@Override
-	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+	public void readDataFromNetwork(@NotNull ByteBuf in, byte packetId,
+									@NotNull NBTTagCompound nbt) {
 		nbt.setByte("state", in.readByte());
 	}
 

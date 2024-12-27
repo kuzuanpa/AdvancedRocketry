@@ -7,6 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
 
@@ -14,7 +16,7 @@ public class SpySatellite extends SatelliteBase {
 
 	//TODO: write position to player file and teleport player then subscribe to onlogin
 	@Override
-	public String getInfo(World world) {
+	public @Nullable String getInfo(World world) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -87,7 +89,7 @@ public class SpySatellite extends SatelliteBase {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		// TODO Auto-generated method stub
 
 	}

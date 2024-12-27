@@ -1,11 +1,5 @@
 package zmaster587.advancedRocketry.client.render.multiblocks;
 
-import java.util.List;
-
-import org.lwjgl.opengl.GL11;
-
-import zmaster587.libVulpes.block.RotatableBlock;
-import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -17,6 +11,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
+import zmaster587.libVulpes.block.RotatableBlock;
+import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
+
+import java.util.List;
 
 public class RendererPrecisionAssembler extends TileEntitySpecialRenderer {
 	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/precAssembler.obj"));
@@ -37,8 +37,8 @@ public class RendererPrecisionAssembler extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x,
-			double y, double z, float f) {
+	public void renderTileEntityAt(@NotNull TileEntity tile, double x,
+                                   double y, double z, float f) {
 
 		TileMultiblockMachine multiBlockTile = (TileMultiblockMachine)tile;
 
@@ -90,19 +90,14 @@ public class RendererPrecisionAssembler extends TileEntitySpecialRenderer {
 			
 			process *= 6;
 			if(process > 2 && process < 4){
-				if(process < 3) {
-					process-=2;
-					GL11.glTranslatef(0, -.25f*process, 0); // 0 -> -.25
-					model.renderPart("ProcessA");
-					GL11.glTranslatef(0, .25f*process, 0);
-				}
-				else if(process < 4) {
-					process = -process + 4;
-					GL11.glTranslatef(0, -.25f*process, 0); // 0 -> -.25
-					model.renderPart("ProcessA");
-					GL11.glTranslatef(0, .25f*process, 0);
-				}
-			}
+                // 0 -> -.25
+                if(process < 3) process-=2;
+				else process = -process + 4;
+
+                GL11.glTranslatef(0, -.25f*process, 0); // 0 -> -.25
+                model.renderPart("ProcessA");
+                GL11.glTranslatef(0, .25f*process, 0);
+            }
 			else
 				model.renderPart("ProcessA");
 			
@@ -110,43 +105,27 @@ public class RendererPrecisionAssembler extends TileEntitySpecialRenderer {
 			
 			process -= 6;
 			if(process > 2 && process < 4){
-				if(process < 3) {
-					process-=2;
-					GL11.glTranslatef(0, -.25f*process, 0); // 0 -> -.25
-					model.renderPart("ProcessB");
-					GL11.glTranslatef(0, .25f*process, 0);
-				}
-				else if(process < 4) {
-					process = -process + 4;
-					GL11.glTranslatef(0, -.25f*process, 0); // 0 -> -.25
-					model.renderPart("ProcessB");
-					GL11.glTranslatef(0, .25f*process, 0);
-				}
-			}
+                // 0 -> -.25
+                if(process < 3) process-=2;
+				else process = -process + 4;
+
+                GL11.glTranslatef(0, -.25f*process, 0); // 0 -> -.25
+                model.renderPart("ProcessB");
+                GL11.glTranslatef(0, .25f*process, 0);
+            }
 			else
 				model.renderPart("ProcessB");
 			
 			process -= 6;
 			if(process > 1 && process < 3){
-				if(process < 2) {
-					process-=1;
-					
-					GL11.glTranslated(1.55, 1.47, 0);
-					GL11.glRotatef(90*process, 0, 0, 1);
-					GL11.glTranslated(-1.55, -1.47, 0);
-					
-					model.renderPart("ProcessC");
-				}
-				else if(process < 3) {
-					process = -process + 3;
-					
-					GL11.glTranslated(1.55, 1.47, 0);
-					GL11.glRotatef(90*process, 0, 0, 1);
-					GL11.glTranslated(-1.55, -1.47, 0);
-					
-					model.renderPart("ProcessC");
-				}
-			}
+				if(process < 2) process-=1;
+				else process = -process + 3;
+
+                GL11.glTranslated(1.55, 1.47, 0);
+                GL11.glRotatef(90*process, 0, 0, 1);
+                GL11.glTranslated(-1.55, -1.47, 0);
+                model.renderPart("ProcessC");
+            }
 			else
 				model.renderPart("ProcessC");
 

@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.world.provider;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.Configuration;
@@ -42,7 +43,7 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	}
 	
 	@Override
-	public IChunkProvider createChunkGenerator() {
+	public @NotNull IChunkProvider createChunkGenerator() {
 		return new ChunkProviderSpace(this.worldObj, this.worldObj.getSeed());
 	}
 	
@@ -73,7 +74,7 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	}
 	
 	@Override
-	public DimensionProperties getDimensionProperties(int x , int z) {
+	public @NotNull DimensionProperties getDimensionProperties(int x , int z) {
 		ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 		if(object != null)
 			return (DimensionProperties)object.getProperties();

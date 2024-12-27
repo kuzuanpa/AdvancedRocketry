@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.api.IInfrastructure;
@@ -50,8 +52,9 @@ public class TileGuidanceComputerHatch extends TilePointer implements IInfrastru
 
 	private static final int buttonAutoEject = 0, buttonSatellite = 1, buttonPlanet = 2, buttonStation = 3, redstoneState = 4;
 	private ModuleToggleSwitch module_autoEject, module_satellite, module_planet, module_station;
-	private boolean buttonState[];
+	private boolean[] buttonState;
 	private boolean chipEjected;
+	@Nullable
 	EntityRocket rocket;
 	ModuleRedstoneOutputButton redstoneControl;
 	RedstoneState state;
@@ -185,7 +188,7 @@ public class TileGuidanceComputerHatch extends TilePointer implements IInfrastru
 
 	@Override
 	public boolean onLinkComplete(ItemStack item, TileEntity entity,
-			EntityPlayer player, World world) {
+								  @NotNull EntityPlayer player, World world) {
 		if(player.worldObj.isRemote)
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage((new ChatComponentText(LibVulpes.proxy.getLocalizedString("msg.linker.error.firstMachine"))));
 		return false;
@@ -249,7 +252,7 @@ public class TileGuidanceComputerHatch extends TilePointer implements IInfrastru
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(new ModuleLimitedSlotArray(15, 15, this, 0, 1));
 		modules.add(redstoneControl);
@@ -361,8 +364,8 @@ public class TileGuidanceComputerHatch extends TilePointer implements IInfrastru
 	}
 
 	@Override
-	public void readDataFromNetwork(ByteBuf in, byte packetId,
-			NBTTagCompound nbt) {
+	public void readDataFromNetwork(@NotNull ByteBuf in, byte packetId,
+                                    @NotNull NBTTagCompound nbt) {
 		if(packetId == redstoneState)
 			nbt.setByte("state", in.readByte());
 		else {
@@ -374,7 +377,7 @@ public class TileGuidanceComputerHatch extends TilePointer implements IInfrastru
 
 	@Override
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+                               @NotNull NBTTagCompound nbt) {
 		if(id == redstoneState) {
 			state = RedstoneState.values()[nbt.getByte("state")];
 
@@ -392,7 +395,7 @@ public class TileGuidanceComputerHatch extends TilePointer implements IInfrastru
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setBoolean("chipEjected", chipEjected);
 		nbt.setByte("redstoneState", (byte) state.ordinal());

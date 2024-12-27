@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.util.AsteroidSmall;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -92,17 +93,17 @@ public class Configuration {
 	public static boolean blackListAllVanillaBiomes;
 	public static boolean canPlayerRespawnInSpace;
 	public static float spaceLaserPowerMult;
-	public static List<Integer> laserBlackListDims = new LinkedList<Integer>();
-	public static List<String> standardLaserDrillOres = new LinkedList<String>();
+	public static List<Integer> laserBlackListDims = new LinkedList<>();
+	public static List<String> standardLaserDrillOres = new LinkedList<>();
 	public static boolean laserDrillPlanet;
 	public static double asteroidMiningTimeMult;
 
 	/** list of entities of which atmospheric effects should not be applied **/
-	public static List<Class> bypassEntity = new LinkedList<Class>();
-	public static List<Block> torchBlocks = new LinkedList<Block>();
-	public static List<Block> blackListRocketBlocks = new LinkedList<Block>();
-	public static List<String> standardGeodeOres = new LinkedList<String>();
-	public static Set<Integer> initiallyKnownPlanets = new HashSet<Integer>();
+	public static List<Class> bypassEntity = new LinkedList<>();
+	public static @NotNull List<Block> torchBlocks = new LinkedList<>();
+	public static List<Block> blackListRocketBlocks = new LinkedList<>();
+	public static @NotNull List<String> standardGeodeOres = new LinkedList<>();
+	public static Set<Integer> initiallyKnownPlanets = new HashSet<>();
 
 	public static boolean geodeOresBlackList;
 
@@ -110,8 +111,8 @@ public class Configuration {
 
 	public static boolean lockUI;
 
-	public static HashMap<String, AsteroidSmall> asteroidTypes = new HashMap<String, AsteroidSmall>();
-	public static HashMap<String, AsteroidSmall> prevAsteroidTypes = new HashMap<String, AsteroidSmall>();
+	public static HashMap<String, AsteroidSmall> asteroidTypes = new HashMap<>();
+	public static @NotNull HashMap<String, AsteroidSmall> prevAsteroidTypes = new HashMap<>();
 	public static int oxygenVentSize;
 
 	public static int solarGeneratorMult;

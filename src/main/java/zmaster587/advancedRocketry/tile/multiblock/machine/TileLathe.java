@@ -9,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.api.LibVulpesBlocks;
@@ -64,7 +65,7 @@ public class TileLathe extends TileMultiblockMachine implements IModularInventor
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
 		List<ModuleBase> modules = super.getModules(ID, player);
 
 		modules.add(new ModuleProgress(100, 40, 0, TextureResources.latheProgressBar, this));
@@ -72,7 +73,7 @@ public class TileLathe extends TileMultiblockMachine implements IModularInventor
 	}
 
 	@Override
-	public String getMachineName() {
+	public @NotNull String getMachineName() {
 		return "tile.lathe.name";
 	}
 }

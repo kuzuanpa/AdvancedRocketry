@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Vec3;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.libVulpes.network.BasePacket;
 import zmaster587.libVulpes.util.Vector3F;
@@ -24,7 +25,7 @@ public class PacketLaserGun extends BasePacket {
 	}
 
 	@Override
-	public void write(ByteBuf out) {
+	public void write(@NotNull ByteBuf out) {
 		out.writeInt(fromEntity.getEntityId());
 		out.writeFloat((float)(double)toPos.xCoord);
 		out.writeFloat((float)(double)toPos.yCoord);

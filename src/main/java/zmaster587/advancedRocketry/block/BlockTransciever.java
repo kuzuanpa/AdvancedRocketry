@@ -6,21 +6,19 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import zmaster587.advancedRocketry.AdvancedRocketry;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.client.ClientProxy;
 import zmaster587.libVulpes.block.BlockTile;
-import zmaster587.libVulpes.block.RotatableBlock;
 import zmaster587.libVulpes.render.RenderHelper;
 
 public class BlockTransciever extends BlockTile implements ISimpleBlockRenderingHandler {
 
-	private static AxisAlignedBB bb[] = {AxisAlignedBB.getBoundingBox(.25, .25, .75, .75, .75, 1),
+	private static final AxisAlignedBB[] bb = {AxisAlignedBB.getBoundingBox(.25, .25, .75, .75, .75, 1),
 		AxisAlignedBB.getBoundingBox(.25, .25, 0, .75, .75, 0.25),
 		AxisAlignedBB.getBoundingBox(.75, .25, .25, 1, .75, .75),
 		AxisAlignedBB.getBoundingBox(0, .25, .25, 0.25, .75, .75)};
@@ -35,12 +33,11 @@ public class BlockTransciever extends BlockTile implements ISimpleBlockRendering
 	public void setBlockBoundsBasedOnState(IBlockAccess world,
 			int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
-		
-		if( meta > 2 || meta < 6)
-			return;
-		
+
+		if( meta < 2 || meta > 6) return;
+
 		AxisAlignedBB newBB = bb[meta - 2];
-		
+
 		setBlockBounds((float)newBB.minX, (float)newBB.minY, (float)newBB.minZ, (float)newBB.maxX, (float)newBB.maxY, (float)newBB.maxZ);
 	}
 
@@ -101,7 +98,7 @@ public class BlockTransciever extends BlockTile implements ISimpleBlockRendering
         float minV = glowTex.getInterpolatedV(4);
         float maxV = glowTex.getInterpolatedV(12);
 		
-		AxisAlignedBB newBB = bb[meta - 2];
+		@NotNull AxisAlignedBB newBB = bb[meta - 2];
 		
 		
 		RenderHelper.renderCubeWithUV(Tessellator.instance, newBB.minX + x, newBB.minY + y, newBB.minZ + z, newBB.maxX + x, newBB.maxY + y, newBB.maxZ + z, minU, maxU, minV, maxV);

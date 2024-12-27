@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.api.dimension.solar;
 
 import java.util.Collection;
 
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 
@@ -36,7 +37,7 @@ public interface IGalaxy {
 	 * @param id star id for which to get the object
 	 * @return the {@link StellarBody} object
 	 */
-	public StellarBody getStar(int id);
+	public @Nullable StellarBody getStar(int id);
 	
 	/**
 	 * @param dimId integer id of the dimension

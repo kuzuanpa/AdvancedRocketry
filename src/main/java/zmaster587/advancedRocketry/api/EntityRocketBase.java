@@ -1,13 +1,13 @@
 package zmaster587.advancedRocketry.api;
 
-import java.util.LinkedList;
-import java.util.Set;
-
-import zmaster587.advancedRocketry.api.stations.ISpaceObject;
-import zmaster587.libVulpes.util.BlockPosition;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import zmaster587.advancedRocketry.api.stations.ISpaceObject;
+import zmaster587.libVulpes.util.BlockPosition;
+
+import java.util.LinkedList;
+import java.util.Set;
 
 
 
@@ -99,8 +99,8 @@ public abstract class EntityRocketBase extends Entity {
 		if(this.worldObj.provider.dimensionId == Configuration.spaceDimId) {
 			ISpaceObject station = AdvancedRocketryAPI.spaceObjectManager.getSpaceStationFromBlockCoords((int)this.posX, (int)this.posZ);
 			
-			if(station instanceof ISpaceObject) {
-				((ISpaceObject)station).setPadStatus((int)this.posX, (int)this.posZ, false);
+			if(station != null) {
+				station.setPadStatus((int)this.posX, (int)this.posZ, false);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.block;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObject;
@@ -34,8 +35,8 @@ public class BlockWarpCore extends BlockMultiblockMachine {
 	}
 	
 	@Override
-	public void onBlockPreDestroy(World world, int x,
-			int y, int z, int oldMeta) {
+	public void onBlockPreDestroy(@NotNull World world, int x,
+                                  int y, int z, int oldMeta) {
 		super.onBlockPreDestroy(world, x, y, z,
 				oldMeta);
 		

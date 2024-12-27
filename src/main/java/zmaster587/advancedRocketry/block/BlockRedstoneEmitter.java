@@ -1,6 +1,6 @@
 package zmaster587.advancedRocketry.block;
 
-import zmaster587.advancedRocketry.AdvancedRocketry;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.tile.TileAtmosphereDetector;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.inventory.GuiHandler;
@@ -18,7 +18,7 @@ public class BlockRedstoneEmitter extends Block {
 	IIcon activeIcon;
 	String iconName;
 	
-	public BlockRedstoneEmitter(Material material,String activeIconName) {
+	public BlockRedstoneEmitter(@NotNull Material material, String activeIconName) {
 		super(material);
 		iconName = activeIconName;
 	}
@@ -29,7 +29,7 @@ public class BlockRedstoneEmitter extends Block {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
+	public boolean onBlockActivated(World world, int x, int y, int z, @NotNull EntityPlayer player, int par6, float par7, float par8, float par9)
 	{
 		player.openGui(LibVulpes.instance, GuiHandler.guiId.MODULARNOINV.ordinal(), world, x, y, z);
 		return true;
@@ -59,8 +59,8 @@ public class BlockRedstoneEmitter extends Block {
 	}
 	
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, int x,
-			int y, int z, int p_149709_5_) {
+	public int isProvidingWeakPower(@NotNull IBlockAccess world, int x,
+                                    int y, int z, int p_149709_5_) {
 		return world.getBlockMetadata(x, y, z) == 1 ? 15 : 0;
 	}
 	

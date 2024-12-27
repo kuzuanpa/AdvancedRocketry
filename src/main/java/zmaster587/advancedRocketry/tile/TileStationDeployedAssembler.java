@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.IFuelTank;
 import zmaster587.advancedRocketry.api.IInfrastructure;
@@ -160,7 +161,7 @@ public class TileStationDeployedAssembler extends TileRocketBuilder {
 
 	//TODO get direction of rocket
 	@Override
-	public void scanRocket(World world, int x, int y, int z, AxisAlignedBB bb) {
+	public void scanRocket(@NotNull World world, int x, int y, int z, AxisAlignedBB bb) {
 
 		int thrust = 0;
 		int fuelUse = 0;

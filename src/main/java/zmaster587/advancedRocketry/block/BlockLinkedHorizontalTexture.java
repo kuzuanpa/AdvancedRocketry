@@ -9,13 +9,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 
 public class BlockLinkedHorizontalTexture extends Block {
 
 	
 	//Mapping of side to names
-	//Order is such that the side with a block can be represented as as bitmask where a side with a block is represented by a 0
+	//Order is such that the side with a block can be represented as bitmask where a side with a block is represented by a 0
 	enum iconNames {
 		ALLEDGE(""),
 		NOTRIGHTEDGE("nrEdge"),
@@ -34,13 +35,13 @@ public class BlockLinkedHorizontalTexture extends Block {
 		RIGHTEDGE("rightEdge"),
 		NOEDGE("noEdge");
 		
-		private String suffix;
+		private final String suffix;
 		iconNames(String suffix) {
 			this.suffix = suffix;
 		}
 	}
 	
-	private IIcon icons[] = new IIcon[16];
+	private final IIcon[] icons = new IIcon[16];
 	
 	public BlockLinkedHorizontalTexture(Material material) {
 		super(material);
@@ -72,8 +73,8 @@ public class BlockLinkedHorizontalTexture extends Block {
 	}
 	
 	@Override
-	public void onNeighborBlockChange(World world, int x,
-			int y, int z, Block block) {
+	public void onNeighborBlockChange(@NotNull World world, int x,
+                                      int y, int z, Block block) {
 		
 		//right bit 1,	 1
 		//top, bit 2, 	 2

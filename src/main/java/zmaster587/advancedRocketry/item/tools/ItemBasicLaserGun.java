@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.item.tools;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.libVulpes.util.BlockPosition;
 import net.minecraft.block.Block;
@@ -37,7 +38,7 @@ public class ItemBasicLaserGun extends Item {
 		toolMaterial = ToolMaterial.GOLD;
 		setMaxStackSize(1);
 		setMaxDamage(0);
-		posMap = new WeakHashMap<EntityLivingBase, BlockPosition>();
+		posMap = new WeakHashMap<>();
 	}
 
 
@@ -60,7 +61,7 @@ public class ItemBasicLaserGun extends Item {
 	}
 
 	@Override
-	public void onUsingTick(ItemStack stack, EntityPlayer player, int count) {
+	public void onUsingTick(ItemStack stack, @NotNull EntityPlayer player, int count) {
 
 		World world = player.getEntityWorld();
 
@@ -146,7 +147,7 @@ public class ItemBasicLaserGun extends Item {
 	 * returns the action that specifies what animation to play when the items is being used
 	 */
 	@Override
-	public EnumAction getItemUseAction(ItemStack stack)
+	public @NotNull EnumAction getItemUseAction(ItemStack stack)
 	{
 		return EnumAction.none;
 	}
@@ -177,7 +178,7 @@ public class ItemBasicLaserGun extends Item {
 		return stack;
 	}*/
 
-	public MovingObjectPosition rayTraceEntity(World world, Entity entity) {
+	public MovingObjectPosition rayTraceEntity(@NotNull World world, Entity entity) {
 
 		Vec3 vec3d = Vec3.createVectorHelper(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
 		Vec3 vec3d1 = entity.getLookVec();

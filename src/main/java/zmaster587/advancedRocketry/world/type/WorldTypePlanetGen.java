@@ -1,5 +1,7 @@
 package zmaster587.advancedRocketry.world.type;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.world.ChunkProviderPlanet;
 import zmaster587.advancedRocketry.world.GenLayerBiomePlanet;
 import zmaster587.advancedRocketry.world.gen.GenLayerEdgeExtendedBiomes;
@@ -17,13 +19,13 @@ public class WorldTypePlanetGen extends WorldType {
 	}
 
 	@Override
-	public WorldChunkManager getChunkManager(World world)
+	public @Nullable WorldChunkManager getChunkManager(World world)
 	{
 		return null;//new ChunkManagerPlanet(world); //new WorldChunkManager(world);//
 	}
 
 	@Override
-	public IChunkProvider getChunkGenerator(World world, String generatorOptions) {
+	public IChunkProvider getChunkGenerator(@NotNull World world, String generatorOptions) {
 		return new ChunkProviderPlanet(world, world.getSeed(), false);
 	}
 	

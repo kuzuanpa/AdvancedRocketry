@@ -1,19 +1,24 @@
 package zmaster587.advancedRocketry.entity;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import com.google.common.base.Predicate;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.RocketEvent;
-import zmaster587.advancedRocketry.entity.EntityRocket.PacketType;
 import zmaster587.advancedRocketry.event.PlanetEventHandler;
 import zmaster587.advancedRocketry.tile.multiblock.TileSpaceElevator;
 import zmaster587.advancedRocketry.util.DimensionBlockPosition;
@@ -24,19 +29,8 @@ import zmaster587.libVulpes.interfaces.INetworkEntity;
 import zmaster587.libVulpes.network.PacketEntity;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.util.BlockPosition;
-import zmaster587.libVulpes.util.BlockPosition;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.Teleporter;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
+
+import java.util.List;
 
 public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 
@@ -44,7 +38,8 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 	public static final double MAX_STANDTIME = 200;
 	byte motion;
 	int standTime, idleTime;
-	DimensionBlockPosition dstTilePos, srcTilePos;
+	@Nullable
+    DimensionBlockPosition dstTilePos, srcTilePos;
 
 	private static final byte PACKET_WRITE_DST_INFO = 0;
 	private static final byte PACKET_RECIEVE_NBT = 1;
@@ -172,10 +167,8 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 	{
 		if (!this.worldObj.isRemote && !this.isDead)
 		{
-			
-			double x = posX, z = posZ;
 
-			Entity rider = this.riddenByEntity;
+            Entity rider = this.riddenByEntity;
 			if(rider != null)
 				rider.mountEntity(null);
 
@@ -202,7 +195,7 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 
 				entity.forceSpawn = true;
 
-				entity.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
+				entity.setLocationAndAngles(posX, y, posZ, this.rotationYaw, this.rotationPitch);
 				worldserver1.spawnEntityInWorld(entity);
 				//worldserver1.updateEntityWithOptionalForce(entity, true);
 
@@ -241,14 +234,11 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 
 		//Make sure to update client
 		if(!worldObj.isRemote && this.ticksExisted == 5) {
-			if(dstTilePos != null)
-				setDst(dstTilePos);
-			
-			if(srcTilePos != null)
-				setSourceTile(srcTilePos);
+			if(dstTilePos != null) setDst(dstTilePos);
+			if(srcTilePos != null) setSourceTile(srcTilePos);
 		}
 		
-		if(isAscending()) {
+		if(isAscending() && srcTilePos!=null && dstTilePos != null) {
 
 			if(this.posY > 255)
 				this.motionY = 2.85;
@@ -309,16 +299,10 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 			this.moveEntity(0, this.motionY, 0);
 		}
 		else if(isDescending()) {
-
-
-
-			if(this.posY > 255)
-				this.motionY = -2.85;
-			else
-				this.motionY = -0.85;
+			if(this.posY > 255) this.motionY = -2.85;
+			else this.motionY = -0.85;
 
 			if(!worldObj.isRemote) {
-
 				//Send packet to player for deorbit a bit delayed
 				if(this.ticksExisted == 20)
 					PacketHandler.sendToPlayersTrackingEntity(new PacketEntity(this, PACKET_DEORBIT), this);
@@ -329,7 +313,7 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 						ent.mountEntity(this);
 				}
 
-				if(this.posY <= dstTilePos.pos.y) {
+				if(dstTilePos != null && this.posY <= dstTilePos.pos.y) {
 					setCapsuleMotion(0);
 
 
@@ -348,8 +332,7 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 					if(this.riddenByEntity != null)
 						this.riddenByEntity.mountEntity(null);
 				}
-				else
-					this.moveEntity(0, this.motionY, 0);
+				else this.moveEntity(0, this.motionY, 0);
 			}
 			else
 				this.moveEntity(0, this.motionY, 0);
@@ -370,7 +353,7 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 					srcTile = worldObj.getTileEntity(srcTilePos.pos.x,srcTilePos.pos.y, srcTilePos.pos.z);
 				
 				
-				if( srcTile != null && srcTile instanceof TileSpaceElevator && !((TileSpaceElevator)srcTile).getMachineEnabled())
+				if(srcTile instanceof TileSpaceElevator && !((TileSpaceElevator) srcTile).getMachineEnabled())
 					standTime = 0;
 				
 				setStandTime(standTime);
@@ -403,7 +386,7 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 					srcTile = worldObj.getTileEntity(srcTilePos.pos.x,srcTilePos.pos.y, srcTilePos.pos.z);
 				
 				
-				if( srcTile != null && srcTile instanceof TileSpaceElevator && !((TileSpaceElevator)srcTile).getMachineEnabled())
+				if(srcTile instanceof TileSpaceElevator && !((TileSpaceElevator) srcTile).getMachineEnabled())
 					AdvancedRocketry.proxy.displayMessage(LibVulpes.proxy.getLocalizedString("msg.spaceElevator.turnedOff"),5);
 				else if(dstTilePos != null) 
 					AdvancedRocketry.proxy.displayMessage(LibVulpes.proxy.getLocalizedString("msg.spaceElevator.ascentReady") + ": " + (int)((MAX_STANDTIME - getStandTime())/20) + "\nDST " + dstTilePos,5);
@@ -440,7 +423,7 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 	}
 
 	@Override
-	public void writeDataToNetwork(ByteBuf out, byte id) {
+	public void writeDataToNetwork(@NotNull ByteBuf out, byte id) {
 		if(id == PACKET_WRITE_DST_INFO) {
 			out.writeBoolean(dstTilePos != null);
 
@@ -479,7 +462,7 @@ public class EntityElevatorCapsule extends Entity implements INetworkEntity {
 
 	@Override
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+                               @NotNull NBTTagCompound nbt) {
 		if(id == PACKET_WRITE_DST_INFO && worldObj.isRemote) {
 			if(nbt.hasKey("dimid")) {
 				dstTilePos = new DimensionBlockPosition(nbt.getInteger("dimid"), new BlockPosition(nbt.getInteger("x"), nbt.getInteger("y"), nbt.getInteger("z")));

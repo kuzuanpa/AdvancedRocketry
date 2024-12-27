@@ -2,14 +2,8 @@ package zmaster587.advancedRocketry.atmosphere;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
-import zmaster587.advancedRocketry.api.EntityRocketBase;
-import zmaster587.advancedRocketry.api.armor.IFillableArmor;
-import zmaster587.advancedRocketry.api.armor.IProtectiveArmor;
-import zmaster587.advancedRocketry.integration.CompatibilityMgr;
 import zmaster587.advancedRocketry.network.PacketOxygenState;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.network.PacketHandler;

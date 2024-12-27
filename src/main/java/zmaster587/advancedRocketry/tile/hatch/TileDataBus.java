@@ -13,6 +13,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
 import zmaster587.advancedRocketry.inventory.modules.ModuleData;
@@ -116,8 +117,8 @@ public class TileDataBus extends TileInventoryHatch implements IDataInventory, I
 	}
 
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		LinkedList<ModuleBase> modules = new LinkedList<ModuleBase>();
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
+		LinkedList<ModuleBase> modules = new LinkedList<>();
 		modules.add(new ModuleData(40, 20, 0, this, data));
 		return modules;
 	}
@@ -134,7 +135,7 @@ public class TileDataBus extends TileInventoryHatch implements IDataInventory, I
 	}
 	
 	@Override
-	protected void writeToNBTHelper(NBTTagCompound nbtTagCompound) {
+	protected void writeToNBTHelper(@NotNull NBTTagCompound nbtTagCompound) {
 		super.writeToNBTHelper(nbtTagCompound);
 		data.writeToNBT(nbtTagCompound);
 	}

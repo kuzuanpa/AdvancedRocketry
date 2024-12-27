@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.client.render;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import zmaster587.advancedRocketry.tile.TileRocketBuilder;
@@ -14,9 +15,9 @@ import net.minecraft.util.ResourceLocation;
 public class RendererRocketBuilder extends TileEntitySpecialRenderer {
 
 	
-	private ResourceLocation grid = new ResourceLocation("advancedrocketry:textures/models/grid.png");
-	private ResourceLocation girder = new ResourceLocation("advancedrocketry:textures/models/girder.png");
-	private ResourceLocation round_h = new ResourceLocation("advancedrocketry:textures/models/round_h.png");
+	private final @NotNull ResourceLocation grid = new ResourceLocation("advancedrocketry:textures/models/grid.png");
+	private final ResourceLocation girder = new ResourceLocation("advancedrocketry:textures/models/girder.png");
+	private final ResourceLocation round_h = new ResourceLocation("advancedrocketry:textures/models/round_h.png");
 	
 	@Override
 	public void renderTileEntityAt(TileEntity tile, double x,
@@ -41,14 +42,13 @@ public class RendererRocketBuilder extends TileEntitySpecialRenderer {
 			
 			double xMin = xOffset;
 			double yMin = yOffset + yLocation;
-			double zMin = zOffset;
-			double xMax = xOffset + 0.5;
+            double xMax = xOffset + 0.5;
 			double yMax = yOffset + yLocation+ 0.25;
 			double zMax = zOffset + zSize;
 			double uMin = 0;
 			double vMin = 0;
 			double uMax = 1;
-			double vMax = 1;
+			double vMax;
 
 			GL11.glPushMatrix();
 			GL11.glTranslated(x,y,z);
@@ -124,8 +124,7 @@ public class RendererRocketBuilder extends TileEntitySpecialRenderer {
 			
 			GL11.glColor4f(1f, 1f, 1f, 1f);
 			bindTexture(round_h);
-			uMax = 1f;
-			vMax = 1f;
+            vMax = 1f;
 			//Draw "beam emitters"
 			//West block
 			
@@ -133,11 +132,11 @@ public class RendererRocketBuilder extends TileEntitySpecialRenderer {
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightX, brightY);
 			tess.startDrawingQuads();
 			
-			RenderHelper.renderBottomFaceWithUV(tess, yMin, xMin, zMin, xMax, zMax, uMin, uMax, vMin, vMax);
-			RenderHelper.renderWestFaceWithUV(tess, xMin, yMin, zMin, yMax, zMax, uMin, uMax, vMin, vMax);
+			RenderHelper.renderBottomFaceWithUV(tess, yMin, xMin, zOffset, xMax, zMax, uMin, uMax, vMin, vMax);
+			RenderHelper.renderWestFaceWithUV(tess, xMin, yMin, zOffset, yMax, zMax, uMin, uMax, vMin, vMax);
 			RenderHelper.renderSouthFaceWithUV(tess, zMax, xMin, yMin, xMax, yMax, uMin, uMax, vMin, vMax);
-			RenderHelper.renderNorthFaceWithUV(tess, zMin, xMin, yMin, xMax, yMax, uMin, uMax, vMin, vMax);
-			RenderHelper.renderTopFaceWithUV(tess, yMax, xMin, zMin, xMax, zMax, uMin, uMax, vMin, vMax);
+			RenderHelper.renderNorthFaceWithUV(tess, zOffset, xMin, yMin, xMax, yMax, uMin, uMax, vMin, vMax);
+			RenderHelper.renderTopFaceWithUV(tess, yMax, xMin, zOffset, xMax, zMax, uMin, uMax, vMin, vMax);
 			tess.draw();
 			
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -149,24 +148,24 @@ public class RendererRocketBuilder extends TileEntitySpecialRenderer {
 			else
 				GL11.glColor4f(1f, 3f, 1f, 1f);
 			
-			RenderHelper.renderEastFace(tess, xMax, yMin, zMin, yMax, zMax);
+			RenderHelper.renderEastFace(tess, xMax, yMin, zOffset, yMax, zMax);
 			
 			//Change mins/maxes then render east block
 			xMin = xOffset + xSize - 0.5;
 			xMax = xOffset + xSize;
 			
-			RenderHelper.renderWestFace(tess, xMin, yMin, zMin, yMax, zMax);
+			RenderHelper.renderWestFace(tess, xMin, yMin, zOffset, yMax, zMax);
 			tess.draw();
 			
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightX, brightY);
 			GL11.glColor4f(1f, 1f, 1f, 1f);
 			tess.startDrawingQuads();
-			RenderHelper.renderBottomFaceWithUV(tess, yMin, xMin, zMin, xMax, zMax, uMin, uMax, vMin, vMax);
-			RenderHelper.renderEastFaceWithUV(tess, xMax, yMin, zMin, yMax, zMax, uMin, uMax, vMin, vMax);
+			RenderHelper.renderBottomFaceWithUV(tess, yMin, xMin, zOffset, xMax, zMax, uMin, uMax, vMin, vMax);
+			RenderHelper.renderEastFaceWithUV(tess, xMax, yMin, zOffset, yMax, zMax, uMin, uMax, vMin, vMax);
 			RenderHelper.renderSouthFaceWithUV(tess, zMax, xMin, yMin, xMax, yMax, uMin, uMax, vMin, vMax);
-			RenderHelper.renderNorthFaceWithUV(tess, zMin, xMin, yMin, xMax, yMax, uMin, uMax, vMin, vMax);
-			RenderHelper.renderTopFaceWithUV(tess, yMax, xMin, zMin, xMax, zMax, uMin, uMax, vMin, vMax);
+			RenderHelper.renderNorthFaceWithUV(tess, zOffset, xMin, yMin, xMax, yMax, uMin, uMax, vMin, vMax);
+			RenderHelper.renderTopFaceWithUV(tess, yMax, xMin, zOffset, xMax, zMax, uMin, uMax, vMin, vMax);
 			tess.draw();
 			
 			GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.1f);

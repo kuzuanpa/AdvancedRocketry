@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.tile.multiblock.machine;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.inventory.TextureResources;
@@ -34,7 +35,7 @@ import net.minecraft.item.ItemStack;
 
 public class TilePrecisionAssembler extends TileMultiblockMachine implements IModularInventory, IProgressBar {
 
-	public static final Object structure[][][] = new Object[][][]{ {{LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock}, 
+	public static final Object[][][] structure = new Object[][][]{ {{LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock},
 		{LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock},
 		{LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock, LibVulpesBlocks.blockStructureBlock}},
 
@@ -72,7 +73,7 @@ public class TilePrecisionAssembler extends TileMultiblockMachine implements IMo
 	public void registerRecipes() {
 		ItemStack userInterface = new ItemStack(AdvancedRocketryItems.itemMisc, 1,0);
 		ItemStack basicCircuit = new ItemStack(AdvancedRocketryItems.itemIC, 1,0);
-		ItemStack advancedCircuit = new ItemStack(AdvancedRocketryItems.itemIC, 1,2);
+		@NotNull ItemStack advancedCircuit = new ItemStack(AdvancedRocketryItems.itemIC, 1,2);
 		ItemStack controlCircuitBoard =  new ItemStack(AdvancedRocketryItems.itemIC,1,3);
 		ItemStack itemIOBoard = new ItemStack(AdvancedRocketryItems.itemIC,1,4);
 		ItemStack liquidIOBoard = new ItemStack(AdvancedRocketryItems.itemIC,1,5);
@@ -102,7 +103,7 @@ public class TilePrecisionAssembler extends TileMultiblockMachine implements IMo
 	}
 	
 	@Override
-	public List<BlockMeta> getAllowableWildCardBlocks(Character c) {
+	public @NotNull List<BlockMeta> getAllowableWildCardBlocks(Character c) {
 		List<BlockMeta> list = super.getAllowableWildCardBlocks(c);
 
 		list.add(new BlockMeta(LibVulpesBlocks.blockStructureBlock, BlockMeta.WILDCARD));

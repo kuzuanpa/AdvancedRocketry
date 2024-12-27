@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockAlienPlanks extends Block {
 
@@ -52,7 +53,7 @@ public class BlockAlienPlanks extends Block {
      * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
      */
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item p_149666_1_, CreativeTabs p_149666_2_, List p_149666_3_)
+    public void getSubBlocks(Item p_149666_1_, CreativeTabs p_149666_2_, @NotNull List p_149666_3_)
     {
         p_149666_3_.add(new ItemStack(p_149666_1_, 1, 0));
     }

@@ -39,7 +39,7 @@ public class GravityHandler implements IGravityManager {
 
 	public static final float ENTITY_OFFSET = 0.075f;
 	public static final float ITEM_GRAV_OFFSET = 0.04f;
-	private static WeakHashMap<Entity, Double> entityMap = new WeakHashMap<Entity, Double>();
+	private static WeakHashMap<Entity, Double> entityMap = new WeakHashMap<>();
 	public static void applyGravity(Entity entity) {
 
 		if(!entity.isInWater() || entity instanceof EntityItem) {

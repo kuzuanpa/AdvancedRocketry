@@ -1,14 +1,12 @@
 package zmaster587.advancedRocketry.entity.fx;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 
 public class OxygenCloudFX extends EntityFX {
 	public static final ResourceLocation icon = new ResourceLocation("advancedrocketry:textures/particle/soft.png");
@@ -27,7 +25,6 @@ public class OxygenCloudFX extends EntityFX {
         this.particleGreen = .7F + chroma;
         this.particleBlue = .9f;
         this.setSize(0.001F, 0.001F);
-        this.particleScale = (float)(this.rand.nextFloat() * 0.6F + 6F);
         this.motionX = motx;
         this.motionY = moty;
         this.motionZ = motz;
@@ -62,10 +59,10 @@ public class OxygenCloudFX extends EntityFX {
         
         tess.setColorRGBA_F(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
         
-        tess.addVertexWithUV((double)(f11 - y1 * f10 - y2 * f10), (double)(f12 - z1 * f10), (double)(f13 - x2 * f10 - z2 * f10), 1, 1);
-        tess.addVertexWithUV((double)(f11 - y1 * f10 + y2 * f10), (double)(f12 + z1 * f10), (double)(f13 - x2 * f10 + z2 * f10), 1, 0);
-        tess.addVertexWithUV((double)(f11 + y1 * f10 + y2 * f10), (double)(f12 + z1 * f10), (double)(f13 + x2 * f10 + z2 * f10), 0, 0);
-        tess.addVertexWithUV((double)(f11 + y1 * f10 - y2 * f10), (double)(f12 - z1 * f10), (double)(f13 + x2 * f10 - z2 * f10), 0, 1);
+        tess.addVertexWithUV(f11 - y1 * f10 - y2 * f10, f12 - z1 * f10, f13 - x2 * f10 - z2 * f10, 1, 1);
+        tess.addVertexWithUV(f11 - y1 * f10 + y2 * f10, f12 + z1 * f10, f13 - x2 * f10 + z2 * f10, 1, 0);
+        tess.addVertexWithUV(f11 + y1 * f10 + y2 * f10, f12 + z1 * f10, f13 + x2 * f10 + z2 * f10, 0, 0);
+        tess.addVertexWithUV(f11 + y1 * f10 - y2 * f10, f12 - z1 * f10, f13 + x2 * f10 - z2 * f10, 0, 1);
         //GL11.glEnable(GL11.GL_BLEND);
         
 		GL11.glPopMatrix();

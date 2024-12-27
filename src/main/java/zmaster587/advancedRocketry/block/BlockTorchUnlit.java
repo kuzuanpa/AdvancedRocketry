@@ -1,11 +1,5 @@
 package zmaster587.advancedRocketry.block;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -14,6 +8,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+import zmaster587.advancedRocketry.api.Configuration;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class BlockTorchUnlit extends BlockTorch {
 
@@ -31,7 +31,7 @@ public class BlockTorchUnlit extends BlockTorch {
 	@Override
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z,
 			int metadata, int fortune) {
-		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> ret = new ArrayList<>();
 		
 		ret.add(new ItemStack(Configuration.dropExTorches ? AdvancedRocketryBlocks.blockUnlitTorch : Blocks.torch));
 
@@ -45,8 +45,11 @@ public class BlockTorchUnlit extends BlockTorch {
 			int y, int z, EntityPlayer player,
 			int p_149727_6_, float p_149727_7_, float p_149727_8_,
 			float p_149727_9_) {
-		
-		if(!world.isRemote && player.getCurrentEquippedItem() != null && AtmosphereHandler.getOxygenHandler(world.provider.dimensionId).getAtmosphereType(x, y, z).allowsCombustion() && (player.getCurrentEquippedItem().getItem() == Item.getItemFromBlock(Blocks.torch) || 
+
+		if(world.isRemote || player.getCurrentEquippedItem() == null)return true;
+
+		AtmosphereHandler handler = AtmosphereHandler.getOxygenHandler(world.provider.dimensionId);
+		if(handler!=null && handler.getAtmosphereType(x, y, z).allowsCombustion() && (player.getCurrentEquippedItem().getItem() == Item.getItemFromBlock(Blocks.torch) ||
 				player.getCurrentEquippedItem().getItem() == Items.flint_and_steel || 
 				player.getCurrentEquippedItem().getItem() == Items.fire_charge)) {
 			

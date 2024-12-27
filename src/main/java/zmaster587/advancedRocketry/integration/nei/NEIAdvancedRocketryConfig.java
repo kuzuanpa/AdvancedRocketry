@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.integration.nei;
 import net.minecraft.item.ItemStack;
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
@@ -19,7 +20,7 @@ public class NEIAdvancedRocketryConfig implements IConfigureNEI {
 		TemplateNEI rollingMachine = new RollingMachineNEI();
 		TemplateNEI smallPlatePress = new PlatePresserNEI();
 		TemplateNEI electrolyser = new ElectrolyserNEI();
-		TemplateNEI chemReactor = new ChemicalReactorNEI();
+		@NotNull TemplateNEI chemReactor = new ChemicalReactorNEI();
 		
 		API.registerRecipeHandler(lathe);
 		API.registerUsageHandler(lathe);

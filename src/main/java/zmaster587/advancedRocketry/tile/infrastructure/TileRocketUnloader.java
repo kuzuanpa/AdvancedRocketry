@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.IInfrastructure;
 import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
 import zmaster587.libVulpes.inventory.modules.IButtonInventory;
@@ -23,7 +24,7 @@ public class TileRocketUnloader extends TileRocketLoader implements IInfrastruct
 		super(size);
 	}
 	@Override
-	public String getModularInventoryName() {
+	public @NotNull String getModularInventoryName() {
 		return "tile.loader.2.name";
 	}
 

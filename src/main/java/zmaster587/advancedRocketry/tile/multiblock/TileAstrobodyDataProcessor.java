@@ -19,6 +19,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.DataStorage;
@@ -62,7 +63,7 @@ public class TileAstrobodyDataProcessor extends TileMultiPowerConsumer implement
 	};
 
 
-	private TileDataBus dataCables[];
+	private TileDataBus[] dataCables;
 	private boolean researchingDistance, researchingAtmosphere, researchingMass;
 	private int atmosphereProgress, distanceProgress, massProgress;
 	private static final int maxResearchTime = 20;
@@ -138,12 +139,12 @@ public class TileAstrobodyDataProcessor extends TileMultiPowerConsumer implement
 	}
 
 	@Override
-	public Object[][][] getStructure() {
+	public Object[][] @NotNull [] getStructure() {
 		return structure;
 	}
 
 	@Override
-	public String getMachineName() {
+	public @NotNull String getMachineName() {
 		return "tile.planetanalyser.name";
 	}
 
@@ -410,7 +411,7 @@ public class TileAstrobodyDataProcessor extends TileMultiPowerConsumer implement
 
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		LinkedList<ModuleBase> modules = new LinkedList<ModuleBase>();
+		LinkedList<ModuleBase> modules = new LinkedList<>();
 		modules.add(new ModulePower(18, 20, getBatteries()));
 
 		//TODO: write NBT
@@ -511,7 +512,7 @@ public class TileAstrobodyDataProcessor extends TileMultiPowerConsumer implement
 
 	
 	@Override
-	protected void readNetworkData(NBTTagCompound nbt) {
+	protected void readNetworkData(@NotNull NBTTagCompound nbt) {
 		super.readNetworkData(nbt);
 		researchingAtmosphere = nbt.getBoolean("researchingAtmosphere");
 		researchingDistance = nbt.getBoolean("researchingDistance");
@@ -529,7 +530,7 @@ public class TileAstrobodyDataProcessor extends TileMultiPowerConsumer implement
 	}
 	
 	@Override
-	protected void writeNetworkData(NBTTagCompound nbt) {
+	protected void writeNetworkData(@NotNull NBTTagCompound nbt) {
 		super.writeNetworkData(nbt);
 		nbt.setBoolean("researchingAtmosphere", researchingAtmosphere);
 		nbt.setBoolean("researchingDistance", researchingDistance);

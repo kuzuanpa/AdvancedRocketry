@@ -51,10 +51,6 @@ public class EntityDummy extends Entity {
 		
 	}
 
-	@Override
-	public boolean shouldRiderSit() {
-		return true;
-	}
 	
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound p_70037_1_) {

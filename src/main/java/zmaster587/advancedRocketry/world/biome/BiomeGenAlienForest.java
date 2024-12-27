@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.world.biome;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.world.gen.WorldGenAlienTree;
 import zmaster587.advancedRocketry.world.gen.WorldGenNoTree;
 import net.minecraft.init.Blocks;
@@ -25,8 +26,8 @@ public class BiomeGenAlienForest extends BiomeGenBase {
 	}
 
 	@Override
-	public void decorate(World p_76728_1_, Random random, int chunkX,
-			int chunkZ) {
+	public void decorate(@NotNull World p_76728_1_, Random random, int chunkX,
+                         int chunkZ) {
 
 		//int xCoord = (chunkX << 4) + 8;
 		//int zCoord = (chunkZ << 4) + 8;

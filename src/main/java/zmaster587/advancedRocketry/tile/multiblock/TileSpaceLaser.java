@@ -25,6 +25,8 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.Configuration;
@@ -180,7 +182,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 
 	@Override
 	public void readDataFromNetwork(ByteBuf in, byte id,
-			NBTTagCompound nbt) {
+									@NotNull NBTTagCompound nbt) {
 		super.readDataFromNetwork(in, id, nbt);
 		if(id == 10)
 			nbt.setInteger("laserX", in.readInt());
@@ -370,7 +372,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 	}
 	
 	@Override
-	protected void writeNetworkData(NBTTagCompound nbt) {
+	protected void writeNetworkData(@NotNull NBTTagCompound nbt) {
 		super.writeNetworkData(nbt);
 		nbt.setBoolean("IsRunning", isRunning);
 	}
@@ -477,7 +479,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 	 * Gets the first inventory with an empty slot
 	 * @return first available inventory or null
 	 */
-	private Object getAvalibleInv() {
+	private @Nullable Object getAvalibleInv() {
 		ForgeDirection front = RotatableBlock.getFront(this.getBlockMetadata());
 
 		for(ForgeDirection f : VALID_INVENTORY_DIRECTIONS) {
@@ -498,7 +500,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 	 * @param item item to fit into inventory
 	 * @return inv with capablity of holding 'itemStack'
 	 */
-	private Object getAvalibleInv(ItemStack item) {
+	private Object getAvalibleInv(@Nullable ItemStack item) {
 		if(item == null)
 			return getAvalibleInv();
 
@@ -710,7 +712,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 	}
 
 	@Override
-	public void onModuleUpdated(ModuleBase module) {
+	public void onModuleUpdated(@NotNull ModuleBase module) {
 
 		if(module == locationX) {
 			if(!((ModuleTextBox)module).getText().isEmpty() && !((ModuleTextBox)module).getText().contentEquals("-"))
@@ -728,7 +730,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		List<ModuleBase> modules = new LinkedList<ModuleBase>();
+		List<ModuleBase> modules = new LinkedList<>();
 
 		if(worldObj.isRemote) {
 			modules.add(locationX = new ModuleNumericTextbox(this, 113, 31, 50, 10, 16));
