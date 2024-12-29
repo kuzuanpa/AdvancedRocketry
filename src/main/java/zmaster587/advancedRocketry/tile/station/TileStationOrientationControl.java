@@ -18,7 +18,6 @@ import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.world.provider.WorldProviderSpace;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
-import zmaster587.libVulpes.inventory.modules.IProgressBar;
 import zmaster587.libVulpes.inventory.modules.ISliderBar;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
 import zmaster587.libVulpes.inventory.modules.ModuleSlider;
@@ -29,10 +28,13 @@ import zmaster587.libVulpes.util.INetworkMachine;
 
 public class TileStationOrientationControl extends TileEntity implements IModularInventory, INetworkMachine, ISliderBar {
 
-	int[] numRotationsPerHour;
-	int[] progress;
+	final int[] numRotationsPerHour;
+	final int[] progress;
 
-	private ModuleText moduleAngularVelocity, numThrusters, maxAngularAcceleration, targetRotations;
+	private final ModuleText moduleAngularVelocity;
+    private ModuleText numThrusters;
+    private ModuleText maxAngularAcceleration;
+    private final ModuleText targetRotations;
 
 	public TileStationOrientationControl() {
 		moduleAngularVelocity = new ModuleText(6, 15, LibVulpes.proxy.getLocalizedString("msg.stationorientctrl.alt"), 0xaa2020);
@@ -57,20 +59,15 @@ public class TileStationOrientationControl extends TileEntity implements IModula
 		modules.add(new ModuleText(10, 54, "X:", 0x202020));
 		modules.add(new ModuleText(10, 69, "Y:", 0x202020)); //AYYYY
 		
-		modules.add(new ModuleSlider(24, 50, 0, TextureResources.doubleWarningSideBarIndicator, (ISliderBar)this));
-		modules.add(new ModuleSlider(24, 65, 1, TextureResources.doubleWarningSideBarIndicator, (ISliderBar)this));
+		modules.add(new ModuleSlider(24, 50, 0, TextureResources.doubleWarningSideBarIndicator, this));
+		modules.add(new ModuleSlider(24, 65, 1, TextureResources.doubleWarningSideBarIndicator, this));
 		//modules.add(new ModuleSlider(24, 35, 2, TextureResources.doubleWarningSideBarIndicator, (ISliderBar)this));
 
 		updateText();
 		return modules;
 	}
 
-	@Override
-	public boolean canUpdate() {
-		return true;
-	}
-
-	private void updateText() {
+    private void updateText() {
 		if(worldObj.isRemote) {
 			ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(this.xCoord, this.zCoord);
 			if(object != null) {

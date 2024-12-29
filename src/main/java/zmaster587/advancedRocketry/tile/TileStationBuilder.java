@@ -1,29 +1,6 @@
 package zmaster587.advancedRocketry.tile;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import cpw.mods.fml.relauncher.Side;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
-import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
-import zmaster587.advancedRocketry.inventory.TextureResources;
-import zmaster587.advancedRocketry.item.ItemPackedStructure;
-import zmaster587.advancedRocketry.item.ItemStationChip;
-import zmaster587.advancedRocketry.stations.SpaceObject;
-import zmaster587.advancedRocketry.stations.SpaceObjectManager;
-import zmaster587.advancedRocketry.tile.TileRocketBuilder.ErrorCodes;
-import zmaster587.advancedRocketry.util.StorageChunk;
-import zmaster587.libVulpes.LibVulpes;
-import zmaster587.libVulpes.api.LibVulpesBlocks;
-import zmaster587.libVulpes.inventory.modules.ModuleBase;
-import zmaster587.libVulpes.inventory.modules.ModuleButton;
-import zmaster587.libVulpes.inventory.modules.ModulePower;
-import zmaster587.libVulpes.inventory.modules.ModuleProgress;
-import zmaster587.libVulpes.inventory.modules.ModuleSlotArray;
-import zmaster587.libVulpes.inventory.modules.ModuleSync;
-import zmaster587.libVulpes.inventory.modules.ModuleText;
-import zmaster587.libVulpes.inventory.modules.ModuleTexturedSlotArray;
-import zmaster587.libVulpes.util.EmbeddedInventory;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -31,10 +8,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
+import zmaster587.advancedRocketry.inventory.TextureResources;
+import zmaster587.advancedRocketry.item.ItemPackedStructure;
+import zmaster587.advancedRocketry.item.ItemStationChip;
+import zmaster587.advancedRocketry.stations.SpaceObject;
+import zmaster587.advancedRocketry.stations.SpaceObjectManager;
+import zmaster587.advancedRocketry.util.StorageChunk;
+import zmaster587.libVulpes.LibVulpes;
+import zmaster587.libVulpes.inventory.modules.*;
+import zmaster587.libVulpes.util.EmbeddedInventory;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class TileStationBuilder extends TileRocketBuilder implements IInventory {
 
-	EmbeddedInventory inventory;
+	final EmbeddedInventory inventory;
 	Long storedId;
 	public TileStationBuilder() {
 		super();
@@ -66,7 +58,7 @@ public class TileStationBuilder extends TileRocketBuilder implements IInventory 
 	}
 
 	@Override
-	public void scanRocket(World world, int x, int y, int z, AxisAlignedBB bb) {
+	public void scanRocket(@NotNull World world, int x, int y, int z, AxisAlignedBB bb) {
 
 		int actualMinX = (int)bb.maxX,
 				actualMinY = (int)bb.maxY,
@@ -186,13 +178,13 @@ public class TileStationBuilder extends TileRocketBuilder implements IInventory 
 
 	@Override
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
-			NBTTagCompound nbt) {
+							   @NotNull NBTTagCompound nbt) {
 		boolean isScanningFlag = !isScanning() && canScan();
 		super.useNetworkData(player, side, id, nbt);
 		
 		if(id == 1 && isScanningFlag ) {
 			inventory.decrStackSize(0, 1);
-			storedId = (long)ItemStationChip.getUUID(inventory.getStackInSlot(1));
+			storedId = ItemStationChip.getUUID(inventory.getStackInSlot(1));
 			if(storedId == 0) storedId = null;
 			if(storedId == null)
 				inventory.decrStackSize(1, 1);
@@ -202,7 +194,7 @@ public class TileStationBuilder extends TileRocketBuilder implements IInventory 
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		inventory.writeToNBT(nbt);
 		if(storedId != null) {

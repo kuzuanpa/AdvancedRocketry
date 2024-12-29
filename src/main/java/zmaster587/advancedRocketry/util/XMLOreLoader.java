@@ -2,7 +2,6 @@ package zmaster587.advancedRocketry.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,7 +62,7 @@ public class XMLOreLoader {
 	public @NotNull List<SingleEntry<BlockPosition, OreGenProperties>> loadPropertyFile() {
 		Node childNode = doc.getFirstChild().getFirstChild();
 		@NotNull List<SingleEntry<BlockPosition, OreGenProperties>> mapping = new LinkedList<>();
-		OreGenProperties properties = new OreGenProperties();
+		OreGenProperties properties;
 
 		while(childNode != null) {
 
@@ -83,7 +82,7 @@ public class XMLOreLoader {
 					try {
 						pressure = MathHelper.clamp_int(Integer.parseInt(node.getTextContent()),0, AtmosphereTypes.values().length);
 					} catch( NumberFormatException e ) {
-						AdvancedRocketry.logger.warn("Invalid format for pressure: \"" + node.getTextContent() + "\" Only numbers are allowed(" + doc.getDocumentURI() + ")");
+                        AdvancedRocketry.logger.warn("Invalid format for pressure: \"{}\" Only numbers are allowed({})", node.getTextContent(), doc.getDocumentURI());
 						childNode = childNode.getNextSibling();
 						continue;
 					}
@@ -95,14 +94,14 @@ public class XMLOreLoader {
 					try {
 						temp = MathHelper.clamp_int(Integer.parseInt(node.getTextContent()),0, Temps.values().length);
 					} catch( NumberFormatException e ) {
-						AdvancedRocketry.logger.warn("Invalid format for temp: \"" + node.getTextContent() + "\" Only numbers are allowed(" + doc.getDocumentURI() + ")");
+                        AdvancedRocketry.logger.warn("Invalid format for temp: \"{}\" Only numbers are allowed({})", node.getTextContent(), doc.getDocumentURI());
 						childNode = childNode.getNextSibling();
 						continue;
 					}
 				}
 
 				if(pressure == -1 && temp == -1) {
-					AdvancedRocketry.logger.warn("Invalid format for temp: \"" + node.getTextContent() + "\" Only numbers are allowed(" + doc.getDocumentURI() + ")");
+                    AdvancedRocketry.logger.warn("Invalid format for temp: \"{}\" Only numbers are allowed({})", node.getTextContent(), doc.getDocumentURI());
 					childNode = childNode.getNextSibling();
 					continue;
 				}
@@ -116,14 +115,14 @@ public class XMLOreLoader {
 
 				if(temp != pressure) {
 					if(pressure == -1) {
-						mapping.add(new SingleEntry(new BlockPosition(-1, temp,0), properties));
+						mapping.add(new SingleEntry<>(new BlockPosition(-1, temp,0), properties));
 					}
 					else if(temp == -1) {
-						mapping.add(new SingleEntry(new BlockPosition(pressure, -1,0), properties));
+						mapping.add(new SingleEntry<>(new BlockPosition(pressure, -1,0), properties));
 					}
 				}
 				else
-					mapping.add(new SingleEntry(new BlockPosition(pressure, temp,0), properties));
+					mapping.add(new SingleEntry<>(new BlockPosition(pressure, temp,0), properties));
 				
 				childNode = childNode.getNextSibling();
 			}
@@ -239,7 +238,7 @@ public class XMLOreLoader {
 				Block block2 = Block.getBlockFromName(block);
 
 				if(block2 == null) {
-					AdvancedRocketry.logger.warn(block + " is not a valid name for ore");
+                    AdvancedRocketry.logger.warn("{} is not a valid name for ore", block);
 					childNode = childNode.getNextSibling();
 					continue;
 				}
@@ -255,11 +254,11 @@ public class XMLOreLoader {
 	
 	public static String writeXML(OreGenProperties gen, int numTabs) {
 		
-		String outputString = "";
+		String outputString;
 		
-		String tabLen = "";
+		StringBuilder tabLen = new StringBuilder();
 		for(int i = 0; i < numTabs; i++) {
-			tabLen += "\t";
+			tabLen.append("\t");
 		}
 		
 		outputString = tabLen + "<oreGen ";
@@ -269,24 +268,20 @@ public class XMLOreLoader {
 	
 	public static String writeOreEntryXML(OreGenProperties gen, int numTabs) {
 		
-		String outputString = "";
+		StringBuilder outputString = new StringBuilder();
 		
-		String tabLen = "";
+		StringBuilder tabLen = new StringBuilder();
 		for(int i = 0; i < numTabs; i++) {
-			tabLen += "\t";
+			tabLen.append("\t");
 		}
 		
 		for(OreEntry ore : gen.getOreEntries()) {
 			int meta = ore.getBlockState().getMeta();
 			
-			outputString += tabLen + "<ore block=\"" + Block.blockRegistry.getNameForObject(ore.getBlockState().getBlock()) +
-							(meta == 0 ? "" : "\" meta=\"" + meta)
-							+ "\" minHeight=\"" +
-							ore.getMinHeight() + "\" maxHeight=\"" + ore.getMaxHeight() + "\" clumpSize=\"" + ore.getClumpSize() + "\"" +
-							" chancePerChunk=\"" + ore.getChancePerChunk() + "\" />\n";
+			outputString.append(tabLen).append("<ore block=\"").append(Block.blockRegistry.getNameForObject(ore.getBlockState().getBlock())).append(meta == 0 ? "" : "\" meta=\"" + meta).append("\" minHeight=\"").append(ore.getMinHeight()).append("\" maxHeight=\"").append(ore.getMaxHeight()).append("\" clumpSize=\"").append(ore.getClumpSize()).append("\"").append(" chancePerChunk=\"").append(ore.getChancePerChunk()).append("\" />\n");
 			
 		}
 		
-		return outputString;
+		return outputString.toString();
 	}
 }

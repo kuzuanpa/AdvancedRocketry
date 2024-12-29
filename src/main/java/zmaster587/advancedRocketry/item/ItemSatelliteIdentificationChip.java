@@ -15,11 +15,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import zmaster587.libVulpes.LibVulpes;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 public class ItemSatelliteIdentificationChip extends Item implements ISatelliteIdItem {
 
-	private static String name = "name";
+	private static final String name = "name";
 
 	@Override
 	public boolean isDamageable() {

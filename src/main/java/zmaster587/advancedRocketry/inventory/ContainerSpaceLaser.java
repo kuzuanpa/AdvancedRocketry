@@ -1,29 +1,24 @@
 package zmaster587.advancedRocketry.inventory;
 
 import org.jetbrains.annotations.Nullable;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.integration.CompatibilityMgr;
 import zmaster587.advancedRocketry.tile.multiblock.TileSpaceLaser;
 import zmaster587.libVulpes.gui.SlotSingleItem;
 import zmaster587.libVulpes.gui.SlotOreDict;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class ContainerSpaceLaser extends Container {
 
-	TileSpaceLaser laserTile;
+	final TileSpaceLaser laserTile;
 	boolean finished, jammed;
 	int prevEnergy = 0, prevLaserX = 0, prevLaserZ = 0, buildingX, buildingZ;
-	TileSpaceLaser.MODE currMode;
+	final TileSpaceLaser.MODE currMode;
 
 	ContainerSpaceLaser(InventoryPlayer inventoryPlayer, TileSpaceLaser tile) {
 		super();
@@ -56,52 +51,51 @@ public class ContainerSpaceLaser extends Container {
 		super.detectAndSendChanges();
 		if(laserTile.getBatteries().getEnergyStored() != prevEnergy) {
 			prevEnergy = laserTile.getBatteries().getEnergyStored();
-			for (int j = 0; j < this.crafters.size(); ++j)
-			{
-				((ICrafting)this.crafters.get(j)).sendProgressBarUpdate(this, 0, prevEnergy/100);
-			}
+            for (Object crafter : this.crafters) {
+                ((ICrafting) crafter).sendProgressBarUpdate(this, 0, prevEnergy / 100);
+            }
 		}
 		
 		if(laserTile.laserX != prevLaserX) {
 			prevLaserX = laserTile.laserX;
-			
-			
-			for(int i = 0; i < this.crafters.size(); i++) {
-				((ICrafting)this.crafters.get(i)).sendProgressBarUpdate(this, 1, prevLaserX & 65535);
-				
-				int j = prevLaserX >>> 16;
-				//if(j != 0)
-				((ICrafting)this.crafters.get(i)).sendProgressBarUpdate(this, 2, j);
-			}
+
+
+            for (Object crafter : this.crafters) {
+                ((ICrafting) crafter).sendProgressBarUpdate(this, 1, prevLaserX & 65535);
+
+                int j = prevLaserX >>> 16;
+                //if(j != 0)
+                ((ICrafting) crafter).sendProgressBarUpdate(this, 2, j);
+            }
 		}
 		
 		if(laserTile.laserZ != prevLaserZ) {
 			prevLaserZ = laserTile.laserZ;
-			
-			for(int i = 0; i < this.crafters.size(); i++) {
-				((ICrafting)this.crafters.get(i)).sendProgressBarUpdate(this, 3, prevLaserZ & 65535);
-				
-				int j = prevLaserZ >>> 16;
-				//if(j != 0)
-				((ICrafting)this.crafters.get(i)).sendProgressBarUpdate(this, 4, j);
-			}
+
+            for (Object crafter : this.crafters) {
+                ((ICrafting) crafter).sendProgressBarUpdate(this, 3, prevLaserZ & 65535);
+
+                int j = prevLaserZ >>> 16;
+                //if(j != 0)
+                ((ICrafting) crafter).sendProgressBarUpdate(this, 4, j);
+            }
 		}
 		if(currMode.compareTo(laserTile.getMode()) != 0) {
-			for(int i = 0; i < this.crafters.size(); i++) {
-				((ICrafting)this.crafters.get(i)).sendProgressBarUpdate(this, 5, laserTile.getMode().ordinal());
-			}
+            for (Object crafter : this.crafters) {
+                ((ICrafting) crafter).sendProgressBarUpdate(this, 5, laserTile.getMode().ordinal());
+            }
 		}
 		if(jammed != laserTile.isJammed()) {
 			jammed = laserTile.isJammed();
-			for(int i = 0; i < this.crafters.size(); i++) {
-				((ICrafting)this.crafters.get(i)).sendProgressBarUpdate(this, 6, laserTile.isJammed() ? 1 : 0);
-			}
+            for (Object crafter : this.crafters) {
+                ((ICrafting) crafter).sendProgressBarUpdate(this, 6, laserTile.isJammed() ? 1 : 0);
+            }
 		}
 		if(finished != laserTile.isFinished()) {
 			finished = laserTile.isFinished();
-			for(int i = 0; i < this.crafters.size(); i++) {
-				((ICrafting)this.crafters.get(i)).sendProgressBarUpdate(this, 7, laserTile.isFinished() ? 1 : 0);
-			}
+            for (Object crafter : this.crafters) {
+                ((ICrafting) crafter).sendProgressBarUpdate(this, 7, laserTile.isFinished() ? 1 : 0);
+            }
 		}
 	}
 
@@ -127,12 +121,12 @@ public class ContainerSpaceLaser extends Container {
 			buildingZ = 0;
 		}
 		else if(id == 5) {
-			laserTile.setMode(currMode.values()[value]);
+			laserTile.setMode(TileSpaceLaser.MODE.values()[value]);
 		}
 		else if(id == 6)
-			laserTile.setJammed(value == 1 ? true : false);
+			laserTile.setJammed(value == 1);
 		else if(id == 7)
-			laserTile.setFinished(value == 1 ? true : false);
+			laserTile.setFinished(value == 1);
 	}
 
 	@Override

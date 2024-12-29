@@ -1,14 +1,14 @@
 package zmaster587.advancedRocketry.world.gen;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import zmaster587.advancedRocketry.api.Configuration;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.api.Configuration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BiomeCacheExtended {
     /** Reference to the WorldChunkManager */
@@ -16,9 +16,9 @@ public class BiomeCacheExtended {
     /** The last time this BiomeCache was cleaned, in milliseconds. */
     private long lastCleanupTime;
     /** The map of keys to BiomeCacheBlocks. Keys are based on the chunk x, z coordinates as (x | z << 32). */
-    private @NotNull LongHashMap cacheMap = new LongHashMap();
+    private final @NotNull LongHashMap cacheMap = new LongHashMap();
     /** The list of cached BiomeCacheBlocks */
-    private List cache = new ArrayList();
+    private final List<BiomeCacheExtended.Block> cache = new ArrayList<>();
     private static final String __OBFID = "CL_00000162";
 
     public BiomeCacheExtended(WorldChunkManager p_i1973_1_)
@@ -69,7 +69,7 @@ public class BiomeCacheExtended {
 
             for (int k = 0; k < this.cache.size(); ++k)
             {
-            	BiomeCacheExtended.Block block = (BiomeCacheExtended.Block)this.cache.get(k);
+            	BiomeCacheExtended.Block block = this.cache.get(k);
                 long l = i - block.lastAccessTime;
 
                 if (l > 30000L || l < 0L)
@@ -93,13 +93,13 @@ public class BiomeCacheExtended {
     public class Block
     {
         /** An array of chunk rainfall values saved by this cache. */
-        public float[] rainfallValues = new float[Configuration.maxBiomes];
+        public final float[] rainfallValues = new float[Configuration.maxBiomes];
         /** The array of biome types stored in this BiomeCacheBlock. */
-        public BiomeGenBase[] biomes = new BiomeGenBase[Configuration.maxBiomes];
+        public final BiomeGenBase[] biomes = new BiomeGenBase[Configuration.maxBiomes];
         /** The x coordinate of the BiomeCacheBlock. */
-        public int xPosition;
+        public final int xPosition;
         /** The z coordinate of the BiomeCacheBlock. */
-        public int zPosition;
+        public final int zPosition;
         /** The last time this BiomeCacheBlock was accessed, in milliseconds. */
         public long lastAccessTime;
         private static final String __OBFID = "CL_00000163";

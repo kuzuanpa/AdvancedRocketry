@@ -6,7 +6,7 @@ import net.minecraft.world.gen.MapGenBase;
 
 public class MapGenCrater extends MapGenBase {
 
-	int chancePerChunk;
+	final int chancePerChunk;
 
 	public MapGenCrater(int chancePerChunk) {
 		this.chancePerChunk = chancePerChunk;

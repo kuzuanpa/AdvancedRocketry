@@ -56,7 +56,7 @@ public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements
 
 		list.add(pan);
 		list.add(new ModuleButton(120, 124, -1, LibVulpes.proxy.getLocalizedString("msg.biomechanger.scan"), this, TextureResources.buttonScan));
-		list.add(new ModulePower(16, 48, (IUniversalEnergy) sat));
+		list.add(new ModulePower(16, 48, sat));
 
 		return list;
 	}
@@ -112,7 +112,7 @@ public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements
 
 	private int getBiomeId(ItemStack stack) {
 		SatelliteBase sat = getSatellite(stack);
-		if(sat != null && sat instanceof SatelliteBiomeChanger)
+		if(sat instanceof SatelliteBiomeChanger)
 			return ((SatelliteBiomeChanger)sat).getBiome();
 		else
 			return -1;
@@ -121,7 +121,7 @@ public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements
 	private void setBiomeId(ItemStack stack, int id) {
 		if(BiomeGenBase.getBiome(id) != null) {
 			SatelliteBase sat = getSatellite(stack);
-			if(sat != null && sat instanceof SatelliteBiomeChanger) {
+			if(sat instanceof SatelliteBiomeChanger) {
 				((SatelliteBiomeChanger)sat).setBiome(id);
 			}
 		}

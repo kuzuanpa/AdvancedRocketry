@@ -1,15 +1,16 @@
 package zmaster587.advancedRocketry.network;
 
-import java.io.IOException;
-
-import zmaster587.advancedRocketry.api.atmosphere.AtmosphereRegister;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
-import zmaster587.libVulpes.network.BasePacket;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.atmosphere.AtmosphereRegister;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
+import zmaster587.libVulpes.network.BasePacket;
+
+import java.io.IOException;
 
 public class PacketAtmSync extends BasePacket {
 
@@ -35,21 +36,22 @@ public class PacketAtmSync extends BasePacket {
 		try {
 			packetBuffer.writeNBTTagCompoundToBuffer(nbt);
 		} catch (IOException e) {
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
+
 		}
 	}
 
 	@Override
 	public void readClient(ByteBuf in) {
-		NBTTagCompound nbt = new NBTTagCompound();
 		PacketBuffer packetBuffer = new PacketBuffer(in);
 		
 		try {
-			nbt = packetBuffer.readNBTTagCompoundFromBuffer();
+			NBTTagCompound nbt = packetBuffer.readNBTTagCompoundFromBuffer();
 			type = nbt.getString("type");
 			pressure = nbt.getShort("pressure");
 		} catch (IOException e) {
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
+
 		}
 	}
 

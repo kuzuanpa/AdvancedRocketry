@@ -1,11 +1,7 @@
 package zmaster587.advancedRocketry.tile.multiblock.energy;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.LinkedList;
-import java.util.List;
-
 import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,6 +33,9 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 import zmaster587.libVulpes.tile.multiblock.TileMultiPowerProducer;
 import zmaster587.libVulpes.util.Vector3F;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class TileMicrowaveReciever extends TileMultiPowerProducer {
 
 	static final BlockMeta iron_block = new BlockMeta(AdvancedRocketryBlocks.blockSolarPanel);
@@ -53,7 +52,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 	boolean initialCheck;
 	double insolationPowerMultiplier;
 	int powerMadeLastTick, prevPowerMadeLastTick;
-	ModuleText textModule;
+	final ModuleText textModule;
 	public TileMicrowaveReciever() {
 		connectedSatellites = new LinkedList<>();
 		initialCheck = false;
@@ -96,12 +95,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 		return list;
 	}
 
-	@Override
-	public boolean canUpdate() {
-		return true;
-	}
-
-	@Override
+    @Override
 	public String getMachineName() {
 		return "tile.microwaveReciever.name";
 	}
@@ -114,7 +108,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 	public void onInventoryUpdated() {
 		super.onInventoryUpdated();
 
-		List list = new LinkedList<Long>();
+		List<Long> list = new LinkedList<>();
 
 		for(IInventory inv : itemInPorts) {
 			for(int i = 0; i < inv.getSizeInventory(); i++) {
@@ -193,7 +187,7 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 					}
 				}
 				//Multiplied by two for 520W = 1 RF/t becoming 2 RF/t @ 100% efficiency, and by insolation mult for solar stuff
-				energyRecieved *= 2 * insolationPowerMultiplier;
+				energyRecieved *= (int) (2 * insolationPowerMultiplier);
 			}
 			powerMadeLastTick = (int) (energyRecieved*Configuration.microwaveRecieverMulitplier);
 
@@ -262,9 +256,8 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer {
 		int[] intArray = new int[connectedSatellites.size()*2];
 
 		for( int i =0; i < connectedSatellites.size()*2; i += 2 ) {
-			connectedSatellites.get(i/2);
-			intArray[i] = (int) (connectedSatellites.get(i/2) & 0xFFFFFFFF);
-			intArray[i+1] = (int) ((connectedSatellites.get(i/2) >>> 32) & 0xFFFFFFFF);
+			intArray[i] = Math.toIntExact((connectedSatellites.get(i / 2)));
+			intArray[i+1] = (int) ((connectedSatellites.get(i / 2) >>> 32));
 		}
 
 		nbt.setIntArray("satilliteList", intArray);

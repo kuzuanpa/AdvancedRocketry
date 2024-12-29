@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
@@ -14,7 +13,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 public class BucketHandler {
 	
 	public static final BucketHandler INSTANCE = new BucketHandler();
-	private static Map<Block, Item> bucketMap = new HashMap<>();
+	private static final Map<Block, Item> bucketMap = new HashMap<>();
 
 	@SubscribeEvent
 	public void onBucketFill(FillBucketEvent event) {

@@ -14,7 +14,7 @@ import net.minecraft.world.gen.feature.WorldGenShrub;
 
 public class BiomeGenOceanSpires extends BiomeGenBase {
 
-	MapGenBase oceanSpire;
+	final MapGenBase oceanSpire;
 	
 	public BiomeGenOceanSpires(int id, boolean register) {
 		super(id, register);

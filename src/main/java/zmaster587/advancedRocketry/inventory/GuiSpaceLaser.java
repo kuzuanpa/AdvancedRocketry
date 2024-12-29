@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 
 import zmaster587.advancedRocketry.tile.multiblock.TileSpaceLaser;
-import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.gui.GuiImageButton;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
@@ -20,12 +19,11 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class GuiSpaceLaser extends GuiContainer {
 
-	private @NotNull ResourceLocation backdrop = new ResourceLocation("advancedrocketry", "textures/gui/LaserTile.png");
-	private TileSpaceLaser laserTile;
+	private final @NotNull ResourceLocation backdrop = new ResourceLocation("advancedrocketry", "textures/gui/LaserTile.png");
+	private final TileSpaceLaser laserTile;
 	private int prevX, prevZ;
 
 	GuiTextField xbox,ybox;

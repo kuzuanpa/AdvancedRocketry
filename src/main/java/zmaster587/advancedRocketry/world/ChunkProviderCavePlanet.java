@@ -1,24 +1,9 @@
 package zmaster587.advancedRocketry.world;
 
-import static net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SHROOM;
-import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.QUARTZ;
-import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.FIRE;
-import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.GLOWSTONE;
-import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.NETHER_LAVA;
-
-import java.util.List;
-import java.util.Random;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.world.decoration.MapGenHighCaves;
-import zmaster587.advancedRocketry.world.decoration.MapGenMassiveRavine;
+import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
@@ -30,20 +15,22 @@ import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.MapGenCavesHell;
 import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
-import net.minecraft.world.gen.feature.WorldGenFire;
-import net.minecraft.world.gen.feature.WorldGenFlowers;
-import net.minecraft.world.gen.feature.WorldGenGlowStone1;
-import net.minecraft.world.gen.feature.WorldGenGlowStone2;
-import net.minecraft.world.gen.feature.WorldGenHellLava;
-import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.structure.MapGenNetherBridge;
-import net.minecraftforge.common.*;
-import cpw.mods.fml.common.eventhandler.Event.*;
-import net.minecraftforge.event.terraingen.*;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.terraingen.ChunkProviderEvent;
+import net.minecraftforge.event.terraingen.TerrainGen;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.world.decoration.MapGenHighCaves;
+import zmaster587.advancedRocketry.world.decoration.MapGenMassiveRavine;
+
+import java.util.Random;
 
 public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 {
-	private Random hellRNG;
+	private final Random hellRNG;
 	/** A NoiseGeneratorOctaves used in generating nether terrain */
 	private NoiseGeneratorOctaves netherNoiseGen1;
 	private NoiseGeneratorOctaves netherNoiseGen2;
@@ -55,18 +42,19 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 	public NoiseGeneratorOctaves netherNoiseGen6;
 	public NoiseGeneratorOctaves netherNoiseGen7;
 	/** Is the world that the nether is getting generated. */
-	private World worldObj;
+	private final World worldObj;
 	private double[] noiseField;
-	public MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
+	public final MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
 	/** Holds the noise used to determine whether slowsand can be generated at a location */
 	private double[] slowsandNoise = new double[256];
 	private double[] gravelNoise = new double[256];
 	/** Holds the noise used to determine whether something other than netherrack can be generated at a location */
 	private double[] netherrackExclusivityNoise = new double[256];
-	private MapGenBase netherCaveGenerator = new MapGenCavesHell();
+	private final MapGenBase netherCaveGenerator = new MapGenCavesHell();
 	@NotNull
+    final
     MapGenBase genHighCaves = new MapGenHighCaves();
-	private MapGenBase genRavines = new MapGenMassiveRavine();
+	private final MapGenBase genRavines = new MapGenMassiveRavine();
 	double[] noiseData1;
 	double[] noiseData2;
 	double[] noiseData3;
@@ -134,13 +122,13 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 				for (int k1 = 0; k1 < 16; ++k1)
 				{
 					double d0 = 0.125D;
-					double d1 = this.noiseField[((i1 + 0) * l + j1 + 0) * b2 + k1 + 0];
-					double d2 = this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 0];
-					double d3 = this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 0];
-					double d4 = this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 0];
-					double d5 = (this.noiseField[((i1 + 0) * l + j1 + 0) * b2 + k1 + 1] - d1) * d0;
-					double d6 = (this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 1] - d2) * d0;
-					double d7 = (this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 1] - d3) * d0;
+					double d1 = this.noiseField[((i1) * l + j1) * b2 + k1];
+					double d2 = this.noiseField[((i1) * l + j1 + 1) * b2 + k1];
+					double d3 = this.noiseField[((i1 + 1) * l + j1) * b2 + k1];
+					double d4 = this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1];
+					double d5 = (this.noiseField[((i1) * l + j1) * b2 + k1 + 1] - d1) * d0;
+					double d6 = (this.noiseField[((i1) * l + j1 + 1) * b2 + k1 + 1] - d2) * d0;
+					double d7 = (this.noiseField[((i1 + 1) * l + j1) * b2 + k1 + 1] - d3) * d0;
 					double d8 = (this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 1] - d4) * d0;
 
 					for (int l1 = 0; l1 < 8; ++l1)
@@ -153,7 +141,7 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 
 						for (int i2 = 0; i2 < 4; ++i2)
 						{
-							int j2 = i2 + i1 * 4 << 12 | 0 + j1 * 4 << 8 | k1 * 8 + l1;
+							int j2 = i2 + i1 * 4 << 12 | j1 * 4 << 8 | k1 * 8 + l1;
 							short short1 = 256;
 							double d14 = 0.25D;
 							double d15 = d10;
@@ -198,7 +186,6 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 	@Override
     public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
     {
-        BlockFalling.fallInstantly = true;
 
         BlockFalling.fallInstantly = false;
     }
@@ -231,7 +218,7 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 				}
 		}
 
-		BiomeGenBase[] abiomegenbase = this.worldObj.getWorldChunkManager().loadBlockGeneratorData((BiomeGenBase[])null, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16); //Forge Move up to allow for passing to replaceBiomeBlocks
+		BiomeGenBase[] abiomegenbase = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(null, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16); //Forge Move up to allow for passing to replaceBiomeBlocks
 		this.func_147419_a(p_73154_1_, p_73154_2_, ablock.ablock);
 		this.replaceBlocksForBiome(p_73154_1_, p_73154_2_, ablock.ablock, ablock.abyte, abiomegenbase);
 		this.genHighCaves.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock.ablock);
@@ -295,15 +282,13 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 									 if (flag1)
 									 {
 										 block = Blocks.gravel;
-										 block1 = fillblock;
-									 }
+                                     }
 
 									 if (flag)
 									 {
 										 //Other, other, for now we just use fill block
 										 block = fillblock;
-										 block1 = fillblock;
-									 }
+                                     }
 								 }
 
 								 if (k1 < b0 && (block == null || block.getMaterial() == Material.air))
@@ -369,11 +354,11 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 		 for (i2 = 0; i2 < p_73164_6_; ++i2)
 		 {
 			 adouble1[i2] = Math.cos((double)i2 * Math.PI * 6.0D / (double)p_73164_6_) * 2.0D;
-			 double d2 = (double)i2;
+			 double d2 = i2;
 
 			 if (i2 > p_73164_6_ / 2)
 			 {
-				 d2 = (double)(p_73164_6_ - 1 - i2);
+				 d2 = p_73164_6_ - 1 - i2;
 			 }
 
 			 if (d2 < 4.0D)
@@ -391,8 +376,7 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 
 				 if (d3 > 1.0D)
 				 {
-					 d3 = 1.0D;
-				 }
+                 }
 
 				 double d4 = 0.0D;
 				 double d5 = this.noiseData5[l1] / 8000.0D;
@@ -413,27 +397,20 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 						 d5 = -1.0D;
 					 }
 
-					 d5 /= 1.4D;
-					 d5 /= 2.0D;
-					 d3 = 0.0D;
-				 }
+                 }
 				 else
 				 {
 					 if (d5 > 1.0D)
 					 {
-						 d5 = 1.0D;
-					 }
+                     }
 
-					 d5 /= 6.0D;
-				 }
+                 }
 
-				 d3 += 0.5D;
-				 d5 = d5 * (double)p_73164_6_ / 16.0D;
-				 ++l1;
+                 ++l1;
 
 				 for (int j2 = 0; j2 < p_73164_6_; ++j2)
 				 {
-					 double d6 = 0.0D;
+					 double d6;
 					 double d7 = adouble1[j2];
 					 double d8 = this.noiseData2[k1] / 512.0D;
 					 double d9 = this.noiseData3[k1] / 512.0D;
@@ -457,28 +434,11 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 
 					 if (j2 > p_73164_6_ - 4)
 					 {
-						 d11 = (double)((float)(j2 - (p_73164_6_ - 4)) / 3.0F);
+						 d11 = (float)(j2 - (p_73164_6_ - 4)) / 3.0F;
 						 d6 = d6 * (1.0D - d11) + -10.0D * d11;
 					 }
 
-					 if ((double)j2 < d4)
-					 {
-						 d11 = (d4 - (double)j2) / 4.0D;
-
-						 if (d11 < 0.0D)
-						 {
-							 d11 = 0.0D;
-						 }
-
-						 if (d11 > 1.0D)
-						 {
-							 d11 = 1.0D;
-						 }
-
-						 d6 = d6 * (1.0D - d11) + -10.0D * d11;
-					 }
-
-					 p_73164_1_[k1] = d6;
+                     p_73164_1_[k1] = d6;
 					 ++k1;
 				 }
 			 }
@@ -526,18 +486,8 @@ public class ChunkProviderCavePlanet extends ChunkProviderPlanet
 	        return "HellRandomLevelSource";
 	    }
 
-	    public @Nullable ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
+    public void recreateStructures(int p_82695_1_, int p_82695_2_)
 	    {
-	        return null;
-	    }
-
-	    public int getLoadedChunkCount()
-	    {
-	        return 0;
-	    }
-
-	    public void recreateStructures(int p_82695_1_, int p_82695_2_)
-	    {
-	        this.genNetherBridge.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[])null);
+	        this.genNetherBridge.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, null);
 	    }
 }

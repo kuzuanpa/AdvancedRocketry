@@ -27,7 +27,7 @@ public class GuiHandler implements IGuiHandler {
 		Object tile;
 
 		if(y > -1)
-			tile = world.getTileEntity(x, y, z);
+            world.getTileEntity(x, y, z);
 		else if(x == -1) {
 			ItemStack stack = player.getHeldItem();
 			
@@ -35,16 +35,16 @@ public class GuiHandler implements IGuiHandler {
 			if(stack == null || !(stack.getItem() instanceof IModularInventory)) {
 				return null;
 			}
-			
-			tile = player.getHeldItem().getItem();
-		}
+
+            player.getHeldItem().getItem();
+        }
 		else
-			tile = world.getEntityByID(x);
+            world.getEntityByID(x);
 
 		if(ID == guiId.OreMappingSatellite.ordinal()) {
 			SatelliteBase satellite = DimensionManager.getInstance().getSatellite(y);
 			
-			if(satellite == null || !(satellite instanceof SatelliteOreMapping) || satellite.getDimensionId() != world.provider.dimensionId)
+			if(!(satellite instanceof SatelliteOreMapping) || satellite.getDimensionId() != world.provider.dimensionId)
 				satellite = null;
 			
 			return new ContainerOreMappingSatallite((SatelliteOreMapping) satellite, player.inventory);
@@ -59,7 +59,7 @@ public class GuiHandler implements IGuiHandler {
 		Object tile;
 		
 		if(y > -1)
-			tile = world.getTileEntity(x, y, z);
+            world.getTileEntity(x, y, z);
 		else if(x == -1) {
 			ItemStack stack = player.getHeldItem();
 			
@@ -67,17 +67,17 @@ public class GuiHandler implements IGuiHandler {
 			if(stack == null || !(stack.getItem() instanceof IModularInventory)) {
 				return null;
 			}
-			
-			tile = player.getHeldItem().getItem();
-		}
+
+            player.getHeldItem().getItem();
+        }
 		else
-			tile = world.getEntityByID(x);
+            world.getEntityByID(x);
 
 		if(ID == guiId.OreMappingSatellite.ordinal()) {
 			
 			@Nullable SatelliteBase satellite = DimensionManager.getInstance().getSatellite(y);
 			
-			if(satellite == null || !(satellite instanceof SatelliteOreMapping) || satellite.getDimensionId() != world.provider.dimensionId)
+			if(!(satellite instanceof SatelliteOreMapping) || satellite.getDimensionId() != world.provider.dimensionId)
 				satellite = null;
 			
 			return new GuiOreMappingSatellite((SatelliteOreMapping) satellite, player);

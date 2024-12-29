@@ -13,7 +13,7 @@ import zmaster587.advancedRocketry.integration.CompatibilityMgr;
 
 public class AtmosphereNeedsSuit extends AtmosphereBase {
 	
-	static Class powerSuitItem;
+	static Class<?> powerSuitItem;
 	
 	public AtmosphereNeedsSuit(boolean canTick, boolean isBreathable, boolean allowsCombustion, String name) {
 		super(canTick, isBreathable, allowsCombustion, name);
@@ -72,7 +72,7 @@ public class AtmosphereNeedsSuit extends AtmosphereBase {
 		}
 		
 		
-		return isEnchanted || (stack != null && (stack.getItem() instanceof IProtectiveArmor && ((IProtectiveArmor)stack.getItem()).protectsFromSubstance(this, stack, true)));
+		return isEnchanted || stack.getItem() instanceof IProtectiveArmor && ((IProtectiveArmor) stack.getItem()).protectsFromSubstance(this, stack, true);
 	}
 
 }

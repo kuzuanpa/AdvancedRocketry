@@ -48,10 +48,10 @@ public abstract class GuiProgressBarContainer extends GuiContainer {
         float f1 = 0.00390625F;
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV((double)(x + 0), (double)(y + height), (double)this.zLevel, (double)((float)(u + 0) * f), (double)((float)(v + height) * f1));
-        tessellator.addVertexWithUV((double)(x + width), (double)(y + height), (double)this.zLevel, (double)((float)(u + width) * f), (double)((float)(v + height) * f1));
-        tessellator.addVertexWithUV((double)(x + width), (double)(y + 0), (double)this.zLevel, (double)((float)(u + width) * f), (double)((float)(v + 0) * f1));
-        tessellator.addVertexWithUV((double)(x + 0), (double)(y + 0), (double)this.zLevel, (double)((float)(u + 0) * f), (double)((float)(v + 0) * f1));
+        tessellator.addVertexWithUV(x, y + height, this.zLevel, (float)(u) * f, (float)(v + height) * f1);
+        tessellator.addVertexWithUV(x + width, y + height, this.zLevel, (float)(u + width) * f, (float)(v + height) * f1);
+        tessellator.addVertexWithUV(x + width, y, this.zLevel, (float)(u + width) * f, (float)(v) * f1);
+        tessellator.addVertexWithUV(x, y, this.zLevel, (float)(u) * f, (float)(v) * f1);
         tessellator.draw();
     }
 }

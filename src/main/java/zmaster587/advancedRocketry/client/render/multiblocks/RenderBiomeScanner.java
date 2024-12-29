@@ -15,9 +15,9 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiPowerConsumer;
 
 public class RenderBiomeScanner extends TileEntitySpecialRenderer {
 
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/biomeScanner.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/biomeScanner.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/biomeScanner.jpg");
+	final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/biomeScanner.jpg");
 
 	public RenderBiomeScanner(){}
 	

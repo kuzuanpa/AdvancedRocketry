@@ -31,7 +31,7 @@ public class GenLayerShoreExtended extends GenLayerExtendedCompare {
 		{
 			for (int j1 = 0; j1 < p_75904_3_; ++j1)
 			{
-				this.initChunkSeed((long)(j1 + p_75904_1_), (long)(i1 + p_75904_2_));
+				this.initChunkSeed(j1 + p_75904_1_, i1 + p_75904_2_);
 				int k1 = aint[j1 + 1 + (i1 + 1) * (p_75904_3_ + 2)];
 				BiomeGenBase biomegenbase = AdvancedRocketryBiomes.instance.getBiomeById(k1);
 				int l1;
@@ -167,7 +167,7 @@ public class GenLayerShoreExtended extends GenLayerExtendedCompare {
 
 	private boolean func_151631_c(int p_151631_1_)
 	{
-		return AdvancedRocketryBiomes.instance.getBiomeById(p_151631_1_) != null && AdvancedRocketryBiomes.instance.getBiomeById(p_151631_1_).getBiomeClass() == BiomeGenJungle.class ? true : p_151631_1_ == BiomeGenBase.jungleEdge.biomeID || p_151631_1_ == BiomeGenBase.jungle.biomeID || p_151631_1_ == BiomeGenBase.jungleHills.biomeID || p_151631_1_ == BiomeGenBase.forest.biomeID || p_151631_1_ == BiomeGenBase.taiga.biomeID || isBiomeOceanic(p_151631_1_);
+		return AdvancedRocketryBiomes.instance.getBiomeById(p_151631_1_) != null && AdvancedRocketryBiomes.instance.getBiomeById(p_151631_1_).getBiomeClass() == BiomeGenJungle.class || p_151631_1_ == BiomeGenBase.jungleEdge.biomeID || p_151631_1_ == BiomeGenBase.jungle.biomeID || p_151631_1_ == BiomeGenBase.jungleHills.biomeID || p_151631_1_ == BiomeGenBase.forest.biomeID || p_151631_1_ == BiomeGenBase.taiga.biomeID || isBiomeOceanic(p_151631_1_);
 	}
 
 	private boolean func_151633_d(int p_151633_1_)

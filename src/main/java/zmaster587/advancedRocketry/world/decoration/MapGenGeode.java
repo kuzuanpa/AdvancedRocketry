@@ -19,12 +19,12 @@ import net.minecraft.world.gen.MapGenBase;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class MapGenGeode extends MapGenBase {
-	int chancePerChunk;
+	final int chancePerChunk;
 
 
 	private static List<BlockMeta> ores;//= {new BlockMeta(Blocks.iron_ore), new BlockMeta(Blocks.gold_ore), new BlockMeta(Blocks.redstone_ore), new BlockMeta(Blocks.lapis_ore)};
 
-	private HashMap<BlockPosition, Byte> metaPos = new HashMap<>();
+	private final HashMap<BlockPosition, Byte> metaPos = new HashMap<>();
 
 	public MapGenGeode(int chancePerChunk) {
 		this.chancePerChunk = chancePerChunk;

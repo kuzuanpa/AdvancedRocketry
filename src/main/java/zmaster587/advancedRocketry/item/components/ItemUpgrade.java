@@ -1,8 +1,5 @@
 package zmaster587.advancedRocketry.item.components;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -15,18 +12,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.libVulpes.api.IArmorComponent;
 import zmaster587.libVulpes.client.ResourceIcon;
 import zmaster587.libVulpes.items.ItemIngredient;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 public class ItemUpgrade extends ItemIngredient implements IArmorComponent {
 
-	ResourceIcon[] icon;
-	private int legUpgradeDamage = 2;
-	private int bootsUpgradeDamage = 3;
-	Field walkSpeed;
+	final ResourceIcon[] icon;
+	private final int legUpgradeDamage = 2;
+	private final int bootsUpgradeDamage = 3;
+	final Field walkSpeed;
 
 	public ItemUpgrade(int num) {
 		super(num);
@@ -56,21 +57,17 @@ public class ItemUpgrade extends ItemIngredient implements IArmorComponent {
 				//Walkspeed
 				try {
 					walkSpeed.setFloat(player.capabilities, (itemCount+1)*0.1f);
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					AdvancedRocketry.logger.error(e);
 				}
-				//ReflectionHelper.setPrivateValue(net.minecraft.entity.player.PlayerCapabilities.class, player.capabilities, (itemCount+1)*0.1f, "walkSpeed", "field_75097_g");
+                //ReflectionHelper.setPrivateValue(net.minecraft.entity.player.PlayerCapabilities.class, player.capabilities, (itemCount+1)*0.1f, "walkSpeed", "field_75097_g");
 			} else
 				try {
 					walkSpeed.setFloat(player.capabilities, 0.1f);
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					AdvancedRocketry.logger.error(e);
 				}
-			//ReflectionHelper.setPrivateValue(net.minecraft.entity.player.PlayerCapabilities.class, player.capabilities, 0.1f,"walkSpeed", "field_75097_g");
+            //ReflectionHelper.setPrivateValue(net.minecraft.entity.player.PlayerCapabilities.class, player.capabilities, 0.1f,"walkSpeed", "field_75097_g");
 		}
 		else if(componentStack.getItemDamage() == bootsUpgradeDamage && 
 				(!Configuration.lowGravityBoots || DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId).getGravitationalMultiplier() < 1f))

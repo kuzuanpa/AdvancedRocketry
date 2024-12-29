@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -103,7 +104,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
 
 	}
 
-	protected abstract Class getMachine();
+	protected abstract Class<? extends TileEntity> getMachine();
 	protected abstract ProgressBarImage getProgressBar();
 
 	@Override
@@ -197,7 +198,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
 				else if(FluidContainerRegistry.isFilledContainer(ingredient) && FluidContainerRegistry.isFilledContainer(ingredient))
 					fluidStack = FluidContainerRegistry.getFluidForFilledItem(ingredient);
 				
-				for(FluidStack stack : ((Recipe)irecipe).getFluidIngredients() ) {
+				for(FluidStack stack : irecipe.getFluidIngredients() ) {
 					if((fluidStack != null && fluidStack.getFluid() == stack.getFluid()) ||
 							(Block.getBlockFromItem(ingredient.getItem()) != Blocks.air && FluidRegistry.lookupFluidForBlock(Block.getBlockFromItem(ingredient.getItem())) == stack.getFluid() )) {
 						recipe.setIngredientPermutation(recipe.ingredients, ingredient);
@@ -239,7 +240,7 @@ public abstract class TemplateNEI extends TemplateRecipeHandler {
 		drawTexturedModalRect(65, 3, progressBar.getBackOffsetX(), progressBar.getBackOffsetY(), progressBar.getBackWidth(), progressBar.getBackHeight());
 
 
-		drawProgressBar(65 + progressBar.getInsetX(), 3 +  + progressBar.getInsetY(), progressBar.getForeOffsetX(), progressBar.getForeOffsetY(), progressBar.getForeWidth(),  progressBar.getForeHeight(), 50, progressBar.getDirection().getRotation(ForgeDirection.SOUTH).ordinal());
+		drawProgressBar(65 + progressBar.getInsetX(), 3 + progressBar.getInsetY(), progressBar.getForeOffsetX(), progressBar.getForeOffsetY(), progressBar.getForeWidth(),  progressBar.getForeHeight(), 50, progressBar.getDirection().getRotation(ForgeDirection.SOUTH).ordinal());
 	}
 	
     public void drawFluidTanks(@NotNull CachedMachineRecipe r) {

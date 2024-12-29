@@ -1,8 +1,5 @@
 package zmaster587.advancedRocketry.mission;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -17,6 +14,9 @@ import zmaster587.advancedRocketry.item.ItemAsteroidChip;
 import zmaster587.advancedRocketry.util.AsteroidSmall;
 import zmaster587.advancedRocketry.util.AsteroidSmall.StackEntry;
 import zmaster587.libVulpes.util.BlockPosition;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class MissionOreMining extends MissionResourceCollection {
 
@@ -57,12 +57,14 @@ public class MissionOreMining extends MissionResourceCollection {
 						List<StackEntry> stacks2 = asteroid.getHarvest(((ItemAsteroidChip)stack.getItem()).getUUID(stack));
 						List<ItemStack> totalStacksList = new LinkedList<>();
 						for(StackEntry entry : stacks2) {
+							if(entry ==null)continue;
+							if(entry.stack.stackSize < 0)entry.stack.stackSize=0;
 
 							if(compositionData/(float)maxData >= Math.random())
-								entry.stack.stackSize *= 1.25f;
+								entry.stack.stackSize *= (int) 1.25f;
 
 							if(massData/(float)maxData >= Math.random())
-								entry.stack.stackSize *= 1.25f;
+								entry.stack.stackSize *= (int) 1.25f;
 
 							//if(entry.stack.getMaxStackSize() < entry.stack.stackSize) {
 							for(int i = 0; i < entry.stack.stackSize/entry.stack.getMaxStackSize(); i++) {

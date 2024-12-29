@@ -16,17 +16,13 @@ import zmaster587.advancedRocketry.network.PacketSpaceStationInfo;
 import zmaster587.advancedRocketry.network.PacketStationUpdate;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.util.BlockPosition;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -36,13 +32,13 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 	public static final int WARPDIMID = Integer.MIN_VALUE;
 	private long nextStationTransitionTick = -1;
 	//station ids to object
-	HashMap<Integer,ISpaceObject> stationLocations;
+    final HashMap<Integer,ISpaceObject> stationLocations;
 	//Map of planet IDs to station Ids
-	HashMap<Integer, List<ISpaceObject>> spaceStationOrbitMap;
-	HashMap<Integer, Long> temporaryDimensions;				//Stores a list of temporary dimensions to time they vanish
+    final HashMap<Integer, List<ISpaceObject>> spaceStationOrbitMap;
+	final HashMap<Integer, Long> temporaryDimensions;				//Stores a list of temporary dimensions to time they vanish
 	HashMap<Integer, Integer> temporaryDimensionPlayerNumber;
-	HashMap<String, Class> nameToClass;
-	HashMap<Class, String> classToString;
+	final HashMap<String, Class> nameToClass;
+	final HashMap<Class, String> classToString;
 
 	private final static SpaceObjectManager spaceObjectManager = new SpaceObjectManager();
 
@@ -59,7 +55,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 	 * The {@link SpaceObjectManager} is used for tasks such as managing space stations and orbiting worlds 
 	 * @return the {@link SpaceObjectManager} registered with the DimensionManager
 	 */
-	public final static SpaceObjectManager getSpaceManager() {
+	public static SpaceObjectManager getSpaceManager() {
 		return spaceObjectManager;
 	}
 
@@ -90,7 +86,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 	 * @param str key with which to register the spaceObject type
 	 * @param clazz class of space object to register
 	 */
-	public void registerSpaceObjectType(String str, Class<? extends Object> clazz) {
+	public void registerSpaceObjectType(String str, Class<?> clazz) {
 		nameToClass.put(str, clazz);
 		classToString.put(clazz, str);
 	}
@@ -105,12 +101,10 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 
 		try {
 			return (ISpaceObject)clazz.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		return null;
+        return null;
 	}
 
 	public String getItentifierFromClass(Class<? extends ISpaceObject> clazz) {
@@ -123,8 +117,8 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 	 */
 	public ISpaceObject getSpaceStationFromBlockCoords(int x, int z) {
 
-		x = (int) Math.round((x)/(2f*Configuration.stationSize));
-		z = (int) Math.round((z)/(2f*Configuration.stationSize));
+		x = Math.round((x)/(2f*Configuration.stationSize));
+		z = Math.round((z)/(2f*Configuration.stationSize));
 		int radius = Math.max(Math.abs(x), Math.abs(z));
 
 		int index = (int) Math.pow((2*radius-1),2) + x + radius;
@@ -278,7 +272,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 
 			result = Math.abs(2*(((int)event.player.posX + Configuration.stationSize/2) % (2*Configuration.stationSize) )/Configuration.stationSize);
 
-			if(event.player.posX < -Configuration.stationSize/2)
+			if(event.player.posX < (double) -Configuration.stationSize /2)
 				if(result == 3)
 					result = 0;
 				else if(result == 0)
@@ -373,8 +367,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 			spaceStationOrbitMap.get(station.getOrbitingPlanetId()).remove(station);
 		}
 
-		if(spaceStationOrbitMap.get(dimId) == null)
-			spaceStationOrbitMap.put(dimId, new LinkedList<>());
+        spaceStationOrbitMap.computeIfAbsent(dimId, k -> new LinkedList<>());
 
 		if(!spaceStationOrbitMap.get(dimId).contains(station))
 			spaceStationOrbitMap.get(dimId).add(station);
@@ -400,8 +393,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 			spaceStationOrbitMap.get(station.getOrbitingPlanetId()).remove(station);
 		}
 
-		if(spaceStationOrbitMap.get(WARPDIMID) == null)
-			spaceStationOrbitMap.put(WARPDIMID, new LinkedList<>());
+        spaceStationOrbitMap.computeIfAbsent(WARPDIMID, k -> new LinkedList<>());
 
 		if(!spaceStationOrbitMap.get(WARPDIMID).contains(station))
 			spaceStationOrbitMap.get(WARPDIMID).add(station);

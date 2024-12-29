@@ -11,7 +11,7 @@ public class TilePipe extends TileEntity {
 	int networkID;
 	boolean initialized, destroyed;
 
-	boolean[] connectedSides;
+	final boolean[] connectedSides;
 
 	public TilePipe() {
 		initialized = false;

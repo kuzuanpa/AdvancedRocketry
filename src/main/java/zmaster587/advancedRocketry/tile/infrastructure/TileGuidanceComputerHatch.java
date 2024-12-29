@@ -21,7 +21,6 @@ import zmaster587.advancedRocketry.item.ItemStationChip;
 import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
 import zmaster587.advancedRocketry.tile.TileRocketBuilder;
 import zmaster587.libVulpes.LibVulpes;
-import zmaster587.libVulpes.block.multiblock.BlockHatch;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.IToggleButton;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
@@ -51,12 +50,15 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class TileGuidanceComputerHatch extends TilePointer implements IInfrastructure, IInventory, IModularInventory, IToggleButton, INetworkMachine {
 
 	private static final int buttonAutoEject = 0, buttonSatellite = 1, buttonPlanet = 2, buttonStation = 3, redstoneState = 4;
-	private ModuleToggleSwitch module_autoEject, module_satellite, module_planet, module_station;
-	private boolean[] buttonState;
+	private final ModuleToggleSwitch module_autoEject;
+    private final ModuleToggleSwitch module_satellite;
+    private final ModuleToggleSwitch module_planet;
+    private final ModuleToggleSwitch module_station;
+	private final boolean[] buttonState;
 	private boolean chipEjected;
 	@Nullable
 	EntityRocket rocket;
-	ModuleRedstoneOutputButton redstoneControl;
+	final ModuleRedstoneOutputButton redstoneControl;
 	RedstoneState state;
 
 	public TileGuidanceComputerHatch() {
@@ -356,7 +358,7 @@ public class TileGuidanceComputerHatch extends TilePointer implements IInfrastru
 		else {
 			short status = 0;
 			for(int i = 0; i < buttonState.length; i++) {
-				status += buttonState[i] ? 1<<i : 0; 
+				status += (short) (buttonState[i] ? 1<<i : 0);
 			}
 			out.writeShort(status);
 		}
@@ -402,7 +404,7 @@ public class TileGuidanceComputerHatch extends TilePointer implements IInfrastru
 
 		short status = 0;
 		for(int i = 0; i < buttonState.length; i++) {
-			status += buttonState[i] ? 1<<i : 0; 
+			status += (short) (buttonState[i] ? 1<<i : 0);
 		}
 
 		nbt.setShort("statuses", status);

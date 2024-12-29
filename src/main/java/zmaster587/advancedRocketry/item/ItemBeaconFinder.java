@@ -74,7 +74,7 @@ public class ItemBeaconFinder extends Item implements IArmorComponent {
 				double angle = MathHelper.wrapAngleTo180_double(Math.atan2(deltaZ, deltaX)*180/Math.PI + 90 - Minecraft.getMinecraft().thePlayer.rotationYawHead);
 				
 				//GL11.glTranslatef(pos.x, pos.y, pos.z);
-				GL11.glTranslated((event.resolution.getScaledWidth_double()*angle/180f) + event.resolution.getScaledWidth()/2,0,5);
+				GL11.glTranslated((event.resolution.getScaledWidth_double()*angle/180f) + (double) event.resolution.getScaledWidth() /2,0,5);
 				//GL11.glDepthMask(false);
 				//GL11.glDisable(GL11.GL_TEXTURE_2D);
 				Minecraft.getMinecraft().renderEngine.bindTexture(TextureResources.buttonDown[0]);

@@ -9,7 +9,7 @@ import java.util.Hashtable;
 import java.util.Map.Entry;
 
 public class HandlerCableNetwork {
-	protected Hashtable<Integer,CableNetwork> networks = new Hashtable<>();
+	protected final Hashtable<Integer,CableNetwork> networks = new Hashtable<>();
 
 	//private static final String FILENAME = "/data/insanityCraft.dat";
 	

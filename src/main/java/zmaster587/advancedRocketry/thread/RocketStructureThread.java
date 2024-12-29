@@ -32,6 +32,7 @@ public class RocketStructureThread extends Thread{
                 }
             }else {
                 currentTaskID=tasks.keySet().iterator().next();
+                boolean outputLog = false;
                 if(outputLog)System.out.print("Calculating Rocket Structure for: "+currentTaskID+"\n");
                 long i = System.nanoTime();
                 calculateLeveledRocketParts(tasks.get(currentTaskID));
@@ -40,7 +41,6 @@ public class RocketStructureThread extends Thread{
         }
     }
 
-    private final boolean outputLog=false;
     private final HashMap<UUID,StorageChunk> tasks = new HashMap<>();
     private final HashMap<UUID,ArrayList<LeveledRocketPart>> results = new HashMap<>();
     private UUID currentTaskID;
@@ -77,7 +77,7 @@ public class RocketStructureThread extends Thread{
         final ArrayList<BlockPosition> list = new ArrayList<>();
         findConnectedParts(list,entireRocket, x,y,z,startFromDivide);
         //if we can't find any new parts, return
-        if(list.size()==0||list.stream().allMatch(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider))return;
+        if(list.isEmpty() ||list.stream().allMatch(pos->entireRocket.getBlock(pos.x,pos.y,pos.z) instanceof ILeveledPartsDivider))return;
 
         partList.add(new LeveledRocketPart(StorageChunk.divideStorage(entireRocket, list), 0, false, 1));
 

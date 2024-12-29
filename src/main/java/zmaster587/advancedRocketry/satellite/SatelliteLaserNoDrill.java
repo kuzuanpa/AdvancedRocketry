@@ -23,10 +23,10 @@ import zmaster587.libVulpes.util.ZUtils;
 
 public class SatelliteLaserNoDrill extends SatelliteBase {
 	protected boolean  jammed;
-	protected IInventory boundChest;
+	protected final IInventory boundChest;
 	World world;
 	private static List<ItemStack> ores;
-	Random random;
+	final Random random;
 
 	public SatelliteLaserNoDrill(IInventory boundChest) {
 		this.boundChest = boundChest;
@@ -60,7 +60,7 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 						name = splitStr[0] + ":" + splitStr[1];
 					}
 					catch(IndexOutOfBoundsException e) {
-						AdvancedRocketry.logger.warn("Unexpected ore name: \"" + oreDictName + "\" during laser drill harvesting");
+                        AdvancedRocketry.logger.warn("Unexpected ore name: \"{}\" during laser drill harvesting", oreDictName);
 						continue;
 					}
 					
@@ -162,8 +162,7 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 				//TODO: drop extra items
 				this.deactivateLaser();
 				this.jammed = true;
-				return;
-			}
+            }
 		}
 	}
 
@@ -199,12 +198,4 @@ public class SatelliteLaserNoDrill extends SatelliteBase {
 		jammed = nbt.getBoolean("jammed");
 	}
 
-	@Override
-	public boolean canTick() {
-		return false;
-	}
-
-	@Override
-	public void tickEntity() {
-	}
 }

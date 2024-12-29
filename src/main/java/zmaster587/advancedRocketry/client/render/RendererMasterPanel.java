@@ -11,7 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class RendererMasterPanel extends TileEntitySpecialRenderer {
-	ResourceLocation font = new ResourceLocation("advancedRocketry:textures/font.png");
+	final ResourceLocation font = new ResourceLocation("advancedRocketry:textures/font.png");
 	public RendererMasterPanel() {}
 	
 	@Override

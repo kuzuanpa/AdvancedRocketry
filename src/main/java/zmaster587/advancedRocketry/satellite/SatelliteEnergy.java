@@ -83,8 +83,7 @@ public class SatelliteEnergy extends SatelliteBase implements IUniversalEnergyTr
 			World world = net.minecraftforge.common.DimensionManager.getWorld(getDimensionId());
 			if(world != null) {
 				battery.acceptEnergy(energyCreated(world), simulate);
-				int energy = battery.extractEnergy(getEnergyMTU(ForgeDirection.UNKNOWN), simulate);
-				return energy;
+                return battery.extractEnergy(getEnergyMTU(ForgeDirection.UNKNOWN), simulate);
 			}
 		}
 		return 0;

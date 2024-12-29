@@ -14,7 +14,6 @@ import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
-import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.fuel.FuelRegistry.FuelType;
 import zmaster587.advancedRocketry.api.Configuration;
@@ -27,8 +26,6 @@ import zmaster587.advancedRocketry.api.RocketEvent.RocketLandedEvent;
 import zmaster587.advancedRocketry.api.StatsRocket;
 import zmaster587.advancedRocketry.block.BlockSeat;
 import zmaster587.advancedRocketry.entity.EntityRocket;
-import zmaster587.advancedRocketry.inventory.TextureResources;
-import zmaster587.advancedRocketry.network.PacketAirParticle;
 import zmaster587.advancedRocketry.network.PacketInvalidLocationNotify;
 import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
 import zmaster587.advancedRocketry.util.StorageChunk;
@@ -54,18 +51,14 @@ import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
 import zmaster587.libVulpes.tile.IMultiblock;
 import zmaster587.libVulpes.tile.TileEntityRFConsumer;
-import zmaster587.libVulpes.tile.TilePointer;
 import zmaster587.libVulpes.util.BlockPosition;
 import zmaster587.libVulpes.util.INetworkMachine;
 import zmaster587.libVulpes.util.IconResource;
 import zmaster587.libVulpes.util.ZUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
@@ -81,13 +74,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonInventory, INetworkMachine, IDataSync, IModularInventory, IProgressBar, ILinkableTile {
 
-	private final int MAX_SIZE = 16;
-	private final int MIN_SIZE = 3;
-	private final int MAX_SIZE_Y = 64;
-	private final int MIN_SIZE_Y = 4;
-	private final int MAXSCANDELAY = 10;
-	private final int ENERGYFOROP = 100;
-	//private final int ENERGY = 100;
+    private final int MAXSCANDELAY = 10;
+    //private final int ENERGY = 100;
 
 	protected static final ResourceLocation backdrop =  new ResourceLocation("advancedrocketry","textures/gui/rocketBuilder.png");
 	private static final ProgressBarImage horizontalProgressBar = new ProgressBarImage(89, 9, 81, 17, 176, 0, 80, 15, 0, 2, ForgeDirection.EAST, backdrop);
@@ -102,15 +90,15 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	private boolean building; //True is rocket is being built, false if only scanning or otherwise
 
 	private int lastRocketID;
-	protected StatsRocket stats;
+	protected final StatsRocket stats;
 	protected AxisAlignedBB bbCache;
 	protected ErrorCodes status;
 	
 	static final Block[] viableBlocks = {AdvancedRocketryBlocks.blockLaunchpad, AdvancedRocketryBlocks.blockLandingPad};
 
-	private List<BlockPosition> blockPos;
+	private final List<BlockPosition> blockPos;
 
-	protected static enum ErrorCodes {
+	protected enum ErrorCodes {
 		SUCCESS(LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.success")),
 		NOFUEL(LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.nofuel")),
 		NOSEAT(LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.noseat")),
@@ -126,8 +114,8 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 		OUTPUTBLOCKED(LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.outputblocked")),
 		INVALIDBLOCK(LibVulpes.proxy.getLocalizedString("msg.rocketbuild.invalidblock"));
 		
-		String code;
-		private ErrorCodes(String code) {
+		final String code;
+		ErrorCodes(String code) {
 			this.code = code;
 		}
 
@@ -187,7 +175,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 	public int getWeight()  { return stats.getWeight(); }
 
-	public int getThrust() { return (int) (stats.getThrust()); }
+	public int getThrust() { return stats.getThrust(); }
 
 	public float getNeededThrust() {return getWeight();}
 
@@ -203,19 +191,15 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 		status = ErrorCodes.values()[value];
 	}
 
-	@Override
-	public boolean canUpdate() {
-		return true;
-	}
-
-	@Override
+    @Override
 	public boolean shouldRenderInPass(int pass) {
 		return pass == 1;
 	}
 
 	@Override
 	public int getPowerPerOperation() {
-		return ENERGYFOROP;
+        int ENERGYFOROP = 100;
+        return ENERGYFOROP;
 	}
 
 	@Override
@@ -328,9 +312,9 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 							if(block instanceof BlockSeat) {
 
 								if(stats.hasSeat()) 
-									stats.addPassengerSeat((int)(xCurr - actualMinX - ((actualMaxX - actualMinX)/2f)) , (int)(yCurr  -actualMinY), (int)(zCurr - actualMinZ - ((actualMaxZ - actualMinZ)/2f)));
+									stats.addPassengerSeat((int)(xCurr - actualMinX - ((actualMaxX - actualMinX)/2f)) , yCurr  -actualMinY, (int)(zCurr - actualMinZ - ((actualMaxZ - actualMinZ)/2f)));
 								else
-									stats.setSeatLocation((int)(xCurr - actualMinX - ((actualMaxX - actualMinX)/2f)) , (int)(yCurr  -actualMinY), (int)(zCurr - actualMinZ - ((actualMaxZ - actualMinZ)/2f)));
+									stats.setSeatLocation((int)(xCurr - actualMinX - ((actualMaxX - actualMinX)/2f)) , yCurr  -actualMinY, (int)(zCurr - actualMinZ - ((actualMaxZ - actualMinZ)/2f)));
 							}
 
 							if(block instanceof IMiningDrill) {
@@ -403,7 +387,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 		NBTTagCompound nbtdata = new NBTTagCompound();
 
 		rocket.writeToNBT(nbtdata);
-		PacketHandler.sendToNearby(new PacketEntity((INetworkEntity)rocket, (byte)0, nbtdata), rocket.worldObj.provider.dimensionId, xCoord, yCoord, zCoord, 64);
+		PacketHandler.sendToNearby(new PacketEntity(rocket, (byte)0, nbtdata), rocket.worldObj.provider.dimensionId, xCoord, yCoord, zCoord, 64);
 
 		stats.reset();
 		this.status = ErrorCodes.FINISHED;
@@ -437,7 +421,8 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 		int xSize, zSize;
 
 		//Get min and maximum Z/X bounds
-		if(direction.offsetX != 0) {
+        int MAX_SIZE = 16;
+        if(direction.offsetX != 0) {
 			xSize = ZUtils.getContinuousBlockLength(world, direction, xCurrent, yCurrent, zCurrent, MAX_SIZE, viableBlocks);
 			zMin = ZUtils.getContinuousBlockLength(world, ForgeDirection.NORTH, xCurrent, yCurrent, zCurrent, MAX_SIZE, viableBlocks);
 			zMax = ZUtils.getContinuousBlockLength(world, ForgeDirection.SOUTH, xCurrent, yCurrent, zCurrent+1, MAX_SIZE - zMin, viableBlocks);
@@ -476,7 +461,8 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 		int maxTowerSize = 0;
 		//Check perimeter for structureBlocks and get the size
-		for(int i = xMin; i <= xMax; i++) {
+        int MAX_SIZE_Y = 64;
+        for(int i = xMin; i <= xMax; i++) {
 			if(world.getBlock(i, yCurrent, zMin-1) == AdvancedRocketryBlocks.blockStructureTower) {
 				maxTowerSize = Math.max(maxTowerSize, ZUtils.getContinuousBlockLength(world, ForgeDirection.UP, i, yCurrent, zMin-1, MAX_SIZE_Y, AdvancedRocketryBlocks.blockStructureTower));
 			}
@@ -497,7 +483,9 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 		}
 
 		//if tower does not meet criteria then reutrn null
-		if(maxTowerSize < MIN_SIZE_Y || xSize < MIN_SIZE || zSize < MIN_SIZE) {
+        int MIN_SIZE_Y = 4;
+        int MIN_SIZE = 3;
+        if(maxTowerSize < MIN_SIZE_Y || xSize < MIN_SIZE || zSize < MIN_SIZE) {
 			return null;
 		}
 
@@ -510,7 +498,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 		boundLoop:
 			for(int xx = (int)bb.minX; xx <= (int)bb.maxX; xx++) {
-				for(int zz = (int)bb.minZ; zz <= (int)bb.maxZ && whole; zz++) {
+				for(int zz = (int)bb.minZ; zz <= (int)bb.maxZ; zz++) {
 					Block blockAtSpot = world.getBlock(xx, (int)bb.minY-1, zz);
 					boolean contained = false;
 					for(Block b : viableBlocks) {
@@ -535,7 +523,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
 		stats.writeToNBT(nbt);
@@ -657,9 +645,8 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
                                @NotNull NBTTagCompound nbt) {
 		if(id == 0) {
-			AxisAlignedBB bb = getRocketPadBounds(worldObj, xCoord, yCoord, zCoord);
 
-			bbCache = bb;
+            bbCache = getRocketPadBounds(worldObj, xCoord, yCoord, zCoord);
 			if(!canScan())
 				return;
 
@@ -673,9 +660,8 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 				return;
 
 			building = true;
-			AxisAlignedBB bb = getRocketPadBounds(worldObj, xCoord, yCoord, zCoord);
 
-			bbCache = bb;
+            bbCache = getRocketPadBounds(worldObj, xCoord, yCoord, zCoord);
 			if(!canScan())
 				return;
 
@@ -700,7 +686,7 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 		thrustText.setText(isScanning() ? (LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.thrust") + ": ???") :  String.format("%s: %dN",LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.thrust"), getThrust()));
 		weightText.setText(isScanning() ? (LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.weight") + ": ???")  : String.format("%s: %dN", LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.weight"),getWeight()));
 		fuelText.setText(isScanning() ? (LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.fuel") + ": ???") :  String.format("%s: %dmb/s", LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.fuel"), getRocketStats().getFuelRate(FuelType.LIQUID)));
-		accelerationText.setText(isScanning() ? (LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.acc") + ": ???") : String.format("%s: %.2fm/s\u00b2", LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.acc"), getAcceleration()*20f));
+		accelerationText.setText(isScanning() ? (LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.acc") + ": ???") : String.format("%s: %.2fm/s²", LibVulpes.proxy.getLocalizedString("msg.rocketbuilder.acc"), getAcceleration()*20f));
 		if(!worldObj.isRemote) { 
 			if(getRocketPadBounds(worldObj, xCoord, yCoord, zCoord) == null)
 				setStatus(ErrorCodes.INCOMPLETESTRCUTURE.ordinal());
@@ -867,7 +853,10 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 	@Override
 	public boolean onLinkComplete(ItemStack item, TileEntity entity,
 								  @NotNull EntityPlayer player, World world) {
-		TileEntity tile = world.getTileEntity(((ItemLinker)item.getItem()).getMasterX(item), ((ItemLinker)item.getItem()).getMasterY(item), ((ItemLinker)item.getItem()).getMasterZ(item));
+        item.getItem();
+        item.getItem();
+        item.getItem();
+        TileEntity tile = world.getTileEntity(ItemLinker.getMasterX(item), ItemLinker.getMasterY(item), ItemLinker.getMasterZ(item));
 
 		if(tile instanceof IInfrastructure) {
 			BlockPosition pos = new BlockPosition(tile.xCoord, tile.yCoord, tile.zCoord);
@@ -923,7 +912,8 @@ public class TileRocketBuilder extends TileEntityRFConsumer implements IButtonIn
 
 		while(iter.hasNext()) {
 			BlockPosition position = iter.next();
-			TileEntity tile = worldObj.getTileEntity(position.x, position.y, position.z);
+            worldObj.getTileEntity(position.x, position.y, position.z);
+            TileEntity tile;
 			if((tile = worldObj.getTileEntity(position.x, position.y, position.z)) instanceof IInfrastructure) {
 				infrastructure.add((IInfrastructure)tile);
 			}

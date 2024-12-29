@@ -8,12 +8,10 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
-import zmaster587.advancedRocketry.api.satellite.IDataHandler;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.inventory.TextureResources;
@@ -29,9 +27,7 @@ import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
 import zmaster587.libVulpes.inventory.modules.ModuleButton;
 import zmaster587.libVulpes.inventory.modules.ModulePower;
-import zmaster587.libVulpes.inventory.modules.ModuleSlotArray;
 import zmaster587.libVulpes.inventory.modules.ModuleText;
-import zmaster587.libVulpes.inventory.modules.ModuleToggleSwitch;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
 import zmaster587.libVulpes.tile.TileInventoriedRFConsumer;
@@ -41,9 +37,9 @@ public class TileEntitySatelliteControlCenter extends TileInventoriedRFConsumer 
 
 
 	//ModuleText satelliteText;
-	ModuleSatellite moduleSatellite;
+    final ModuleSatellite moduleSatellite;
 	ModuleText moduleText;
-	DataStorage data;
+	final DataStorage data;
 
 	public TileEntitySatelliteControlCenter() {
 		super(10000, 2);
@@ -251,7 +247,7 @@ public class TileEntitySatelliteControlCenter extends TileInventoriedRFConsumer 
 		if(type == data.getDataType() || data.getDataType() == DataType.UNDEFINED) {
 			SatelliteBase satellite = getSatelliteFromSlot(0);
 			
-			if(satellite != null && satellite instanceof SatelliteData && DimensionManager.getInstance().areDimensionsInSamePlanetMoonSystem(satellite.getDimensionId(), this.worldObj.provider.dimensionId)) {
+			if(satellite instanceof SatelliteData && DimensionManager.getInstance().areDimensionsInSamePlanetMoonSystem(satellite.getDimensionId(), this.worldObj.provider.dimensionId)) {
 				satellite.performAction(null, worldObj, this.xCoord, this.yCoord, this .zCoord);
 			}
 			return data.removeData(maxAmount, commit);

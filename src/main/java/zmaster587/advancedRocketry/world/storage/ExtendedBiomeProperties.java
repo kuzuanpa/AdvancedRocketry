@@ -1,19 +1,16 @@
 package zmaster587.advancedRocketry.world.storage;
 
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.World;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
-import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
-
 public class ExtendedBiomeProperties {
 
-	World world;
+	final World world;
 	
-	HashMap<ChunkCoordIntPair, ChunkProperties> chunkPropertyMap;
+	final HashMap<ChunkCoordIntPair, ChunkProperties> chunkPropertyMap;
 	
 	public ExtendedBiomeProperties(World world) {
 		this.world = world;
@@ -46,18 +43,15 @@ public class ExtendedBiomeProperties {
 		return properties;
 	}
 	
-	public class ChunkProperties {
+	public static class ChunkProperties {
 
 		private int[] blockBiomeArray;
-		private int positionX, positionZ;
 
-		public ChunkProperties(World world, int x, int z) {
+        public ChunkProperties(World world, int x, int z) {
 			blockBiomeArray = new int[256];
 			Arrays.fill(blockBiomeArray, -1);
-			positionX = x;
-			positionZ = z;
 
-		}
+        }
 
 		public int[] getBlockBiomeArray() {
 			return blockBiomeArray;

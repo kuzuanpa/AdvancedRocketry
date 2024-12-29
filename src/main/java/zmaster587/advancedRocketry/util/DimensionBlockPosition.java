@@ -2,6 +2,8 @@ package zmaster587.advancedRocketry.util;
 
 import zmaster587.libVulpes.util.BlockPosition;
 
+import java.util.Objects;
+
 public class DimensionBlockPosition {
 	public BlockPosition pos;
 	public int dimid;
@@ -30,7 +32,7 @@ public class DimensionBlockPosition {
 			flag = ((DimensionBlockPosition)arg0).pos == null;
 		}
 		
-		return dimid == ((DimensionBlockPosition)arg0).dimid && (flag || pos.equals(((DimensionBlockPosition)arg0).pos));
+		return dimid == ((DimensionBlockPosition)arg0).dimid && (flag || Objects.equals(pos, ((DimensionBlockPosition) arg0).pos));
 	}
 	
 	@Override

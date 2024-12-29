@@ -2,7 +2,6 @@ package zmaster587.advancedRocketry.tile.station;
 
 import io.netty.buffer.ByteBuf;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -301,8 +300,8 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 		if(isOnStation) {
 			DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(station.getOrbitingPlanetId());
 			location = properties;
-			hasAtmo = properties.hasAtmosphere();
-			planetName = properties.getName();
+            properties.hasAtmosphere();
+            planetName = properties.getName();
 		}
 		else {
 			location = DimensionManager.getInstance().getDimensionProperties(worldObj.provider.dimensionId);
@@ -340,9 +339,8 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 				baseX = 94;
 				baseY = 20;
 				sizeX = 65;
-				sizeY = 65;
 
-				dstPlanetImg = new ModulePanetImage(baseX + 10,baseY + 10,sizeX - 20, location);
+                dstPlanetImg = new ModulePanetImage(baseX + 10,baseY + 10,sizeX - 20, location);
 				dstPlanetText = new ModuleText(baseX + 4, baseY + 56, "", 0xFFFFFF);
 				dstPlanetText.setAlwaysOnTop(true);
 
@@ -362,8 +360,8 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 				dstProps = DimensionManager.getInstance().getDimensionProperties(dstPlanet);
 
 			if(dstProps != null) {
-				hasAtmo = dstProps.hasAtmosphere();
-				planetName = dstProps.getName();
+                dstProps.hasAtmosphere();
+                planetName = dstProps.getName();
 				location = dstProps;
 
 
@@ -399,10 +397,10 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 				PacketHandler.sendToServer(new PacketMachine(this, (byte)2));
 			}
 			else if(buttonId == 3) {
-				PacketHandler.sendToServer(new PacketMachine(this, (byte)SEARCH));
+				PacketHandler.sendToServer(new PacketMachine(this, SEARCH));
 			}
 			else if(buttonId == 4) {
-				PacketHandler.sendToServer(new PacketMachine(this, (byte)PROGRAMFROMCHIP));
+				PacketHandler.sendToServer(new PacketMachine(this, PROGRAMFROMCHIP));
 			}
 		}
 	}
@@ -505,8 +503,8 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 			if(obj != null) {
 				ItemStack stack = getStackInSlot(PLANETSLOT);
 				if(stack != null && stack.getItem() instanceof ItemPlanetIdentificationChip) {//todo: identify what did AR author do actually
-					if(DimensionManager.getInstance().isDimensionCreated(((ItemPlanetIdentificationChip)stack.getItem()).getDimensionId(stack)));
-					obj.discoverPlanet(((ItemPlanetIdentificationChip)stack.getItem()).getDimensionId(stack));
+                    DimensionManager.getInstance().isDimensionCreated(((ItemPlanetIdentificationChip) stack.getItem()).getDimensionId(stack));
+                    obj.discoverPlanet(((ItemPlanetIdentificationChip)stack.getItem()).getDimensionId(stack));
 				}
 			}
 		}
@@ -592,7 +590,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 		else if(id == 1)
 			return 30;
 		else if(id == 2)
-			return (int) 30;
+			return 30;
 		else if(id == 3) {
 			return progress == -1 ? 0 : progress;
 		}

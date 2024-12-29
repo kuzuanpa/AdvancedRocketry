@@ -12,7 +12,7 @@ import zmaster587.advancedRocketry.api.satellite.IDataHandler;
  *
  */
 public class MultiData implements IDataHandler {
-	HashMap<DataStorage.DataType, DataStorage> dataStorages;
+	final HashMap<DataStorage.DataType, DataStorage> dataStorages;
 
 	public MultiData() {
 		dataStorages = new HashMap<>();

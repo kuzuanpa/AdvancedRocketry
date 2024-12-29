@@ -22,13 +22,8 @@ public class EnchantmentSpaceBreathing extends Enchantment {
 	public boolean canApply(@Nullable ItemStack stack) {
 		return stack != null && stack.getItem() instanceof ItemArmor;
 	}
-	
-	@Override
-	public int getMaxLevel() {
-		return 1;
-	}
 
-	@Override
+    @Override
 	public boolean isAllowedOnBooks() {
 		return false;
 	}

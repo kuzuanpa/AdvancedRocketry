@@ -1,16 +1,17 @@
 package zmaster587.advancedRocketry.network;
 
-import java.io.IOException;
-
-import org.jetbrains.annotations.NotNull;
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.util.AsteroidSmall;
-import zmaster587.libVulpes.network.BasePacket;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.Configuration;
+import zmaster587.advancedRocketry.util.AsteroidSmall;
+import zmaster587.libVulpes.network.BasePacket;
+
+import java.io.IOException;
 
 public class PacketAsteroidInfo extends BasePacket {
 
@@ -34,7 +35,7 @@ public class PacketAsteroidInfo extends BasePacket {
 			packetBuffer.writeStringToBuffer(asteroid.ID);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
 		}
 		packetBuffer.writeInt(asteroid.distance);
 		packetBuffer.writeInt(asteroid.mass);
@@ -53,7 +54,7 @@ public class PacketAsteroidInfo extends BasePacket {
 				packetBuffer.writeFloat(asteroid.stackProbabilites.get(i));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				AdvancedRocketry.logger.error(e);
 			}
 		}
 	}
@@ -66,7 +67,7 @@ public class PacketAsteroidInfo extends BasePacket {
 			asteroid.ID = packetBuffer.readStringFromBuffer(128);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			AdvancedRocketry.logger.error(e1);
 		}
 		asteroid.distance = packetBuffer.readInt();
 		asteroid.mass = packetBuffer.readInt();
@@ -84,7 +85,7 @@ public class PacketAsteroidInfo extends BasePacket {
 				asteroid.itemStacks.add(packetBuffer.readItemStackFromBuffer());
 				asteroid.stackProbabilites.add(packetBuffer.readFloat());
 			} catch (IOException e) {
-				e.printStackTrace();
+				AdvancedRocketry.logger.error(e);
 			}
 		}
 	}

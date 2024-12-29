@@ -30,13 +30,17 @@ public class GuiOreMappingSatellite extends GuiContainer {
 	private int fancyScanOffset;
 	private long prevWorldTickTime;
 	private int prevSlot;
-	private int mouseValue;
-	private int scanSize = 2;
-	private int radius = 1;
-	private int xSelected, zSelected, xCenter, zCenter, playerPosZ, playerPosX;
+    private int scanSize;
+	private final int radius = 1;
+	private int xSelected;
+    private int zSelected;
+    private int xCenter;
+    private int zCenter;
+    private final int playerPosZ;
+    private final int playerPosX;
 	private static final ResourceLocation backdrop = new ResourceLocation("advancedrocketry", "textures/gui/VideoSatallite.png");
 	int[][] oreMap;
-	World world;
+	final World world;
 	SatelliteOreMapping tile;
 
 	public GuiOreMappingSatellite(SatelliteOreMapping tile,EntityPlayer inventoryPlayer) {
@@ -63,19 +67,17 @@ public class GuiOreMappingSatellite extends GuiContainer {
 	}
 
 	//Create separate thread to do this because it takes a while!
-	Runnable mapper = new Runnable() {
+    final Runnable mapper = new Runnable() {
 		@Override
 		public void run() {
 			oreMap = SatelliteOreMapping.scanChunk(world, xCenter, zCenter, scanSize/2, radius);
-			if(oreMap != null)
-				merged = true;
-			else merged = false;
+            merged = oreMap != null;
 		}
 	};
 
 	//Create separate thread to do this because it takes a while!
 	class ItemMapper implements Runnable {
-		private ItemStack myBlock;
+		private final ItemStack myBlock;
 
 		ItemMapper(ItemStack block) {
 			//Copy so we dont have any possible CME or oddness due to that
@@ -85,13 +87,11 @@ public class GuiOreMappingSatellite extends GuiContainer {
 		@Override
 		public void run() {
 			oreMap = SatelliteOreMapping.scanChunk(world, xCenter, zCenter, scanSize/2, radius, myBlock);
-			if(oreMap != null)
-				merged = true;
-			else merged = false;
+            merged = oreMap != null;
 		}
-	};
+	}
 
-	//Don't pause the game whilst player is looking at the satellite
+    //Don't pause the game whilst player is looking at the satellite
 	public boolean doesGuiPauseGame(){ return false; }
 
 	private void runMapperWithSelection() {
@@ -134,7 +134,7 @@ public class GuiOreMappingSatellite extends GuiContainer {
 		//If the grid is displayed get the value at this location
 		if(oreMap != null) {
 			double numPixels = (scanSize/(float)(SCREEN_SIZE*radius));
-			mouseValue = oreMap[(int)((x - xOffset) * numPixels)][(int)((y - yOffset) * numPixels)]/0xFF;
+            int mouseValue = oreMap[(int) ((x - xOffset) * numPixels)][(int) ((y - yOffset) * numPixels)] / 0xFF;
 
 			xSelected = (int)((x - xOffset) * numPixels) + xCenter - (radius*scanSize/2);
 			zSelected = (int)((y - yOffset) * numPixels) + zCenter - (radius*scanSize/2);
@@ -238,17 +238,17 @@ public class GuiOreMappingSatellite extends GuiContainer {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glColor3f(0f, 0.8f, 0f);
 		tessellator.startDrawingQuads();
-		tessellator.addVertex(-21, 82 + fancyScanOffset, (double)this.zLevel);
-		tessellator.addVertex(0, 84 + fancyScanOffset, (double)this.zLevel);
-		tessellator.addVertex(0, 81 + fancyScanOffset, (double)this.zLevel);
-		tessellator.addVertex(-21, 81 + fancyScanOffset, (double)this.zLevel);
+		tessellator.addVertex(-21, 82 + fancyScanOffset, this.zLevel);
+		tessellator.addVertex(0, 84 + fancyScanOffset, this.zLevel);
+		tessellator.addVertex(0, 81 + fancyScanOffset, this.zLevel);
+		tessellator.addVertex(-21, 81 + fancyScanOffset, this.zLevel);
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
-		tessellator.addVertex(-21, 82 - fancyScanOffset + FANCYSCANMAXSIZE, (double)this.zLevel);
-		tessellator.addVertex(0, 84 - fancyScanOffset + FANCYSCANMAXSIZE, (double)this.zLevel);
-		tessellator.addVertex(0, 81 - fancyScanOffset + FANCYSCANMAXSIZE, (double)this.zLevel);
-		tessellator.addVertex(-21, 81 - fancyScanOffset + FANCYSCANMAXSIZE, (double)this.zLevel);
+		tessellator.addVertex(-21, 82 - fancyScanOffset + FANCYSCANMAXSIZE, this.zLevel);
+		tessellator.addVertex(0, 84 - fancyScanOffset + FANCYSCANMAXSIZE, this.zLevel);
+		tessellator.addVertex(0, 81 - fancyScanOffset + FANCYSCANMAXSIZE, this.zLevel);
+		tessellator.addVertex(-21, 81 - fancyScanOffset + FANCYSCANMAXSIZE, this.zLevel);
 		tessellator.draw();
 
 
@@ -257,10 +257,10 @@ public class GuiOreMappingSatellite extends GuiContainer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
 		GL11.glColor4f(0.5f, 0.5f, 0.0f,0.3f + ((float)Math.sin(Math.PI*(fancyScanOffset/(float)FANCYSCANMAXSIZE))/3f));
 		tessellator.startDrawingQuads();
-		tessellator.addVertex(173, 141, (double)this.zLevel);
-		tessellator.addVertex(194, 141, (double)this.zLevel);
-		tessellator.addVertex(194, 82, (double)this.zLevel);
-		tessellator.addVertex(173, 82, (double)this.zLevel);
+		tessellator.addVertex(173, 141, this.zLevel);
+		tessellator.addVertex(194, 141, this.zLevel);
+		tessellator.addVertex(194, 82, this.zLevel);
+		tessellator.addVertex(173, 82, this.zLevel);
 		tessellator.draw();
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -284,10 +284,10 @@ public class GuiOreMappingSatellite extends GuiContainer {
 			GL11.glColor3f(0f, 0.8f, 0f);
 
 			tessellator.startDrawingQuads();
-			tessellator.addVertexWithUV(13 + (18*slot), 155 + 16, (double)this.zLevel, 0, 1);
-			tessellator.addVertexWithUV(13 + 16 + (18*slot), 155 + 16, (double)this.zLevel, 1, 1);
-			tessellator.addVertexWithUV(13 + 16 + (18*slot), 155, (double)this.zLevel, 1, 0);
-			tessellator.addVertexWithUV(13 + (18*slot), 155, (double)this.zLevel, 0, 0);
+			tessellator.addVertexWithUV(13 + (18*slot), 155 + 16, this.zLevel, 0, 1);
+			tessellator.addVertexWithUV(13 + 16 + (18*slot), 155 + 16, this.zLevel, 1, 1);
+			tessellator.addVertexWithUV(13 + 16 + (18*slot), 155, this.zLevel, 1, 0);
+			tessellator.addVertexWithUV(13 + (18*slot), 155, this.zLevel, 0, 0);
 			tessellator.draw();
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
@@ -325,32 +325,32 @@ public class GuiOreMappingSatellite extends GuiContainer {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureId());
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(47 + x, 20 + y + SCREEN_SIZE, (double)this.zLevel, 0, 1);
-		tessellator.addVertexWithUV(47 + x + SCREEN_SIZE, 20 + y + SCREEN_SIZE, (double)this.zLevel, 1, 1);
-		tessellator.addVertexWithUV(47 + x + SCREEN_SIZE, 20 + y, (double)this.zLevel, 1, 0);
-		tessellator.addVertexWithUV(47 + x, 20 + y, (double)this.zLevel, 0, 0);
+		tessellator.addVertexWithUV(47 + x, 20 + y + SCREEN_SIZE, this.zLevel, 0, 1);
+		tessellator.addVertexWithUV(47 + x + SCREEN_SIZE, 20 + y + SCREEN_SIZE, this.zLevel, 1, 1);
+		tessellator.addVertexWithUV(47 + x + SCREEN_SIZE, 20 + y, this.zLevel, 1, 0);
+		tessellator.addVertexWithUV(47 + x, 20 + y, this.zLevel, 0, 0);
 		tessellator.draw();
 
 		
 		//Render player location
 		float offsetX = playerPosX - xCenter;
 		float offsetY = zCenter - playerPosZ ;
-		double numPixels = SCREEN_SIZE/scanSize;//(scanSize/(float)(SCREEN_SIZE*radius));
+		double numPixels = (double) SCREEN_SIZE /scanSize;//(scanSize/(float)(SCREEN_SIZE*radius));
 
 
 		float radius = 2;
-		if(Math.abs(offsetX) < scanSize/2 && Math.abs(offsetY) < scanSize/2) {
-			offsetX *= numPixels;
-			offsetY *= numPixels;
+		if(Math.abs(offsetX) < (float) scanSize /2 && Math.abs(offsetY) < (float) scanSize /2) {
+			offsetX *= (float) numPixels;
+			offsetY *= (float) numPixels;
 			
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glColor3f(0.4f, 1f, 0.4f);
 			tessellator.startDrawingQuads();
-			RenderHelper.renderNorthFaceWithUV(tessellator, this.zLevel, offsetX + 47 + x + SCREEN_SIZE/2 - radius,  offsetY + 20 + y + SCREEN_SIZE/2 - radius, offsetX + 47 + x + SCREEN_SIZE/2 + radius, offsetY + 20 + y + SCREEN_SIZE/2 + radius, 0, 1, 0, 1);
+			RenderHelper.renderNorthFaceWithUV(tessellator, this.zLevel, offsetX + 47 + x + (double) SCREEN_SIZE /2 - radius,  offsetY + 20 + y + (double) SCREEN_SIZE /2 - radius, offsetX + 47 + x + (double) SCREEN_SIZE /2 + radius, offsetY + 20 + y + (double) SCREEN_SIZE /2 + radius, 0, 1, 0, 1);
 			tessellator.draw();
 			GL11.glColor3f(1, 1, 1);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			this.drawCenteredString(this.fontRendererObj, "You", (int)(offsetX + 47 + x + SCREEN_SIZE/2 - radius), (int)(offsetY + 20 + y + SCREEN_SIZE/2 - radius) -10, 0xF0F0F0);
+			this.drawCenteredString(this.fontRendererObj, "You", (int)(offsetX + 47 + x + (float) SCREEN_SIZE /2 - radius), (int)(offsetY + 20 + y + (float) SCREEN_SIZE /2 - radius) -10, 0xF0F0F0);
 		}
 
 

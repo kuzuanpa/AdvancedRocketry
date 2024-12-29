@@ -8,8 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.ForgeDirection;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.SatelliteRegistry;
@@ -23,7 +21,6 @@ import zmaster587.advancedRocketry.item.ItemSatellite;
 import zmaster587.advancedRocketry.item.ItemSatelliteIdentificationChip;
 import zmaster587.advancedRocketry.item.ItemStationChip;
 import zmaster587.libVulpes.LibVulpes;
-import zmaster587.libVulpes.block.BlockMeta;
 import zmaster587.libVulpes.client.util.ProgressBarImage;
 import zmaster587.libVulpes.inventory.modules.IButtonInventory;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
@@ -46,7 +43,7 @@ public class TileSatelliteBuilder extends TileMultiPowerConsumer implements IMod
 		{{'P'}}
 	};
 
-	EmbeddedInventory inventory;
+	final EmbeddedInventory inventory;
 	//Slot 0: functional Piece
 	//Slot 1 -> 3: power
 	//Slot 4 -> 7: data Storage

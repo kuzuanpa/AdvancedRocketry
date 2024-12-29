@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.libVulpes.network.BasePacket;
@@ -22,7 +23,7 @@ public class PacketDimInfo extends BasePacket {
 	NBTTagCompound dimNBT;
 	int dimNumber;
 	boolean deleteDim;
-	List<ItemStack> artifacts;
+	final List<ItemStack> artifacts;
 
 	public PacketDimInfo() {
 		artifacts = new LinkedList<>();
@@ -60,14 +61,14 @@ public class PacketDimInfo extends BasePacket {
 				} catch (Exception e){}
 			} catch(NullPointerException e) {
 				out.writeBoolean(true);
-				e.printStackTrace();
+				AdvancedRocketry.logger.error(e);
 				Logger.getLogger("advancedRocketry").warning("Dimension " + dimNumber + " has thrown an exception trying to write NBT, deleting!");
 				DimensionManager.getInstance().deleteDimension(dimNumber);
 			}
 
 		}
 		else
-			out.writeBoolean(flag);
+			out.writeBoolean(true);
 
 	}
 
@@ -92,7 +93,7 @@ public class PacketDimInfo extends BasePacket {
 				}
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				AdvancedRocketry.logger.error(e);
 				return;
 			}
 			dimProperties = new DimensionProperties(dimNumber);

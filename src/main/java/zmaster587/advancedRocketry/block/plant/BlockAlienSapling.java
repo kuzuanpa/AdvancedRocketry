@@ -19,9 +19,9 @@ import java.util.Random;
 
 public class BlockAlienSapling extends BlockSapling {
 
-	public String[] names = new String[] { "blueTree" };
+	public final String[] names = new String[] { "blueTree" };
 
-	public IIcon[] icons = new IIcon[names.length];
+	public final IIcon[] icons = new IIcon[names.length];
 
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTab, @NotNull List list)

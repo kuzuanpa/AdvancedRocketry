@@ -41,19 +41,19 @@ import zmaster587.libVulpes.util.ZUtils.RedstoneState;
 
 public class TilePlanetaryHologram extends TileEntity implements IButtonInventory, IModularInventory, ISliderBar, INetworkMachine {
 
-	private List<EntityUIPlanet> entities;
-	private List<EntityUIStar> starEntities;
+	private final List<EntityUIPlanet> entities;
+	private final List<EntityUIStar> starEntities;
 	private @Nullable EntityUIPlanet centeredEntity;
 	private EntityUIPlanet selectedPlanet;
 	private @Nullable EntityUIStar currentStar;
 	private EntityUIButton backButton;
 	private StellarBody currentStarBody;
 
-	private ModuleRedstoneOutputButton redstoneControl;
+	private final ModuleRedstoneOutputButton redstoneControl;
 	private RedstoneState state;
 	private int selectedId;
 	private float onTime;
-	private ModuleText targetGrav;
+	private final ModuleText targetGrav;
 	private float size;
 	private static final byte SCALEPACKET = 0;
 	private static final byte STATEUPDATE = 1;
@@ -110,12 +110,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 		return (!powered && state == RedstoneState.INVERTED) || (powered && state == RedstoneState.ON) || state == RedstoneState.OFF;
 	}
 
-	@Override
-	public boolean canUpdate() {
-		return true;
-	}
-	
-	@Override
+    @Override
 	public void updateEntity() {
 		if(!worldObj.isRemote) {
 			if(isEnabled()) {
@@ -139,7 +134,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 					}
 					else {
 						if(!starEntities.isEmpty()) {
-							float phaseInc = 4*360/starEntities.size();
+							float phaseInc = (float) (4 * 360) /starEntities.size();
 							float phase = 0;
 							for(EntityUIStar entity : starEntities) {
 								double deltaX, deltaY;
@@ -267,7 +262,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 
 				//Spawn substars
 				if(currentStarBody.getSubStars() != null && !currentStarBody.getSubStars().isEmpty()) {
-					float phaseInc = 360/currentStarBody.getSubStars().size();
+					float phaseInc = (float) 360 /currentStarBody.getSubStars().size();
 					float phase = 0;
 					int count = 0;
 					Collection<StellarBody> starList = currentStarBody.getSubStars();
@@ -321,7 +316,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 		List<ModuleBase> modules = new LinkedList<>();
 
 		modules.add(targetGrav);
-		modules.add(new ModuleSlider(6, 60, 0, TextureResources.doubleWarningSideBarIndicator, (ISliderBar)this));
+		modules.add(new ModuleSlider(6, 60, 0, TextureResources.doubleWarningSideBarIndicator, this));
 		modules.add(redstoneControl);
 
 		updateText();
@@ -431,7 +426,7 @@ public class TilePlanetaryHologram extends TileEntity implements IButtonInventor
 		}
 		else if(buttonId == 1) {
 			state = redstoneControl.getState();
-			PacketHandler.sendToServer(new PacketMachine(this, (byte)STATEUPDATE));
+			PacketHandler.sendToServer(new PacketMachine(this, STATEUPDATE));
 		}
 	}
 

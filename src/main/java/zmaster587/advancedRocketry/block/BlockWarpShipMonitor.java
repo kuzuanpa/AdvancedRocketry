@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.block;
 
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
@@ -16,8 +17,8 @@ public class BlockWarpShipMonitor extends BlockTile {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z,
-			EntityLivingBase entity, ItemStack stack) {
+	public void onBlockPlacedBy(@NotNull World world, int x, int y, int z,
+								EntityLivingBase entity, ItemStack stack) {
 		super.onBlockPlacedBy(world, x, y, z, entity, stack);
 		ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 		

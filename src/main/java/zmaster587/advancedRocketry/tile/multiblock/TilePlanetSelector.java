@@ -33,7 +33,7 @@ public class TilePlanetSelector extends TilePointer implements ISelectionNotify,
 	public static final int certaintyDataValue = 5000;
 	DimensionProperties dimCache;
 
-	int[] cachedProgressValues;
+	final int[] cachedProgressValues;
 
 	public TilePlanetSelector() {
 		cachedProgressValues = new int[] { -1, -1, -1};
@@ -159,7 +159,7 @@ public class TilePlanetSelector extends TilePointer implements ISelectionNotify,
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt) {
 
 		super.onDataPacket(net, pkt);
 		readAdditionalNBT(pkt.func_148857_g());

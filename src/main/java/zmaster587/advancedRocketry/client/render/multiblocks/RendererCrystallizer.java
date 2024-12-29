@@ -20,9 +20,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class RendererCrystallizer extends TileEntitySpecialRenderer {
 
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/crystallizer.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/crystallizer.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/crystallizer.png");
+	final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/crystallizer.png");
 
 	private final RenderItem dummyItem = new RenderItem();
 

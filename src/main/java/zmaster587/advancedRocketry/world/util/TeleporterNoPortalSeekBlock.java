@@ -1,9 +1,6 @@
 package zmaster587.advancedRocketry.world.util;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 
@@ -33,7 +30,7 @@ public class TeleporterNoPortalSeekBlock extends Teleporter {
 		y = (int) entityIn.posY;
 		z = (int) entityIn.posZ;
 		
-		for(int yy = (int) y; yy < world.getHeight(); yy++) {
+		for(int yy = y; yy < world.getHeight(); yy++) {
 			if(world.isAirBlock(x,yy,z) && world.isAirBlock(x,yy+1,z)){
 				y = yy;
 				break;

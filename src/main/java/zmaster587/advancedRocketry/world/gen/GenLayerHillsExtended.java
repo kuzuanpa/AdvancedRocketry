@@ -9,7 +9,7 @@ import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 
 public class GenLayerHillsExtended extends GenLayerExtendedCompare {
 
-	    private GenLayer field_151628_d;
+	    private final GenLayer field_151628_d;
 
 	    public GenLayerHillsExtended(long p_i45479_1_, GenLayer p_i45479_3_, GenLayer p_i45479_4_)
 	    {
@@ -32,7 +32,7 @@ public class GenLayerHillsExtended extends GenLayerExtendedCompare {
 	        {
 	            for (int j1 = 0; j1 < p_75904_3_; ++j1)
 	            {
-	                this.initChunkSeed((long)(j1 + p_75904_1_), (long)(i1 + p_75904_2_));
+	                this.initChunkSeed(j1 + p_75904_1_, i1 + p_75904_2_);
 	                int k1 = aint[j1 + 1 + (i1 + 1) * (p_75904_3_ + 2)];
 	                int l1 = aint1[j1 + 1 + (i1 + 1) * (p_75904_3_ + 2)];
 	                boolean flag = (l1 - 2) % 29 == 0;

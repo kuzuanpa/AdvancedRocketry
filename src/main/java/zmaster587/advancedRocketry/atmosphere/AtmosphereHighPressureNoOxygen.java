@@ -11,7 +11,7 @@ import zmaster587.libVulpes.network.PacketHandler;
 
 public class AtmosphereHighPressureNoOxygen extends AtmosphereNeedsSuit {
 
-	public static boolean enableNausea = Configuration.enableNausea;
+	public static final boolean enableNausea = Configuration.enableNausea;
 
 	public AtmosphereHighPressureNoOxygen(boolean canTick, boolean isBreathable, boolean allowsCombustion,
                                       String name) {

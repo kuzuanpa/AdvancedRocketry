@@ -1,8 +1,6 @@
 package zmaster587.advancedRocketry.tile;
 
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
-import zmaster587.advancedRocketry.satellite.SatelliteOreMapping;
-import zmaster587.advancedRocketry.satellite.SpySatellite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

@@ -22,9 +22,9 @@ public class AtmosphereRegister {
 		return instance;
 	}
 	
-	Map<String, IAtmosphere> atmosphereRegistration;
-	List<Fluid> harvestableAtmosphere;
-	List<IAtmosphere> atmosphereList;
+	final Map<String, IAtmosphere> atmosphereRegistration;
+	final List<Fluid> harvestableAtmosphere;
+	final List<IAtmosphere> atmosphereList;
 	
 	/**
 	 * Registers the atmosphere with the mod

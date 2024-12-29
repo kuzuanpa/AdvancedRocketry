@@ -47,13 +47,13 @@ import zmaster587.libVulpes.util.ZUtils;
 import zmaster587.libVulpes.util.ZUtils.RedstoneState;
 
 public class TileRailgun extends TileMultiPowerConsumer implements IInventory, ILinkableTile, IGuiCallback {
-	private EmbeddedInventory inv;
+	private final EmbeddedInventory inv;
 	Ticket ticket;
 	public long recoil;
 	int minStackTransferSize = 1;
 	ModuleNumericTextbox textBox;
 	RedstoneState state;
-	ModuleRedstoneOutputButton redstoneControl;
+	final ModuleRedstoneOutputButton redstoneControl;
 
 	public static final Object[][][] structure = {
 		{	{null, null, null, null, null}, 
@@ -124,8 +124,8 @@ public class TileRailgun extends TileMultiPowerConsumer implements IInventory, I
 	protected int requiredPowerPerTick() {
 		BlockPosition pos = getDestPosition();
 		if(pos != null) {
-			int distance = (int)Math.sqrt(Math.pow(pos.x - this.xCoord,2) + Math.pow(pos.z - this.zCoord, 2));;
-			if(getDestDimId() == this.worldObj.provider.dimensionId)
+			int distance = (int)Math.sqrt(Math.pow(pos.x - this.xCoord,2) + Math.pow(pos.z - this.zCoord, 2));
+            if(getDestDimId() == this.worldObj.provider.dimensionId)
 				distance = distance*10 + 50000;
 			return Math.min(distance, super.requiredPowerPerTick());
 		}

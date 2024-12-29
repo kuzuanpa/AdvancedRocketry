@@ -1,17 +1,15 @@
 package zmaster587.advancedRocketry.entity.fx;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
 public class FxLaserSpark extends EntityFX {
 	
-	double length;
+	final double length;
 	
 	public FxLaserSpark(World world, double x,
 			double y, double z, double velX, double velY, double velZ, double length) {
@@ -51,9 +49,9 @@ public class FxLaserSpark extends EntityFX {
 		GL11.glLineWidth(1);
 		GL11.glColor4f(0.8f, 0.2f, 0.2f, particleAlpha);
 		
-		x += motionX*particleAge;
-		y += motionY*particleAge;
-		z += motionZ*particleAge;
+		x += (float) (motionX*particleAge);
+		y += (float) (motionY*particleAge);
+		z += (float) (motionZ*particleAge);
 				
 		worldRendererIn.addVertex(x,y,z);
 		worldRendererIn.addVertex(x + motionX*length,y + motionY*length,z + motionZ*length);

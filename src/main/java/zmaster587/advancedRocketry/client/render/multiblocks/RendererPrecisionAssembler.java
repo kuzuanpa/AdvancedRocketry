@@ -19,9 +19,9 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 import java.util.List;
 
 public class RendererPrecisionAssembler extends TileEntitySpecialRenderer {
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/precAssembler.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/precAssembler.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/precAssembler.png");
+	final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/precAssembler.png");
 
 	private final RenderItem dummyItem = new RenderItem();
 	

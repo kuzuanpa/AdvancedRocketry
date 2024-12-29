@@ -8,9 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.libVulpes.items.ItemIngredient;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -24,10 +22,9 @@ public class ItemData extends ItemIngredient {
 	}
 
 	public int getMaxData(int damage) {
-		switch(damage) {
-		case 0:
-			return 1000;
-		}
+        if (damage == 0) {
+            return 1000;
+        }
 		return 0;
 	}
 
@@ -97,7 +94,7 @@ public class ItemData extends ItemIngredient {
 		DataStorage data = getDataStorage(stack);
 
 		list.add(data.getData() + " / " + data.getMaxData() + " Data");
-		list.add(I18n.format(data.getDataType().toString(), new Object[0]));
+		list.add(I18n.format(data.getDataType().toString()));
 
 	}
 

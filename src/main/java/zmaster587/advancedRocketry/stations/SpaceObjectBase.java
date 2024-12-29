@@ -20,8 +20,8 @@ public abstract class SpaceObjectBase implements ISpaceObject {
 	private int posX, posY;
 	private int altitude;
 	private BlockPosition spawnLocation;
-	private double[] rotation;
-	private double[] angularVelocity;
+	private final double[] rotation;
+	private final double[] angularVelocity;
 	private long lastTimeModification = 0;
 	private DimensionProperties properties;
 

@@ -1,23 +1,20 @@
 package zmaster587.advancedRocketry.event;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.event.world.ChunkEvent;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.cable.NetworkRegistry;
+import zmaster587.advancedRocketry.tile.cables.TilePipe;
+
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.event.world.ChunkEvent;
-import org.jetbrains.annotations.NotNull;
-import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.advancedRocketry.cable.NetworkRegistry;
-import zmaster587.advancedRocketry.tile.cables.TilePipe;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
 public class CableTickHandler {
 
@@ -30,15 +27,15 @@ public class CableTickHandler {
 				NetworkRegistry.liquidNetwork.tickAllNetworks();
 			}
 		} catch (ConcurrentModificationException e) {
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
 		}
 	}
 
 	@SubscribeEvent
 	public void chunkLoadedEvent(ChunkEvent.Load event) {
 
-		Map map = event.getChunk().chunkTileEntityMap;
-		@NotNull Iterator<Entry> iter = map.entrySet().iterator();
+		Map<?,?> map = event.getChunk().chunkTileEntityMap;
+		Iterator<? extends Entry<?, ?>> iter = map.entrySet().iterator();
 
 		try {
 			while(iter.hasNext()) {
@@ -91,7 +88,7 @@ public class CableTickHandler {
 				}
 				if(pipecount == 0) //lastInNetwork
 					((TilePipe)homeTile).getNetworkHandler().removeNetworkByID(((TilePipe)homeTile).getNetworkID());
-				((TilePipe)homeTile).markDirty();
+				(homeTile).markDirty();
 			}
 			else if(homeTile != null) {
 				for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {

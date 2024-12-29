@@ -1,21 +1,22 @@
 package zmaster587.advancedRocketry.network;
 
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import org.jetbrains.annotations.NotNull;
-import zmaster587.advancedRocketry.api.stations.ISpaceObject;
-import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.stations.SpaceObject;
-import zmaster587.advancedRocketry.stations.SpaceObjectManager;
-import zmaster587.libVulpes.network.BasePacket;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.stations.ISpaceObject;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.stations.SpaceObject;
+import zmaster587.advancedRocketry.stations.SpaceObjectManager;
+import zmaster587.libVulpes.network.BasePacket;
+
+import java.io.IOException;
+import java.util.logging.Logger;
 
 public class PacketSpaceStationInfo extends BasePacket {
 	SpaceObject spaceObject;
@@ -47,7 +48,7 @@ public class PacketSpaceStationInfo extends BasePacket {
 					packetBuffer.writeStringToBuffer(SpaceObjectManager.getSpaceManager().getItentifierFromClass(spaceObject.getClass()));
 					packetBuffer.writeNBTTagCompoundToBuffer(nbt);
 				} catch (IOException e) {
-					e.printStackTrace();
+					AdvancedRocketry.logger.error(e);
 				}
 				packetBuffer.writeBoolean(spaceObject.hasWarpCores);
 				
@@ -87,7 +88,7 @@ public class PacketSpaceStationInfo extends BasePacket {
 				nbt = packetBuffer.readNBTTagCompoundFromBuffer();
 				
 			} catch (IOException e) {
-				e.printStackTrace();
+				AdvancedRocketry.logger.error(e);
 				return;
 			}
 			boolean hasWarpCores = in.readBoolean();

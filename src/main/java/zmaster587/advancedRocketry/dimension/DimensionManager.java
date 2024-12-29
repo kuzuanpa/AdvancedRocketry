@@ -58,7 +58,7 @@ public class DimensionManager implements IGalaxy {
 	private final @NotNull HashMap<Integer, StellarBody> starList;
 
 	private static long nextSatelliteId;
-    public Set<Integer> knownPlanets;
+    public final Set<Integer> knownPlanets;
 
 	//The default properties belonging to the overworld
 	public static DimensionProperties overworldProperties;
@@ -471,7 +471,7 @@ public class DimensionManager implements IGalaxy {
 		try {
 			FileUtils.deleteDirectory(file);
 		} catch(IOException e) {
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
 		}
 	}
 
@@ -565,7 +565,7 @@ public class DimensionManager implements IGalaxy {
 		nbt.setLong("nextSatelliteId", nextSatelliteId);
 
 		//Save Overworld
-		NBTTagCompound dimNbt = new NBTTagCompound();
+		NBTTagCompound dimNbt;
 
 		for(Entry<Integer, DimensionProperties> dimSet : dimensionList.entrySet()) {
 
@@ -612,7 +612,7 @@ public class DimensionManager implements IGalaxy {
 				FileOutputStream properOstream = new FileOutputStream(file);
 				FileInputStream inStream = new FileInputStream(tmpFile);
 				byte[] buffer = new byte[1024];
-				int numRead = 0;
+				int numRead;
 				while((numRead = inStream.read(buffer)) > 0) {
 					properOstream.write(buffer, 0, numRead);
 				}
@@ -622,11 +622,11 @@ public class DimensionManager implements IGalaxy {
 				
 			} catch(Exception e) {
 				AdvancedRocketry.logger.error("Cannot save advanced rocketry planet file");
-				e.printStackTrace();
+				AdvancedRocketry.logger.error(e);
 			}
 			outStream.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
 		}
 	}
 
@@ -666,12 +666,12 @@ public class DimensionManager implements IGalaxy {
 			//Patch to fix JEI printing when trying to load planets too early
 			return false;
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
 			return false;
 
 		} catch (IOException e) {
 			//TODO: try not to obliterate planets in the future
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
 			return false;
 		}
 

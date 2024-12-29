@@ -1,21 +1,6 @@
 package zmaster587.advancedRocketry.world;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
-
 import cpw.mods.fml.relauncher.ReflectionHelper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
-import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.world.gen.BiomeCacheExtended;
-import zmaster587.advancedRocketry.world.gen.GenLayerHillsExtended;
-import zmaster587.advancedRocketry.world.gen.GenLayerVoronoiExtended;
-import zmaster587.advancedRocketry.world.type.WorldTypePlanetGen;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.LongHashMap;
@@ -25,34 +10,28 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeCache;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.gen.layer.GenLayer;
-import net.minecraft.world.gen.layer.GenLayerAddIsland;
-import net.minecraft.world.gen.layer.GenLayerAddMushroomIsland;
-import net.minecraft.world.gen.layer.GenLayerAddSnow;
-import net.minecraft.world.gen.layer.GenLayerDeepOcean;
-import net.minecraft.world.gen.layer.GenLayerEdge;
-import net.minecraft.world.gen.layer.GenLayerFuzzyZoom;
-import net.minecraft.world.gen.layer.GenLayerHills;
-import net.minecraft.world.gen.layer.GenLayerIsland;
-import net.minecraft.world.gen.layer.GenLayerRareBiome;
-import net.minecraft.world.gen.layer.GenLayerRemoveTooMuchOcean;
-import net.minecraft.world.gen.layer.GenLayerRiver;
-import net.minecraft.world.gen.layer.GenLayerRiverInit;
-import net.minecraft.world.gen.layer.GenLayerRiverMix;
-import net.minecraft.world.gen.layer.GenLayerSmooth;
-import net.minecraft.world.gen.layer.GenLayerVoronoiZoom;
-import net.minecraft.world.gen.layer.GenLayerZoom;
-import net.minecraft.world.gen.layer.IntCache;
+import net.minecraft.world.gen.layer.*;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.world.gen.GenLayerHillsExtended;
+import zmaster587.advancedRocketry.world.gen.GenLayerVoronoiExtended;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class ChunkManagerPlanet extends WorldChunkManager {
 	//TODO: make higher biome ids work
 	/** A GenLayer containing the indices into BiomeGenBase.biomeList[] */
-	private GenLayer biomeIndexLayer;
+	private final GenLayer biomeIndexLayer;
 
-	private BiomeCache biomeCache;
+	private final BiomeCache biomeCache;
 
-	private GenLayer genBiomes;
+	private final GenLayer genBiomes;
 
 	private List<BiomeEntry> biomes;
 	
@@ -79,7 +58,7 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 	
 	public ChunkManagerPlanet(@NotNull World world, List biomes)
 	{
-		this(world.getSeed(), (WorldTypePlanetGen)world.getWorldInfo().getTerrainType(), DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId));
+		this(world.getSeed(), world.getWorldInfo().getTerrainType(), DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId));
 		//Note: world MUST BE REGISTERED WITH THE DIMENSION MANAGER
 		//This is a mess!
 		this.biomes = biomes;
@@ -120,14 +99,10 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 			b0 = 6;
 		}
 
-		if (flag)
-		{
-			b0 = 4;
-		}
-		b0 = GenLayer.getModdedBiomeSize(type, b0);
+        b0 = GenLayer.getModdedBiomeSize(type, b0);
 
 		GenLayer genlayer = GenLayerZoom.magnify(1000L, genlayer2, 0);
-		Object object = type.getBiomeLayer(seed, genlayer2);
+		GenLayer object = type.getBiomeLayer(seed, genlayer2);
 
 		GenLayer genlayer1;
 
@@ -140,7 +115,7 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 		else
 			genlayer1 = genlayer;
 
-		GenLayerHillsExtended genlayerhills = new GenLayerHillsExtended(1000L, (GenLayer)object, genlayer1);
+		GenLayerHillsExtended genlayerhills = new GenLayerHillsExtended(1000L, object, genlayer1);
 
 		genlayer = GenLayerZoom.magnify(1000L, genlayer, b0);
 
@@ -156,20 +131,20 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 
 		for (int j = 0; j < b0; ++j)
 		{
-			object = new GenLayerZoom((long)(1000 + j), (GenLayer)object);
+			object = new GenLayerZoom(1000 + j, object);
 
 			if (j == 0)
 			{
-				object = new GenLayerAddIsland(3L, (GenLayer)object);
+				object = new GenLayerAddIsland(3L, object);
 			}
 
 			if (j == 1)
 			{
-				object = new zmaster587.advancedRocketry.world.gen.GenLayerShoreExtended(1000L, (GenLayer)object);
+				object = new zmaster587.advancedRocketry.world.gen.GenLayerShoreExtended(1000L, object);
 			}
 		}
 
-		@NotNull GenLayerSmooth genlayersmooth1 = new GenLayerSmooth(1000L, (GenLayer)object);
+		@NotNull GenLayerSmooth genlayersmooth1 = new GenLayerSmooth(1000L, object);
 		GenLayerVoronoiExtended genlayervoronoizoom;
 		if(hasRivers) {
 			GenLayerRiverMix genlayerrivermix = new GenLayerRiverMix(100L, genlayersmooth1, genlayersmooth);
@@ -252,9 +227,9 @@ public class ChunkManagerPlanet extends WorldChunkManager {
 		
 		try {
 			fBiomeCacheMap.set(this.biomeCache, new LongHashMap());
-			((List)fBiomeCache.get(this.biomeCache)).clear();
+			((List<?>)fBiomeCache.get(this.biomeCache)).clear();
 		} catch (Exception e) {
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
 		}
 	}
 

@@ -15,7 +15,7 @@ import java.util.Random;
 public class EnergyNetwork extends CableNetwork implements IUniversalEnergy {
 
 
-	UniversalBattery battery;
+	final UniversalBattery battery;
 
 	public EnergyNetwork() {
 		battery = new UniversalBattery(500);

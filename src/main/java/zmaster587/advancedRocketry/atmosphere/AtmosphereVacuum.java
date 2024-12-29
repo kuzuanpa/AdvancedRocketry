@@ -16,7 +16,7 @@ import zmaster587.libVulpes.network.PacketHandler;
 public class AtmosphereVacuum extends AtmosphereNeedsSuit {
 
 	public static int damageValue;
-	public static boolean enableNausea = Configuration.enableNausea;
+	public static final boolean enableNausea = Configuration.enableNausea;
 
 	public AtmosphereVacuum() {
 		super(true, false, false, "vacuum");

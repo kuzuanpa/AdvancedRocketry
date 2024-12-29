@@ -14,7 +14,7 @@ import zmaster587.libVulpes.inventory.modules.ModuleText;
 
 public class TileMachineChipInfo extends TileEntity implements IModularInventory {
 
-	ModuleText infoText;
+	final ModuleText infoText;
 	
 	public TileMachineChipInfo() {
 		infoText = new ModuleText(16, 16, "", 0x2f2f2f);

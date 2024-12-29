@@ -53,15 +53,15 @@ public class TileOxygenVent extends TileInventoriedRFConsumerTank implements IBl
 	boolean soundInit;
 	boolean allowTrace;
 	int numScrubbers;
-	List<TileCO2Scrubber> scrubbers;
+	final List<TileCO2Scrubber> scrubbers;
 	int radius = 0;
 	
 	final static byte PACKET_REDSTONE_ID = 2;
 	final static byte PACKET_TRACE_ID = 3;
 	
 	RedstoneState state;
-	ModuleRedstoneOutputButton redstoneControl;
-	ModuleToggleSwitch traceToggle;
+	final ModuleRedstoneOutputButton redstoneControl;
+	final ModuleToggleSwitch traceToggle;
 	
 	public TileOxygenVent() {
 		super(1000,2, 1000);
@@ -232,15 +232,13 @@ public class TileOxygenVent extends TileInventoriedRFConsumerTank implements IBl
 
 		if(!worldObj.isRemote) {
 			if(firstRun) {
-				if(!worldObj.isRemote) {
-					AtmosphereHandler.getOxygenHandler(this.worldObj.provider.dimensionId).registerBlob(this, xCoord, yCoord, zCoord);
+                AtmosphereHandler.getOxygenHandler(this.worldObj.provider.dimensionId).registerBlob(this, xCoord, yCoord, zCoord);
 
-					onAdjacentBlockUpdated();
-					//isSealed starts as true so we can accurately check for scrubbers, we now set it to false to force the tile to check for a seal on first run
-					isSealed = false;
-					
-				}
-				firstRun = false;
+                onAdjacentBlockUpdated();
+                //isSealed starts as true so we can accurately check for scrubbers, we now set it to false to force the tile to check for a seal on first run
+                isSealed = false;
+
+                firstRun = false;
 			}
 			
 			if(isSealed && AtmosphereHandler.getOxygenHandler(this.worldObj.provider.dimensionId).getBlobSize(this) == 0) {

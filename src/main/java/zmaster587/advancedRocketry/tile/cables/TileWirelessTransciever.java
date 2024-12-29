@@ -43,9 +43,9 @@ public class TileWirelessTransciever extends TileEntity implements INetworkMachi
 	boolean extractMode;
 	boolean enabled;
 	int networkID;
-	MultiData data;
-	ModuleToggleSwitch toggle;
-	protected ModuleToggleSwitch toggleSwitch;
+	final MultiData data;
+	final ModuleToggleSwitch toggle;
+	protected final ModuleToggleSwitch toggleSwitch;
 	boolean updated = false;
 
 	public TileWirelessTransciever() {
@@ -165,7 +165,7 @@ public class TileWirelessTransciever extends TileEntity implements INetworkMachi
 
 	@Override
 	public List<ModuleBase> getModules(int id, EntityPlayer player) {
-		LinkedList list = new LinkedList<ModuleBase>();
+		LinkedList<ModuleBase> list = new LinkedList<>();
 
 		list.add(toggle);
 		list.add(toggleSwitch);
@@ -277,13 +277,8 @@ public class TileWirelessTransciever extends TileEntity implements INetworkMachi
 		}
 	}
 
-	@Override
-	public boolean canUpdate() {
-		return true;
-	}
 
-
-	public void update() {
+    public void update() {
 		int state = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		Block block = worldObj.getBlock(xCoord, yCoord, zCoord);
 		

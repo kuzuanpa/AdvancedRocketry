@@ -14,7 +14,7 @@ import zmaster587.libVulpes.render.RenderHelper;
 public class FxLaserHeat extends EntityFX {
 
 	
-	double size;
+	final double size;
 	
 	public FxLaserHeat(World world, double x,
 			double y, double z, double size) {

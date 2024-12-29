@@ -71,7 +71,7 @@ public class PlanetEventHandler {
 
 	public static long time = 0;
 	private static long endTime, duration;
-	private static @NotNull Map<Long,TransitionEntity> transitionMap = new HashMap<>();
+	private static final @NotNull Map<Long,TransitionEntity> transitionMap = new HashMap<>();
 
 	public static void addDelayedTransition(long tick, TransitionEntity entity) {
 		transitionMap.put(tick, entity);
@@ -150,13 +150,11 @@ public class PlanetEventHandler {
 		World world = event.world;
 		if(world.provider instanceof WorldProviderPlanet)event.list.clear();
 		DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId);
-		if(properties != null) {
-			List<SpawnListEntryNBT> entries = properties.getSpawnListEntries();
-			if(!entries.isEmpty()) for (SpawnListEntryNBT entry : entries) {
-				if (event.type.getCreatureClass().isAssignableFrom(entry.entityClass))event.list.add(entry);
-			}
-		}
-	}
+        List<SpawnListEntryNBT> entries = properties.getSpawnListEntries();
+        if(!entries.isEmpty()) for (SpawnListEntryNBT entry : entries) {
+            if (event.type.getCreatureClass().isAssignableFrom(entry.entityClass))event.list.add(entry);
+        }
+    }
 	//Handle gravity
 	@SubscribeEvent
 	public void playerTick(LivingUpdateEvent event) {
@@ -219,29 +217,22 @@ public class PlanetEventHandler {
 
 	//TODO move
 	//Has weak refs so if the player gets killed/logsout etc the entry doesnt stay trapped in RAM
-	private static @NotNull HashSet<WeakReference<EntityPlayer>> inventoryCheckPlayerBypassMap = new HashSet<>();
+	private static final @NotNull HashSet<WeakReference<EntityPlayer>> inventoryCheckPlayerBypassMap = new HashSet<>();
 
 	public static void addPlayerToInventoryBypass(EntityPlayer player) {
 		inventoryCheckPlayerBypassMap.add(new WeakReference<>(player));
 	}
 
 	public static void removePlayerFromInventoryBypass(EntityPlayer player) {
-		Iterator<WeakReference<EntityPlayer>> iter = inventoryCheckPlayerBypassMap.iterator();
 
-		while(iter.hasNext()) {
-			WeakReference<EntityPlayer> player2 = iter.next();
-			if(player2.get() == player || player2.get() == null)
-				iter.remove();
-		}
+        inventoryCheckPlayerBypassMap.removeIf(player2 -> player2.get() == player || player2.get() == null);
 	}
 
 	public static boolean canPlayerBypassInvChecks(EntityPlayer player) {
-		Iterator<WeakReference<EntityPlayer>> iter = inventoryCheckPlayerBypassMap.iterator();
-		while(iter.hasNext()) {
-			WeakReference<EntityPlayer> player2 = iter.next();
-			if(player2.get() == player)
-				return true;
-		}
+        for (WeakReference<EntityPlayer> player2 : inventoryCheckPlayerBypassMap) {
+            if (player2.get() == player)
+                return true;
+        }
 		return false;
 	}
 
@@ -259,7 +250,7 @@ public class PlanetEventHandler {
 	@SubscribeEvent
 	public void tick(TickEvent.ServerTickEvent event) {
 		//Tick satellites
-		if(event.phase == event.phase.END) {
+		if(event.phase == TickEvent.Phase.END) {
 			DimensionManager.getInstance().tickDimensions();
 			time++;
 
@@ -284,7 +275,7 @@ public class PlanetEventHandler {
 
 	@SubscribeEvent
 	public void tickClient(TickEvent.@NotNull ClientTickEvent event) {
-		if(event.phase == event.phase.END)
+		if(event.phase == TickEvent.Phase.END)
 			DimensionManager.getInstance().tickDimensionsClient();
 	}
 
@@ -403,31 +394,29 @@ public class PlanetEventHandler {
 			return;
 
 		DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(event.entity.dimension);
-		if(properties != null) {
-			float fog = Math.min(properties.getAtmosphereDensityAtHeight(event.entity.posY), 200);
+        float fog = Math.min(properties.getAtmosphereDensityAtHeight(event.entity.posY), 200);
 
-			if(event.entity.worldObj.provider instanceof IPlanetaryProvider) {
-				Vec3 color = event.entity.worldObj.provider.getSkyColor(event.entity, 0f);
-				event.red = (float) Math.min(color.xCoord*1.4f,1f);
-				event.green = (float) Math.min(color.yCoord*1.4f, 1f);
-				event.blue = (float) Math.min(color.zCoord*1.4f, 1f);
-			}
+        if(event.entity.worldObj.provider instanceof IPlanetaryProvider) {
+            Vec3 color = event.entity.worldObj.provider.getSkyColor(event.entity, 0f);
+            event.red = (float) Math.min(color.xCoord*1.4f,1f);
+            event.green = (float) Math.min(color.yCoord*1.4f, 1f);
+            event.blue = (float) Math.min(color.zCoord*1.4f, 1f);
+        }
 
-			if(endTime > 0) {
-				double amt = (endTime - Minecraft.getMinecraft().theWorld.getTotalWorldTime()) / (double)duration;
-				if(amt < 0) {
-					endTime = 0;
-				}
-				else
-					event.green = event.blue = event.red = (float)amt;
+        if(endTime > 0) {
+            double amt = (endTime - Minecraft.getMinecraft().theWorld.getTotalWorldTime()) / (double)duration;
+            if(amt < 0) {
+                endTime = 0;
+            }
+            else
+                event.green = event.blue = event.red = (float)amt;
 
-			} else {
-				event.red *= fog;
-				event.green *= fog;
-				event.blue *= fog;
-			}
-		}
-	}
+        } else {
+            event.red *= fog;
+            event.green *= fog;
+            event.blue *= fog;
+        }
+    }
 
 	@SubscribeEvent
 	public void serverTickEvent(TickEvent.WorldTickEvent event) {
@@ -436,7 +425,7 @@ public class PlanetEventHandler {
 			if(DimensionManager.getInstance().getDimensionProperties(event.world.provider.dimensionId).isTerraformed()) {
 				List<Chunk> list = ((WorldServer)event.world).theChunkProviderServer.loadedChunks;
 				int listSize = list.size();
-				if(list.size() > 0) {
+				if(!list.isEmpty()) {
 					if(Configuration.terraformingBlockSpeed > listSize || event.world.rand.nextFloat() < Configuration.terraformingBlockSpeed/(float)listSize)
 					{
 						for(int i = 0; i < Configuration.terraformingBlockSpeed; i++) {
@@ -483,12 +472,12 @@ public class PlanetEventHandler {
 	@SideOnly(Side.CLIENT)
 	public void fogColor(net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent event) {
 
-		if(false || event.fogMode == -1) {
+		if(event.fogMode == -1) {
 			return;
 		}
 
 		DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(event.entity.dimension);
-		if(properties != null && event.block != Blocks.water && event.block != Blocks.lava) {//& properties.atmosphereDensity > 125) {
+		if(event.block != Blocks.water && event.block != Blocks.lava) {//& properties.atmosphereDensity > 125) {
 			float fog = Math.min(properties.getAtmosphereDensityAtHeight(event.entity.posY), 200);
 			//GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
 			GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR);
@@ -555,7 +544,7 @@ public class PlanetEventHandler {
 	public void fallEvent(LivingFallEvent event) {
 		if(event.entity.worldObj.provider instanceof IPlanetaryProvider) {
 			IPlanetaryProvider planet = (IPlanetaryProvider)event.entity.worldObj.provider;
-			event.distance *= planet.getGravitationalMultiplier((int)event.entity.posX, (int)event.entity.posZ);
+			event.distance *= (float) planet.getGravitationalMultiplier((int)event.entity.posX, (int)event.entity.posZ);
 		}
 	}
 }

@@ -15,8 +15,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
-import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.entity.EntityRocket;
 import zmaster587.advancedRocketry.util.StorageChunk;
 import zmaster587.libVulpes.interfaces.INetworkEntity;
@@ -46,11 +44,11 @@ public class PacketStorageTileUpdate extends BasePacket {
 
 	@Override
 	public void write(ByteBuf out) {
-		NBTTagCompound nbt = (NBTTagCompound)ReflectionHelper.getPrivateValue(S35PacketUpdateTileEntity.class, (S35PacketUpdateTileEntity)tile.getDescriptionPacket(), "field_148860_e");
+		NBTTagCompound nbt = ReflectionHelper.getPrivateValue(S35PacketUpdateTileEntity.class, (S35PacketUpdateTileEntity)tile.getDescriptionPacket(), "field_148860_e");
 
 
-		out.writeInt(((Entity)entity).worldObj.provider.dimensionId);
-		out.writeInt(((Entity)entity).getEntityId());
+		out.writeInt(entity.worldObj.provider.dimensionId);
+		out.writeInt(entity.getEntityId());
 		out.writeInt(x);
 		out.writeInt(y);
 		out.writeInt(z);
@@ -90,7 +88,7 @@ public class PacketStorageTileUpdate extends BasePacket {
 		this.nbt = nbt;
 
 
-		if(ent != null && ent instanceof INetworkEntity) {
+		if(ent instanceof INetworkEntity) {
 			entity = (EntityRocket)ent;
 			this.chunk = entity.storage;
 		}

@@ -17,14 +17,9 @@ public class PrecisionAssemberNEI extends TemplateNEI {
 	public String getRecipeName() {
 		return I18n.format("gui.nei.PrecisionAssember");
 	}
-	
-	
-	@Override
-	public int recipiesPerPage() {
-		return 1;
-	}
-	
-	@Override
+
+
+    @Override
     public void drawExtras(int recipe)
     {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureResources.progressBars);
@@ -36,13 +31,13 @@ public class PrecisionAssemberNEI extends TemplateNEI {
     	
     	//(cycleticks % 100) /100f;
     	if(mode == 0)
-    		drawProgressBar(93, 23, 54, 42, 13, 15, (cycleticks % (ticksPerBar/3)) /(float)(ticksPerBar/3), 1);
+    		drawProgressBar(93, 23, 54, 42, 13, 15, (cycleticks % ((float) ticksPerBar /3)) /(float)(ticksPerBar/3), 1);
     	else if(mode == 1) {
     		drawTexturedModalRect(61, 22, 78, 42, 12, 13);
     		
     		drawTexturedModalRect(93, 23, 54, 42, 13, 15);
     		
-    		drawProgressBar(94, 42, 67, 42, 11, 15, (cycleticks % (ticksPerBar/3)) /(float)(ticksPerBar/3), 1);
+    		drawProgressBar(94, 42, 67, 42, 11, 15, (cycleticks % ((float) ticksPerBar /3)) /(float)(ticksPerBar/3), 1);
     	}
     	else if(mode == 2) {
     		drawTexturedModalRect(59, 51, 54, 57, 14, 9);
@@ -51,7 +46,7 @@ public class PrecisionAssemberNEI extends TemplateNEI {
     		drawTexturedModalRect(93, 23, 54, 42, 13, 15);
     		drawTexturedModalRect(94, 42, 67, 42, 11, 15);
     		
-    		drawProgressBar(89, 63, 90, 42, 22, 3, (cycleticks % (ticksPerBar/3)) /(float)(ticksPerBar/3), 0);
+    		drawProgressBar(89, 63, 90, 42, 22, 3, (cycleticks % ((float) ticksPerBar /3)) /(float)(ticksPerBar/3), 0);
     	}
     }
 

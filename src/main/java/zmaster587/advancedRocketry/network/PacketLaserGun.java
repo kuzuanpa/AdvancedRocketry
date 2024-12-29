@@ -8,7 +8,6 @@ import net.minecraft.util.Vec3;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.libVulpes.network.BasePacket;
-import zmaster587.libVulpes.util.Vector3F;
 
 public class PacketLaserGun extends BasePacket {
 
@@ -27,15 +26,15 @@ public class PacketLaserGun extends BasePacket {
 	@Override
 	public void write(@NotNull ByteBuf out) {
 		out.writeInt(fromEntity.getEntityId());
-		out.writeFloat((float)(double)toPos.xCoord);
-		out.writeFloat((float)(double)toPos.yCoord);
-		out.writeFloat((float)(double)toPos.zCoord);
+		out.writeFloat((float) toPos.xCoord);
+		out.writeFloat((float) toPos.yCoord);
+		out.writeFloat((float) toPos.zCoord);
 	}
 
 	@Override
 	public void readClient(ByteBuf in) {
 		entityId = in.readInt();
-		toPos = Vec3.createVectorHelper((double)in.readFloat(), (double)in.readFloat(), (double)in.readFloat());
+		toPos = Vec3.createVectorHelper(in.readFloat(), in.readFloat(), in.readFloat());
 	}
 
 	@Override

@@ -37,23 +37,24 @@ public class ItemSatellite extends ItemIdWithName {
 			int powerStorage = 0, powerGeneration = 0, maxData = 0;
 			EmbeddedInventory inv = readInvFromNBT(stackIn);
 
-			if(inv.getStackInSlot(0) == null)
-				return null;
-			
-			String satType = SatelliteRegistry.getSatelliteProperty(inv.getStackInSlot(0)).getSatelliteType();
+			if(inv.getStackInSlot(0) == null) return null;
+
+			SatelliteProperties properties = SatelliteRegistry.getSatelliteProperty(inv.getStackInSlot(0));
+			if(properties == null)return null;
+			String satType = properties.getSatelliteType();
 			SatelliteBase sat = SatelliteRegistry.getSatallite(satType);
+			if(sat == null)return null;
 
 			for(int i = 0; i < inv.getSizeInventory(); i++) {
 				ItemStack stack = inv.getStackInSlot(i);
 				if(stack != null) {
-					SatelliteProperties properties = SatelliteRegistry.getSatelliteProperty(stack);
+					SatelliteProperties properties2 = SatelliteRegistry.getSatelliteProperty(stack);
 
-					if(!sat.acceptsItemInConstruction(stack))
-						continue;
+					if(properties2==null || !sat.acceptsItemInConstruction(stack)) continue;
 
-					powerStorage += properties.getPowerStorage();
-					powerGeneration += properties.getPowerGeneration();
-					maxData += properties.getMaxDataStorage();
+					powerStorage += properties2.getPowerStorage();
+					powerGeneration += properties2.getPowerGeneration();
+					maxData += properties2.getMaxDataStorage();
 				}
 			}
 

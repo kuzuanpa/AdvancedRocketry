@@ -65,8 +65,8 @@ public class OreGenerator extends WorldGenerator implements IWorldGenerator {
 			if(Configuration.generateDilithium) {
 				int dilithiumChance = Configuration.dilithiumPerChunk;
 				if(world.provider instanceof WorldProviderPlanet) {
-					dilithiumChance = DimensionProperties.AtmosphereTypes.getAtmosphereTypeFromValue(DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId).getAtmosphereDensity()) == DimensionProperties.AtmosphereTypes.NONE ? Configuration.dilithiumPerChunkMoon : Configuration.dilithiumPerChunk;;
-				}
+					dilithiumChance = DimensionProperties.AtmosphereTypes.getAtmosphereTypeFromValue(DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId).getAtmosphereDensity()) == DimensionProperties.AtmosphereTypes.NONE ? Configuration.dilithiumPerChunkMoon : Configuration.dilithiumPerChunk;
+                }
 				
 				for(int i = 0; i < dilithiumChance; i++) {
 					int coordX = 16*chunkX + random.nextInt(16);

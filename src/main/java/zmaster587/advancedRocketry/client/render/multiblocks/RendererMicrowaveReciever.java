@@ -16,8 +16,8 @@ import zmaster587.libVulpes.render.RenderHelper;
 
 public class RendererMicrowaveReciever extends TileEntitySpecialRenderer {
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/blocks/solar.png");
-	ResourceLocation panelSide = new ResourceLocation("advancedrocketry:textures/blocks/panelSide.png");
+	final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/blocks/solar.png");
+	final ResourceLocation panelSide = new ResourceLocation("advancedrocketry:textures/blocks/panelSide.png");
 
 	@Override
 	public void renderTileEntityAt(TileEntity tile, double x,
@@ -120,13 +120,13 @@ public class RendererMicrowaveReciever extends TileEntitySpecialRenderer {
 					tessellator.addVertex(- x , -y + 200,  - z);
 					tessellator.addVertex(- x, -y + 200, - z);
 					tessellator.addVertex(- (radius* Math.cos(i)) + 0.5F, 0,- (radius* Math.sin(i)) + 0.5F);
-					tessellator.addVertex(+ (radius* Math.sin(i)) + 0.5F, 0, (radius* Math.cos(i)) + 0.5F);
+					tessellator.addVertex((radius* Math.sin(i)) + 0.5F, 0, (radius* Math.cos(i)) + 0.5F);
 				}
 
 				for(double i = 0; i < 2*Math.PI; i += Math.PI) {
 					tessellator.addVertex(- x, -y + 200,- z);
 					tessellator.addVertex(- x, -y + 200, - z);
-					tessellator.addVertex(+ (radius* Math.sin(i)) + 0.5F, 0, -(radius* Math.cos(i)) + 0.5F);
+					tessellator.addVertex((radius* Math.sin(i)) + 0.5F, 0, -(radius* Math.cos(i)) + 0.5F);
 					tessellator.addVertex(- (radius* Math.cos(i)) + 0.5F, 0,(radius* Math.sin(i)) + 0.5F);
 				}
 			}

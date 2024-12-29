@@ -55,7 +55,7 @@ public class TileEntityFuelingStation extends TileInventoriedRFConsumerTank impl
 	@Nullable
 	EntityRocketBase linkedRocket;
 	BlockPosition masterBlock;
-	ModuleRedstoneOutputButton redstoneControl;
+	final ModuleRedstoneOutputButton redstoneControl;
 	RedstoneState state;
 	
 	public TileEntityFuelingStation() {
@@ -273,7 +273,7 @@ public class TileEntityFuelingStation extends TileInventoriedRFConsumerTank impl
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setByte("redstoneState", (byte) state.ordinal());
 		if(hasMaster()) {

@@ -50,7 +50,7 @@ import java.util.Random;
 
 public class RocketEventHandler extends Gui {
 
-	private ResourceLocation background = TextureResources.rocketHud;
+	private final ResourceLocation background = TextureResources.rocketHud;
 	private static ClientDynamicTexture earth;
 	private static ClientDynamicTexture outerBounds;
 	private static final int getImgSize = 512;
@@ -59,10 +59,10 @@ public class RocketEventHandler extends Gui {
 	private static boolean mapNeedsBinding = false;
 	private static @Nullable IRenderHandler prevRenderHanlder = null;
 	private static IntBuffer table,outerBoundsTable;
-	public static @NotNull GuiBox suitPanel = new GuiBox(8,8,24,24);
-	public static @NotNull GuiBox oxygenBar = new GuiBox(8,-57, 80, 48);
-	public static @NotNull GuiBox hydrogenBar = new GuiBox(8,-74, 80, 48);
-	public static @NotNull GuiBox atmBar = new GuiBox(8, 27, 200, 48);
+	public static final @NotNull GuiBox suitPanel = new GuiBox(8,8,24,24);
+	public static final @NotNull GuiBox oxygenBar = new GuiBox(8,-57, 80, 48);
+	public static final @NotNull GuiBox hydrogenBar = new GuiBox(8,-74, 80, 48);
+	public static final @NotNull GuiBox atmBar = new GuiBox(8, 27, 200, 48);
 	private static @Nullable GuiBox currentlySelectedBox = null;
 
 
@@ -143,106 +143,103 @@ public class RocketEventHandler extends Gui {
 		//Multi thread texture creation b/c it can be expensive
 		final @NotNull World worldObj = event.world;
 		final Entity entity = event.entity;
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
+		new Thread(() -> {
 
 
-				table = earth.getByteBuffer();
-				outerBoundsTable = outerBounds.getByteBuffer();
+            table = earth.getByteBuffer();
+            outerBoundsTable = outerBounds.getByteBuffer();
 
-				//Get the average of each edge RGB
-				long[] topEdge, bottomEdge, leftEdge, rightEdge, total;
-				total = topEdge = bottomEdge = leftEdge = rightEdge = new long[] {0,0,0};
+            //Get the average of each edge RGB
+            long[] topEdge, bottomEdge, leftEdge, rightEdge, total;
+            total = new long[] {0,0,0};
 
-				int numChunksLoaded = 0;
+            int numChunksLoaded = 0;
 
-				for(int i = 0; i < getImgSize*getImgSize; i++) {
-					//TODO: Optimize
-					int xOffset = (i % getImgSize);
-					int yOffset = (i / getImgSize);
+            for(int i = 0; i < getImgSize*getImgSize; i++) {
+                //TODO: Optimize
+                int xOffset = (i % getImgSize);
+                int yOffset = (i / getImgSize);
 
-					int xPosition = (int)entity.posX - (getImgSize/2) + xOffset;
-					int zPosition = (int)entity.posZ - (getImgSize/2) + yOffset;
-					Chunk chunk = worldObj.getChunkFromBlockCoords(xPosition, zPosition);
+                int xPosition = (int)entity.posX - (getImgSize/2) + xOffset;
+                int zPosition = (int)entity.posZ - (getImgSize/2) + yOffset;
+                Chunk chunk = worldObj.getChunkFromBlockCoords(xPosition, zPosition);
 
-					if(chunk.isChunkLoaded && !chunk.isEmpty()) {
-						//Get Xcoord and ZCoords in the chunk
-						numChunksLoaded++;
-						int heightValue = chunk.getHeightValue( xPosition + (chunk.xPosition >= 0 ? - (Math.abs( chunk.xPosition )<< 4) : (Math.abs( chunk.xPosition )<< 4)), zPosition + (chunk.zPosition >= 0 ? - (Math.abs(chunk.zPosition )<< 4) : (Math.abs(chunk.zPosition )<< 4)));
-						MapColor color = MapColor.airColor;
-						int yPosition;
+                if(chunk.isChunkLoaded && !chunk.isEmpty()) {
+                    //Get Xcoord and ZCoords in the chunk
+                    numChunksLoaded++;
+                    int heightValue = chunk.getHeightValue( xPosition + (chunk.xPosition >= 0 ? - (Math.abs( chunk.xPosition )<< 4) : (Math.abs( chunk.xPosition )<< 4)), zPosition + (chunk.zPosition >= 0 ? - (Math.abs(chunk.zPosition )<< 4) : (Math.abs(chunk.zPosition )<< 4)));
+                    MapColor color = MapColor.airColor;
+                    int yPosition;
 
-						Block block = null;
+                    Block block = null;
 
-						//Get the first non-air block
-						for(yPosition = heightValue; yPosition > 0; yPosition-- ) {
-							block = worldObj.getBlock(xPosition, yPosition, zPosition);
-							if((color = block.getMapColor(worldObj.getBlockMetadata(xPosition, yPosition, zPosition))) != MapColor.airColor) {
-								break;
-							}
-						}
+                    //Get the first non-air block
+                    for(yPosition = heightValue; yPosition > 0; yPosition-- ) {
+                        block = worldObj.getBlock(xPosition, yPosition, zPosition);
+                        if((color = block.getMapColor(worldObj.getBlockMetadata(xPosition, yPosition, zPosition))) != MapColor.airColor) {
+                            break;
+                        }
+                    }
 
-						int intColor;
+                    int intColor;
 
-						if(block == Blocks.grass || block == Blocks.tallgrass) {
-							int color2 = worldObj.getBiomeGenForCoords(xPosition, zPosition).getBiomeGrassColor(xPosition, yPosition, zPosition);
-							int r = (color2 & 0xFF);
-							int g = ( (color2 >>> 8) & 0xFF);
-							int b = ( (color2 >>> 16) & 0xFF);
-							intColor = b | (g << 8) | (r << 16);
-						}
-						else if(block == Blocks.leaves || block == Blocks.leaves2) {
-							int color2 = worldObj.getBiomeGenForCoords(xPosition, zPosition).getBiomeFoliageColor(xPosition, yPosition, zPosition);
-							int r = (color2 & 0xFF);
-							int g = ( (color2 >>> 8) & 0xFF);
-							int b = ( (color2 >>> 16) & 0xFF);
-							intColor = b | (g << 8) | (r << 16);
-						}
-						else
-							intColor = ( (color.colorValue & 0xFF) << 16) | ( ( color.colorValue >>> 16 ) & 0xFF ) | ( color.colorValue & 0xFF00 );
+                    if(block == Blocks.grass || block == Blocks.tallgrass) {
+                        int color2 = worldObj.getBiomeGenForCoords(xPosition, zPosition).getBiomeGrassColor(xPosition, yPosition, zPosition);
+                        int r = (color2 & 0xFF);
+                        int g = ( (color2 >>> 8) & 0xFF);
+                        int b = ( (color2 >>> 16) & 0xFF);
+                        intColor = b | (g << 8) | (r << 16);
+                    }
+                    else if(block == Blocks.leaves || block == Blocks.leaves2) {
+                        int color2 = worldObj.getBiomeGenForCoords(xPosition, zPosition).getBiomeFoliageColor(xPosition, yPosition, zPosition);
+                        int r = (color2 & 0xFF);
+                        int g = ( (color2 >>> 8) & 0xFF);
+                        int b = ( (color2 >>> 16) & 0xFF);
+                        intColor = b | (g << 8) | (r << 16);
+                    }
+                    else
+                        intColor = ( (color.colorValue & 0xFF) << 16) | ( ( color.colorValue >>> 16 ) & 0xFF ) | ( color.colorValue & 0xFF00 );
 
-						//Put into the table and make opaque
-						table.put(i, intColor | 0xFF000000);
+                    //Put into the table and make opaque
+                    table.put(i, intColor | 0xFF000000);
 
-						//Background in case chunk doesnt load
-						total[0] += intColor & 0xFF;
-						total[1] += (intColor & 0xFF00) >>> 8;
-							total[2] += (intColor & 0xFF0000) >>> 16;
+                    //Background in case chunk doesnt load
+                    total[0] += intColor & 0xFF;
+                    total[1] += (intColor & 0xFF00) >>> 8;
+                        total[2] += (intColor & 0xFF0000) >>> 16;
 
-					}
-				}
+                }
+            }
 
-				int multiplierGreen = 1;
-				int multiplierBlue = 1;
+            int multiplierGreen = 1;
+            int multiplierBlue = 1;
 
-				//Get the outer layer
-				total[0] =     ZUtils.getAverageColor(total[0], total[1]*multiplierGreen, total[2]* multiplierBlue, numChunksLoaded);
+            //Get the outer layer
+            total[0] =     ZUtils.getAverageColor(total[0], total[1]*multiplierGreen, total[2]* multiplierBlue, numChunksLoaded);
 
-				Random random = new Random(); 
+            Random random = new Random();
 
-				int randomMax = 0x2A;
+            int randomMax = 0x2A;
 
-				for(int i = 0; i < outerImgSize*outerImgSize; i++) {
+            for(int i = 0; i < outerImgSize*outerImgSize; i++) {
 
-					int randR =   randomMax - random.nextInt(randomMax) / 2;
-					int randG = ( randomMax - random.nextInt(randomMax)/2 ) << 8;
-					int randB = ( randomMax - random.nextInt(randomMax) /2 ) << 16;
+                int randR =   randomMax - random.nextInt(randomMax) / 2;
+                int randG = ( randomMax - random.nextInt(randomMax)/2 ) << 8;
+                int randB = ( randomMax - random.nextInt(randomMax) /2 ) << 16;
 
 
-					int color = (int)( MathHelper.clamp_int((int) ( (total[0] & 0xFF) + randR ),0, 0xFF ) |
-							MathHelper.clamp_int((int)(total[0] & 0xFF00) + randG, 0x0100, 0xFF00)  | 
-							MathHelper.clamp_int( (int)(( total[0] & 0xFF0000) + randB), 0x010000, 0xFF0000) );
+                int color = MathHelper.clamp_int((int) ( (total[0] & 0xFF) + randR ),0, 0xFF ) |
+                        MathHelper.clamp_int((int)(total[0] & 0xFF00) + randG, 0x0100, 0xFF00)  |
+                        MathHelper.clamp_int( (int)(( total[0] & 0xFF0000) + randB), 0x010000, 0xFF0000);
 
-					outerBoundsTable.put(i, color | 0xff000000);
-				}
+                outerBoundsTable.put(i, color | 0xff000000);
+            }
 
-				outerBoundsTable.flip();
-				table.flip(); //Yes really
-				mapNeedsBinding = true;
-				mapReady = true;
-			}
-		}, "Planet Texture Creator").start();
+            outerBoundsTable.flip();
+            table.flip(); //Yes really
+            mapNeedsBinding = true;
+            mapReady = true;
+        }, "Planet Texture Creator").start();
 	}
 
 
@@ -367,8 +364,8 @@ public class RocketEventHandler extends Gui {
 
 						float scale = str.length() < 50 ? 1f : 0.5f;
 
-						int screenX = (int) ((event.resolution.getScaledWidth()/(scale*6) - fontRenderer.getStringWidth(partStr)/2));
-						int screenY = (int) ((event.resolution.getScaledHeight()/18)/scale) + numLines*18;
+						int screenX = (int) ((event.resolution.getScaledWidth()/(scale*6) - (float) fontRenderer.getStringWidth(partStr) /2));
+						int screenY = (int) (((float) event.resolution.getScaledHeight() /18)/scale) + numLines*18;
 
 						GL11.glPushMatrix();
 						GL11.glScalef(3*scale, 3*scale, 3*scale);
@@ -580,7 +577,8 @@ public class RocketEventHandler extends Gui {
 		private int y;
 		int modeX = -1;
 		int modeY = -1;
-		int sizeX, sizeY;
+		final int sizeX;
+        final int sizeY;
 		boolean isVisible = true;
 
 		public GuiBox(int x, int y, int sizeX, int sizeY) {
@@ -611,33 +609,31 @@ public class RocketEventHandler extends Gui {
 		}
 
 		public void setRenderX(int x, double scaleX) {
-			double i = scaleX;
-			if(x < i/3) {
+            if(x < scaleX /3) {
 				modeX = -1;
 				this.setRawX(x); 
 			}
-			else if(x > i*2/3) {
-				this.setRawX((int) (i - x));
+			else if(x > scaleX *2/3) {
+				this.setRawX((int) (scaleX - x));
 				modeX = 1;
 			}
 			else {
-				this.setRawX((int)(i/2 - x));
+				this.setRawX((int)(scaleX /2 - x));
 				modeX = 0;
 			}
 		}
 
 		public void setRenderY(int y, double scaleY) {
-			double i = scaleY;
-			if(y < i/3) {
+            if(y < scaleY /3) {
 				modeY = -1;
 				this.setRawY(y); 
 			}
-			else if(y > i*2/3) {
-				this.setRawY((int) (i - y));
+			else if(y > scaleY *2/3) {
+				this.setRawY((int) (scaleY - y));
 				modeY = 1;
 			}
 			else {
-				this.setRawY((int)(i/2 - y));
+				this.setRawY((int)(scaleY /2 - y));
 				modeY = 0;
 			}
 		}

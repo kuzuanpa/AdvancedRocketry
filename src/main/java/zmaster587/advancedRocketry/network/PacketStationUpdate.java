@@ -1,8 +1,5 @@
 package zmaster587.advancedRocketry.network;
 
-import java.io.IOException;
-import java.util.logging.Logger;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,13 +7,16 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.ForgeDirection;
+import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.event.PlanetEventHandler;
-import zmaster587.advancedRocketry.event.RocketEventHandler;
 import zmaster587.advancedRocketry.stations.SpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.libVulpes.network.BasePacket;
+
+import java.io.IOException;
+import java.util.logging.Logger;
 
 public class PacketStationUpdate extends BasePacket {
 	ISpaceObject spaceObject;
@@ -36,7 +36,7 @@ public class PacketStationUpdate extends BasePacket {
 	public PacketStationUpdate() {}
 
 	public PacketStationUpdate(ISpaceObject dimProperties, Type type) {
-		this.spaceObject = (SpaceObject)dimProperties;
+		this.spaceObject = dimProperties;
 		this.stationNumber = dimProperties.getId();
 		this.type = type;
 	}
@@ -77,7 +77,7 @@ public class PacketStationUpdate extends BasePacket {
 				try {
 					packetBuffer.writeNBTTagCompoundToBuffer(nbt);
 				} catch (IOException e) {
-					e.printStackTrace();
+					AdvancedRocketry.logger.error(e);
 				}
 			} catch(NullPointerException e) {
 				out.writeBoolean(true);
@@ -127,7 +127,7 @@ public class PacketStationUpdate extends BasePacket {
 				nbt = packetBuffer.readNBTTagCompoundFromBuffer();
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				AdvancedRocketry.logger.error(e);
 				return;
 			}
 			spaceObject.getProperties().readFromNBT(nbt);

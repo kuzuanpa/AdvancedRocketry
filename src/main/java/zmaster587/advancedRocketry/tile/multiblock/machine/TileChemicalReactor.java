@@ -4,14 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -65,7 +63,7 @@ public class TileChemicalReactor extends TileMultiblockMachine {
 			
 			if(list != null) {
 				for( int i = 0 ; i < list.tagCount(); i++ ) {
-					NBTTagCompound tag = (NBTTagCompound)list.getCompoundTagAt(i);
+					NBTTagCompound tag = list.getCompoundTagAt(i);
 					//if(tag.getInteger("id") == AdvancedRocketryAPI.enchantmentSpaceProtection.effectId ) {
 
 						flag = true;
@@ -106,34 +104,31 @@ public class TileChemicalReactor extends TileMultiblockMachine {
 	public void consumeItemsSpecial(IRecipe recipe) {
 		List<LinkedList<ItemStack>> ingredients = recipe.getIngredients();
 
-		for(int ingredientNum = 0;ingredientNum < ingredients.size(); ingredientNum++) {
+        for (List<ItemStack> ingredient : ingredients) {
 
-			List<ItemStack> ingredient = ingredients.get(ingredientNum);
+            ingredientCheck:
+            for (IInventory hatch : itemInPorts) {
+                for (int i = 0; i < hatch.getSizeInventory(); i++) {
+                    ItemStack stackInSlot = hatch.getStackInSlot(i);
+                    for (ItemStack stack : ingredient) {
+                        if (stackInSlot != null && stackInSlot.stackSize >= stack.stackSize && stackInSlot.isItemEqual(stack)) {
+                            ItemStack stack2 = hatch.decrStackSize(i, stack.stackSize);
 
-			ingredientCheck:
-			for(IInventory hatch : itemInPorts) {
-				for(int i = 0; i < hatch.getSizeInventory(); i++) {
-					ItemStack stackInSlot = hatch.getStackInSlot(i);
-					for (ItemStack stack : ingredient) {
-						if(stackInSlot != null && stackInSlot.stackSize >= stack.stackSize && stackInSlot.isItemEqual(stack)) {
-							ItemStack stack2 = hatch.decrStackSize(i, stack.stackSize);
-							
-							if(stack2.getItem() instanceof ItemArmor)
-							{
-								stack2.addEnchantment(AdvancedRocketryAPI.enchantmentSpaceProtection, 1);
-								List<ItemStack> list = new LinkedList<>();
-								list.add(stack2);
-								setOutputs(list);
-							}
-							
-							hatch.markDirty();
-							worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-							break ingredientCheck;
-						}
-					}
-				}
-			}
-		}
+                            if (stack2.getItem() instanceof ItemArmor) {
+                                stack2.addEnchantment(AdvancedRocketryAPI.enchantmentSpaceProtection, 1);
+                                List<ItemStack> list = new LinkedList<>();
+                                list.add(stack2);
+                                setOutputs(list);
+                            }
+
+                            hatch.markDirty();
+                            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                            break ingredientCheck;
+                        }
+                    }
+                }
+            }
+        }
 	}
 	
 	@Override

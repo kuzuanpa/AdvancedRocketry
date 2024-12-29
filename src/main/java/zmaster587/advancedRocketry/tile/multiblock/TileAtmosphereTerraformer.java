@@ -7,7 +7,6 @@ import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -30,10 +29,8 @@ import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.entity.fx.FxSystemElectricArc;
 import zmaster587.advancedRocketry.item.ItemBiomeChanger;
 import zmaster587.advancedRocketry.item.ItemSatelliteIdentificationChip;
-import zmaster587.advancedRocketry.network.PacketDimInfo;
 import zmaster587.advancedRocketry.satellite.SatelliteBiomeChanger;
 import zmaster587.advancedRocketry.world.provider.WorldProviderPlanet;
 import zmaster587.libVulpes.LibVulpes;
@@ -54,16 +51,16 @@ import zmaster587.libVulpes.network.PacketMachine;
 import zmaster587.libVulpes.tile.multiblock.TileMultiPowerConsumer;
 import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine.NetworkPackets;
-import zmaster587.libVulpes.tile.multiblock.hatch.TileFluidHatch;
 import zmaster587.libVulpes.util.EmbeddedInventory;
 import zmaster587.libVulpes.util.IconResource;
 
 public class TileAtmosphereTerraformer extends TileMultiPowerConsumer implements IInventory {
 
-	private ModuleToggleSwitch buttonIncrease, buttonDecrease;
-	private ModuleRadioButton radioButton;
-	private ModuleText text;
-	private EmbeddedInventory inv;
+	private final ModuleToggleSwitch buttonIncrease;
+    private final ModuleToggleSwitch buttonDecrease;
+	private final ModuleRadioButton radioButton;
+	private final ModuleText text;
+	private final EmbeddedInventory inv;
 	private boolean outOfFluid;
 
 	private static final Object[][][] structure = new Object[][][]{                                                                                                                                                                                                                                                                                                        
@@ -466,8 +463,7 @@ public class TileAtmosphereTerraformer extends TileMultiPowerConsumer implements
 		completionTime = getCompletionTime();
 
 		DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(worldObj.provider.dimensionId);
-		if( !worldObj.isRemote && properties != null && properties.getId() == worldObj.provider.dimensionId && ((worldObj.provider.getClass().equals(WorldProviderPlanet.class) && 
-				properties.isNativeDimension || Configuration.allowTerraformNonAR)) ) {
+		if(!worldObj.isRemote && properties.getId() == worldObj.provider.dimensionId && (worldObj.provider.getClass().equals(WorldProviderPlanet.class) && properties.isNativeDimension || Configuration.allowTerraformNonAR)) {
 			if(buttonIncrease.getState() && properties.getAtmosphereDensity() < 1600)
 				properties.setAtmosphereDensity(properties.getAtmosphereDensity()+1);
 			else if(buttonDecrease.getState() && properties.getAtmosphereDensity() > 0) {
@@ -482,7 +478,7 @@ public class TileAtmosphereTerraformer extends TileMultiPowerConsumer implements
 
 
 		if(packetId == (byte)TileMultiblockMachine.NetworkPackets.TOGGLE.ordinal()) {
-			radioButton.setOptionSelected((int)in.readByte());
+			radioButton.setOptionSelected(in.readByte());
 		}
 		super.readDataFromNetwork(in, packetId, nbt);
 	}

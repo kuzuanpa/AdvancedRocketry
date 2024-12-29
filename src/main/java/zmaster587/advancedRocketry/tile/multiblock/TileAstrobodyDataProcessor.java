@@ -2,7 +2,6 @@ package zmaster587.advancedRocketry.tile.multiblock;
 
 import io.netty.buffer.ByteBuf;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,33 +15,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.jetbrains.annotations.NotNull;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.api.DataStorage;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.inventory.modules.ModuleData;
 import zmaster587.advancedRocketry.item.ItemAsteroidChip;
-import zmaster587.advancedRocketry.item.ItemPlanetIdentificationChip;
 import zmaster587.advancedRocketry.tile.hatch.TileDataBus;
-import zmaster587.advancedRocketry.util.ITilePlanetSystemSelectable;
-import zmaster587.advancedRocketry.world.util.MultiData;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.block.BlockMeta;
-import zmaster587.libVulpes.client.util.ProgressBarImage;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
-import zmaster587.libVulpes.inventory.modules.ModuleButton;
-import zmaster587.libVulpes.inventory.modules.ModuleOutputSlotArray;
 import zmaster587.libVulpes.inventory.modules.ModulePower;
 import zmaster587.libVulpes.inventory.modules.ModuleProgress;
 import zmaster587.libVulpes.inventory.modules.ModuleSlotArray;
 import zmaster587.libVulpes.inventory.modules.ModuleText;
-import zmaster587.libVulpes.inventory.modules.ModuleTexturedSlotArray;
 import zmaster587.libVulpes.inventory.modules.ModuleToggleSwitch;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
@@ -63,11 +53,11 @@ public class TileAstrobodyDataProcessor extends TileMultiPowerConsumer implement
 	};
 
 
-	private TileDataBus[] dataCables;
+	private final TileDataBus[] dataCables;
 	private boolean researchingDistance, researchingAtmosphere, researchingMass;
 	private int atmosphereProgress, distanceProgress, massProgress;
 	private static final int maxResearchTime = 20;
-	private EmbeddedInventory inventory;
+	private final EmbeddedInventory inventory;
 	TileInventoryHatch inputHatch, outputHatch;
 
 	public TileAstrobodyDataProcessor() {
@@ -121,10 +111,10 @@ public class TileAstrobodyDataProcessor extends TileMultiPowerConsumer implement
 			int destroyedY, int destroyedZ, boolean blockBroken) {
 
 		//Make sure to unlock the data cables
-		for(int i = 0; i < dataCables.length; i++) {
-			if(dataCables[i] != null)
-				dataCables[i].lockData(null);
-		}
+        for (TileDataBus dataCable : dataCables) {
+            if (dataCable != null)
+                dataCable.lockData(null);
+        }
 
 		super.deconstructMultiBlock(world, destroyedX, destroyedY, destroyedZ,
 				blockBroken);

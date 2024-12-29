@@ -18,10 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
-import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.entity.EntityLaserNode;
 import zmaster587.advancedRocketry.event.BlockBreakEvent.LaserBreakEvent;
-import zmaster587.advancedRocketry.tile.multiblock.TileSpaceLaser;
 import zmaster587.libVulpes.util.ZUtils;
 
 public class SatelliteLaser extends SatelliteLaserNoDrill {
@@ -42,12 +40,8 @@ public class SatelliteLaser extends SatelliteLaserNoDrill {
 	public boolean isFinished() {
 		return finished;
 	}
-	
-	public boolean getJammed() { return jammed; }
-	
-	public void setJammed(boolean newJam) { jammed = newJam; }
-	
-	public void deactivateLaser() {
+
+    public void deactivateLaser() {
 		if(laser != null) {
 			laser.setDead();
 			laser = null;
@@ -76,15 +70,13 @@ public class SatelliteLaser extends SatelliteLaserNoDrill {
 			int y = 64;
 			
 			if(world.getChunkFromBlockCoords(x, z).isChunkLoaded) {
-				int current = 0;
+				int current;
 				for(int i = 0; i < 9; i++) {
 					current = world.getTopSolidOrLiquidBlock(x + (i % 3) - 1, z + (i / 3) - 1);
 					if(current > y)
 						y = current;
 				}
-				if(y < 1)
-					y = 255;
-			}
+            }
 			else
 				y = 255;
 			
@@ -187,16 +179,14 @@ public class SatelliteLaser extends SatelliteLaserNoDrill {
 				if(!dropBlock.getMaterial().isOpaque() || dropBlock == Blocks.bedrock)
 					continue;
 
-				if(dropBlock == null ||  dropBlock.getMaterial().isLiquid()) {
+				if(dropBlock.getMaterial().isLiquid()) {
 					laser.worldObj.setBlockToAir(x, (int)laser.posY, z);
 					continue;
 				}
 
-				if(dropBlock != null) {
-					blockInWay = true;
-					break;
-				}
-			}
+                blockInWay = true;
+                break;
+            }
 		} while (!blockInWay);
 	}
 
@@ -207,7 +197,7 @@ public class SatelliteLaser extends SatelliteLaserNoDrill {
 	}
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		// TODO Auto-generated method stub
 		return "Laser";
 	}
@@ -237,12 +227,4 @@ public class SatelliteLaser extends SatelliteLaserNoDrill {
 		jammed = nbt.getBoolean("jammed");
 	}
 
-	@Override
-	public boolean canTick() {
-		return false;
-	}
-
-	@Override
-	public void tickEntity() {
-	}
 }

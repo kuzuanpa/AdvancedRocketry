@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.util.StorageChunk;
 
 public class LeveledRocketPart {
-    public StorageChunk storage;
-    public long fuelRemaining;
-    public boolean isActived;
-    public int level;
+    public final StorageChunk storage;
+    public final long fuelRemaining;
+    public final boolean isActived;
+    public final int level;
 
     public LeveledRocketPart(StorageChunk storage, long fuelRemaining, boolean isActived, int level) {
          this.storage =storage;

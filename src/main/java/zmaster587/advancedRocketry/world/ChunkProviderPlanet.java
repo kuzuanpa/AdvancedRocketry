@@ -45,7 +45,7 @@ import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.Ev
 
 public class ChunkProviderPlanet implements IChunkProvider {
 	/** RNG. */
-	private Random rand;
+	private final Random rand;
 	private NoiseGeneratorOctaves field_147431_j;
 	private NoiseGeneratorOctaves field_147432_k;
 	private NoiseGeneratorOctaves field_147429_l;
@@ -56,11 +56,8 @@ public class ChunkProviderPlanet implements IChunkProvider {
 	public NoiseGeneratorOctaves noiseGen6;
 	public NoiseGeneratorOctaves mobSpawnerNoise;
 	/** Reference to the World object. */
-	private World worldObj;
-	/** are map structures going to be generated (e.g. strongholds) */
-	private final boolean mapFeaturesEnabled;
-	private WorldType field_147435_p;
-	private final double[] field_147434_q;
+	private final World worldObj;
+    private final double[] field_147434_q;
 	private final float[] parabolicField;
 	private double[] stoneNoise = new double[256];
 	private MapGenBase caveGenerator = new MapGenCaves();
@@ -73,13 +70,13 @@ public class ChunkProviderPlanet implements IChunkProvider {
 	private MapGenScatteredFeature scatteredFeatureGenerator = new MapGenScatteredFeature();
 	/** Holds ravine generator */
 	private MapGenBase ravineGenerator = new MapGenRavineExt();
-	private int seaLevel;
+	private final int seaLevel;
 	protected Block oceanBlock;
 	protected Block fillblock;
 	
 
-	private MapGenCrater craterGenerator;
-	private MapGenGeode geodeGenerator;
+	private final MapGenCrater craterGenerator;
+	private final MapGenGeode geodeGenerator;
 	/** The biomes that are used to generate the chunk */
 	private BiomeGenBase[] biomesForGeneration;
 	double[] field_147427_d;
@@ -101,8 +98,8 @@ public class ChunkProviderPlanet implements IChunkProvider {
 	public ChunkProviderPlanet(World p_i2006_1_, long p_i2006_2_, boolean p_i2006_4_)
 	{
 		this.worldObj = p_i2006_1_;
-		this.mapFeaturesEnabled = p_i2006_4_;
-		this.field_147435_p = p_i2006_1_.getWorldInfo().getTerrainType();
+        /** are map structures going to be generated (e.g. strongholds) */
+        WorldType field_147435_p = p_i2006_1_.getWorldInfo().getTerrainType();
 		this.rand = new Random(p_i2006_2_);
 		this.field_147431_j = new NoiseGeneratorOctaves(this.rand, 16);
 		this.field_147432_k = new NoiseGeneratorOctaves(this.rand, 16);
@@ -163,8 +160,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
 
 	public void func_147424_a(int p_147424_1_, int p_147424_2_, Block[] p_147424_3_)
 	{
-		int b0 = seaLevel;
-		//TODO: may break for little planets
+        //TODO: may break for little planets
 		this.biomesForGeneration = ((ChunkManagerPlanet)this.worldObj.getWorldChunkManager()).getBiomesForGeneration(this.biomesForGeneration, p_147424_1_ * 4 - 2, p_147424_2_ * 4 - 2, 10, 10, ((WorldProviderPlanet)worldObj.provider).getDimensionProperties(0,0));
 		this.func_147423_a(p_147424_1_ * 4, 0, p_147424_2_ * 4);
 
@@ -202,7 +198,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
 
 						for (int i3 = 0; i3 < 4; ++i3)
 						{
-							int j3 = i3 + k * 4 << 12 | 0 + j1 * 4 << 8 | k2 * 8 + l2;
+							int j3 = i3 + k * 4 << 12 | j1 * 4 << 8 | k2 * 8 + l2;
 							short short1 = 256;
 							j3 -= short1;
 							double d14 = 0.25D;
@@ -215,7 +211,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
 								{
 									p_147424_3_[j3 += short1] = fillblock;
 								}
-								else if (k2 * 8 + l2 < b0)
+								else if (k2 * 8 + l2 < seaLevel)
 								{
 									p_147424_3_[j3 += short1] = oceanBlock;
 								}
@@ -246,7 +242,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
 		if (event.getResult() == Result.DENY) return;
 
 		double d0 = 0.03125D;
-		this.stoneNoise = this.field_147430_m.func_151599_a(this.stoneNoise, (double)(p_147422_1_ * 16), (double)(p_147422_2_ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
+		this.stoneNoise = this.field_147430_m.func_151599_a(this.stoneNoise, p_147422_1_ * 16, p_147422_2_ * 16, 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
 
 		for (int k = 0; k < 16; ++k)
 		{
@@ -285,12 +281,9 @@ public class ChunkProviderPlanet implements IChunkProvider {
 		if(this.geodeGenerator != null)
 			this.geodeGenerator.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock.ablock);
 
-		if (this.mapFeaturesEnabled)
-		{
-			//TODO: structures
-		}
-		
-		return ablock;
+        //TODO: structures
+
+        return ablock;
 	}
 	
 	/**
@@ -397,8 +390,8 @@ public class ChunkProviderPlanet implements IChunkProvider {
 				}
 
 				++i1;
-				double d13 = (double)f1;
-				double d14 = (double)f;
+				double d13 = f1;
+				double d14 = f;
 				d13 += d12 * 0.2D;
 				d13 = d13 * 8.5D / 8.0D;
 				double d5 = 8.5D + d13 * 4.0D;
@@ -419,7 +412,7 @@ public class ChunkProviderPlanet implements IChunkProvider {
 
 					if (j2 > 29)
 					{
-						double d11 = (double)((float)(j2 - 29) / 3.0F);
+						double d11 = (float)(j2 - 29) / 3.0F;
 						d10 = d10 * (1.0D - d11) + -10.0D * d11;
 					}
 
@@ -459,21 +452,16 @@ public class ChunkProviderPlanet implements IChunkProvider {
 		if(populationFlag )
 			MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag));
 
-		if (this.mapFeaturesEnabled)
-		{
-			//TODO: maybe features
-		}
+        //TODO: maybe features
 
 
-		biomegenbase.decorate(this.worldObj, this.rand, k, l);
+        biomegenbase.decorate(this.worldObj, this.rand, k, l);
 		if (TerrainGen.populate(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag, ANIMALS))
 		{
 			SpawnerAnimals.performWorldGenSpawning(this.worldObj, biomegenbase, k + 8, l + 8, 16, 16, this.rand);
 		}
-		k += 8;
-		l += 8;
 
-		//If a planet is terraformed chenge upper blocks
+        //If a planet is terraformed chenge upper blocks
 		if(zmaster587.advancedRocketry.api.Configuration.allowTerraforming && worldObj.provider.getClass() == WorldProviderPlanet.class) {
 
 			if(DimensionManager.getInstance().getDimensionProperties(worldObj.provider.dimensionId).isTerraformed()) {
@@ -557,16 +545,12 @@ public class ChunkProviderPlanet implements IChunkProvider {
 
 	public void recreateStructures(int p_82695_1_, int p_82695_2_)
 	{
-		if (this.mapFeaturesEnabled)
-		{
-
-		}
-	}
+    }
 	
 	public static class BlockMetacoupling
 	{
-		public Block @NotNull [] ablock = new Block[65536];
-		public byte[] abyte = new byte[65536];
+		public final Block @NotNull [] ablock = new Block[65536];
+		public final byte[] abyte = new byte[65536];
 	}
 
 }

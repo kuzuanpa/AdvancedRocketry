@@ -1110,7 +1110,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 				for(BiomeManager.BiomeType types : BiomeManager.BiomeType.values()) {
 					for(BiomeEntry entry : BiomeManager.getBiomes(types)) {
 						if(biomes == null)
-							AdvancedRocketry.logger.warn("Null biomes loaded for DIMID: " + this.getId());
+                            AdvancedRocketry.logger.warn("Null biomes loaded for DIMID: {}", this.getId());
 						else if(entry.biome.biomeID == biomes.biomeID) {
 							biomeEntries.add(entry);
 							notFound = false;

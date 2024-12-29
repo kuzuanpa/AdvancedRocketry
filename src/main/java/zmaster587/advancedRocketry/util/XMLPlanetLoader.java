@@ -36,12 +36,12 @@ public class XMLPlanetLoader {
 
 	Document doc;
 	NodeList currentList;
-	int currentNodeIndex;
-	int starId;
+	final int currentNodeIndex;
+	final int starId;
 	int offset;
 
-	HashMap<StellarBody, Integer> maxPlanetNumber = new HashMap<>();
-	HashMap<StellarBody, Integer> maxGasPlanetNumber = new HashMap<>();
+	final HashMap<StellarBody, Integer> maxPlanetNumber = new HashMap<>();
+	final HashMap<StellarBody, Integer> maxGasPlanetNumber = new HashMap<>();
 
 	public boolean loadFile(File xmlFile) throws IOException {
 		DocumentBuilder docBuilder;
@@ -86,9 +86,7 @@ public class XMLPlanetLoader {
 
 		DimensionProperties properties = new DimensionProperties(DimensionManager.getInstance().getNextFreeDim(offset));
 
-		if(properties == null)
-			return list;
-		list.add(properties);
+        list.add(properties);
 		offset++;//Increment for dealing with child planets
 
 
@@ -107,7 +105,7 @@ public class XMLPlanetLoader {
 					//We're not using the offset so decrement to prepare for next planet
 					offset--;
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Invalid DIMID specified for planet " + properties.getName()); //TODO: more detailed error msg
+                    AdvancedRocketry.logger.warn("Invalid DIMID specified for planet {}", properties.getName()); //TODO: more detailed error msg
 					list.remove(properties);
 					offset--;
 					return list;
@@ -158,7 +156,7 @@ public class XMLPlanetLoader {
 				Fluid f = FluidRegistry.getFluid(planetPropertyNode.getTextContent());
 				
 				if(f == null)
-					AdvancedRocketry.logger.warn( "\"" + planetPropertyNode.getTextContent() + "\" is not a valid fluid"); //TODO: more detailed error msg
+                    AdvancedRocketry.logger.warn("\"{}\" is not a valid fluid", planetPropertyNode.getTextContent()); //TODO: more detailed error msg
 				else {
 					properties.getHarvestableGasses().add(f);
 				}
@@ -168,17 +166,17 @@ public class XMLPlanetLoader {
 				Block block = (Block) Block.blockRegistry.getObject(blockName);
 				
 				if(block == Blocks.air || block == null)
-					AdvancedRocketry.logger.warn("Invalid ocean block: " + blockName); //TODO: more detailed error msg
+                    AdvancedRocketry.logger.warn("Invalid ocean block: {}", blockName); //TODO: more detailed error msg
 				
 				properties.setOceanBlock(block);
 			}
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("fillerBlock")) {
 				String blockName = planetPropertyNode.getTextContent();
-				Block block = (Block) Block.getBlockFromName(blockName);
+				Block block = Block.getBlockFromName(blockName);
 				
 				if(block == Blocks.air || block == null)
 				{
-					AdvancedRocketry.logger.warn("Invalid filler block: " + blockName); //TODO: more detailed error msg
+                    AdvancedRocketry.logger.warn("Invalid filler block: {}", blockName); //TODO: more detailed error msg
 					block = null;
 				}
 				
@@ -266,16 +264,16 @@ public class XMLPlanetLoader {
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("biomeids")) {
 
 				String[] biomeList = planetPropertyNode.getTextContent().split(",");
-				for(int j = 0; j < biomeList.length; j++) {
-					try {
-						int biome =  Integer.parseInt(biomeList[j]);
+                for (String s : biomeList) {
+                    try {
+                        int biome = Integer.parseInt(s);
 
-						if(!properties.addBiome(biome))
-							AdvancedRocketry.logger.warn(biomeList[j] + " is not a valid biome id"); //TODO: more detailed error msg
-					} catch (NumberFormatException e) {
-						AdvancedRocketry.logger.warn(biomeList[j] + " is not a valid biome id"); //TODO: more detailed error msg
-					}
-				}
+                        if (!properties.addBiome(biome))
+                            AdvancedRocketry.logger.warn("{} is not a valid biome id", s); //TODO: more detailed error msg
+                    } catch (NumberFormatException e) {
+                        AdvancedRocketry.logger.warn("{} is not a valid biome id", s); //TODO: more detailed error msg
+                    }
+                }
 			}
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("artifact")) {
 				ItemStack stack = XMLPlanetLoader.getStack(planetPropertyNode.getTextContent());
@@ -285,7 +283,7 @@ public class XMLPlanetLoader {
 			}
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("planet")) {
 				List<DimensionProperties> childList = readPlanetFromNode(planetPropertyNode, star);
-				if(childList.size() > 0) {
+				if(!childList.isEmpty()) {
 					DimensionProperties child = childList.get(childList.size()-1); // Last entry in the list is the child planet
 					properties.addChildPlanet(child);
 					list.addAll(childList);
@@ -341,12 +339,12 @@ public class XMLPlanetLoader {
 			}
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("hasOxygen")) {
 				String text = planetPropertyNode.getTextContent();
-				if(text != null && !text.isEmpty() && text.equalsIgnoreCase("false"))
+				if(text != null && text.equalsIgnoreCase("false"))
 					properties.hasOxygen = false;
 			}
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("GasGiant")) {
 				String text = planetPropertyNode.getTextContent();
-				if(text != null && !text.isEmpty() && text.equalsIgnoreCase("true"))
+				if(text != null && text.equalsIgnoreCase("true"))
 					properties.setGasGiant(true);
 			}else if(planetPropertyNode.getNodeName().equalsIgnoreCase("spawnable")) {
 				int weight = 100;
@@ -404,22 +402,18 @@ public class XMLPlanetLoader {
 						try {
 							entry.setNbt(nbtString);
 						} catch (DOMException e) {
-							AdvancedRocketry.logger.fatal("===== Configuration Error!  Please check your save's planetDefs.xml config file =====\n"
-									+ e.getLocalizedMessage()
-									+ "\nThe following is not valid JSON:\n" + nbtString);
+                            AdvancedRocketry.logger.fatal("===== Configuration Error!  Please check your save's planetDefs.xml config file =====\n{}\nThe following is not valid JSON:\n{}", e.getLocalizedMessage(), nbtString);
 						} catch (NBTException e) {
-							AdvancedRocketry.logger.fatal("===== Configuration Error!  Please check your save's planetDefs.xml config file =====\n"
-									+ e.getLocalizedMessage()
-									+ "\nThe following is not valid NBT data:\n" + nbtString);
+                            AdvancedRocketry.logger.fatal("===== Configuration Error!  Please check your save's planetDefs.xml config file =====\n{}\nThe following is not valid NBT data:\n{}", e.getLocalizedMessage(), nbtString);
 						}
 
 					properties.getSpawnListEntries().add(entry);
 				} else
-					AdvancedRocketry.logger.warn("Cannot find " + planetPropertyNode.getTextContent() + " while registering entity for planet spawn");
+                    AdvancedRocketry.logger.warn("Cannot find {} while registering entity for planet spawn", planetPropertyNode.getTextContent());
 
 			} else if(planetPropertyNode.getNodeName().equalsIgnoreCase("isKnown")) {
 				String text = planetPropertyNode.getTextContent();
-				if(text != null && !text.isEmpty() && text.equalsIgnoreCase("true")) {
+				if(text != null && text.equalsIgnoreCase("true")) {
 					Configuration.initiallyKnownPlanets.add(properties.getId());
 				}
 			}
@@ -459,7 +453,7 @@ public class XMLPlanetLoader {
 				try {
 					star.setPosX(Integer.parseInt(nameNode.getNodeValue()));
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
+                    AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
 				}
 			}
 
@@ -469,7 +463,7 @@ public class XMLPlanetLoader {
 				try {
 					star.setPosZ(Integer.parseInt(nameNode.getNodeValue()));
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
+                    AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
 				}
 			}
 
@@ -508,7 +502,7 @@ public class XMLPlanetLoader {
 					//We're not using the offset so decrement to prepare for next planet
 					offset--;
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Invalid DIMID specified for star " + properties.getName()); //TODO: more detailed error msg
+                    AdvancedRocketry.logger.warn("Invalid DIMID specified for star {}", properties.getName()); //TODO: more detailed error msg
 					offset--;
 					return null;
 				}
@@ -532,7 +526,7 @@ public class XMLPlanetLoader {
 				try {
 					star.setId(Integer.parseInt(nameNode.getNodeValue()));
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
+                    AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
 				}
 			}
 			nameNode = planetNode.getAttributes().getNamedItem("temp");
@@ -541,7 +535,7 @@ public class XMLPlanetLoader {
 				try {
 					star.setTemperature(Integer.parseInt(nameNode.getNodeValue()));
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
+                    AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
 				}
 			}
 			
@@ -550,7 +544,7 @@ public class XMLPlanetLoader {
 				try {
 					star.setSize(Float.parseFloat(nameNode.getNodeValue()));
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
+                    AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
 				}
 			}
 			
@@ -559,7 +553,7 @@ public class XMLPlanetLoader {
 				try {
 					star.setStarSeperation(Float.parseFloat(nameNode.getNodeValue()));
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
+                    AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
 				}
 			}
 		}
@@ -608,130 +602,128 @@ public class XMLPlanetLoader {
 
 	public static @NotNull String writeXML(IGalaxy galaxy) {
 		//galaxy.
-		String outputString = "<galaxy>\n";
+		StringBuilder outputString = new StringBuilder("<galaxy>\n");
 
 		Collection<StellarBody> stars = galaxy.getStars();
 
 		for(StellarBody star : stars) {
-			outputString = outputString + "\t<star name=\"" + star.getName() +"\" id=\""+star.getId()+"\" temp=\"" + star.getTemperature() + "\" x=\"" + star.getPosX()
-					+ "\" y=\"" + star.getPosZ() + "\" size=\"" + star.getSize() + "\" numPlanets=\"0\" numGasGiants=\"0\">\n";
+			outputString.append("\t<star name=\"").append(star.getName()).append("\" id=\"").append(star.getId()).append("\" temp=\"").append(star.getTemperature()).append("\" x=\"").append(star.getPosX()).append("\" y=\"").append(star.getPosZ()).append("\" size=\"").append(star.getSize()).append("\" numPlanets=\"0\" numGasGiants=\"0\">\n");
 
 			for(StellarBody star2 : star.getSubStars()) {
-				outputString = outputString + "\t\t<star temp=\"" + star2.getTemperature() + 
-						"\" size=\"" + star2.getSize() + "\" seperation=\"" + star2.getStarSeperation() + "\" />\n";
+				outputString.append("\t\t<star temp=\"").append(star2.getTemperature()).append("\" size=\"").append(star2.getSize()).append("\" seperation=\"").append(star2.getStarSeperation()).append("\" />\n");
 
 			}
 			
 			for(IDimensionProperties properties : star.getPlanets()) {
 				if(!properties.isMoon()&&!properties.isSun()&&!(properties.getId()==star.getId()))
-					outputString = outputString + writePlanet((DimensionProperties)properties, 2);
+					outputString.append(writePlanet((DimensionProperties) properties, 2));
 			}
 
-			outputString = outputString + "\t</star>\n";
+			outputString.append("\t</star>\n");
 		}
 
-		outputString = outputString + "</galaxy>";
+		outputString.append("</galaxy>");
 
-		return outputString;
+		return outputString.toString();
 	}
 
 	private static String writePlanet(@NotNull DimensionProperties properties, int numTabs) {
-		String outputString = "";
-		@NotNull String tabLen = "";
+		StringBuilder outputString;
+		StringBuilder tabLen = new StringBuilder();
 
 		for(int i = 0; i < numTabs; i++) {
-			tabLen += "\t";
+			tabLen.append("\t");
 		}
 
-		outputString = tabLen + "<planet name=\"" + properties.getName() + "\" DIMID=\"" + properties.getId() + "\"" +
-				(properties.isNativeDimension ? "" : " dimMapping=\"\"") + 
-				(properties.customIcon.isEmpty() ? "" : " customIcon=\"" + properties.customIcon + "\"") + ">\n";
+		outputString = new StringBuilder(tabLen + "<planet name=\"" + properties.getName() + "\" DIMID=\"" + properties.getId() + "\"" +
+                (properties.isNativeDimension ? "" : " dimMapping=\"\"") +
+                (properties.customIcon.isEmpty() ? "" : " customIcon=\"" + properties.customIcon + "\"") + ">\n");
 
 
-		outputString = outputString + tabLen + "\t<isKnown>" + Configuration.initiallyKnownPlanets.contains(properties.getId()) + "</isKnown>\n";	
+		outputString.append(tabLen).append("\t<isKnown>").append(Configuration.initiallyKnownPlanets.contains(properties.getId())).append("</isKnown>\n");
 		if(properties.hasRings) {
-			outputString = outputString + tabLen + "\t<hasRings>true</hasRings>\n";
-			outputString = outputString + tabLen + "\t<ringColor>" + properties.ringColor[0] + "," + properties.ringColor[1] + "," + properties.ringColor[2] + "</ringColor>\n";
+			outputString.append(tabLen).append("\t<hasRings>true</hasRings>\n");
+			outputString.append(tabLen).append("\t<ringColor>").append(properties.ringColor[0]).append(",").append(properties.ringColor[1]).append(",").append(properties.ringColor[2]).append("</ringColor>\n");
 		}
 
 		if(!properties.hasOxygen)
 		{
-			outputString = outputString + tabLen + "\t<hasOxygen>false</hasOxygen>\n";
+			outputString.append(tabLen).append("\t<hasOxygen>false</hasOxygen>\n");
 		}
 
 		if(properties.isGasGiant())
 		{
-			outputString = outputString + tabLen + "\t<GasGiant>true</GasGiant>\n";
+			outputString.append(tabLen).append("\t<GasGiant>true</GasGiant>\n");
 			if(!properties.getHarvestableGasses().isEmpty())
 			{
 				for(Fluid f : properties.getHarvestableGasses())
 				{
-					outputString = outputString + tabLen + "\t<gas>" + f.getName() + "</gas>\n";
+					outputString.append(tabLen).append("\t<gas>").append(f.getName()).append("</gas>\n");
 				}
 				
 			}
 		}
 
-		outputString = outputString + tabLen + "\t<fogColor>" + properties.fogColor[0] + "," + properties.fogColor[1] + "," + properties.fogColor[2] + "</fogColor>\n";
-		outputString = outputString + tabLen + "\t<skyColor>" + properties.skyColor[0] + "," + properties.skyColor[1] + "," + properties.skyColor[2] + "</skyColor>\n";
-		outputString = outputString + tabLen + "\t<gravitationalMultiplier>" + (int)(properties.getGravitationalMultiplier()*100f) + "</gravitationalMultiplier>\n";
-		outputString = outputString + tabLen + "\t<orbitalDistance>" + properties.getOrbitalDist() + "</orbitalDistance>\n";
-		outputString = outputString + tabLen + "\t<orbitalTheta>" + (int)(properties.baseOrbitTheta * 180d/Math.PI) + "</orbitalTheta>\n";
-		outputString = outputString + tabLen + "\t<solarInsolationMult>" + properties.peakInsolationMultiplier + "</solarInsolationMult>\n";
-		outputString = outputString + tabLen + "\t<avgTemperature>" + (int)(properties.averageTemperature) + "</avgTemperature>\n";
-		outputString = outputString + tabLen + "\t<orbitalPhi>" + (int)(properties.orbitalPhi) + "</orbitalPhi>\n";
-		outputString = outputString + tabLen + "\t<rotationalPeriod>" + (int)properties.rotationalPeriod + "</rotationalPeriod>\n";
-		outputString = outputString + tabLen + "\t<atmosphereDensity>" + (int)properties.getAtmosphereDensity() + "</atmosphereDensity>\n";
+		outputString.append(tabLen).append("\t<fogColor>").append(properties.fogColor[0]).append(",").append(properties.fogColor[1]).append(",").append(properties.fogColor[2]).append("</fogColor>\n");
+		outputString.append(tabLen).append("\t<skyColor>").append(properties.skyColor[0]).append(",").append(properties.skyColor[1]).append(",").append(properties.skyColor[2]).append("</skyColor>\n");
+		outputString.append(tabLen).append("\t<gravitationalMultiplier>").append((int) (properties.getGravitationalMultiplier() * 100f)).append("</gravitationalMultiplier>\n");
+		outputString.append(tabLen).append("\t<orbitalDistance>").append(properties.getOrbitalDist()).append("</orbitalDistance>\n");
+		outputString.append(tabLen).append("\t<orbitalTheta>").append((int) (properties.baseOrbitTheta * 180d / Math.PI)).append("</orbitalTheta>\n");
+		outputString.append(tabLen).append("\t<solarInsolationMult>").append(properties.peakInsolationMultiplier).append("</solarInsolationMult>\n");
+		outputString.append(tabLen).append("\t<avgTemperature>").append(properties.averageTemperature).append("</avgTemperature>\n");
+		outputString.append(tabLen).append("\t<orbitalPhi>").append((int) (properties.orbitalPhi)).append("</orbitalPhi>\n");
+		outputString.append(tabLen).append("\t<rotationalPeriod>").append(properties.rotationalPeriod).append("</rotationalPeriod>\n");
+		outputString.append(tabLen).append("\t<atmosphereDensity>").append(properties.getAtmosphereDensity()).append("</atmosphereDensity>\n");
 		
 		if(properties.getSeaLevel() != 63)
-			outputString = outputString + tabLen + "\t<seaLevel>" + properties.getSeaLevel() + "</seaLevel>\n";
+			outputString.append(tabLen).append("\t<seaLevel>").append(properties.getSeaLevel()).append("</seaLevel>\n");
 		
 		if(properties.getGenType() != 0)
-			outputString = outputString + tabLen + "\t<genType>" + properties.getGenType() + "</genType>\n";
+			outputString.append(tabLen).append("\t<genType>").append(properties.getGenType()).append("</genType>\n");
 		
 		if(properties.oreProperties != null) {
-			outputString = outputString + tabLen + "\t<oreGen>\n";
-			outputString = outputString + XMLOreLoader.writeOreEntryXML(properties.oreProperties, numTabs+2);
-			outputString = outputString + tabLen + "\t</oreGen>\n";
+			outputString.append(tabLen).append("\t<oreGen>\n");
+			outputString.append(XMLOreLoader.writeOreEntryXML(properties.oreProperties, numTabs + 2));
+			outputString.append(tabLen).append("\t</oreGen>\n");
 		}
 		
 		if(properties.isNativeDimension && !properties.isGasGiant()) {
-			String biomeIds = "";
+			StringBuilder biomeIds = new StringBuilder();
 			for(BiomeEntry biome : properties.getBiomes()) {
-				biomeIds = biomeIds + "," + biome.biome.biomeID;
+				biomeIds.append(",").append(biome.biome.biomeID);
 			}
-			if(!biomeIds.isEmpty())
-				biomeIds = biomeIds.substring(1);
+			if(biomeIds.length() > 0)
+				biomeIds = new StringBuilder(biomeIds.substring(1));
 			else
-				AdvancedRocketry.logger.warn("Dim " + properties.getId() + " has no biomes to save!");
+                AdvancedRocketry.logger.warn("Dim {} has no biomes to save!", properties.getId());
 			
-			outputString = outputString + tabLen + "\t<biomeIds>" + biomeIds + "</biomeIds>\n";
+			outputString.append(tabLen).append("\t<biomeIds>").append(biomeIds).append("</biomeIds>\n");
 		}
 
 		for(ItemStack stack : properties.getRequiredArtifacts()) {
-			outputString = outputString + tabLen + "\t<artifact>" + Item.itemRegistry.getNameForObject(stack.getItem()) + " " + stack.getItemDamage() + " " + stack.stackSize + "</artifact>\n";
+			outputString.append(tabLen).append("\t<artifact>").append(Item.itemRegistry.getNameForObject(stack.getItem())).append(" ").append(stack.getItemDamage()).append(" ").append(stack.stackSize).append("</artifact>\n");
 		}
 		
 		for(Integer properties2 : properties.getChildPlanets()) {
-			outputString = outputString + writePlanet(DimensionManager.getInstance().getDimensionProperties(properties2), numTabs+1);
+			outputString.append(writePlanet(DimensionManager.getInstance().getDimensionProperties(properties2), numTabs + 1));
 		}
 
 		if(properties.getOceanBlock() != null) {
-			outputString = outputString + tabLen + "\t<oceanBlock>" + Block.blockRegistry.getNameForObject(properties.getOceanBlock()) + "</oceanBlock>\n";
+			outputString.append(tabLen).append("\t<oceanBlock>").append(Block.blockRegistry.getNameForObject(properties.getOceanBlock())).append("</oceanBlock>\n");
 		}
 		
 		if(properties.getStoneBlock() != null) {
-			outputString = outputString + tabLen + "\t<fillerBlock>" + Block.blockRegistry.getNameForObject(properties.getStoneBlock()) + "</fillerBlock>\n";
+			outputString.append(tabLen).append("\t<fillerBlock>").append(Block.blockRegistry.getNameForObject(properties.getStoneBlock())).append("</fillerBlock>\n");
 		}
 		
-		outputString = outputString + tabLen + "</planet>\n";
-		return outputString;
+		outputString.append(tabLen).append("</planet>\n");
+		return outputString.toString();
 	}
 
 	public static class DimensionPropertyCoupling {
 
-		public List<StellarBody> stars = new LinkedList<>();
-		public @NotNull List<DimensionProperties> dims = new LinkedList<>();
+		public final List<StellarBody> stars = new LinkedList<>();
+		public final @NotNull List<DimensionProperties> dims = new LinkedList<>();
 
 
 	}

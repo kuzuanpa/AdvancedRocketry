@@ -11,7 +11,7 @@ import net.minecraftforge.client.model.IModelCustom;
 
 public class RenderJetPack extends ModelBiped {
 	static IModelCustom model;
-	ResourceLocation texture;
+	final ResourceLocation texture;
 
 	public RenderJetPack() {
 		texture = new ResourceLocation("advancedrocketry:textures/models/jetpack.png");

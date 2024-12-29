@@ -12,7 +12,7 @@ import zmaster587.advancedRocketry.entity.EntityElevatorCapsule;
 public class RenderElevatorCapsule extends Render {
 
 	private static WavefrontObject sphere;
-	public ResourceLocation capsuleTexture =  new ResourceLocation("advancedRocketry:textures/models/spaceElevatorCapsule.png");
+	public final ResourceLocation capsuleTexture =  new ResourceLocation("advancedRocketry:textures/models/spaceElevatorCapsule.png");
 
 	RenderLaser laser;
 	static {

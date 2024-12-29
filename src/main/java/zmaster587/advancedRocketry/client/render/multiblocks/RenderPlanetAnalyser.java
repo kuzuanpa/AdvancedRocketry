@@ -15,9 +15,9 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiPowerConsumer;
 
 public class RenderPlanetAnalyser extends TileEntitySpecialRenderer {
 
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/planetAnalyser.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/planetAnalyser.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/planetAnalyser.png");
+	final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/planetAnalyser.png");
 
 	public RenderPlanetAnalyser(){}
 	

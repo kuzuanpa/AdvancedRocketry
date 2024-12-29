@@ -28,8 +28,7 @@ public class MapGenRavineExt extends MapGenRavine {
     	if (biome == BiomeGenBase.mushroomIslandShore) return true;
         if (biome == BiomeGenBase.mushroomIsland) return true;
         if (biome == BiomeGenBase.beach) return true;
-        if (biome == BiomeGenBase.desert) return true;
-        return false;
+        return biome == BiomeGenBase.desert;
     }
     
     protected void digBlock(Block @NotNull [] data, int index, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop)

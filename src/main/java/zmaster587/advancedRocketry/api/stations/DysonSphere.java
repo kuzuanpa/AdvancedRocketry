@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.Constants;
 
 public class DysonSphere implements IDysonSphere{
@@ -147,7 +148,10 @@ public class DysonSphere implements IDysonSphere{
             this.nodesBuildingProgress = nodesBuildingProgress;
             this.nodesLevel = nodesLevel;
             this.nodesType = nodesType;
-        }catch (Exception e){e.printStackTrace();return null;}
+        }catch (Exception e){
+            AdvancedRocketry.logger.error(e);
+            return null;
+        }
 
         return this;
     }

@@ -41,14 +41,14 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	private int fuelAmount;
 	private final int MAX_FUEL = 1000;
 	private BlockPosition spawnLocation;
-	private List<StationLandingLocation> spawnLocations;
-	private List<BlockPosition> warpCoreLocation;
-	private Set<Integer> knownPlanetList;
-	private HashMap<BlockPosition, String> dockingPoints;
+	private final List<StationLandingLocation> spawnLocations;
+	private final List<BlockPosition> warpCoreLocation;
+	private final Set<Integer> knownPlanetList;
+	private final HashMap<BlockPosition, String> dockingPoints;
 	private long transitionEta;
 	private ForgeDirection direction;
-	private double[] rotation;
-	private double[] angularVelocity;
+	private final double[] rotation;
+	private final double[] angularVelocity;
 	private long lastTimeModification = 0;
 	private DimensionProperties properties;
 	public boolean hasWarpCores = false;
@@ -303,14 +303,11 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	
 	public void setLandingPadAutoLandStatus(int x, int z, boolean status) {
 		BlockPosition pos = new BlockPosition(x, 0, z);
-		
-		Iterator<StationLandingLocation> itr = spawnLocations.iterator();
-		
-		while(itr.hasNext()) {
-			StationLandingLocation loc = itr.next();
-			if(loc.getPos().equals(pos))
-				loc.setAllowedForAutoLand(status);
-		}
+
+        for (StationLandingLocation loc : spawnLocations) {
+            if (loc.getPos().equals(pos))
+                loc.setAllowedForAutoLand(status);
+        }
 	}
 
 	/**
@@ -344,14 +341,8 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	 */
 	public void removeLandingPad(int x, int z) {
 		BlockPosition pos = new BlockPosition(x, 0, z);
-		
-		Iterator<StationLandingLocation> itr = spawnLocations.iterator();
-		
-		while(itr.hasNext()) {
-			StationLandingLocation loc = itr.next();
-			if(loc.getPos().equals(pos))
-				itr.remove();
-		}
+
+        spawnLocations.removeIf(loc -> loc.getPos().equals(pos));
 		//spawnLocations.remove(pos);
 	}
 	
@@ -408,7 +399,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	public StationLandingLocation getPadAtLocation(BlockPosition pos) {
 		pos.y = 0;
 		for(StationLandingLocation loc : spawnLocations) {
-			if(loc.equals(pos))
+			if(loc.getPos().equals(pos))
 				return loc;
 		}
 		return null;
@@ -525,14 +516,14 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 		if(!created) {
 			chunk.pasteInWorld(worldObj, spawnLocation.x - chunk.getSizeX()/2, spawnLocation.y - chunk.getSizeY()/2, spawnLocation.z - chunk.getSizeZ()/2);
 			created = true;
-			setLaunchPos((int)posX, (int)posZ);
-			setPos((int)posX, (int)posZ);
+			setLaunchPos(posX, posZ);
+			setPos(posX, posZ);
 		}
 		else {
 			List<TileEntity> tiles = chunk.getTileEntityList();
 			List<String> targetIds = new LinkedList<>();
 			List<TileEntity> myPoss = new LinkedList<>();
-			BlockPosition pos = null;
+			BlockPosition pos;
 			TileDockingPort destTile = null;
 			TileDockingPort srcTile = null;
 
@@ -702,7 +693,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 			StationLandingLocation loc = new StationLandingLocation(pos, tag.getString("name"));
 			spawnLocations.add(loc);
 			loc.setOccupied(tag.getBoolean("occupied"));
-			loc.setAllowedForAutoLand( tag.hasKey("occupied") ? tag.getBoolean("occupied") : true);
+			loc.setAllowedForAutoLand(!tag.hasKey("occupied") || tag.getBoolean("occupied"));
 		}
 
 		list = nbt.getTagList("warpCorePositions", NBT.TAG_COMPOUND);

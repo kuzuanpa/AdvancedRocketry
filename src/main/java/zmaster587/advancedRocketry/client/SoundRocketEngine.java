@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class SoundRocketEngine extends MovingSound {
 
-	EntityRocket rocket;
+	final EntityRocket rocket;
 
 	public SoundRocketEngine(ResourceLocation loc, EntityRocket rocket) {
 		super(loc);

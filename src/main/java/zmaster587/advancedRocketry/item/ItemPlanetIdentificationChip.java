@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.libVulpes.LibVulpes;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -73,12 +72,8 @@ public class ItemPlanetIdentificationChip extends ItemIdWithName {
 		}
 
 		DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(dimensionId);
-		if(properties == null) {
-			erase(stack);
-			return;
-		}
 
-		if(stack.hasTagCompound())
+        if(stack.hasTagCompound())
 			nbt = stack.getTagCompound();
 		else
 			nbt = new NBTTagCompound();

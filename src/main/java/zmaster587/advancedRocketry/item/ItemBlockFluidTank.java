@@ -10,7 +10,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
@@ -48,7 +47,7 @@ public class ItemBlockFluidTank extends ItemBlock implements IFluidContainerItem
 		if(!world.isRemote) {
 			TileEntity tile = world.getTileEntity(x,y,z);
 
-			if(tile != null && tile instanceof TileFluidTank) {
+			if(tile instanceof TileFluidTank) {
 				TileFluidTank handler = ((TileFluidTank) tile);
 				ItemStack stack2 = stack.copy();
 				stack2.stackSize = 1;

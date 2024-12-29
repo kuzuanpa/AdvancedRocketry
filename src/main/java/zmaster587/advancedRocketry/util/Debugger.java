@@ -18,8 +18,8 @@ public class Debugger implements ICommand {
 	}
 
 	@Override
-	public int compareTo(Object arg0) {
-		return new String("changeRender").compareTo((String) arg0);
+	public int compareTo(@NotNull Object arg0) {
+		return "changeRender".compareTo((String) arg0);
 	}
 
 	@Override

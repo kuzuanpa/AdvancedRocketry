@@ -1,6 +1,7 @@
 package zmaster587.advancedRocketry.util;
 
 import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.network.PacketBiomeIDChange;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.util.BlockPosition;
@@ -35,7 +36,7 @@ public class BiomeHandler {
 		try {
 			biomeArr[(x & 15) + (z & 15)*16] = (byte)biomeId;
 		} catch (IndexOutOfBoundsException e) {
-			e.printStackTrace();
+			AdvancedRocketry.logger.error(e);
 		}
 
 		PacketHandler.sendToNearby(new PacketBiomeIDChange(chunk, world, new BlockPosition(x, y, z)), world.provider.dimensionId, x, y, z, 256);
@@ -62,8 +63,7 @@ public class BiomeHandler {
 			if(chunk.getBlock(x & 15, yy - 1, z & 15) == biome.topBlock)
 				chunk.func_150807_a(x & 15, yy - 1, z & 15, biomeTo.topBlock, 0);
 
-			y = (short)yy;
-		}
+        }
 
 		byte[] biomeArr = chunk.getBiomeArray();
 		biomeArr[(x & 15) + (z & 15)*16] = (byte)biomeId;

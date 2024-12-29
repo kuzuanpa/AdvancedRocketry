@@ -648,16 +648,13 @@ public class WorldCommand implements ICommand {
 				}
 			} //string[0] = planet
 			else if(string[0].equals("star")) {
-				if(string.length > 1) {
-					if(string[1].equalsIgnoreCase("list")) {
-						for(StellarBody star : DimensionManager.getInstance().getStars())
-							sender.addChatMessage(new ChatComponentText(String.format("Star ID: %d   Name: %s  Num Planets: %d", star.getId(), star.getName(), star.getNumPlanets())));
-					}
-					else if(string[1].equalsIgnoreCase("help")) {
-						printStarHelp(sender);
-					}
-				}
-				if(string.length > 3) {
+                if (string[1].equalsIgnoreCase("list")) {
+                    for (StellarBody star : DimensionManager.getInstance().getStars())
+                        sender.addChatMessage(new ChatComponentText(String.format("Star ID: %d   Name: %s  Num Planets: %d", star.getId(), star.getName(), star.getNumPlanets())));
+                } else if (string[1].equalsIgnoreCase("help")) {
+                    printStarHelp(sender);
+                }
+                if(string.length > 3) {
 					if(string[1].equalsIgnoreCase("get")) {
 						try {
 							int id = Integer.parseInt(string[3]);

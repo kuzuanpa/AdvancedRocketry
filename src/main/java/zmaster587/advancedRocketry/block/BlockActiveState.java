@@ -13,7 +13,8 @@ public class BlockActiveState extends Block {
 
 	public IIcon activeIcon;
 	String activeTextureString;
-	@Nullable Class<? extends TileEntity> tileClass;
+	@Nullable
+    final Class<? extends TileEntity> tileClass;
 	
 	public BlockActiveState(@NotNull Material mat, @Nullable TileEntity tile) {
 		super(mat);

@@ -1,16 +1,9 @@
 package zmaster587.advancedRocketry.item.tools;
 
-import java.util.List;
-import java.util.WeakHashMap;
-
-import org.jetbrains.annotations.NotNull;
-import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.libVulpes.util.BlockPosition;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
-import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,19 +12,21 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.*;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.libVulpes.util.BlockPosition;
+
+import java.util.List;
+import java.util.WeakHashMap;
 
 public class ItemBasicLaserGun extends Item {
 
-	int reachDistance = 25;
-	private WeakHashMap<EntityLivingBase, BlockPosition> posMap;
-	ToolMaterial toolMaterial;
+	final int reachDistance = 25;
+	private final WeakHashMap<EntityLivingBase, BlockPosition> posMap;
+	final ToolMaterial toolMaterial;
 
 	public ItemBasicLaserGun() {
 		super();
@@ -51,7 +46,7 @@ public class ItemBasicLaserGun extends Item {
 	public boolean canHarvestBlock(Block block,  ItemStack itemStack)
 	{
 
-		return block == Blocks.obsidian ? this.toolMaterial.getHarvestLevel() == 3 : (block != Blocks.diamond_block && block != Blocks.diamond_ore ? (block != Blocks.emerald_ore && block != Blocks.emerald_block ? (block != Blocks.gold_block && block != Blocks.gold_ore ? (block != Blocks.iron_block && block != Blocks.iron_ore ? (block != Blocks.lapis_block && block != Blocks.lapis_ore ? (block != Blocks.redstone_ore && block != Blocks.lit_redstone_ore ? (block.getMaterial() == Material.rock ? true : (block.getMaterial() == Material.iron ? true : block.getMaterial() == Material.anvil)) : this.toolMaterial.getHarvestLevel() >= 2) : this.toolMaterial.getHarvestLevel() >= 1) : this.toolMaterial.getHarvestLevel() >= 1) : this.toolMaterial.getHarvestLevel() >= 2) : this.toolMaterial.getHarvestLevel() >= 2) : this.toolMaterial.getHarvestLevel() >= 2);
+		return block == Blocks.obsidian ? this.toolMaterial.getHarvestLevel() == 3 : (block != Blocks.diamond_block && block != Blocks.diamond_ore ? (block != Blocks.emerald_ore && block != Blocks.emerald_block ? (block != Blocks.gold_block && block != Blocks.gold_ore ? (block != Blocks.iron_block && block != Blocks.iron_ore ? (block != Blocks.lapis_block && block != Blocks.lapis_ore ? (block != Blocks.redstone_ore && block != Blocks.lit_redstone_ore ? (block.getMaterial() == Material.rock || (block.getMaterial() == Material.iron || block.getMaterial() == Material.anvil)) : this.toolMaterial.getHarvestLevel() >= 2) : this.toolMaterial.getHarvestLevel() >= 1) : this.toolMaterial.getHarvestLevel() >= 1) : this.toolMaterial.getHarvestLevel() >= 2) : this.toolMaterial.getHarvestLevel() >= 2) : this.toolMaterial.getHarvestLevel() >= 2);
 	}
 
 
@@ -73,7 +68,7 @@ public class ItemBasicLaserGun extends Item {
 			return;
 		}
 
-		rayTrace = getMovingObjectPositionFromPlayer(world, (EntityPlayer) player, false);
+		rayTrace = getMovingObjectPositionFromPlayer(world, player, false);
 
 		if(rayTrace == null || rayTrace.typeOfHit != MovingObjectType.BLOCK)
 			return;
@@ -82,8 +77,9 @@ public class ItemBasicLaserGun extends Item {
 			player.clearItemInUse();
 			return;
 		}
-		else if(posMap.get(player) == null) {
-			posMap.put(player, new BlockPosition(rayTrace.blockX, rayTrace.blockY, rayTrace.blockZ));
+		else {
+			MovingObjectPosition finalRayTrace = rayTrace;
+			posMap.computeIfAbsent(player, k -> new BlockPosition(finalRayTrace.blockX, finalRayTrace.blockY, finalRayTrace.blockZ));
 		}
 
 		if(count % 5 == 0 && world.isRemote) {
@@ -184,30 +180,20 @@ public class ItemBasicLaserGun extends Item {
 		Vec3 vec3d1 = entity.getLookVec();
 		Vec3 vec3d2 = vec3d.addVector(vec3d1.xCoord * reachDistance, vec3d1.yCoord * reachDistance, vec3d1.zCoord * reachDistance);
 
-		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.addCoord(vec3d1.xCoord * reachDistance, vec3d1.yCoord * reachDistance, vec3d1.zCoord * reachDistance).expand(1.0D, 1.0D, 1.0D), new IEntitySelector() {
-			
-			@Override
-			public boolean isEntityApplicable(Entity p_apply_1_) {
-				// TODO Auto-generated method stub
-				return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
-			}
-		});
+		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.addCoord(vec3d1.xCoord * reachDistance, vec3d1.yCoord * reachDistance, vec3d1.zCoord * reachDistance).expand(1.0D, 1.0D, 1.0D), p_apply_1_ -> {
+            // TODO Auto-generated method stub
+            return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
+        });
 
-		for (int j = 0; j < list.size(); ++j)
-		{
-			Entity entity1 = (Entity)list.get(j);
-			AxisAlignedBB axisalignedbb = entity1.boundingBox.expand((double)entity1.getCollisionBorderSize(),(double)entity1.getCollisionBorderSize(),(double)entity1.getCollisionBorderSize());
-			MovingObjectPosition raytraceresult = axisalignedbb.calculateIntercept(vec3d, vec3d2);
+        for (Entity entity1 : list) {
+            AxisAlignedBB axisalignedbb = entity1.boundingBox.expand(entity1.getCollisionBorderSize(), entity1.getCollisionBorderSize(), entity1.getCollisionBorderSize());
+            MovingObjectPosition raytraceresult = axisalignedbb.calculateIntercept(vec3d, vec3d2);
 
-			if (axisalignedbb.isVecInside(vec3d))
-			{
-			}
-			else if (raytraceresult != null)
-			{
-				raytraceresult.entityHit = entity1;
-				return raytraceresult;
-			}
-		}
+            if (!axisalignedbb.isVecInside(vec3d) && raytraceresult != null) {
+                raytraceresult.entityHit = entity1;
+                return raytraceresult;
+            }
+        }
 
 		return null;
 	}
@@ -237,7 +223,7 @@ public class ItemBasicLaserGun extends Item {
 			return stack;
 		}
 
-		rayTrace = getMovingObjectPositionFromPlayer(world, (EntityPlayer) player, false);
+		rayTrace = getMovingObjectPositionFromPlayer(world, player, false);
 
 		if(rayTrace != null && rayTrace.typeOfHit == MovingObjectType.BLOCK) {
 

@@ -21,14 +21,14 @@ public interface IBlobHandler {
 	/**
 	 * @return true if a blob is allowed to form otherwise false
 	 */
-	public boolean canFormBlob();
+    boolean canFormBlob();
 	
 	
 	/**
 	 * Due to Minecraft's obf code we need a different method name than getWorldObj()
 	 * @return
 	 */
-	public World getWorld();
+    World getWorld();
 	
 	/**
 	 * Called when two blobs of the same type overlap
@@ -36,17 +36,17 @@ public interface IBlobHandler {
 	 * @param other areaBlob to Overlap
 	 * @return true if the two blobs are allowed to overlap, false if not
 	 */
-	public boolean canBlobsOverlap(BlockPosition blockPosition, AreaBlob blob);
+    boolean canBlobsOverlap(BlockPosition blockPosition, AreaBlob blob);
 	
 	/**
 	 * @return the maximum distance an object can maintain a blob
 	 */
-	public int getMaxBlobRadius();
+    int getMaxBlobRadius();
 	
 	/**
 	 * @return the position to use as root
 	 */
-	public BlockPosition getRootPosition();
+    BlockPosition getRootPosition();
 	
-	public int getTraceDistance();
+	int getTraceDistance();
 }

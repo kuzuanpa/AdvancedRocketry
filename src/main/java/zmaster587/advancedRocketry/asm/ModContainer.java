@@ -1,6 +1,6 @@
 package zmaster587.advancedRocketry.asm;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import com.google.common.eventbus.EventBus;
 
@@ -28,7 +28,7 @@ public class ModContainer extends DummyModContainer {
 		meta.name = "Advanced Rocketry";
 		meta.version = "1";
 		meta.credits = "Created by Zmaster587";
-		meta.authorList = Arrays.asList("Zmaster587");
+		meta.authorList = Collections.singletonList("Zmaster587");
 		meta.description = "ASM handler for AR";
 		meta.url = "";
 		meta.updateUrl = "";

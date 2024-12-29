@@ -11,8 +11,8 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 public class WorldGenLargeCrystal extends WorldGenerator {
 
-	Block block;
-	int validMetas;
+	final Block block;
+	final int validMetas;
 	public WorldGenLargeCrystal() {
 		this.block = AdvancedRocketryBlocks.blockCrystal;
 		validMetas = BlockCrystal.numMetas;

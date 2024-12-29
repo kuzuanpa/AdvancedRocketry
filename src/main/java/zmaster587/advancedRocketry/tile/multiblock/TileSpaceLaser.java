@@ -12,9 +12,6 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -64,7 +61,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 	private static final int INVSIZE = 9;
 	ItemStack glassPanel;
 	//ItemStack invBuffer[];
-	SatelliteLaserNoDrill laserSat;
+    final SatelliteLaserNoDrill laserSat;
 	protected boolean isRunning, finished;
 	protected IInventory adjInv;
 	private int radius, xCenter, yCenter, numSteps;
@@ -74,9 +71,9 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 	private static final int POWER_PER_OPERATION = (int) (10000  * Configuration.spaceLaserPowerMult); 
 	private ModuleTextBox locationX, locationZ;
 	private ModuleText updateText;
-	MultiInventory inv;
+	final MultiInventory inv;
 
-	Object[][][] structure = new Object[][][]{
+	final Object[][][] structure = new Object[][][]{
 			{
 				{null, null, null, null, null},
 				{null, null, LibVulpesBlocks.blockAdvStructureBlock, null, null},
@@ -112,9 +109,9 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 		LINE_X,
 		LINE_Z,
 		SPIRAL
-	};
+	}
 
-	private MODE mode;
+    private MODE mode;
 
 	Ticket ticket;
 
@@ -263,9 +260,9 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 		mode = MODE.values()[num];
 	}
 
-	public void setMode(MODE m) {mode = m;};
+	public void setMode(MODE m) {mode = m;}
 
-	@Override
+    @Override
 	public boolean canUpdate() {return true;}
 
 	public void setFinished(boolean value) { finished = value; }
@@ -490,7 +487,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 
 
 			if(InventoryCompat.canInjectItems(e))
-				return (IInventory)e;
+				return e;
 		}
 		return null;
 	}
@@ -678,10 +675,8 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		if(i == 0)
-			return CompatibilityMgr.gregtechLoaded ? OreDictionary.getOreName(OreDictionary.getOreID(itemstack)).equals("lenseRuby") : AdvancedRocketryItems.itemLens == itemstack.getItem() ? true : false;
-
-			return inv.isItemValidForSlot(i, itemstack);
+		if(i == 0) return CompatibilityMgr.gregtechLoaded ? OreDictionary.getOreName(OreDictionary.getOreID(itemstack)).equals("lenseRuby") : AdvancedRocketryItems.itemLens == itemstack.getItem();
+		return inv.isItemValidForSlot(i, itemstack);
 	}
 	//InventoryHandling end
 

@@ -18,7 +18,7 @@ public class BlockFluid extends BlockFluidClassic {
     @SideOnly(Side.CLIENT)
     protected IIcon flowingIcon;
     
-    Fluid myFluid;
+    final Fluid myFluid;
 	
 	public BlockFluid(Fluid fluid, Material material) {
 		super(fluid, material);

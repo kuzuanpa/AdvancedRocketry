@@ -1,16 +1,11 @@
 package zmaster587.advancedRocketry.satellite;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
-import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
 
 public class SpySatellite extends SatelliteBase {
 
@@ -91,16 +86,6 @@ public class SpySatellite extends SatelliteBase {
 	@Override
 	public void readFromNBT(@NotNull NBTTagCompound nbt) {
 		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean canTick() {
-		return false;
-	}
-
-	@Override
-	public void tickEntity() {
 
 	}
 

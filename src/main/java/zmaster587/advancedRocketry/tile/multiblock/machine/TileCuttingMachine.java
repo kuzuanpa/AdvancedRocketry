@@ -1,35 +1,26 @@
 package zmaster587.advancedRocketry.tile.multiblock.machine;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.api.LibVulpesBlocks;
 import zmaster587.libVulpes.block.BlockMeta;
-import zmaster587.libVulpes.block.BlockRotatableModel;
 import zmaster587.libVulpes.block.RotatableBlock;
-import zmaster587.libVulpes.client.util.ProgressBarImage;
-import zmaster587.libVulpes.interfaces.IRecipe;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
 import zmaster587.libVulpes.inventory.modules.ModuleProgress;
 import zmaster587.libVulpes.recipe.RecipesMachine;
 import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.List;
 
 public class TileCuttingMachine extends TileMultiblockMachine implements IModularInventory {
 
@@ -76,13 +67,7 @@ public class TileCuttingMachine extends TileMultiblockMachine implements IModula
 	public AxisAlignedBB getRenderBoundingBox() {
 		return AxisAlignedBB.getBoundingBox(xCoord -2,yCoord -2, zCoord -2, xCoord + 2, yCoord + 2, zCoord + 2);
 	}
-	
-	public boolean completeStructure() {
-		boolean result = super.completeStructure();
-		
-		return result;
-	}
-	
+
 	@Override
 	public String getMachineName() {
 		return "container.cuttingmachine";

@@ -9,11 +9,9 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,7 +26,7 @@ public class ItemPressureTank extends ItemIngredient implements IArmorComponent,
 
 	ResourceIcon icon;
 	
-	int capacity;
+	final int capacity;
 	public ItemPressureTank( int number, int capacity) {
 		super(number);
 		this.capacity = capacity;

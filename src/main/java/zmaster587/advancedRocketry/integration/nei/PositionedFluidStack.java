@@ -1,7 +1,6 @@
 package zmaster587.advancedRocketry.integration.nei;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -9,25 +8,23 @@ import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.api.AdvancedRocketryFluids;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.GuiUsageRecipe;
 
 public class PositionedFluidStack {
 
-	public FluidStack tank;
-	public int posX, posY;
-	public String overlayTexture;
-	public Point overlayTexturePos;
-	public boolean flowingTexture = false;
-	public boolean showAmount = true;
-	public boolean perTick = false;
+	public final FluidStack tank;
+	public final int posX;
+    public final int posY;
+	public final String overlayTexture;
+	public final Point overlayTexturePos;
+	public final boolean flowingTexture = false;
+	public final boolean showAmount = true;
+	public final boolean perTick = false;
 	public static final int size = 16;
 
 	public PositionedFluidStack(FluidStack tank, int x, int y, String overlayTexture, Point overlayTexturePos) {
@@ -42,7 +39,7 @@ public class PositionedFluidStack {
 	}
 
 	public List<String> handleTooltip(List<String> currenttip) {
-		if (this.tank == null || this.tank == null || this.tank.getFluid() == null || this.tank.amount <= 0) {
+		if (this.tank == null || this.tank.getFluid() == null || this.tank.amount <= 0) {
 			return currenttip;
 		}
 		currenttip.add(this.tank.getLocalizedName());
@@ -55,24 +52,19 @@ public class PositionedFluidStack {
 	public boolean transfer(boolean usage) {
 		if (this.tank != null && this.tank.amount > 0) {
 			if (usage) {
-				if (!GuiUsageRecipe.openRecipeGui("liquid", new Object[] { this.tank })) {
-					return false;
-				}
+                return GuiUsageRecipe.openRecipeGui("liquid", this.tank);
 			} else {
-				if (!GuiCraftingRecipe.openRecipeGui("liquid", new Object[] { this.tank })) {
-					return false;
-				}
+                return GuiCraftingRecipe.openRecipeGui("liquid", this.tank);
 			}
-			return true;
-		}
+        }
 		return false;
 	}
 
 	public void draw() {
-		if (this.tank == null || this.tank == null || this.tank.getFluid() == null || this.tank.amount <= 0) {
+		if (this.tank == null || this.tank.getFluid() == null || this.tank.amount <= 0) {
 			return;
 		}
-		IIcon fluidIcon = null;
+		IIcon fluidIcon;
 		if (this.flowingTexture && this.tank.getFluid().getFlowingIcon() != null) {
 			fluidIcon = this.tank.getFluid().getFlowingIcon();
 		} else if (this.tank.getFluid().getStillIcon() != null) {

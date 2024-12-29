@@ -84,13 +84,10 @@ public class TileFluidTank extends TileFluidHatch implements IAdjBlockUpdate {
 		if(stack != null)
 			return stack;
 
-		FluidStack stack2 = super.drain(from, maxDrain - (stack != null ? stack.amount : 0), doDrain);
+		FluidStack stack2 = super.drain(from, maxDrain, doDrain);
 
-		if(stack != null && stack2 != null)
-			stack2.amount += stack.amount;
 
-		
-		if(stack2 != null && doDrain) {
+        if(stack2 != null && doDrain) {
 			fluidChanged = true;
 		}
 		checkForUpdate();

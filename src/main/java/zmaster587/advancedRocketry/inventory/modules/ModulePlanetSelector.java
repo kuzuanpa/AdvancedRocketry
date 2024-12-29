@@ -31,8 +31,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModulePlanetSelector extends ModuleContainerPan implements IButtonInventory {
-
-
 	//Closest thing i can get to a struct :/
 	private static class PlanetRenderProperties {
 		int radius;
@@ -49,7 +47,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 	}
 
 	private static final int size = 2000;
-	ISelectionNotify hostTile;
+	final ISelectionNotify hostTile;
 	private int currentSystem, selectedSystem;
 	private double zoom,zoomToGo;
 	private boolean currentSystemChanged = false;
@@ -60,7 +58,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 
 	private final HashMap<Integer, PlanetRenderProperties> renderPropertiesMap;
 	PlanetRenderProperties currentlySelectedPlanet;
-	IPlanetDefiner planetDefiner;
+	final IPlanetDefiner planetDefiner;
 
 	public ModulePlanetSelector(int planetId, ResourceLocation backdrop, ISelectionNotify tile, boolean star) {
 		this(planetId, backdrop, tile, null, star);
@@ -335,7 +333,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void onMouseClicked(GuiModular gui, int x, int y, int button) {
+	public void onMouseClicked(@NotNull GuiModular gui, int x, int y, int button) {
 
 		if(clickablePlanetList != null) clickablePlanetList.onMouseClicked(gui, x, y, button);
 
@@ -362,14 +360,14 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 
 	@Override
 	public void renderForeground(int guiOffsetX, int guiOffsetY, int mouseX,
-			int mouseY, float zLevel, GuiContainer gui, FontRenderer font) {
+								 int mouseY, float zLevel, @NotNull GuiContainer gui, FontRenderer font) {
 		super.renderForeground(guiOffsetX, guiOffsetY, mouseX, mouseY, zLevel, gui,
 				font);
 	}
 
 	@Override
 	protected void moveContainerInterior(int deltaX, int deltaY) {
-		super.moveContainerInterior((int)(deltaX), (int)(deltaY));
+		super.moveContainerInterior(deltaX, deltaY);
 	}
 
 	@Override

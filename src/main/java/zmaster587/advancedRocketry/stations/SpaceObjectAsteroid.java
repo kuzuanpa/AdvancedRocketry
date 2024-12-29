@@ -8,7 +8,6 @@ import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.DataStorage.DataType;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.satellite.IDataHandler;
-import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.world.util.MultiData;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,7 +20,7 @@ public class SpaceObjectAsteroid extends SpaceObjectBase implements IDataHandler
 	HashMap<Block, Integer> compositionMapping;
 	int numberOfBlocks;
 	long uuid;
-	MultiData data;
+	final MultiData data;
 	
 	public SpaceObjectAsteroid() {
 		data = new MultiData();

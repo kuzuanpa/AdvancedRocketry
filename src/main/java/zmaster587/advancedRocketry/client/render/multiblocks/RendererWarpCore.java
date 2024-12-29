@@ -22,14 +22,13 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 
 public class RendererWarpCore extends TileEntitySpecialRenderer {
 
-	public static IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/warpcore.obj"));
+	public static final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/warpcore.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/warpcore.png");
+	final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/warpcore.png");
 
-	private final RenderItem dummyItem = new RenderItem();
-
-	public RendererWarpCore() {
-		dummyItem.setRenderManager(RenderManager.instance);
+    public RendererWarpCore() {
+        RenderItem dummyItem = new RenderItem();
+        dummyItem.setRenderManager(RenderManager.instance);
 	}
 
 	@Override

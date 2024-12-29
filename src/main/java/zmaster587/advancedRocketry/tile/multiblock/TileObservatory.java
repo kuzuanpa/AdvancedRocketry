@@ -3,7 +3,6 @@ package zmaster587.advancedRocketry.tile.multiblock;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -53,7 +52,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -106,13 +104,14 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 	final static int openTime = 100;
 	final static int observationtime = 1000;
 	int openProgress;
-	private LinkedList<TileDataBus> dataCables;
+	private final LinkedList<TileDataBus> dataCables;
 	private boolean isOpen;
-	private HashMap<Integer, String> buttonType  = new HashMap<>();
-	private ModuleTab tabModule;
-	private int dataConsumedPerRefresh = 100;
+	private final HashMap<Integer, String> buttonType  = new HashMap<>();
+	private final ModuleTab tabModule;
+	private final int dataConsumedPerRefresh = 100;
 	@NotNull
-	EmbeddedInventory inv = new EmbeddedInventory(3);
+    final
+    EmbeddedInventory inv = new EmbeddedInventory(3);
 
 	public TileObservatory() {
 		openProgress = 0;
@@ -364,8 +363,8 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 				List<StackEntry> harvestList = Configuration.asteroidTypes.get(lastType).getHarvest(lastSeed + lastButton, Math.max(1 - ((Math.min(getDataAmt(DataType.COMPOSITION),2000)  + Math.min(getDataAmt(DataType.MASS), 2000) )/4000f), 0));
 				for(StackEntry entry : harvestList) {
 					//buttonList.add(new ModuleButton((g % 3)*24, 24*(g/3), -2, "",this, TextureResources.tabData, 24, 24));
-					buttonList.add(new ModuleSlotButton((g % 3)*24 + 1, 24*(g/3) + 1, -2, this, entry.stack, String.valueOf(entry.midpoint) + " +/-  " + String.valueOf(entry.variablility)));
-					buttonList.add(new ModuleText((g % 3)*24 + 1, 24*(g/3) + 1, String.valueOf(entry.midpoint) + "\n+/- " + String.valueOf(entry.variablility) , 0xFFFFFF, 0.5f ));
+					buttonList.add(new ModuleSlotButton((g % 3)*24 + 1, 24*(g/3) + 1, -2, this, entry.stack, entry.midpoint + " +/-  " + entry.variablility));
+					buttonList.add(new ModuleText((g % 3)*24 + 1, 24*(g/3) + 1, entry.midpoint + "\n+/- " + entry.variablility, 0xFFFFFF, 0.5f ));
 					g++;
 				}
 				
@@ -457,28 +456,28 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 			List<DataStorage> distanceStorage = new LinkedList<>();
 			List<DataStorage> compositionStorage = new LinkedList<>();
 			List<DataStorage> massStorage = new LinkedList<>();
-			for(int i = 0; i < dataCables.size(); i++) {
+            for (TileDataBus dataCable : dataCables) {
 
-				DataStorage storage = dataCables.get(i).getDataObject();
-				DataType type = dataCables.get(i).getDataObject().getDataType();
-				if(type == DataType.COMPOSITION)
-					compositionStorage.add(storage);
-				else if(type == DataType.DISTANCE)
-					distanceStorage.add(storage);
-				else if(type == DataType.MASS)
-					massStorage.add(storage);
+                DataStorage storage = dataCable.getDataObject();
+                DataType type = dataCable.getDataObject().getDataType();
+                if (type == DataType.COMPOSITION)
+                    compositionStorage.add(storage);
+                else if (type == DataType.DISTANCE)
+                    distanceStorage.add(storage);
+                else if (type == DataType.MASS)
+                    massStorage.add(storage);
+            }
+
+			if(!distanceStorage.isEmpty()) {
+				modules.add(new ModuleData(40, 20, 0, this, distanceStorage.toArray(new DataStorage[0])));
 			}
 
-			if(distanceStorage.size() > 0 ) {
-				modules.add(new ModuleData(40, 20, 0, this, (DataStorage[]) distanceStorage.toArray(new DataStorage[distanceStorage.size()])));
+			if(!compositionStorage.isEmpty()) {
+				modules.add(new ModuleData(80, 20, 0, this, compositionStorage.toArray(new DataStorage[0])));
 			}
 
-			if(compositionStorage.size() > 0 ) {
-				modules.add(new ModuleData(80, 20, 0, this, (DataStorage[]) compositionStorage.toArray(new DataStorage[compositionStorage.size()])));
-			}
-
-			if(massStorage.size() > 0 ) {
-				modules.add(new ModuleData(120, 20, 0, this, (DataStorage[]) massStorage.toArray(new DataStorage[massStorage.size()])));
+			if(!massStorage.isEmpty()) {
+				modules.add(new ModuleData(120, 20, 0, this, massStorage.toArray(new DataStorage[0])));
 			}
 			
 			modules.add(new ModuleText(10, 90, LibVulpes.proxy.getLocalizedString("msg.observetory.text.observabledistance") + " " + getMaxDistance(), 0x2d2d2d, false));
@@ -497,13 +496,13 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 
 		if(buttonId == 1) {
 			//Begin discovery processing
-			PacketHandler.sendToServer(new PacketMachine(this, (byte)PROCESS_CHIP));
+			PacketHandler.sendToServer(new PacketMachine(this, PROCESS_CHIP));
 		}
 
 		if(buttonId >= LIST_OFFSET) {
 			lastButton = buttonId;
 			lastType = buttonType.get(lastButton - LIST_OFFSET);
-			PacketHandler.sendToServer(new PacketMachine(this, (byte)BUTTON_PRESS));
+			PacketHandler.sendToServer(new PacketMachine(this, BUTTON_PRESS));
 		}
 		if(buttonId == 2) {
 			
@@ -512,7 +511,7 @@ public class TileObservatory extends TileMultiPowerConsumer implements IModularI
 					lastSeed = worldObj.getTotalWorldTime()/100;
 					lastButton = -1;
 					lastType = "";
-					PacketHandler.sendToServer(new PacketMachine(this, (byte)SEED_CHANGE));
+					PacketHandler.sendToServer(new PacketMachine(this, SEED_CHANGE));
 				}
 			//}
 		}

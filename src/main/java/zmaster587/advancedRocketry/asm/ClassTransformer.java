@@ -1,35 +1,19 @@
 package zmaster587.advancedRocketry.asm;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.FrameNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LineNumberNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
-
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import org.objectweb.asm.tree.*;
 import zmaster587.advancedRocketry.AdvancedRocketry;
-import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.launchwrapper.Launch;
+
+import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ClassTransformer implements IClassTransformer {
 
@@ -673,7 +657,7 @@ public class ClassTransformer implements IClassTransformer {
 
 			if(onUpdate != null) {
 				final @NotNull InsnList nodeAdd = new InsnList();
-				AbstractInsnNode pos = null;
+				AbstractInsnNode pos;
 				List<AbstractInsnNode> removeNodes = new LinkedList<>();
 				int numALoadsInARow = 0;
 				int firstALoadIndex = 0;
@@ -686,15 +670,14 @@ public class ClassTransformer implements IClassTransformer {
 							firstALoadIndex = i;
 						numALoadsInARow++;
 						if(numALoadsInARow == 3) {
-							pos = ain;
-							break;
+                            break;
 						}
 					}
 					else
 						numALoadsInARow = 0;
 				}
 				int i = firstALoadIndex;
-				while((ain = onUpdate.instructions.get(--i)).getOpcode() != Opcodes.PUTFIELD);
+				while(onUpdate.instructions.get(--i).getOpcode() != Opcodes.PUTFIELD);
 
 
 				while((ain = onUpdate.instructions.get(i--)).getOpcode() != Opcodes.ALOAD) {
@@ -728,10 +711,9 @@ public class ClassTransformer implements IClassTransformer {
 				for(int i = moveEntityWithHeading.instructions.size() - 1; i >= 0; i--) {
 					AbstractInsnNode ain = moveEntityWithHeading.instructions.get(i);
 					if(ain.getOpcode() == Opcodes.GOTO) {
-						pos = ain;
 
 
-						while(moveEntityWithHeading.instructions.get(++i).getOpcode() != Opcodes.ALOAD);
+                        while(moveEntityWithHeading.instructions.get(++i).getOpcode() != Opcodes.ALOAD);
 
 						pos = moveEntityWithHeading.instructions.get(i-1);
 						ain = moveEntityWithHeading.instructions.get(i);

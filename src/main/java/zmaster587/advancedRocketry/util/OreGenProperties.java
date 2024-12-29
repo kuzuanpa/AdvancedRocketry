@@ -11,14 +11,14 @@ import zmaster587.libVulpes.block.BlockMeta;
 
 public class OreGenProperties {
 
-	private List<OreEntry> oreEntries;
+	private final List<OreEntry> oreEntries;
 	
 	/**
 	 * Array of properties for [pressure][temperature]
 	 * @see DimensionProperties.AtmosphereTypes
 	 * @see DimensionProperties.Temps
 	 */
-	private static OreGenProperties[][] oreGenPropertyMap = new OreGenProperties[DimensionProperties.AtmosphereTypes.values().length][DimensionProperties.Temps.values().length];
+	private static final OreGenProperties[][] oreGenPropertyMap = new OreGenProperties[DimensionProperties.AtmosphereTypes.values().length][DimensionProperties.Temps.values().length];
 	
 	public OreGenProperties() {
 		oreEntries = new LinkedList<>();
@@ -56,11 +56,11 @@ public class OreGenProperties {
 	}
 	
 	public static class OreEntry {
-		private BlockMeta state;
-		int minHeight;
-		int maxHeight;
-		int clumpSize;
-		int chancePerChunk;
+		private final BlockMeta state;
+		final int minHeight;
+		final int maxHeight;
+		final int clumpSize;
+		final int chancePerChunk;
 		
 		public OreEntry(BlockMeta state, int minHeight, int maxHeight, int clumpSize, int chancePerChunk) {
 			this.state = state;

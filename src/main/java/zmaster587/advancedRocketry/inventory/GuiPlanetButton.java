@@ -11,7 +11,7 @@ import zmaster587.libVulpes.gui.GuiImageButton;
 
 public class GuiPlanetButton extends GuiImageButton {
 
-	DimensionProperties properties;
+	final DimensionProperties properties;
 	
 	public GuiPlanetButton(int id, int x, int y, int width, int height,
 			DimensionProperties properties) {
@@ -50,7 +50,7 @@ public class GuiPlanetButton extends GuiImageButton {
 	        //GL11.glTranslatef(xPosition, 100 + this.zLevel, yPosition);
 	        float newWidth = width/2f;
 	        
-	        RenderPlanetarySky.renderPlanetPubHelper(tessellator, properties.getPlanetIcon(), (int)(xPosition + newWidth), (int)(yPosition + newWidth), (double)this.zLevel, newWidth, 1f, properties.getSolarTheta(), properties.hasAtmosphere(), properties.skyColor, properties.ringColor, properties.isGasGiant(), properties.hasRings());
+	        RenderPlanetarySky.renderPlanetPubHelper(tessellator, properties.getPlanetIcon(), (int)(xPosition + newWidth), (int)(yPosition + newWidth), this.zLevel, newWidth, 1f, properties.getSolarTheta(), properties.hasAtmosphere(), properties.skyColor, properties.ringColor, properties.isGasGiant(), properties.hasRings());
             GL11.glPopMatrix();
 	        
 	        /*vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);

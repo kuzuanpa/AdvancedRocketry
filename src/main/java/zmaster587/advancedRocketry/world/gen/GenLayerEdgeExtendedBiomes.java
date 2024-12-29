@@ -1,11 +1,6 @@
 package zmaster587.advancedRocketry.world.gen;
 
-import java.util.concurrent.Callable;
-
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.util.ReportedException;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
@@ -30,7 +25,7 @@ public class GenLayerEdgeExtendedBiomes extends GenLayerExtendedCompare {
         {
             for (int j1 = 0; j1 < p_75904_3_; ++j1)
             {
-                this.initChunkSeed((long)(j1 + p_75904_1_), (long)(i1 + p_75904_2_));
+                this.initChunkSeed(j1 + p_75904_1_, i1 + p_75904_2_);
                 int k1 = aint[j1 + 1 + (i1 + 1) * (p_75904_3_ + 2)];
 
                 if (!this.func_151636_a(aint, aint1, j1, i1, p_75904_3_, k1, BiomeGenBase.extremeHills.biomeID, BiomeGenBase.extremeHillsEdge.biomeID) && !this.func_151635_b(aint, aint1, j1, i1, p_75904_3_, k1, BiomeGenBase.mesaPlateau_F.biomeID, BiomeGenBase.mesa.biomeID) && !this.func_151635_b(aint, aint1, j1, i1, p_75904_3_, k1, BiomeGenBase.mesaPlateau.biomeID, BiomeGenBase.mesa.biomeID) && !this.func_151635_b(aint, aint1, j1, i1, p_75904_3_, k1, BiomeGenBase.megaTaiga.biomeID, BiomeGenBase.taiga.biomeID))

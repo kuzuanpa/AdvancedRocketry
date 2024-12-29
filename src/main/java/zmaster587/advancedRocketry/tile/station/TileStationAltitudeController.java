@@ -33,7 +33,10 @@ public class TileStationAltitudeController extends TileEntity implements IModula
 	int gravity;
 	int progress;
 
-	private ModuleText moduleGrav, numGravPylons, maxGravBuildSpeed, targetGrav;
+	private final ModuleText moduleGrav;
+    private ModuleText numGravPylons;
+    private final ModuleText maxGravBuildSpeed;
+    private final ModuleText targetGrav;
 
 	public TileStationAltitudeController() {
 		moduleGrav = new ModuleText(6, 15, "Altitude: ", 0xaa2020);
@@ -50,7 +53,7 @@ public class TileStationAltitudeController extends TileEntity implements IModula
 		modules.add(maxGravBuildSpeed);
 
 		modules.add(targetGrav);
-		modules.add(new ModuleSlider(6, 60, 0, TextureResources.doubleWarningSideBarIndicator, (ISliderBar)this));
+		modules.add(new ModuleSlider(6, 60, 0, TextureResources.doubleWarningSideBarIndicator, this));
 
 		updateText();
 		return modules;
@@ -73,12 +76,7 @@ public class TileStationAltitudeController extends TileEntity implements IModula
 
 	}
 
-	@Override
-	public boolean canUpdate() {
-		return true;
-	}
-
-	private void updateText() {
+    private void updateText() {
 		if(worldObj.isRemote) {
 			ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(xCoord, zCoord);
 			if(object != null) {

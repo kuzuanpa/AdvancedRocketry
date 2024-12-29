@@ -35,7 +35,7 @@ public abstract class MissionResourceCollection extends SatelliteBase implements
 	NBTTagCompound missionPersistantNBT;
 
 	//stores the coordinates of infrastructures, used for when the world loads/saves
-	protected LinkedList<BlockPosition> infrastructureCoords;
+	protected final LinkedList<BlockPosition> infrastructureCoords;
 
 	public MissionResourceCollection(){
 		infrastructureCoords = new LinkedList<>();
@@ -134,15 +134,12 @@ public abstract class MissionResourceCollection extends SatelliteBase implements
 		nbt.setInteger("launchDim", launchDimension);
 
 		NBTTagList itemList = new NBTTagList();
-		for(int i = 0; i < infrastructureCoords.size(); i++)
-		{
-			BlockPosition inf = infrastructureCoords.get(i);
+        for (BlockPosition inf : infrastructureCoords) {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setIntArray("loc", new int[]{inf.x, inf.y, inf.z});
+            itemList.appendTag(tag);
 
-			NBTTagCompound tag = new NBTTagCompound();
-			tag.setIntArray("loc", new int[] {inf.x, inf.y, inf.z});
-			itemList.appendTag(tag);
-
-		}
+        }
 		nbt.setTag("infrastructure", itemList);
 	}
 

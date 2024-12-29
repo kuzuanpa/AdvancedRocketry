@@ -94,9 +94,7 @@ public class EntityItemAbducted extends Entity {
         this.getDataWatcher().updateObject(10, p_92058_1_);
         this.getDataWatcher().setObjectWatched(10);
     }
-    
-    public void onCollideWithPlayer(EntityPlayer par1EntityPlayer) {}
-    
+
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.

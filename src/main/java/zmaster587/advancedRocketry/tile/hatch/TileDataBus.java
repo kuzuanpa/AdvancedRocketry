@@ -9,9 +9,6 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.DataStorage;
@@ -19,7 +16,6 @@ import zmaster587.advancedRocketry.api.DataStorage.DataType;
 import zmaster587.advancedRocketry.inventory.modules.ModuleData;
 import zmaster587.advancedRocketry.item.ItemData;
 import zmaster587.advancedRocketry.util.IDataInventory;
-import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
@@ -30,7 +26,7 @@ import zmaster587.libVulpes.util.INetworkMachine;
 public class TileDataBus extends TileInventoryHatch implements IDataInventory, INetworkMachine {
 
 	int maxData;
-	DataStorage data;
+	final DataStorage data;
 
 	public TileDataBus() {
 		data = new DataStorage(DataStorage.DataType.UNDEFINED);

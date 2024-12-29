@@ -59,11 +59,10 @@ public class BlockAlienLeaves extends BlockLeaves {
     
     protected void func_150124_c(World world, int x, int y, int z, int p_150124_5_, int p_150124_6_)
     {
-        if ((p_150124_5_ & 3) == 0 && world.rand.nextInt(p_150124_6_) == 0)
-        {
-            //TODO make drop
-        	//this.dropBlockAsItem(world, x, y, z, new ItemStack(Items.apple, 1, 0));
-        }
+        if ((p_150124_5_ & 3) == 0) {
+            world.rand.nextInt(p_150124_6_);
+        }//TODO make drop
+//this.dropBlockAsItem(world, x, y, z, new ItemStack(Items.apple, 1, 0));
     }
 	
     /**

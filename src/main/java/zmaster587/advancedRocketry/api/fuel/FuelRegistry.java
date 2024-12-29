@@ -21,7 +21,7 @@ public class FuelRegistry {
 		//Stores a fuel entry for each type of fuel
 		final @NotNull HashSet<fuelEntry> fuels;
 		
-		private FuelType() {
+		FuelType() {
 			fuels = new HashSet<>();
 		}
 		

@@ -15,7 +15,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 public class ChunkProviderSpace implements IChunkProvider{
 
-	World worldObj;
+	final World worldObj;
 	
 	public ChunkProviderSpace(World p_i2006_1_, long p_i2006_2_)
 	{

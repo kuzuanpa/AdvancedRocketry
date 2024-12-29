@@ -16,9 +16,9 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 
 public class RenderTerraformerAtm extends TileEntitySpecialRenderer {
 	
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/terraformerAtm.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/terraformerAtm.obj"));
 
-	ResourceLocation tubeTexture =  new ResourceLocation("advancedRocketry:textures/models/tubes.png");
+	final ResourceLocation tubeTexture =  new ResourceLocation("advancedRocketry:textures/models/tubes.png");
 	
 	
 	@Override

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public class FluidColored extends Fluid {
 
 	
-	int color;
+	final int color;
 	public FluidColored(@NotNull String fluidName, int color) {
 		super(fluidName);
 		this.color = color;

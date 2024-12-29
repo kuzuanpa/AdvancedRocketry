@@ -1,7 +1,6 @@
 package zmaster587.advancedRocketry.world.biome;
 
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 
@@ -31,7 +30,7 @@ public class BiomeGenMoonDark extends BiomeGenBase {
 	
 	
 	@Override
-	public List getSpawnableList(EnumCreatureType p_76747_1_) {
+	public List<?> getSpawnableList(EnumCreatureType p_76747_1_) {
 		return new LinkedList<>();
 	}
 	

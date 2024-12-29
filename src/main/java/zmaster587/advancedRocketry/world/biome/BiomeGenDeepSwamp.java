@@ -2,7 +2,6 @@ package zmaster587.advancedRocketry.world.biome;
 
 import java.util.Random;
 
-import zmaster587.advancedRocketry.world.decoration.MapGenCrater;
 import zmaster587.advancedRocketry.world.gen.WorldGenNoTree;
 import zmaster587.advancedRocketry.world.gen.WorldGenSwampTree;
 import cpw.mods.fml.relauncher.Side;
@@ -14,7 +13,6 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenSwamp;
 import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 

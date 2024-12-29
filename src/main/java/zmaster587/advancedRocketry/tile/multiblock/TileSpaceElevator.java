@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -37,7 +36,6 @@ import zmaster587.libVulpes.inventory.TextureResources;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
 import zmaster587.libVulpes.inventory.modules.ModuleButton;
 import zmaster587.libVulpes.inventory.modules.ModuleContainerPan;
-import zmaster587.libVulpes.inventory.modules.ModuleSlotArray;
 import zmaster587.libVulpes.inventory.modules.ModuleText;
 import zmaster587.libVulpes.inventory.modules.ModuleTexturedSlotArray;
 import zmaster587.libVulpes.items.ItemLinker;
@@ -49,7 +47,7 @@ import zmaster587.libVulpes.util.EmbeddedInventory;
 
 public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkableTile, IInventory {
 
-	Object[][][] structure =
+	final Object[][][] structure =
 		{
 			{
 				{null,null,null,null,null,null,null},
@@ -98,13 +96,13 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 			}
 		};
 
-	EmbeddedInventory inv;
+	final EmbeddedInventory inv;
 	@Nullable
 	EntityElevatorCapsule capsule;
-	boolean firstTick;
+	final boolean firstTick;
 	DimensionBlockPosition dimBlockPos;
 
-	private ModuleText landingPadDisplayText;
+	private final ModuleText landingPadDisplayText;
 	private static final byte SUMMON_PACKET = 2;
 	private static final byte SELECT_DST = 3;
 	private static final int BUTTON_ID_OFFSET = 5;
@@ -350,7 +348,7 @@ public class TileSpaceElevator extends TileMultiPowerConsumer implements ILinkab
 
 	public double getLandingLocationZ() {
 		ForgeDirection facing = RotatableBlock.getFront(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
-		return zCoord + facing.offsetX*1 + facing.offsetZ*-3 + 0.5;
+		return zCoord + facing.offsetX + facing.offsetZ*-3 + 0.5;
 	}
 
 

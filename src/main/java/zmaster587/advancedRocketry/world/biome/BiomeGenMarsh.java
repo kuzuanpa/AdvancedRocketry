@@ -42,7 +42,7 @@ public class BiomeGenMarsh extends BiomeGenBase {
 		{
 			int index = (Math.abs(x % 16) * 16 + Math.abs(z % 16)) * 256 + 62;
 			block[index] = Blocks.grass;
-			for(int y = (int)(61); y > 1; y--) {
+			for(int y = 61; y > 1; y--) {
 				index = (Math.abs(x % 16) * 16 + Math.abs(z % 16)) * 256 + y;
 				if(block[index] == null || !block[index].isOpaqueCube())
 					block[index] = Blocks.dirt;

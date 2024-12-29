@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 public class FxSkyLaser extends EntityFX {
 	
 	
-	static @NotNull RenderLaser render = new RenderLaser(0.75, new float[] { 0.2f, 0.2f, 0.8f, 0.0f}, new float[] { 0.2f, 0.2f, 0.8f, 0.9f});
+	static final @NotNull RenderLaser render = new RenderLaser(0.75, new float[] { 0.2f, 0.2f, 0.8f, 0.0f}, new float[] { 0.2f, 0.2f, 0.8f, 0.9f});
 	
 	public FxSkyLaser(World world, double x,
 			double y, double z) {

@@ -5,7 +5,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.DimensionManager;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.libVulpes.network.BasePacket;
@@ -16,7 +15,7 @@ public class PacketBiomeIDChange extends BasePacket {
 	Chunk chunk;
 	int worldId, xPos, zPos;
 	byte[] array;
-	BlockPosition pos;
+	final BlockPosition pos;
 	
 	public PacketBiomeIDChange() {
 		array = new byte[256];

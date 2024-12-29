@@ -23,7 +23,7 @@ public class StellarBody {
 	String name;
 	short posX, posZ;
 	float size;
-	public List<StellarBody> subStars;
+	public final List<StellarBody> subStars;
 	float starSeperation;
 
 	public DysonSphere dysonSphere;

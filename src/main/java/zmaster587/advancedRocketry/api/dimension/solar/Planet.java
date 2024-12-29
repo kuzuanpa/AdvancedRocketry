@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Planet {
 	private int dimId;
-	private StellarBody star;
+	private final StellarBody star;
 	private List<Planet> moons;
 	private List<SatelliteBase> satallites;
 	private List<SatelliteBase> tickingSatallites;

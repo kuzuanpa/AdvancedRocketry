@@ -20,9 +20,9 @@ public class BlockWarpCore extends BlockMultiblockMachine {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x,
-			int y, int z, EntityLivingBase player,
-			ItemStack items) {
+	public void onBlockPlacedBy(@NotNull World world, int x,
+								int y, int z, EntityLivingBase player,
+								ItemStack items) {
 		super.onBlockPlacedBy(world, x, y, z,
 				player, items);
 		

@@ -10,7 +10,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 public class NBTStorableListList {
 
-	List<DimensionBlockPosition> pos;
+	final List<DimensionBlockPosition> pos;
 	
 	public NBTStorableListList() {
 		pos = new LinkedList<>();

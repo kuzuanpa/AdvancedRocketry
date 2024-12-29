@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 public class BlockRedstoneEmitter extends Block {
 
 	IIcon activeIcon;
-	String iconName;
+	final String iconName;
 	
 	public BlockRedstoneEmitter(@NotNull Material material, String activeIconName) {
 		super(material);

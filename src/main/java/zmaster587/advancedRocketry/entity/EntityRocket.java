@@ -89,9 +89,9 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	public ArrayList<LeveledRocketPart> LeveledRocketParts=new ArrayList<>();
 	private String errorStr;
 	private long lastErrorTime = Long.MIN_VALUE;
-	private static long ERROR_DISPLAY_TIME = 100;
-	private static int DESCENT_TIMER = 500;
-	private static int BUTTON_ID_OFFSET = 25;
+	private static final long ERROR_DISPLAY_TIME = 100;
+	private static final int DESCENT_TIMER = 500;
+	private static final int BUTTON_ID_OFFSET = 25;
 	private static final int STATION_LOC_OFFSET = 50;
 	private ModuleText landingPadDisplayText;
 	protected long lastWorldTickTicked;
@@ -99,7 +99,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	private SatelliteBase satallite;
 	protected int destinationDimId;
 	//Offset for buttons linking to the tileEntityGrid
-	private int tilebuttonOffset = 3;
+	private final int tilebuttonOffset = 3;
 	private int autoDescendTimer;
 	private WeakReference<Entity>[] mountedEntities;
 	protected ModulePlanetSelector container;
@@ -714,7 +714,6 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 					//Make player confirm deorbit if a player is riding the rocket
 					if(this.riddenByEntity != null) {
 						setInFlight(false);
-						pos.y = (float) Configuration.orbit;
 
 					}
 					this.setInOrbit(true);
@@ -1005,15 +1004,13 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		{
 
 			if(!DimensionManager.getInstance().canTravelTo(newDimId)) {
-				AdvancedRocketry.logger.warn("Rocket trying to travel from Dim" + this.worldObj.provider.dimensionId + " to Dim " + newDimId + ".  target not accessible by rocket from launch dim");
+                AdvancedRocketry.logger.warn("Rocket trying to travel from Dim{} to Dim {}.  target not accessible by rocket from launch dim", this.worldObj.provider.dimensionId, newDimId);
 				return;
 			}
 
 			lastDimensionFrom = this.worldObj.provider.dimensionId;
-			
-			double x = posX, z = posZ;
 
-			Entity rider = this.riddenByEntity;
+            Entity rider = this.riddenByEntity;
 			if(rider != null)
 				rider.mountEntity(null);
 
@@ -1040,7 +1037,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 				entity.forceSpawn = true;
 
-				entity.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
+				entity.setLocationAndAngles(posX, y, posZ, this.rotationYaw, this.rotationPitch);
 				worldserver1.spawnEntityInWorld(entity);
 				//worldserver1.updateEntityWithOptionalForce(entity, true);
 
@@ -1229,7 +1226,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				NBTTagCompound nbtdata = new NBTTagCompound();
 
 				this.writeNetworkableNBT(nbtdata);
-				PacketHandler.sendToPlayer(new PacketEntity((INetworkEntity)this, (byte)PacketType.RECEIVE_NBT.ordinal(), nbtdata), player);
+				PacketHandler.sendToPlayer(new PacketEntity(this, (byte)PacketType.RECEIVE_NBT.ordinal(), nbtdata), player);
 
 			}
 		}
@@ -1265,7 +1262,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		else if(id == PacketType.DISCONNECT_INFRASTRUCTURE.ordinal()) {
 			int[] pos = nbt.getIntArray("pos");
 
-			connectedInfrastructure.remove(new BlockPosition(pos[0], pos[1], pos[2]));
+			//connectedInfrastructure.remove(new BlockPosition(pos[0], pos[1], pos[2]));
 
 			TileEntity tile = worldObj.getTileEntity(pos[0], pos[1], pos[2]);
 			if(tile instanceof IInfrastructure) {
@@ -1339,8 +1336,9 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		for(int i = 0; i < this.stats.getNumPassengerSeats(); i++) {
 			BlockPosition pos = this.stats.getPassengerSeat(i);
 			if(mountedEntities[i] != null && mountedEntities[i].get() != null) {
-				mountedEntities[i].get().setPosition(this.posX + pos.x, this.posY + pos.y, this.posZ + pos.z);
-				System.out.println("Additional: " + mountedEntities[i].get());
+				Entity entities = mountedEntities[i].get();
+				System.out.println("Additional: " + entities);
+				if(entities != null)entities.setPosition(this.posX + pos.x, this.posY + pos.y, this.posZ + pos.z);
 			}
 		}
 	}
@@ -1505,7 +1503,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		//Attempt to dismount passengers first, else dismount pilot
 		for(int i = 0; i < mountedEntities.length; i++) {
 
-			if(mountedEntities[i] != null && mountedEntities[i].equals(entity)) {
+			if(mountedEntities[i] != null && Objects.equals(mountedEntities[i].get(), entity)) {
 				mountedEntities[i] = null;
 				break;
 			}

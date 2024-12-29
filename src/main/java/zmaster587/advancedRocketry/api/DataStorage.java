@@ -17,8 +17,8 @@ public class DataStorage {
 
 		public String toString() {
 			return "data." + name().toLowerCase(Locale.ENGLISH) + ".name";
-		};
-	}
+		}
+    }
 
 	private int data, maxData;
 	private DataType dataType;

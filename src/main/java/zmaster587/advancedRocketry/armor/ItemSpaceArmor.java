@@ -232,8 +232,8 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, IProtect
 
 		if(armor.hasTagCompound()) {
 			nbt = armor.getTagCompound();
-			componentList = nbt.getTagList(componentNBTName, NBT.TAG_COMPOUND);
-		}
+            nbt.getTagList(componentNBTName, NBT.TAG_COMPOUND);
+        }
 		else {
 			return null;
 		}

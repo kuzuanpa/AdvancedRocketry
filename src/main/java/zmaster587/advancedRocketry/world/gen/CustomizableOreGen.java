@@ -17,8 +17,11 @@ import net.minecraft.world.gen.feature.WorldGenMinable;
 
 public class CustomizableOreGen implements IWorldGenerator {
 
-	BlockMeta oreToGen;
-	int numPerChunk, clumpSize, heightLevel, difference;
+	final BlockMeta oreToGen;
+	final int numPerChunk;
+    final int clumpSize;
+    final int heightLevel;
+    final int difference;
 
 
 	public CustomizableOreGen(BlockMeta oreToGen, int numPerChunk, int clumpSize, int minHeight, int maxHeight) {
@@ -44,7 +47,7 @@ public class CustomizableOreGen implements IWorldGenerator {
 		Block block = Blocks.stone;
 		if(DimensionManager.getInstance().isDimensionCreated(world.provider.dimensionId))
 		{
-			Block state = ((DimensionProperties)DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId)).getStoneBlock();
+			Block state = DimensionManager.getInstance().getDimensionProperties(world.provider.dimensionId).getStoneBlock();
 			if(state != null)
 				block = state;
 		}

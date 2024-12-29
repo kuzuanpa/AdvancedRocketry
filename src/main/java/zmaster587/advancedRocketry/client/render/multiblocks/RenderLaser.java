@@ -15,9 +15,9 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiBlock;
 
 public class RenderLaser extends TileEntitySpecialRenderer {
 	
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/laser.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/laser.obj"));
 
-	ResourceLocation texture =  new ResourceLocation("advancedRocketry:textures/models/laser.png");
+	final ResourceLocation texture =  new ResourceLocation("advancedRocketry:textures/models/laser.png");
 	
 	public RenderLaser() {
 		

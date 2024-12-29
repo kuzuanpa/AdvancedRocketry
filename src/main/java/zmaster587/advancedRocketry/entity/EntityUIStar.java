@@ -9,7 +9,7 @@ import zmaster587.advancedRocketry.tile.station.TilePlanetaryHologram;
 public class EntityUIStar extends EntityUIPlanet {
 	
 	StellarBody star;
-	int subStar = -1;
+	int subStar;
 	public final static int starIDoffset = 10000;
 	protected static final int subStarData = 5;
 	

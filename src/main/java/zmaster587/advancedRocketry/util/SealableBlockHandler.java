@@ -23,15 +23,15 @@ import java.util.List;
 public final class SealableBlockHandler implements IAtmosphereSealHandler
 {
     /** List of blocks not allowed. */
-    private List<Block> blockBanList = new ArrayList();
+    private final List<Block> blockBanList = new ArrayList<>();
     /** List of blocks that are allowed regardless of properties. */
-    private List<Block> blockAllowList = new ArrayList();
+    private final List<Block> blockAllowList = new ArrayList<>();
     /** List of block materials not allowed. */
-    private List<Material> materialBanList = new ArrayList();
+    private final List<Material> materialBanList = new ArrayList<>();
     /** List of block materials that are allowed regardless of properties. */
-    private List<Material> materialAllowList = new ArrayList();
+    private final List<Material> materialAllowList = new ArrayList<>();
     
-    private @NotNull HashSet<BlockPosition> doorPositions = new HashSet<>();
+    private final @NotNull HashSet<BlockPosition> doorPositions = new HashSet<>();
     //TODO add meta support
     //TODO add complex logic support threw API interface
     //TODO add complex logic handler for integration support
@@ -111,10 +111,7 @@ public final class SealableBlockHandler implements IAtmosphereSealHandler
         {
             blockBanList.add(block);
         }
-        if (blockAllowList.contains(block))
-        {
-            blockAllowList.remove(block);
-        }
+        blockAllowList.remove(block);
     }
 
     @Override
@@ -124,10 +121,7 @@ public final class SealableBlockHandler implements IAtmosphereSealHandler
         {
             blockAllowList.add(block);
         }
-        if (blockBanList.contains(block))
-        {
-            blockBanList.remove(block);
-        }
+        blockBanList.remove(block);
     }
 
     /**

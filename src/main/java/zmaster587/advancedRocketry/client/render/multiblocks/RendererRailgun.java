@@ -16,9 +16,10 @@ import zmaster587.libVulpes.block.RotatableBlock;
 
 public class RendererRailgun extends TileEntitySpecialRenderer {
 	
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/railgun.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/railgun.obj"));
 
 	@NotNull
+    final
     ResourceLocation texture =  new ResourceLocation("advancedRocketry:textures/models/railgun.png");
 	
 	public RendererRailgun() {

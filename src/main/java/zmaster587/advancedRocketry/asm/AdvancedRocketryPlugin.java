@@ -2,7 +2,6 @@ package zmaster587.advancedRocketry.asm;
 
 import java.util.Map;
 
-import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
 import org.jetbrains.annotations.NotNull;

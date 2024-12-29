@@ -14,9 +14,9 @@ import net.minecraftforge.client.model.IModelCustom;
 public class RendererDrill  extends TileEntitySpecialRenderer {
 
 	
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/drill.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/drill.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/drill.png");
+	final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/drill.png");
 	
 	
 	@Override

@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 public class AdvancedRocketryBiomes {
 	
 	public static final AdvancedRocketryBiomes instance = new AdvancedRocketryBiomes();
-	private List<BiomeGenBase> registeredBiomes;
-	private List<BiomeGenBase> registeredHighPressureBiomes;
-	private List<BiomeGenBase> registeredSingleBiome;
+	private final List<BiomeGenBase> registeredBiomes;
+	private final List<BiomeGenBase> registeredHighPressureBiomes;
+	private final List<BiomeGenBase> registeredSingleBiome;
 	private static List<Integer> blackListedBiomeIds;
 	
 	public static BiomeGenBase moonBiome;

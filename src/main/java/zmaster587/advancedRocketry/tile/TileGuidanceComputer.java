@@ -1,10 +1,8 @@
 package zmaster587.advancedRocketry.tile;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -17,7 +15,6 @@ import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.item.ItemAsteroidChip;
 import zmaster587.advancedRocketry.item.ItemPlanetIdentificationChip;
 import zmaster587.advancedRocketry.item.ItemSatelliteIdentificationChip;
@@ -25,11 +22,8 @@ import zmaster587.advancedRocketry.item.ItemStationChip;
 import zmaster587.advancedRocketry.stations.SpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.util.StationLandingLocation;
-import zmaster587.libVulpes.inventory.modules.IButtonInventory;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
-import zmaster587.libVulpes.inventory.modules.ModuleButton;
-import zmaster587.libVulpes.inventory.modules.ModuleContainerPan;
 import zmaster587.libVulpes.tile.multiblock.hatch.TileInventoryHatch;
 import zmaster587.libVulpes.util.BlockPosition;
 import zmaster587.libVulpes.util.Vector3F;
@@ -38,7 +32,7 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 
 	int destinationId;
 	Vector3F<Float> landingPos;
-	Map<Integer, BlockPosition> landingLoc;
+	final Map<Integer, BlockPosition> landingLoc;
 
 	public TileGuidanceComputer() {
 		super(1);
@@ -47,10 +41,9 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 		landingLoc = new HashMap<>();
 	}
 	@Override
-	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
-		List<ModuleBase> modules = super.getModules(ID, player);
+	public @NotNull List<ModuleBase> getModules(int ID, EntityPlayer player) {
 
-		return modules;
+        return super.getModules(ID, player);
 	}
 
 	@Override
@@ -144,10 +137,8 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 			ItemStationChip chip = (ItemStationChip)stack.getItem();
 			if(landingDimension == Configuration.spaceDimId) {
 				//TODO: handle Exception
-				Long uuid = chip.getUUID(stack);
-				if(uuid == null)
-					return null;
-				ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStation((int)(long)uuid);
+				long uuid = ItemStationChip.getUUID(stack);
+                ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStation((int) uuid);
 				BlockPosition vec = null;
 				if(object instanceof SpaceObject) {
 					if(landingLoc.get(object.getId()) != null) {

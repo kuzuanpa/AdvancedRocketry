@@ -1,22 +1,7 @@
 package zmaster587.advancedRocketry.item;
 
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereBase;
-import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
-import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.event.RocketEventHandler;
-import zmaster587.advancedRocketry.inventory.TextureResources;
-import zmaster587.libVulpes.LibVulpes;
-import zmaster587.libVulpes.api.IArmorComponent;
-import zmaster587.libVulpes.client.ResourceIcon;
-import zmaster587.libVulpes.render.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -32,16 +17,30 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereBase;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
+import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.event.RocketEventHandler;
+import zmaster587.advancedRocketry.inventory.TextureResources;
+import zmaster587.libVulpes.LibVulpes;
+import zmaster587.libVulpes.api.IArmorComponent;
+import zmaster587.libVulpes.client.ResourceIcon;
+import zmaster587.libVulpes.render.RenderHelper;
+
+import java.util.List;
 
 public class ItemAtmosphereAnalzer extends Item implements IArmorComponent {
 
 	private static ResourceIcon icon;
-	private static @NotNull ResourceLocation eyeCandySpinner = new ResourceLocation("advancedrocketry:textures/gui/eyeCandy/spinnyThing.png");
+	private static final @NotNull ResourceLocation eyeCandySpinner = new ResourceLocation("advancedrocketry:textures/gui/eyeCandy/spinnyThing.png");
 	
-	private static String breathable = LibVulpes.proxy.getLocalizedString("msg.atmanal.canbreathe");
-	private static String atmtype = LibVulpes.proxy.getLocalizedString("msg.atmanal.atmType");
-	private static String yes = LibVulpes.proxy.getLocalizedString("msg.yes");
-	private static String no = LibVulpes.proxy.getLocalizedString("msg.no");
+	private static final String breathable = LibVulpes.proxy.getLocalizedString("msg.atmanal.canbreathe");
+	private static final String atmtype = LibVulpes.proxy.getLocalizedString("msg.atmanal.atmType");
+	private static final String yes = LibVulpes.proxy.getLocalizedString("msg.yes");
+	private static final String no = LibVulpes.proxy.getLocalizedString("msg.no");
 
 	@Override
 	public void onTick(World world, EntityPlayer player, ItemStack armorStack,
@@ -64,8 +63,9 @@ public class ItemAtmosphereAnalzer extends Item implements IArmorComponent {
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world,
 			EntityPlayer player) {
-		if(!world.isRemote) {
-			String[] str = getAtmosphereReadout(stack, (AtmosphereBase) AtmosphereHandler.getOxygenHandler(world.provider.dimensionId).getAtmosphereType(player), world);
+		AtmosphereHandler handler = AtmosphereHandler.getOxygenHandler(world.provider.dimensionId);
+		if(!world.isRemote && handler != null) {
+			String[] str = getAtmosphereReadout(stack, (AtmosphereBase) handler.getAtmosphereType(player), world);
 			for(String str1 : str)
 					player.addChatMessage(new ChatComponentText(str1));
 		}
@@ -112,7 +112,7 @@ public class ItemAtmosphereAnalzer extends Item implements IArmorComponent {
 		GL11.glPushMatrix();
 		Minecraft.getMinecraft().renderEngine.bindTexture(eyeCandySpinner);
 		GL11.glTranslatef(screenX + 12, screenY + 8, 0);
-		GL11.glRotatef(( System.currentTimeMillis() / 100 ) % 360, 0, 0, 1);
+		GL11.glRotatef(( (float) System.currentTimeMillis() / 100 ) % 360, 0, 0, 1);
 		
 		Tessellator.instance.startDrawingQuads();
 		RenderHelper.renderNorthFaceWithUV(Tessellator.instance, -1, -16,  -16, 16,  16, 0, 1, 0, 1);
@@ -131,9 +131,9 @@ public class ItemAtmosphereAnalzer extends Item implements IArmorComponent {
 	@Override
 	public ResourceIcon getComponentIcon(ItemStack armorStack) {
 		if(icon == null)
-			this.icon = new ResourceIcon(TextureMap.locationItemsTexture, this.getIcon(armorStack, 0));
+			icon = new ResourceIcon(TextureMap.locationItemsTexture, this.getIcon(armorStack, 0));
 
-		return this.icon;
+		return icon;
 	}
 
 }

@@ -36,12 +36,7 @@ public class TileAtmosphereDetector extends TileEntity implements IModularInvent
 		atmosphereToDetect = AtmosphereTypes.AIR;
 	}
 
-	@Override
-	public boolean canUpdate() {
-		return true;
-	}
-
-	@Override
+    @Override
 	public void updateEntity() {
 		if(!worldObj.isRemote && worldObj.getWorldTime() % 10 == 0) {
 			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);

@@ -10,7 +10,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 
 public class RenderComponents {
 
-	static RenderJetPack renderJetPack = new RenderJetPack();
+	static final RenderJetPack renderJetPack = new RenderJetPack();
 	@SubscribeEvent
 	public void renderPostSpecial(RenderPlayerEvent.Specials.@NotNull Post event) {
 		//RenderJet pack

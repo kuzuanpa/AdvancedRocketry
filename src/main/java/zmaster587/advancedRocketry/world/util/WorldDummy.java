@@ -23,7 +23,7 @@ public class WorldDummy extends World {
 
 	private final static ProviderDummy dummyProvider = new ProviderDummy();
 
-	StorageChunk storage;
+	final StorageChunk storage;
 	
 	
 	public int glListID = -1;
@@ -101,7 +101,7 @@ public class WorldDummy extends World {
 		if (p_72849_4_ && this.getBlock(p_72849_1_, p_72849_2_, p_72849_3_).getUseNeighborBrightness())
 		{
 			return super.getBlockLightValue_do(p_72849_1_, p_72849_2_, p_72849_3_,
-					p_72849_4_);
+                    true);
 		}
 		else 
 			return 15;//TODO: make chunks

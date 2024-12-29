@@ -19,8 +19,8 @@ import zmaster587.libVulpes.render.RenderHelper;
 public class RenderPlanetUIEntity extends Render {
 
 	private static WavefrontObject sphere;
-	public static ResourceLocation planetUIBG = new ResourceLocation("advancedrocketry:textures/gui/planetUIOverlay.png");
-	public static ResourceLocation planetUIFG = new ResourceLocation("advancedrocketry:textures/gui/planetUIOverlayFG.png");
+	public static final ResourceLocation planetUIBG = new ResourceLocation("advancedrocketry:textures/gui/planetUIOverlay.png");
+	public static final ResourceLocation planetUIFG = new ResourceLocation("advancedrocketry:textures/gui/planetUIOverlayFG.png");
 
 	static {
 		try {

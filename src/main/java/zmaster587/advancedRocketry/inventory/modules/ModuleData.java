@@ -28,14 +28,16 @@ public class ModuleData extends ModuleBase implements IButtonInventory {
 	static final int textureOffsetX = 0;
 	static final int textureOffsetY = 215;
 
-	DataStorage[] data;
-	int[] prevData;
+	final DataStorage[] data;
+	final int[] prevData;
 	int prevDataType;
-	int slot;
-	IDataInventory chipStorage;
+	final int slot;
+	final IDataInventory chipStorage;
 	@NotNull
-	IconResource icon = zmaster587.advancedRocketry.inventory.TextureResources.ioSlot;
-	ModuleButton buttonStore, buttonLoad;
+    final
+    IconResource icon = zmaster587.advancedRocketry.inventory.TextureResources.ioSlot;
+	final ModuleButton buttonStore;
+    final ModuleButton buttonLoad;
 
 	public ModuleData(int offsetX, int offsetY, int slot, IDataInventory chipStorage, DataStorage ... data) {
 		super(offsetX, offsetY);
@@ -138,7 +140,7 @@ public class ModuleData extends ModuleBase implements IButtonInventory {
 
 			List<String> list = new LinkedList<>();
 			list.add(totalData + " / " + totalMaxData + " Data");
-			list.add("Type: " +  I18n.format(data[0].getDataType().toString(), new Object[0]));
+			list.add("Type: " +  I18n.format(data[0].getDataType().toString()));
 
 			this.drawTooltip(gui, list, mouseX, mouseY, zLevel, font);
 		}

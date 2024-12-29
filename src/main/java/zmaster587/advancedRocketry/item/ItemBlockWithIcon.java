@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemBlockWithIcon extends Item {
-	private Block block;
+	private final Block block;
 
     public ItemBlockWithIcon(Block p_i45329_1_)
     {
@@ -72,7 +72,7 @@ public class ItemBlockWithIcon extends Item {
         }
         else
         {
-            if (world.canPlaceEntityOnSide(this.block, x, y, z, false, p_77648_7_, (Entity)null, stack))
+            if (world.canPlaceEntityOnSide(this.block, x, y, z, false, p_77648_7_, null, stack))
             {
                 int i1 = this.block.onBlockPlaced(world, x, y, z, p_77648_7_, p_77648_8_, p_77648_9_, p_77648_10_, 0);
 
@@ -84,7 +84,7 @@ public class ItemBlockWithIcon extends Item {
                         this.block.onPostBlockPlaced(world, x, y, z, i1);
                     }
 
-                    world.playSoundEffect((double)((float)x + 0.5F), (double)((float)y + 0.5F), (double)((float)z + 0.5F), this.block.stepSound.func_150496_b(), (this.block.stepSound.getVolume() + 1.0F) / 2.0F, this.block.stepSound.getPitch() * 0.8F);
+                    world.playSoundEffect((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, this.block.stepSound.func_150496_b(), (this.block.stepSound.getVolume() + 1.0F) / 2.0F, this.block.stepSound.getPitch() * 0.8F);
                     --stack.stackSize;
                 }
             }

@@ -16,7 +16,7 @@ public class AreaBlob {
 	//Graph containing the acutal area enclosed
 	protected final AdjacencyGraph<BlockPosition> graph;
 	//Object to call back to when events happen, usually a tileentity
-	protected IBlobHandler blobHandler;
+	protected final IBlobHandler blobHandler;
 	//Data stored by this blob
 	@Nullable
 	Object data;
@@ -94,7 +94,7 @@ public class AreaBlob {
 	 * @return true if the block exists in the blob
 	 */
 	public boolean contains(BlockPosition position) {
-		boolean contains = false;
+		boolean contains;
 		
 		synchronized (graph) {
 			contains = graph.contains(position);

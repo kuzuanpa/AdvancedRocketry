@@ -10,18 +10,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class TileForceFieldProjector extends TileEntity{
 
 	private short extensionRange;
-	private static short MAX_RANGE = 32;
+	private static final short MAX_RANGE = 32;
 
 	public TileForceFieldProjector() {
 		extensionRange = 0;
 	}
 
-	@Override
-	public boolean canUpdate() {
-		return true;
-	}
-
-	public void destroyField(ForgeDirection facing) {
+    public void destroyField(ForgeDirection facing) {
 		while(extensionRange > 0) {
 			int newX = xCoord + facing.offsetX*extensionRange;
 			int newY = yCoord + facing.offsetY*extensionRange;

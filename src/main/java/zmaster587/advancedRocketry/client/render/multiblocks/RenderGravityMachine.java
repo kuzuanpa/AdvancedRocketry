@@ -18,7 +18,7 @@ public class RenderGravityMachine extends TileEntitySpecialRenderer {
 	
 	WavefrontObject model;
 
-	ResourceLocation texture =  new ResourceLocation("advancedRocketry:textures/models/gravityMachine.png");
+	final ResourceLocation texture =  new ResourceLocation("advancedRocketry:textures/models/gravityMachine.png");
 	
 	public RenderGravityMachine() {
 		try {

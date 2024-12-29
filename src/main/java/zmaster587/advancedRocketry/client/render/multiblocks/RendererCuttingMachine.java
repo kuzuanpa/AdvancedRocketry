@@ -22,9 +22,9 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 
 public class RendererCuttingMachine extends TileEntitySpecialRenderer {
 
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/cuttingMachine.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/cuttingMachine.obj"));
 
-	public static ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/cuttingMachine.png");
+	public static final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/cuttingMachine.png");
 
 	private final RenderItem dummyItem = new RenderItem();
 

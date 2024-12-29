@@ -16,5 +16,5 @@ public interface IFuelTank {
 	 * @param meta
 	 * @return the capacity for the container
 	 */
-	public int getMaxFill(World world, int x, int y, int z , int meta);
+    int getMaxFill(World world, int x, int y, int z, int meta);
 }

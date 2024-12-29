@@ -34,11 +34,11 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 	private static int bodyList;
 
-	int starGLCallList;
-	int glSkyList;
-	int glSkyList2;
+	final int starGLCallList;
+	final int glSkyList;
+	final int glSkyList2;
 	float celestialAngle;
-	Vector3F<Float> axis;
+	final Vector3F<Float> axis;
 
 	//Mostly vanilla code
 	//TODO: make usable on other planets
@@ -94,7 +94,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 		GL11.glEndList();
 	}
 
-	Minecraft mc = Minecraft.getMinecraft();
+	final Minecraft mc = Minecraft.getMinecraft();
 
 	private void renderStars()
 	{

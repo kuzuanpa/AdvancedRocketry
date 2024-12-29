@@ -1,29 +1,22 @@
 package zmaster587.advancedRocketry.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-
 import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.advancedRocketry.dimension.DimensionProperties.AtmosphereTypes;
-import zmaster587.advancedRocketry.dimension.DimensionProperties.Temps;
-import zmaster587.libVulpes.util.SingleEntry;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class XMLAsteroidLoader {
 
@@ -83,7 +76,7 @@ public class XMLAsteroidLoader {
 					try {
 						asteroid.distance = Integer.parseInt(node.getTextContent());
 					} catch(NumberFormatException e) {
-						AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid distance value");
+                        AdvancedRocketry.logger.warn("Asteroid {} has invalid distance value", asteroid.ID);
 					}
 				}
 
@@ -92,7 +85,7 @@ public class XMLAsteroidLoader {
 					try {
 						asteroid.mass = Integer.parseInt(node.getTextContent());
 					} catch(NumberFormatException e) {
-						AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid mass value");
+                        AdvancedRocketry.logger.warn("Asteroid {} has invalid mass value", asteroid.ID);
 					}
 				}
 
@@ -101,7 +94,7 @@ public class XMLAsteroidLoader {
 					try {
 						asteroid.minLevel = Integer.parseInt(node.getTextContent());
 					} catch(NumberFormatException e) {
-						AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid minLevel value");
+                        AdvancedRocketry.logger.warn("Asteroid {} has invalid minLevel value", asteroid.ID);
 					}
 				}
 
@@ -110,7 +103,7 @@ public class XMLAsteroidLoader {
 					try {
 						asteroid.massVariability = Float.parseFloat(node.getTextContent());
 					} catch(NumberFormatException e) {
-						AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid massVariability value");
+                        AdvancedRocketry.logger.warn("Asteroid {} has invalid massVariability value", asteroid.ID);
 					}
 				}
 
@@ -119,7 +112,7 @@ public class XMLAsteroidLoader {
 					try {
 						asteroid.richness = Float.parseFloat(node.getTextContent());
 					} catch(NumberFormatException e) {
-						AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid richness value");
+                        AdvancedRocketry.logger.warn("Asteroid {} has invalid richness value", asteroid.ID);
 					}
 				}
 
@@ -128,7 +121,7 @@ public class XMLAsteroidLoader {
 					try {
 						asteroid.richnessVariability = Float.parseFloat(node.getTextContent());
 					} catch(NumberFormatException e) {
-						AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid richnessVariability value");
+                        AdvancedRocketry.logger.warn("Asteroid {} has invalid richnessVariability value", asteroid.ID);
 					}
 				}
 
@@ -137,7 +130,7 @@ public class XMLAsteroidLoader {
 					try {
 						asteroid.probability = Float.parseFloat(node.getTextContent());
 					} catch(NumberFormatException e) {
-						AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid probability value");
+                        AdvancedRocketry.logger.warn("Asteroid {} has invalid probability value", asteroid.ID);
 					}
 				}
 				
@@ -146,7 +139,7 @@ public class XMLAsteroidLoader {
 					try {
 						asteroid.timeMultiplier = Float.parseFloat(node.getTextContent());
 					} catch(NumberFormatException e) {
-						AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid timeMultiplier value");
+                        AdvancedRocketry.logger.warn("Asteroid {} has invalid timeMultiplier value", asteroid.ID);
 					}
 				}
 				else
@@ -160,7 +153,6 @@ public class XMLAsteroidLoader {
 					continue;
 				}
 
-				if(asteroidNode.getNodeName().equalsIgnoreCase("ore")) {
 					NamedNodeMap att = asteroidNode.getAttributes();
 
 					//Add itemStacks
@@ -170,7 +162,7 @@ public class XMLAsteroidLoader {
 						if(stack != null)
 							asteroid.itemStacks.add(stack);
 						else {
-							AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid ore");
+                            AdvancedRocketry.logger.warn("Asteroid {} has invalid ore", asteroid.ID);
 							break;
 						}
 					}
@@ -182,11 +174,11 @@ public class XMLAsteroidLoader {
 						try {
 							asteroid.stackProbabilites.add(Float.parseFloat(node.getTextContent()));
 						} catch (NumberFormatException e) {
-							AdvancedRocketry.logger.warn("Asteroid " + asteroid.ID + " has invalid ore");
+                            AdvancedRocketry.logger.warn("Asteroid {} has invalid ore", asteroid.ID);
 							break;
 						}
 					}
-				}
+
 
 				asteroidNode = asteroidNode.getNextSibling();
 			}

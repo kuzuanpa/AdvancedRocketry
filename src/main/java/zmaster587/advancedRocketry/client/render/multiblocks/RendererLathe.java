@@ -17,9 +17,9 @@ import zmaster587.libVulpes.block.RotatableBlock;
 import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 
 public class RendererLathe extends TileEntitySpecialRenderer {
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/lathe.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/lathe.obj"));
 
-	ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/lathe.png");
+	final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/lathe.png");
 
 	private static int bodyList;
 

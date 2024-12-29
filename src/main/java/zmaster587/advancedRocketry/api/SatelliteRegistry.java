@@ -3,6 +3,7 @@ package zmaster587.advancedRocketry.api;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
 
@@ -11,31 +12,31 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 public class SatelliteRegistry {
-	static HashMap<String, Class<? extends SatelliteBase>> registry = new HashMap<>();
+	static final @NotNull HashMap<String, Class<? extends SatelliteBase>> registry = new HashMap<>();
 
-	static HashMap<ItemStack, SatelliteProperties> itemPropertiesRegistry = new HashMap<>();
+	static final @NotNull HashMap<ItemStack, SatelliteProperties> itemPropertiesRegistry = new HashMap<>();
 
 	/**
 	 * Registers an itemStack with a satellite property, this is used in the Satellite Builder to determine the effect of a component
 	 * @param stack stack to register, stacksize insensitive
 	 * @param properties Satellite Properties to register the ItemStack with
 	 */
-	public static void registerSatelliteProperty(ItemStack stack, SatelliteProperties properties) {
+	public static void registerSatelliteProperty(@Nullable ItemStack stack, SatelliteProperties properties) {
 		if(stack == null) {
 			Logger.getLogger(Constants.modId).warning("null satellite property being registered!");
 		}
 		else if(!itemPropertiesRegistry.containsKey(stack))
 			itemPropertiesRegistry.put(stack, properties);
 		else
-			Logger.getLogger(Constants.modId).warning("Duplicate satellite property being registered for " + stack.toString());
+			Logger.getLogger(Constants.modId).warning("Duplicate satellite property being registered for " + stack);
 	}
 
 	/**
 	 * @param stack ItemStack to get the SatelliteProperties of, stacksize insensative 
 	 * @return the registered SatelliteProperties of the stack, or null if not registered
 	 */
-	public static SatelliteProperties getSatelliteProperty(@NotNull ItemStack stack) {
-		
+	public @Nullable static SatelliteProperties getSatelliteProperty(@Nullable ItemStack stack) {
+		if(stack == null)return null;
 		for(ItemStack keyStack : itemPropertiesRegistry.keySet()) {
 			if(keyStack.getItem() == stack.getItem() && ( !keyStack.getHasSubtypes() || keyStack.getItemDamage() == stack.getItemDamage()) ) {
 				return itemPropertiesRegistry.get(keyStack);
@@ -58,14 +59,13 @@ public class SatelliteRegistry {
 	 * @param clazz Satellite Class to get the String identifier for 
 	 * @return String identifier for clazz
 	 */
-	public static String getKey(Class<? extends SatelliteBase> clazz) {
+	public static @Nullable String getKey(Class<? extends SatelliteBase> clazz) {
 
 		for(Entry<String, Class<? extends SatelliteBase>> entrySet : registry.entrySet()) {
 			if(entrySet.getValue() == clazz)
 				return entrySet.getKey();
 		}
-		//TODO: throw exception
-		return "poo";
+		return null;
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class SatelliteRegistry {
 	 * @param nbt NBT to create a satellite Object from
 	 * @return Satellite constructed from the passed NBT
 	 */
-	public static SatelliteBase createFromNBT(@NotNull NBTTagCompound nbt) {
+	public static @Nullable SatelliteBase createFromNBT(@NotNull NBTTagCompound nbt) {
 		SatelliteBase satellite = getSatallite(nbt.getString("dataType"));
 
 		if(satellite == null) return null;
@@ -87,7 +87,7 @@ public class SatelliteRegistry {
 	 * @param name String identifier for a satellite
 	 * @return new satellite registered to the String identifier, SatelliteDefunct otherwise
 	 */
-	public static SatelliteBase getSatallite(String name) {
+	public static @Nullable SatelliteBase getSatallite(String name) {
 		Class<? extends SatelliteBase> clazz = registry.get(name);
 
 		if(clazz == null) {

@@ -10,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class WorldGenMinableMoon {
 	
-    private Block field_150519_a;
+    private final Block field_150519_a;
     /** The number of blocks to generate. */
-    private int numberOfBlocks;
-    private Block field_150518_c;
+    private final int numberOfBlocks;
+    private final Block field_150518_c;
     private static final String __OBFID = "CL_00000426";
     private int mineableBlockMeta;
 
@@ -38,12 +38,12 @@ public class WorldGenMinableMoon {
     public boolean generate(@NotNull World p_76484_1_, Random p_76484_2_, int p_76484_3_, int p_76484_4_, int p_76484_5_)
     {
         float f = p_76484_2_.nextFloat() * (float)Math.PI;
-        double d0 = (double)((float)(p_76484_3_ + 8) + MathHelper.sin(f) * (float)this.numberOfBlocks / 8.0F);
-        double d1 = (double)((float)(p_76484_3_ + 8) - MathHelper.sin(f) * (float)this.numberOfBlocks / 8.0F);
-        double d2 = (double)((float)(p_76484_5_ + 8) + MathHelper.cos(f) * (float)this.numberOfBlocks / 8.0F);
-        double d3 = (double)((float)(p_76484_5_ + 8) - MathHelper.cos(f) * (float)this.numberOfBlocks / 8.0F);
-        double d4 = (double)(p_76484_4_ + p_76484_2_.nextInt(3) - 2);
-        double d5 = (double)(p_76484_4_ + p_76484_2_.nextInt(3) - 2);
+        double d0 = (float)(p_76484_3_ + 8) + MathHelper.sin(f) * (float)this.numberOfBlocks / 8.0F;
+        double d1 = (float)(p_76484_3_ + 8) - MathHelper.sin(f) * (float)this.numberOfBlocks / 8.0F;
+        double d2 = (float)(p_76484_5_ + 8) + MathHelper.cos(f) * (float)this.numberOfBlocks / 8.0F;
+        double d3 = (float)(p_76484_5_ + 8) - MathHelper.cos(f) * (float)this.numberOfBlocks / 8.0F;
+        double d4 = p_76484_4_ + p_76484_2_.nextInt(3) - 2;
+        double d5 = p_76484_4_ + p_76484_2_.nextInt(3) - 2;
 
         for (int l = 0; l <= this.numberOfBlocks; ++l)
         {

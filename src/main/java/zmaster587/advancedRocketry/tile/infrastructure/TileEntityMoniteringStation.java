@@ -23,7 +23,6 @@ import zmaster587.advancedRocketry.api.EntityRocketBase;
 import zmaster587.advancedRocketry.api.IInfrastructure;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.entity.EntityRocket;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.api.IMission;
 import zmaster587.libVulpes.LibVulpes;
@@ -39,7 +38,6 @@ import zmaster587.libVulpes.inventory.modules.ModuleProgress;
 import zmaster587.libVulpes.inventory.modules.ModuleRedstoneOutputButton;
 import zmaster587.libVulpes.inventory.modules.ModuleText;
 import zmaster587.libVulpes.items.ItemLinker;
-import zmaster587.libVulpes.network.PacketEntity;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
 import zmaster587.libVulpes.util.IAdjBlockUpdate;
@@ -51,9 +49,9 @@ public class TileEntityMoniteringStation extends TileEntity  implements IModular
 	EntityRocketBase linkedRocket;
 	@Nullable
 	IMission mission;
-	ModuleText missionText;
+	final ModuleText missionText;
 	RedstoneState state;
-	ModuleRedstoneOutputButton redstoneControl;
+	final ModuleRedstoneOutputButton redstoneControl;
 
 	int rocketHeight;
 	int velocity;
@@ -341,7 +339,7 @@ public class TileEntityMoniteringStation extends TileEntity  implements IModular
 		else if(id == 1)
 			return (int)(linkedRocket.motionY*100);
 		else if (id == 2)
-			return (int)(linkedRocket.getFuelAmount());
+			return linkedRocket.getFuelAmount();
 
 		return 0;
 	}

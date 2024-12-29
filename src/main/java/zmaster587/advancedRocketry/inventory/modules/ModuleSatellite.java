@@ -16,6 +16,7 @@ public class ModuleSatellite extends ModuleSlotArray {
 
 	SatelliteBase satellite;
 	@NotNull
+    final
     IconResource satelliteSlot = TextureResources.idChip;
 	boolean needsUpdate = false;
 

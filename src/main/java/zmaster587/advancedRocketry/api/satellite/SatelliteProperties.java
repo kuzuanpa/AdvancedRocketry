@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class SatelliteProperties {
 
-	public static enum Property {
+	public enum Property {
 		MAIN,
 		DATA,
 		POWER_GEN,

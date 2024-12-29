@@ -7,7 +7,6 @@ import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
-import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.IToggleButton;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;

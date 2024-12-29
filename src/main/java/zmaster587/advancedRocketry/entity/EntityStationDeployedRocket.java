@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,7 +18,6 @@ import zmaster587.advancedRocketry.api.StatsRocket;
 import zmaster587.advancedRocketry.api.RocketEvent.RocketLaunchEvent;
 import zmaster587.advancedRocketry.api.atmosphere.AtmosphereRegister;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
-import zmaster587.advancedRocketry.client.SoundRocketEngine;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.mission.MissionGasCollection;
@@ -51,8 +49,8 @@ public class EntityStationDeployedRocket extends EntityRocket {
 
 	public ForgeDirection launchDirection;
 	public ForgeDirection forwardDirection;
-	public BlockPosition launchLocation;
-	private ModuleText atmText;
+	public final BlockPosition launchLocation;
+	private final ModuleText atmText;
 	private short gasId;
 	boolean coastMode;
 	private @Nullable Ticket ticket;
@@ -98,7 +96,7 @@ public class EntityStationDeployedRocket extends EntityRocket {
 			return;
 
 		ISpaceObject spaceObj;
-		if( worldObj.provider.dimensionId == Configuration.spaceDimId && (spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)posX, (int)posZ)) != null && ((DimensionProperties)spaceObj.getProperties().getParentProperties()).isGasGiant() ) { //Abort if destination is invalid
+		if( worldObj.provider.dimensionId == Configuration.spaceDimId && (spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)posX, (int)posZ)) != null && spaceObj.getProperties().getParentProperties().isGasGiant() ) { //Abort if destination is invalid
 
 
 			setInFlight(true);
@@ -126,15 +124,12 @@ public class EntityStationDeployedRocket extends EntityRocket {
 
 		if(this.ticksExisted == 20) {
 			//problems with loading on other world then where the infrastructure was set?
-			ListIterator<BlockPosition> itr = (new LinkedList<>(infrastructureCoords)).listIterator();
-			while(itr.hasNext()) {
-				BlockPosition temp = itr.next();
-
-				TileEntity tile = this.worldObj.getTileEntity(temp.x, temp.y, temp.z);
-				if(tile instanceof IInfrastructure) {
-					this.linkInfrastructure((IInfrastructure)tile);
-				}
-			}
+            for (BlockPosition temp : new LinkedList<>(infrastructureCoords)) {
+                TileEntity tile = this.worldObj.getTileEntity(temp.x, temp.y, temp.z);
+                if (tile instanceof IInfrastructure) {
+                    this.linkInfrastructure((IInfrastructure) tile);
+                }
+            }
 		}
 
 		if(isInFlight()) {
@@ -342,7 +337,7 @@ public class EntityStationDeployedRocket extends EntityRocket {
 
 		//Check again to make sure we are around a gas giant
 		ISpaceObject spaceObj;
-		if( worldObj.provider.dimensionId == Configuration.spaceDimId && ((spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)posX, (int)posZ)) != null && ((DimensionProperties)spaceObj.getProperties().getParentProperties()).isGasGiant() )) { //Abort if destination is invalid
+		if( worldObj.provider.dimensionId == Configuration.spaceDimId && ((spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)posX, (int)posZ)) != null && spaceObj.getProperties().getParentProperties().isGasGiant() )) { //Abort if destination is invalid
 			setInOrbit(true);
 			this.setPosition(forwardDirection.offsetX*64d + this.launchLocation.x + (storage.getSizeX() % 2 == 0 ? 0 : 0.5d), posY, forwardDirection.offsetZ*64d + this.launchLocation.z + (storage.getSizeZ() % 2 == 0 ? 0 : 0.5d));	
 		}
@@ -376,7 +371,7 @@ public class EntityStationDeployedRocket extends EntityRocket {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbt) {
+	protected void readEntityFromNBT(@NotNull NBTTagCompound nbt) {
 		super.readEntityFromNBT(nbt);
 
 	}

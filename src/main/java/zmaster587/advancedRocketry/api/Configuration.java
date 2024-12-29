@@ -9,7 +9,6 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.util.AsteroidSmall;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 
 /**
  * Stores config variables
@@ -18,16 +17,16 @@ import net.minecraft.entity.Entity;
 public class Configuration {
 	public static final String configFolder = "advRocketry";
 	
-	public static int orbit = 1000;
+	public static final int orbit = 1000;
 	public static int MoonId = -1;
 	public static int spaceDimId = -2;
-	public static int fuelPointsPer10Mb = 10;
+	public static final int fuelPointsPer10Mb = 10;
 	public static int stationSize = 1024;
 	
 	public static double rocketThrustMultiplier;
 	public static double fuelCapacityMultiplier;
 	
-	public static int maxBiomes = 512;
+	public static final int maxBiomes = 512;
 	public static boolean rocketRequireFuel = true;
 	public static boolean enableOxygen = true;
 	public static boolean enableNausea = true;
@@ -93,17 +92,17 @@ public class Configuration {
 	public static boolean blackListAllVanillaBiomes;
 	public static boolean canPlayerRespawnInSpace;
 	public static float spaceLaserPowerMult;
-	public static List<Integer> laserBlackListDims = new LinkedList<>();
-	public static List<String> standardLaserDrillOres = new LinkedList<>();
+	public static final List<Integer> laserBlackListDims = new LinkedList<>();
+	public static final List<String> standardLaserDrillOres = new LinkedList<>();
 	public static boolean laserDrillPlanet;
 	public static double asteroidMiningTimeMult;
 
 	/** list of entities of which atmospheric effects should not be applied **/
-	public static List<Class> bypassEntity = new LinkedList<>();
-	public static @NotNull List<Block> torchBlocks = new LinkedList<>();
-	public static List<Block> blackListRocketBlocks = new LinkedList<>();
-	public static @NotNull List<String> standardGeodeOres = new LinkedList<>();
-	public static Set<Integer> initiallyKnownPlanets = new HashSet<>();
+	public static final List<Class> bypassEntity = new LinkedList<>();
+	public static final @NotNull List<Block> torchBlocks = new LinkedList<>();
+	public static final List<Block> blackListRocketBlocks = new LinkedList<>();
+	public static final @NotNull List<String> standardGeodeOres = new LinkedList<>();
+	public static final Set<Integer> initiallyKnownPlanets = new HashSet<>();
 
 	public static boolean geodeOresBlackList;
 
@@ -111,7 +110,7 @@ public class Configuration {
 
 	public static boolean lockUI;
 
-	public static HashMap<String, AsteroidSmall> asteroidTypes = new HashMap<>();
+	public static final HashMap<String, AsteroidSmall> asteroidTypes = new HashMap<>();
 	public static @NotNull HashMap<String, AsteroidSmall> prevAsteroidTypes = new HashMap<>();
 	public static int oxygenVentSize;
 

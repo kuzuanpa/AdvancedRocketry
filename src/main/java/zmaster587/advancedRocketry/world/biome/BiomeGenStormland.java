@@ -15,7 +15,7 @@ import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 
 public class BiomeGenStormland extends BiomeGenBase {
 
-	WorldGenAbstractTree charTree = new WorldGenCharredTree(false, 6);
+	final WorldGenAbstractTree charTree = new WorldGenCharredTree(false, 6);
 	
 	public BiomeGenStormland(int biomeId, boolean register) {
 		super(biomeId, register);

@@ -22,7 +22,7 @@ public class FxElectricArc  extends EntityFX {
         this.particleGreen = 1f;
         this.particleBlue = 1f;
         this.setSize(0.12F, 0.12F);
-        this.particleScale *= sizeMultiplier;
+        this.particleScale *= (float) sizeMultiplier;
         this.particleMaxAge = 5;
 	}
 

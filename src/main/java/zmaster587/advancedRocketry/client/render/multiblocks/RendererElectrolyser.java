@@ -20,9 +20,10 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 
 public class RendererElectrolyser extends TileEntitySpecialRenderer{
 
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/electrolyser.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/electrolyser.obj"));
 
 	@NotNull
+    final
     ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/electrolyser.png");
 
 	@Override

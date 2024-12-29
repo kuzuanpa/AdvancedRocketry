@@ -44,12 +44,12 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 
 	@Nullable
     EntityRocket rocket;
-	ModuleRedstoneOutputButton redstoneControl;
+	final ModuleRedstoneOutputButton redstoneControl;
 	RedstoneState state;
-	ModuleRedstoneOutputButton inputRedstoneControl;
+	final ModuleRedstoneOutputButton inputRedstoneControl;
 	RedstoneState inputstate;
-	ModuleBlockSideSelector sideSelectorModule;
-	private static int ALLOW_REDSTONEOUT = 2;
+	final ModuleBlockSideSelector sideSelectorModule;
+	private static final int ALLOW_REDSTONEOUT = 2;
 
 	public TileRocketLoader() {
 		redstoneControl = new ModuleRedstoneOutputButton(174, 4, 0, "", this, LibVulpes.proxy.getLocalizedString("msg.rocketLoader.loadingState"));
@@ -57,7 +57,7 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 		inputRedstoneControl = new ModuleRedstoneOutputButton(174, 32, 1, "", this, LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowLoading"));
 		inputstate = RedstoneState.OFF;
 		inputRedstoneControl.setRedstoneState(inputstate);
-		sideSelectorModule = new ModuleBlockSideSelector(90, 15, this, new String[] {LibVulpes.proxy.getLocalizedString("msg.rocketLoader.none"), LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowredstoneoutput"), LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowredstoneinput")});
+		sideSelectorModule = new ModuleBlockSideSelector(90, 15, this, LibVulpes.proxy.getLocalizedString("msg.rocketLoader.none"), LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowredstoneoutput"), LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowredstoneinput"));
 	}
 
 	public TileRocketLoader(int size) {
@@ -67,7 +67,7 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 		inputRedstoneControl = new ModuleRedstoneOutputButton(174, 32, 1, "", this, LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowLoading"));
 		inputstate = RedstoneState.OFF;
 		inputRedstoneControl.setRedstoneState(inputstate);
-		sideSelectorModule = new ModuleBlockSideSelector(90, 15, this, new String[] {LibVulpes.proxy.getLocalizedString("msg.rocketLoader.none"), LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowredstoneoutput"), LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowredstoneinput")});
+		sideSelectorModule = new ModuleBlockSideSelector(90, 15, this, LibVulpes.proxy.getLocalizedString("msg.rocketLoader.none"), LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowredstoneoutput"), LibVulpes.proxy.getLocalizedString("msg.rocketLoader.allowredstoneinput"));
 }
 	
 	@Override

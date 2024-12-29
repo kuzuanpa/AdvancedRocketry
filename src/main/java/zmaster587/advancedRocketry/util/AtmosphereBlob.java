@@ -17,12 +17,7 @@ import zmaster587.advancedRocketry.network.PacketAirParticle;
 import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.util.BlockPosition;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -31,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class AtmosphereBlob extends AreaBlob implements Runnable {
 
 
-	static ThreadPoolExecutor pool = (Configuration.atmosphereHandleBitMask & 1) == 1 ? new ThreadPoolExecutor(3, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(32)) : null;
+	static final ThreadPoolExecutor pool = (Configuration.atmosphereHandleBitMask & 1) == 1 ? new ThreadPoolExecutor(3, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(32)) : null;
 
 	boolean executing;
 	BlockPosition blockPos;
@@ -86,7 +81,7 @@ public class AtmosphereBlob extends AreaBlob implements Runnable {
 						try {
 							pool.execute(this);
 						} catch (RejectedExecutionException e) {
-							AdvancedRocketry.logger.warn("Atmosphere calculation at " + this.getRootPosition() + " aborted due to oversize queue!");
+                            AdvancedRocketry.logger.warn("Atmosphere calculation at {} aborted due to oversize queue!", this.getRootPosition());
 						}
 					else
 						this.run();
@@ -145,8 +140,8 @@ public class AtmosphereBlob extends AreaBlob implements Runnable {
 						}
 					} catch (Exception e){
 						//Catches errors with additional information
-						AdvancedRocketry.logger.info("Error: AtmosphereBlob has failed to form correctly due to an error. \nCurrentBlock: " + stackElement + "\tNextPos: " + searchNextPosition + "\tDir: " + dir2 + "\tStackSize: " + stack.size());
-						e.printStackTrace();
+                        AdvancedRocketry.logger.info("Error: AtmosphereBlob has failed to form correctly due to an error. \nCurrentBlock: {}\tNextPos: {}\tDir: {}\tStackSize: {}", stackElement, searchNextPosition, dir2, stack.size());
+						AdvancedRocketry.logger.error(e);
 						//Failed to seal, void
 						clearBlob();
 						executing = false;
@@ -172,23 +167,22 @@ public class AtmosphereBlob extends AreaBlob implements Runnable {
 	 * @param blocks Collection containing affected locations
 	 */
 	protected void runEffectOnWorldBlocks(World world, Collection<BlockPosition> blocks) {
-		if(!AtmosphereHandler.getOxygenHandler(world.provider.dimensionId).getDefaultAtmosphereType().allowsCombustion()) {
-			List<BlockPosition> list;
+		AtmosphereHandler handler = AtmosphereHandler.getOxygenHandler(world.provider.dimensionId);
+		if (handler == null || handler.getDefaultAtmosphereType().allowsCombustion()) return;
+		List<BlockPosition> list;
 
-			synchronized (graph) {
-				list = new LinkedList<>(blocks);
-			}
+		synchronized (graph) {
+			list = new LinkedList<>(blocks);
+		}
 
-			for(BlockPosition pos : list) {
-				Block block = world.getBlock(pos.x, pos.y, pos.z);
-				if(block== Blocks.torch) {
-					world.setBlock(pos.x, pos.y, pos.z, AdvancedRocketryBlocks.blockUnlitTorch);
-				}
-				else if(Configuration.torchBlocks.contains(block)) {
-					EntityItem item = new EntityItem(world, pos.x, pos.y, pos.z, new ItemStack(block));
-					world.setBlockToAir(pos.x, pos.y, pos.z);
-					world.spawnEntityInWorld(item);
-				}
+		for (BlockPosition pos : list) {
+			Block block = world.getBlock(pos.x, pos.y, pos.z);
+			if (block == Blocks.torch) {
+				world.setBlock(pos.x, pos.y, pos.z, AdvancedRocketryBlocks.blockUnlitTorch);
+			} else if (Configuration.torchBlocks.contains(block)) {
+				EntityItem item = new EntityItem(world, pos.x, pos.y, pos.z, new ItemStack(block));
+				world.setBlockToAir(pos.x, pos.y, pos.z);
+				world.spawnEntityInWorld(item);
 			}
 		}
 	}

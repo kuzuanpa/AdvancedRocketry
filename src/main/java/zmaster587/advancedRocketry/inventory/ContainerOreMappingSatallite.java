@@ -2,21 +2,17 @@ package zmaster587.advancedRocketry.inventory;
 
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.satellite.SatelliteOreMapping;
-import codechicken.lib.inventory.InventorySimple;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ContainerOreMappingSatallite extends Container {
 
 
-	private SatelliteOreMapping inv;
+	private final SatelliteOreMapping inv;
 
 	ContainerOreMappingSatallite(SatelliteOreMapping inv, InventoryPlayer inventoryPlayer) {
 		super();
@@ -85,7 +81,7 @@ public class ContainerOreMappingSatallite extends Container {
 
 			if (stackInSlot.stackSize == 0)
 			{
-				slot.putStack((ItemStack)null);
+				slot.putStack(null);
 			}
 			else
 			{

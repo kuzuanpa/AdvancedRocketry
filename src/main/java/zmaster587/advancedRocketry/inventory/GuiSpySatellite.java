@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public class GuiSpySatellite extends GuiScreen {
 	
-	TileEntity tileEntity;
+	final TileEntity tileEntity;
 	public GuiSpySatellite(TileEntity tile, EntityPlayer player) {
 		tileEntity = tile;
 	}

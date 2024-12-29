@@ -10,7 +10,8 @@ import net.minecraft.world.World;
 
 public class EntityLaserNode extends Entity {
 
-	boolean chunkReloaded = false, firstLoad = false;
+	final boolean chunkReloaded = false;
+    boolean firstLoad = false;
 
 	//Used to make sure the emitter is still loaded and so we can send blocks back to the emitter
 	//Also we don't want the chunk loading with the laser being there without an emitter it will cause a crash
@@ -51,7 +52,7 @@ public class EntityLaserNode extends Entity {
 			new Thread(cleanThread).start();
 	}
 
-	Runnable cleanThread = () -> {
+	final Runnable cleanThread = () -> {
         for(int h = 0; h < worldObj.getHeight(); h++) {
             for(int i = 0; i < 9; i++) {
                 int x = (int)posX + (i % 3) - 1;

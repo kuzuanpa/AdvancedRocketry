@@ -207,36 +207,24 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		
 		switch(dir) {
 		case DOWN:
-			out.x = in.z;
+            case UP:
+                out.x = in.z;
 			out.y = in.y;
 			out.z = in.x;
 			break;
-		case UP:
-			out.x = in.z;
-			out.y = in.y;
-			out.z = in.x;
-			break;
-		case NORTH:
-			out.x = in.y;
+            case NORTH:
+            case SOUTH:
+                out.x = in.y;
 			out.y = (short)(in.x);
 			out.z = in.z;
 			break;
-		case SOUTH:
-			out.x = in.y;
-			out.y = (short)in.x;
-			out.z = in.z;
-			break;
-		case EAST:
-			out.x = in.x;
+            case EAST:
+            case WEST:
+                out.x = in.x;
 			out.y = (short)(in.z);
 			out.z = in.y;
 			break;
-		case WEST:
-			out.x = in.x;
-			out.y = (short)in.z;
-			out.z = in.y;
-			break;
-		}
+        }
 			
 		return out;
 	}
@@ -333,7 +321,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 				tile.writeToNBT(tileNbt);
 				tileList.appendTag(tileNbt);
 			} catch(RuntimeException e) {
-				AdvancedRocketry.logger.warn("A tile entity has thrown an error: " + tile.getClass().getCanonicalName());
+                AdvancedRocketry.logger.warn("A tile entity has thrown an error: {}", tile.getClass().getCanonicalName());
 				blocks[tile.xCoord][tile.yCoord][tile.zCoord] = Blocks.air;
 				metas[tile.xCoord][tile.yCoord][tile.zCoord] = 0;
 				tileEntityIterator.remove();
@@ -827,7 +815,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 				}
 
 			} catch(RuntimeException e) {
-				AdvancedRocketry.logger.warn("A tile entity has thrown an error while writing to network: " + tile.getClass().getCanonicalName());
+                AdvancedRocketry.logger.warn("A tile entity has thrown an error while writing to network: {}", tile.getClass().getCanonicalName());
 				tileIterator.remove();
 			}
 		}

@@ -5,12 +5,10 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
-import zmaster587.libVulpes.inventory.modules.ModuleImage;
-import zmaster587.libVulpes.util.IconResource;
 
 public class ModuleStellarBackground extends ModuleBase {
 
-	ResourceLocation icon;
+	final ResourceLocation icon;
 	
 	public ModuleStellarBackground(int offsetX, int offsetY, ResourceLocation icon) {
 		super(offsetX, offsetY);
@@ -24,7 +22,7 @@ public class ModuleStellarBackground extends ModuleBase {
 			gui.mc.getTextureManager().bindTexture(this.icon);
 			gui.drawTexturedModalRect(0, 0, 0, 0, gui.width,  gui.height);
 			gui.mc.getTextureManager().bindTexture(TextureResources.genericStation);
-			gui.drawTexturedModalRect((int)(256), (int)(64), 0, 0, 256, 256);
+			gui.drawTexturedModalRect(256, 64, 0, 0, 256, 256);
 		}
 	}
 }

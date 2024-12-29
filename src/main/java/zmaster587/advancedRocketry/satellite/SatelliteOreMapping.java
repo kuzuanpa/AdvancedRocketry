@@ -1,18 +1,13 @@
 package zmaster587.advancedRocketry.satellite;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +21,7 @@ import zmaster587.advancedRocketry.item.ItemOreScanner;
 public class SatelliteOreMapping extends SatelliteBase  {
 
 	int blockCenterX, blockCenterZ;
-	public static ArrayList<Integer> oreList = new ArrayList<>();
+	public static final ArrayList<Integer> oreList = new ArrayList<>();
 
 	ItemStack inv;
 
@@ -108,8 +103,8 @@ public class SatelliteOreMapping extends SatelliteBase  {
 						}
 					}
 				}
-				oreCount /= Math.pow(blocksPerPixel,2);
-				otherCount /= Math.pow(blocksPerPixel,2);
+				oreCount /= (int) Math.pow(blocksPerPixel,2);
+				otherCount /= (int) Math.pow(blocksPerPixel,2);
 
 				if(Thread.interrupted())
 					return null;
@@ -176,8 +171,8 @@ public class SatelliteOreMapping extends SatelliteBase  {
 						}
 					}
 				}
-				oreCount /= Math.pow(blocksPerPixel,2);
-				otherCount /= Math.pow(blocksPerPixel,2);
+				oreCount /= (int) Math.pow(blocksPerPixel,2);
+				otherCount /= (int) Math.pow(blocksPerPixel,2);
 
 				if(Thread.interrupted())
 					return null;
@@ -198,16 +193,7 @@ public class SatelliteOreMapping extends SatelliteBase  {
 		return "Ore Mapper";
 	}
 
-	@Override
-	public boolean canTick() {
-		return false;
-	}
-
-	@Override
-	public void tickEntity() {		
-	}
-
-	public int getZoomRadius() {
+    public int getZoomRadius() {
 		return Math.min(satelliteProperties.getPowerGeneration(),7);
 	}
 

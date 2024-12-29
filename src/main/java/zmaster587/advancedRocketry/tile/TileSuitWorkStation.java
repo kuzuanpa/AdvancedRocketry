@@ -3,17 +3,14 @@ package zmaster587.advancedRocketry.tile;
 import java.util.LinkedList;
 import java.util.List;
 
-import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.api.IArmorComponent;
 import zmaster587.libVulpes.api.IModularArmor;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ModuleBase;
-import zmaster587.libVulpes.inventory.modules.ModuleLimitedSlotArray;
 import zmaster587.libVulpes.inventory.modules.ModuleSlotArmor;
 import zmaster587.libVulpes.inventory.modules.ModuleSlotArray;
 import zmaster587.libVulpes.inventory.modules.ModuleTexturedLimitedSlotArray;
 import zmaster587.libVulpes.util.EmbeddedInventory;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
@@ -23,8 +20,8 @@ import net.minecraft.tileentity.TileEntity;
 
 public class TileSuitWorkStation extends TileEntity implements IModularInventory, IInventory {
 
-	EmbeddedInventory inventory;
-	ModuleTexturedLimitedSlotArray[] slotArray;
+	final EmbeddedInventory inventory;
+	final ModuleTexturedLimitedSlotArray[] slotArray;
 
 	public TileSuitWorkStation() {
 		inventory = new EmbeddedInventory(getSizeInventory());

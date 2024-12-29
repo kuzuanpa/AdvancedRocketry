@@ -1,11 +1,11 @@
 package zmaster587.advancedRocketry.world.biome;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.BiomeGenBase;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class BiomeGenSpace extends BiomeGenBase {
 	public BiomeGenSpace(int biomeId, boolean register) {
@@ -27,7 +27,7 @@ public class BiomeGenSpace extends BiomeGenBase {
 	}
 	
 	@Override
-	public List getSpawnableList(EnumCreatureType p_76747_1_) {
+	public List<?> getSpawnableList(EnumCreatureType p_76747_1_) {
 		return new LinkedList<>();
 	}
 	

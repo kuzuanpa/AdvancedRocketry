@@ -25,7 +25,7 @@ public class BlockRocketMotor extends BlockRotatableModel implements IRocketEngi
 	}
 	
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
+	public void onBlockPlacedBy(@NotNull World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
 	}
 	
 	@Override

@@ -18,11 +18,11 @@ public class CableNetwork {
 	int networkID;
 	protected int numCables = 0;
 
-	protected static HashSet<Integer> usedIds = new HashSet<>();
+	protected static final HashSet<Integer> usedIds = new HashSet<>();
 
-	CopyOnWriteArraySet<Entry<TileEntity, ForgeDirection>> sources;
+	final CopyOnWriteArraySet<Entry<TileEntity, ForgeDirection>> sources;
 
-	CopyOnWriteArraySet<Entry<TileEntity, ForgeDirection>> sinks;
+	final CopyOnWriteArraySet<Entry<TileEntity, ForgeDirection>> sinks;
 
 	protected CableNetwork() {
 

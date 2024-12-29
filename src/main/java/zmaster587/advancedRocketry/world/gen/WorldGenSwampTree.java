@@ -6,22 +6,18 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.MapGenBase;
-import net.minecraft.world.gen.feature.WorldGenAbstractTree;
-import net.minecraftforge.common.util.ForgeDirection;
-import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.libVulpes.block.BlockMeta;
 import zmaster587.libVulpes.util.BlockPosition;
 
 public class WorldGenSwampTree extends MapGenBase {
 
-	Map<BlockPosition, BlockMeta> cachedCanopy;
-	Map<BlockPosition, BlockMeta> cachedRoots;
+	final Map<BlockPosition, BlockMeta> cachedCanopy;
+	final Map<BlockPosition, BlockMeta> cachedRoots;
 	private final static double arcSize = 16.0;
-	int chancePerChunk;
+	final int chancePerChunk;
 
 	public WorldGenSwampTree(int chancePerChunk) {
 		super();
@@ -37,7 +33,7 @@ public class WorldGenSwampTree extends MapGenBase {
 		cachedRoots.clear();
 		for (double Yangle = 0; Yangle < 2*Math.PI; Yangle+=Math.PI/3.0){
 			// Yangle = 0.0;//Math.PI/4.0;
-			int yOffset = (int)(1.25*arcSize*Math.sin(Math.PI)) + 1;
+			int yOffset = 1;
 			int xOffset = (int)(1.1*arcSize*Math.cos(Math.PI)*Math.cos(Yangle));
 			int zOffset = (int)(1.1*arcSize*Math.cos(Math.PI)*Math.sin(Yangle));
 
@@ -56,8 +52,7 @@ public class WorldGenSwampTree extends MapGenBase {
 					cachedRoots.put( new BlockPosition(2 + xx - xOffset, yy - yOffset +2, 1 + zz- zOffset), new BlockMeta(Blocks.log, 3));
 				if(!cachedRoots.containsKey(new BlockPosition(2 + xx - xOffset,  yy - yOffset +3, 1 + zz- zOffset)))
 					cachedRoots.put( new BlockPosition(2 + xx - xOffset,  yy - yOffset +3, 1 + zz- zOffset), new BlockMeta(Blocks.log, 3));
-				if(!cachedRoots.containsKey(new BlockPosition(1 + xx - xOffset  , yy - yOffset +2, zz- zOffset)))
-				cachedRoots.put(new BlockPosition(1 + xx - xOffset  , yy - yOffset +2, zz- zOffset), new BlockMeta(Blocks.log, 3));
+				if(!cachedRoots.containsKey(new BlockPosition(1 + xx - xOffset  , yy - yOffset +2, zz- zOffset))) cachedRoots.put(new BlockPosition(1 + xx - xOffset  , yy - yOffset +2, zz- zOffset), new BlockMeta(Blocks.log, 3));
 				if(!cachedRoots.containsKey(new BlockPosition(2 + xx - xOffset, yy - yOffset +2, zz- zOffset - 1)))
 					cachedRoots.put( new BlockPosition(2 + xx - xOffset, yy - yOffset +2, zz- zOffset - 1), new BlockMeta(Blocks.log, 3));
 			}
@@ -81,8 +76,7 @@ public class WorldGenSwampTree extends MapGenBase {
 				int zz = (int) (xzRadius*Math.sin(Yangle));
 
 				for(int yyy = -2 ; yyy < 4; yyy++)
-					if(!cachedCanopy.containsKey(new BlockPosition(2 + xx - xOffset, yyy + yy - yOffset +2, zz- zOffset)))
-					cachedCanopy.put(new BlockPosition(2 + xx - xOffset, yyy + yy - yOffset +2, zz- zOffset), new BlockMeta(Blocks.leaves, 3));
+					if(!cachedCanopy.containsKey(new BlockPosition(2 + xx - xOffset, yyy + yy - yOffset +2, zz- zOffset))) cachedCanopy.put(new BlockPosition(2 + xx - xOffset, yyy + yy - yOffset +2, zz- zOffset), new BlockMeta(Blocks.leaves, 3));
 				//world.setBlock( x + 2 + xx - xOffset - radius/2, treeHeight -3 + yy - yOffset +2, z + zz- zOffset, Blocks.vine, 0,2);
 			}
 
@@ -113,9 +107,7 @@ public class WorldGenSwampTree extends MapGenBase {
 
 			final float SHAPE = 0.1f;
 
-			currentEdgeRadius = (int)((SHAPE*(edgeRadius * treeHeight )) + ((1f-SHAPE)*edgeRadius));
-
-			y++;
+            y++;
 
 
 			for(int yOff = -20; yOff < treeHeight; yOff++) {
@@ -188,9 +180,7 @@ public class WorldGenSwampTree extends MapGenBase {
 					for(zz = -1; zz < 2; zz++)
 						for(xx = -1; xx < 2; xx++)
 							setBlock( x + 2 + xx - xOffset - radius/2, y + treeHeight - 10 + yy - yOffset +2, z + zz- zOffset, Blocks.leaves, blocks);
-					xx=xxx;
-					zz=zzz;
-					//Descending 
+                    //Descending
 					for(int yyy = 0; yyy < 10; yyy++) {
 
 
@@ -367,9 +357,7 @@ public class WorldGenSwampTree extends MapGenBase {
 				for(zz = -1; zz < 2; zz++)
 					for(xx = -1; xx < 2; xx++)
 						world.setBlock( x + 2 + xx - xOffset - radius/2,y + treeHeight - 10 + yy - yOffset +2, z + zz- zOffset, Blocks.leaves, 3,5);
-				xx=xxx;
-				zz=zzz;
-				//Descending 
+                //Descending
 				for(int yyy = 0; yyy < 10; yyy++) {
 
 

@@ -30,7 +30,7 @@ import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 
 public class RecipeHandler {
 	
-	private List<Class<? extends TileMultiblockMachine>> machineList = new ArrayList<>();
+	private final List<Class<? extends TileMultiblockMachine>> machineList = new ArrayList<>();
 	
 	public void registerMachine(Class<? extends TileMultiblockMachine> clazz) {
 		if(!machineList.contains(clazz))
@@ -61,12 +61,10 @@ public class RecipeHandler {
 		for(Class<? extends TileMultiblockMachine>  clazz : machineList)
 			try {
 				clazz.newInstance().registerRecipes();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
-	}
+    }
 	
 	public void createAutoGennedRecipes(HashMap<AllowedProducts, HashSet<String>> modProducts) {
 		//AutoGenned Recipes
@@ -171,7 +169,7 @@ public class RecipeHandler {
 					for(String str : entry.getValue()) {
 						zmaster587.libVulpes.api.material.Material material = zmaster587.libVulpes.api.material.Material.valueOfSafe(str.toUpperCase());
 
-						if(OreDictionary.doesOreNameExist("ingot" + str) && OreDictionary.getOres("ingot" + str).size() > 0 && (material == null || !AllowedProducts.getProductByName("PLATE").isOfType(material.getAllowedProducts())) ) {
+						if(OreDictionary.doesOreNameExist("ingot" + str) && !OreDictionary.getOres("ingot" + str).isEmpty() && (material == null || !AllowedProducts.getProductByName("PLATE").isOfType(material.getAllowedProducts())) ) {
 
 							RecipesMachine.getInstance().addRecipe(TileRollingMachine.class, OreDictionary.getOres("plate" + str).get(0), 300, 20, "ingot" + str);
 						}
@@ -181,15 +179,15 @@ public class RecipeHandler {
 					for(String str : entry.getValue()) {
 						zmaster587.libVulpes.api.material.Material material = zmaster587.libVulpes.api.material.Material.valueOfSafe(str.toUpperCase());
 
-						if(OreDictionary.doesOreNameExist("ingot" + str) && OreDictionary.getOres("ingot" + str).size() > 0 && (material == null || !AllowedProducts.getProductByName("STICK").isOfType(material.getAllowedProducts())) ) {
+						if(OreDictionary.doesOreNameExist("ingot" + str) && !OreDictionary.getOres("ingot" + str).isEmpty() && (material == null || !AllowedProducts.getProductByName("STICK").isOfType(material.getAllowedProducts())) ) {
 
 							//GT registers rods as sticks
-							ItemStack stackToAdd = null;
-							if(OreDictionary.doesOreNameExist("rod" + str) && OreDictionary.getOres("rod" + str).size() > 0) {
+							ItemStack stackToAdd;
+							if(OreDictionary.doesOreNameExist("rod" + str) && !OreDictionary.getOres("rod" + str).isEmpty()) {
 								stackToAdd = OreDictionary.getOres("rod" + str).get(0).copy();
 								stackToAdd.stackSize = 2;
 							}
-							else if(OreDictionary.doesOreNameExist("stick" + str)  && OreDictionary.getOres("stick" + str).size() > 0) {
+							else if(OreDictionary.doesOreNameExist("stick" + str)  && !OreDictionary.getOres("stick" + str).isEmpty()) {
 								stackToAdd = OreDictionary.getOres("stick" + str).get(0).copy();
 								stackToAdd.stackSize = 2;
 							}

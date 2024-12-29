@@ -11,10 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.satellite.SatelliteProperties;
 import zmaster587.advancedRocketry.item.ItemBiomeChanger;
-import zmaster587.advancedRocketry.network.PacketBiomeIDChange;
 import zmaster587.advancedRocketry.util.BiomeHandler;
 import zmaster587.libVulpes.api.IUniversalEnergy;
-import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.util.BlockPosition;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,8 +29,8 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 
 	//Stores blocks to be updated
 	//Note: we really don't care about order, in fact, lack of order is better
-	private List<BlockPosition> toChangeList;
-	private Set<Byte> discoveredBiomes;
+	private final List<BlockPosition> toChangeList;
+	private final Set<Byte> discoveredBiomes;
 	private static int MAX_SIZE = 1024;
 
 	public SatelliteBiomeChanger() {
@@ -96,7 +94,8 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 		if(world != null) {
 
 			for(int i = 0; i < 10; i++) {
-				if(world.getTotalWorldTime() % 1 == 0 && !toChangeList.isEmpty()) {
+                world.getTotalWorldTime();
+                if(!toChangeList.isEmpty()) {
 					if(extractEnergy(10, true) ==10 ) {
 						extractEnergy(10, false);
 						BlockPosition pos = toChangeList.remove(world.rand.nextInt(toChangeList.size()));
@@ -156,12 +155,7 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 		return false;
 	}
 
-	@Override
-	public double failureChance() {
-		return 0;
-	}
-
-	@Override
+    @Override
 	public void writeToNBT(@NotNull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setInteger("biomeId", biomeId);
@@ -201,9 +195,9 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 
 		array = nbt.getIntArray("biomeList");
 		discoveredBiomes.clear();
-		for(int i = 0; i < array.length; i ++) {
-			discoveredBiomes.add((byte) array[i]);
-		}
+        for (int j : array) {
+            discoveredBiomes.add((byte) j);
+        }
 	}
 
 	@Override

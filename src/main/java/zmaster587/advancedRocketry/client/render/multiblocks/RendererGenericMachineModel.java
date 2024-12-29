@@ -14,9 +14,9 @@ import zmaster587.libVulpes.block.RotatableBlock;
 import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 
 public class RendererGenericMachineModel extends TileEntitySpecialRenderer {
-	IModelCustom model;
+	final IModelCustom model;
 	
-	ResourceLocation texture;
+	final ResourceLocation texture;
 	
 	public RendererGenericMachineModel(String modelPath, String texturePath) {
 		texture = new ResourceLocation(texturePath);

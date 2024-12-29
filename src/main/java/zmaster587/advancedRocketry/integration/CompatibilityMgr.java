@@ -21,8 +21,5 @@ public class CompatibilityMgr {
 	}
 	
 	public static void initCompatRecipies() {
-		if(gregtechLoaded) {
-
-		}
-	}
+    }
 }

@@ -32,14 +32,14 @@ public class ModuleOreMapper extends ModuleBase {
 	private static final int FANCYSCANMAXSIZE = 57;
 	private int fancyScanOffset;
 	private long prevWorldTickTime;
-	private int prevSlot;
+	private final int prevSlot;
 	private int mouseValue;
-	private int scanSize = 32;
-	private int radius = 1;
+	private final int scanSize = 32;
+	private final int radius = 1;
 	private int xSelected, zSelected, xCenter, zCenter;
 	private static final ResourceLocation backdrop = new ResourceLocation("advancedrocketry", "textures/gui/VideoSatallite.png");
-	int[]@Nullable[] oreMap;
-	World world;
+	int[] @Nullable [] oreMap;
+	final World world;
 	SatelliteOreMapping tile;
 	ItemStack selectedStack;
 	
@@ -48,8 +48,7 @@ public class ModuleOreMapper extends ModuleBase {
 		world = Minecraft.getMinecraft().theWorld;
 
 		prevSlot = -1;
-		this.tile = tile;
-		//masterConsole = tile;
+        //masterConsole = tile;
 		//xCenter = tile.getBlockCenterX();
 		//zCenter = tile.getBlockCenterZ();
 		
@@ -60,19 +59,18 @@ public class ModuleOreMapper extends ModuleBase {
 
 	//Create separate thread to do this because it takes a while!
     @NotNull
+    final
     Runnable mapper = new Runnable() {
 		@Override
 		public void run() {
 			oreMap = SatelliteOreMapping.scanChunk(world, xCenter, zCenter, scanSize/2, radius);
-			if(oreMap != null)
-				merged = true;
-			else merged = false;
+            merged = oreMap != null;
 		}
 	};
 
 	//Create separate thread to do this because it takes a while!
 	class ItemMapper implements Runnable {
-		private ItemStack myBlock;
+		private final ItemStack myBlock;
 
 		ItemMapper(ItemStack block) {
 			//Copy so we dont have any possible CME or oddness due to that
@@ -82,13 +80,11 @@ public class ModuleOreMapper extends ModuleBase {
 		@Override
 		public void run() {
 			oreMap = SatelliteOreMapping.scanChunk(world, xCenter, zCenter, scanSize/2, radius, myBlock);
-			if(oreMap != null)
-				merged = true;
-			else merged = false;
+            merged = oreMap != null;
 		}
-	};
-	
-	private void runMapperWithSelection() {
+	}
+
+    private void runMapperWithSelection() {
 		currentMapping.interrupt();
 		resetTexture();
 		if(prevSlot == -1) {
@@ -121,17 +117,17 @@ public class ModuleOreMapper extends ModuleBase {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glColor3f(0f, 0.8f, 0f);
 		tessellator.startDrawingQuads();
-		tessellator.addVertex(-21, 82 + fancyScanOffset, (double)zLevel);
-		tessellator.addVertex(0, 84 + fancyScanOffset, (double)zLevel);
-		tessellator.addVertex(0, 81 + fancyScanOffset, (double)zLevel);
-		tessellator.addVertex(-21, 81 + fancyScanOffset, (double)zLevel);
+		tessellator.addVertex(-21, 82 + fancyScanOffset, zLevel);
+		tessellator.addVertex(0, 84 + fancyScanOffset, zLevel);
+		tessellator.addVertex(0, 81 + fancyScanOffset, zLevel);
+		tessellator.addVertex(-21, 81 + fancyScanOffset, zLevel);
 		tessellator.draw();
 		
 		tessellator.startDrawingQuads();
-		tessellator.addVertex(-21, 82 - fancyScanOffset + FANCYSCANMAXSIZE, (double)zLevel);
-		tessellator.addVertex(0, 84 - fancyScanOffset + FANCYSCANMAXSIZE, (double)zLevel);
-		tessellator.addVertex(0, 81 - fancyScanOffset + FANCYSCANMAXSIZE, (double)zLevel);
-		tessellator.addVertex(-21, 81 - fancyScanOffset + FANCYSCANMAXSIZE, (double)zLevel);
+		tessellator.addVertex(-21, 82 - fancyScanOffset + FANCYSCANMAXSIZE, zLevel);
+		tessellator.addVertex(0, 84 - fancyScanOffset + FANCYSCANMAXSIZE, zLevel);
+		tessellator.addVertex(0, 81 - fancyScanOffset + FANCYSCANMAXSIZE, zLevel);
+		tessellator.addVertex(-21, 81 - fancyScanOffset + FANCYSCANMAXSIZE, zLevel);
 		tessellator.draw();
 		
 		
@@ -140,10 +136,10 @@ public class ModuleOreMapper extends ModuleBase {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
 		GL11.glColor4f(0.5f, 0.5f, 0.0f,0.3f + ((float)Math.sin(Math.PI*(fancyScanOffset/(float)FANCYSCANMAXSIZE))/3f));
 		tessellator.startDrawingQuads();
-		tessellator.addVertex(173, 141, (double)zLevel);
-		tessellator.addVertex(194, 141, (double)zLevel);
-		tessellator.addVertex(194, 82, (double)zLevel);
-		tessellator.addVertex(173, 82, (double)zLevel);
+		tessellator.addVertex(173, 141, zLevel);
+		tessellator.addVertex(194, 141, zLevel);
+		tessellator.addVertex(194, 82, zLevel);
+		tessellator.addVertex(173, 82, zLevel);
 		tessellator.draw();
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -167,10 +163,10 @@ public class ModuleOreMapper extends ModuleBase {
 			GL11.glColor3f(0f, 0.8f, 0f);
 			
 			tessellator.startDrawingQuads();
-			tessellator.addVertexWithUV(13 + (18*slot), 155 + 16, (double)zLevel, 0, 1);
-			tessellator.addVertexWithUV(13 + 16 + (18*slot), 155 + 16, (double)zLevel, 1, 1);
-			tessellator.addVertexWithUV(13 + 16 + (18*slot), 155, (double)zLevel, 1, 0);
-			tessellator.addVertexWithUV(13 + (18*slot), 155, (double)zLevel, 0, 0);
+			tessellator.addVertexWithUV(13 + (18*slot), 155 + 16, zLevel, 0, 1);
+			tessellator.addVertexWithUV(13 + 16 + (18*slot), 155 + 16, zLevel, 1, 1);
+			tessellator.addVertexWithUV(13 + 16 + (18*slot), 155, zLevel, 1, 0);
+			tessellator.addVertexWithUV(13 + (18*slot), 155, zLevel, 0, 0);
 			tessellator.draw();
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
@@ -184,7 +180,7 @@ public class ModuleOreMapper extends ModuleBase {
 		//int x = (width - 240) / 2, y = (height - 192) / 2;
 
 		//If the scan is done then 
-		if(merged) {
+		if(merged && oreMap != null) {
 			IntBuffer buffer = texture.getByteBuffer();
 			int scanWidth = Math.max(scanSize/radius,1);
 
@@ -209,10 +205,10 @@ public class ModuleOreMapper extends ModuleBase {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureId());
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(47 + x, 20 + y + SCREEN_SIZE, (double)zLevel, 0, 1);
-		tessellator.addVertexWithUV(47 + x + SCREEN_SIZE, 20 + y + SCREEN_SIZE, (double)zLevel, 1, 1);
-		tessellator.addVertexWithUV(47 + x + SCREEN_SIZE, 20 + y, (double)zLevel, 1, 0);
-		tessellator.addVertexWithUV(47 + x, 20 + y, (double)zLevel, 0, 0);
+		tessellator.addVertexWithUV(47 + x, 20 + y + SCREEN_SIZE, zLevel, 0, 1);
+		tessellator.addVertexWithUV(47 + x + SCREEN_SIZE, 20 + y + SCREEN_SIZE, zLevel, 1, 1);
+		tessellator.addVertexWithUV(47 + x + SCREEN_SIZE, 20 + y, zLevel, 1, 0);
+		tessellator.addVertexWithUV(47 + x, 20 + y, zLevel, 0, 0);
 		tessellator.draw();
 
 

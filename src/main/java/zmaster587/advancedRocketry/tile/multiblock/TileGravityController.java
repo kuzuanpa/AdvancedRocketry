@@ -13,7 +13,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.jetbrains.annotations.NotNull;
@@ -44,10 +43,11 @@ public class TileGravityController extends TileMultiPowerConsumer implements ISl
 	float currentProgress;
 	double rotation;
 
-	private ModuleRedstoneOutputButton redstoneControl;
+	private final ModuleRedstoneOutputButton redstoneControl;
 	private RedstoneState state;
-	private ModuleText targetGrav, textRadius;
-	private ModuleBlockSideSelector sideSelectorModule;
+	private final ModuleText targetGrav;
+    private final ModuleText textRadius;
+	private final ModuleBlockSideSelector sideSelectorModule;
 
 	private static final Object[][][] structure = {
 		{{null, null, null},
@@ -62,7 +62,7 @@ public class TileGravityController extends TileMultiPowerConsumer implements ISl
 		//numGravPylons = new ModuleText(10, 25, "Number Of Thrusters: ", 0xaa2020);
 		textRadius = new ModuleText(6, 82, LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.radius") + "5", 0x202020);
 		targetGrav = new ModuleText(6, 110, LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.targetgrav"), 0x202020);
-		sideSelectorModule = new ModuleBlockSideSelector(90, 15, this, new String[] {LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.none"), LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.activeset"), LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.activeadd")});
+		sideSelectorModule = new ModuleBlockSideSelector(90, 15, this, LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.none"), LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.activeset"), LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.activeadd"));
 
 		redstoneControl = new ModuleRedstoneOutputButton(174, 4, 1, "", this);
 		state = RedstoneState.OFF;
@@ -85,8 +85,8 @@ public class TileGravityController extends TileMultiPowerConsumer implements ISl
 		modules.add(redstoneControl);
 
 
-		modules.add(new ModuleSlider(6, 120, 0, TextureResources.doubleWarningSideBarIndicator, (ISliderBar)this));
-		modules.add(new ModuleSlider(6, 90, 1, TextureResources.doubleWarningSideBarIndicator, (ISliderBar)this));
+		modules.add(new ModuleSlider(6, 120, 0, TextureResources.doubleWarningSideBarIndicator, this));
+		modules.add(new ModuleSlider(6, 90, 1, TextureResources.doubleWarningSideBarIndicator, this));
 
 		modules.add(new ModuleText(42, 20, LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.targetdir.1") + "\n" + LibVulpes.proxy.getLocalizedString("msg.gravitycontroller.targetdir.2"), 0x202020));
 		modules.add(targetGrav);
@@ -219,8 +219,7 @@ public class TileGravityController extends TileMultiPowerConsumer implements ISl
 							}
 							
 							if(worldObj.isRemote) {
-								if(Minecraft.getMinecraft().gameSettings.particleSetting == 0 && !(Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && Minecraft.getMinecraft().thePlayer == e))
-								AdvancedRocketry.proxy.spawnParticle("gravityEffect", worldObj, e.posX, e.posY, e.posZ, .2f*dir.offsetX*currentProgress, .2f*dir.offsetY*currentProgress, .2f*dir.offsetZ*currentProgress);
+								if(Minecraft.getMinecraft().gameSettings.particleSetting == 0 && !(Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && Minecraft.getMinecraft().thePlayer == e)) AdvancedRocketry.proxy.spawnParticle("gravityEffect", worldObj, e.posX, e.posY, e.posZ, .2f*dir.offsetX*currentProgress, .2f*dir.offsetY*currentProgress, .2f*dir.offsetZ*currentProgress);
 							}
 						}
 					}

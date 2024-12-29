@@ -12,10 +12,10 @@ public class RenderLaser extends Render {
 
 	private static final ResourceLocation flare = new ResourceLocation("advancedrocketry", "textures/entity/Flare.png");
 
-	float[] color;
-	float[] flareColor;
+	final float[] color;
+	final float[] flareColor;
 	//float flareColo
-	double size;
+    final double size;
 	
 	public RenderLaser(double size, float[] flarecolor, float[] color) {
 		this.size = size;
@@ -64,13 +64,13 @@ public class RenderLaser extends Render {
 				tessellator.addVertex(- x , -y + 200,  - z);
 				tessellator.addVertex(- x, -y + 200, - z);
 				tessellator.addVertex(- (radius* Math.cos(i)) + 0.5F, 0,- (radius* Math.sin(i)) + 0.5F);
-				tessellator.addVertex(+ (radius* Math.sin(i)) + 0.5F, 0, (radius* Math.cos(i)) + 0.5F);
+				tessellator.addVertex((radius* Math.sin(i)) + 0.5F, 0, (radius* Math.cos(i)) + 0.5F);
 			}
 
 			for(double i = 0; i < 2*Math.PI; i += Math.PI) {
 				tessellator.addVertex(- x, -y + 200,- z);
 				tessellator.addVertex(- x, -y + 200, - z);
-				tessellator.addVertex(+ (radius* Math.sin(i)) + 0.5F, 0, -(radius* Math.cos(i)) + 0.5F);
+				tessellator.addVertex((radius* Math.sin(i)) + 0.5F, 0, -(radius* Math.cos(i)) + 0.5F);
 				tessellator.addVertex(- (radius* Math.cos(i)) + 0.5F, 0,(radius* Math.sin(i)) + 0.5F);
 			}
 		}

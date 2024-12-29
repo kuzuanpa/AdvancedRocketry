@@ -22,7 +22,7 @@ public class RenderSpaceSky extends RenderPlanetarySky {
 	}
 	float oldRotateX,oldRotateY;
 
-	Minecraft mc = Minecraft.getMinecraft();
+	final Minecraft mc = Minecraft.getMinecraft();
 	
 	@Override
 	protected void renderPlanet2(Tessellator tessellator1, ResourceLocation icon, int locationX, int locationY, double zLevel, float planetOrbitalDistance, float alphaMultiplier, double angle, boolean hasAtmosphere, float[] atmColor, float[] ringColor, boolean isGasgiant, boolean hasRings, Vec3 sunColor)  {

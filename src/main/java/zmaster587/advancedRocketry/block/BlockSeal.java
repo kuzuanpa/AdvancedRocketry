@@ -141,8 +141,8 @@ public class BlockSeal extends Block {
 	
 	private static class BlobHandler implements IBlobHandler {
 		
-		World world;
-		BlockPosition pos;
+		final World world;
+		final BlockPosition pos;
 		
 		public BlobHandler(World world, BlockPosition pos) {
 			this.world = world;

@@ -2,13 +2,9 @@ package zmaster587.advancedRocketry.world.storage;
 
 import java.util.Arrays;
 
-import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.world.provider.WorldProviderPlanet;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 
 public class ChunkExtendedBiome extends Chunk {

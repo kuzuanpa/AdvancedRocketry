@@ -18,8 +18,8 @@ public class RendererSpaceElevator extends TileEntitySpecialRenderer {
 	
 	WavefrontObject model;
 
-	public @NotNull ResourceLocation baseTexture =  new ResourceLocation("advancedRocketry:textures/models/spaceElevator.jpg");
-	RenderLaser laser;
+	public final @NotNull ResourceLocation baseTexture =  new ResourceLocation("advancedRocketry:textures/models/spaceElevator.jpg");
+	final RenderLaser laser;
 	
 	public RendererSpaceElevator() {
 		laser = new RenderLaser(1, new float[] { 0,0 , 0, 0}, new float[] { 1, 1 , 0, 0.11f} );

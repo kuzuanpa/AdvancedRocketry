@@ -22,7 +22,7 @@ public class InverseTrailFx extends EntityFX {
         this.particleBlue = .8F + chroma;
         this.setSize(0.12F, 0.12F);
         this.particleMaxAge = (int)(100.0D);
-        this.particleScale *= this.rand.nextFloat() * 0.6F + 6F + Math.pow(1.04f, this.particleMaxAge);
+        this.particleScale *= (float) (this.rand.nextFloat() * 0.6F + 6F + Math.pow(1.04f, this.particleMaxAge));
         this.motionX = -motx;
         this.motionY = -moty;
         this.motionZ = -motz;

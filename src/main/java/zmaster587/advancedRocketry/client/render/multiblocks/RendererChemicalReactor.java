@@ -15,8 +15,8 @@ import zmaster587.libVulpes.block.RotatableBlock;
 
 public class RendererChemicalReactor  extends TileEntitySpecialRenderer {
 
-	IModelCustom model;
-	ResourceLocation texture;
+	final IModelCustom model;
+	final ResourceLocation texture;
 	
 	public RendererChemicalReactor(String modelPath, String texturePath) {
 		texture = new ResourceLocation(texturePath);

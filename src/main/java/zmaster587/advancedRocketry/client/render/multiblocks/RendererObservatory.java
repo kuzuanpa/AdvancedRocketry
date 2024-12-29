@@ -16,9 +16,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class RendererObservatory  extends TileEntitySpecialRenderer {
 
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/observatory.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/observatory.obj"));
 
 	@NotNull
+    final
     ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/T1Observatory.png");
 
 	private static int bodyList;

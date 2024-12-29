@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ChunkProviderDummy implements IChunkProvider {
 
-	World world;
+	final World world;
 	
 	ChunkProviderDummy(World world){
 		this.world = world;

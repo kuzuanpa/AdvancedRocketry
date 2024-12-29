@@ -7,10 +7,10 @@ import net.minecraft.world.gen.MapGenBase;
 //TODO: finish
 public class MapGenInvertedPillar extends MapGenBase {
 
-	int chancePerChunk;
-	Block block;
-	Block topBlock;
-	Block bottomBlock;
+	final int chancePerChunk;
+	final Block block;
+	final Block topBlock;
+	final Block bottomBlock;
 
 	public MapGenInvertedPillar(int chancePerChunk,Block bottom, Block blockType, Block blockTop) {
 		super();
@@ -41,9 +41,7 @@ public class MapGenInvertedPillar extends MapGenBase {
 
 			final float SHAPE = -0.005f;
 
-			currentEdgeRadius = (int)((SHAPE*(edgeRadius * Math.pow(treeHeight,2) )) + ((1f-SHAPE)*edgeRadius));
-
-			y++;
+            y++;
 
 			for(int yOff = -20; yOff < treeHeight; yOff++) {
 				Block actualBlock;// = yOff > (2*(treeHeight+rand.nextInt(4))/3f) ? topBlock : block;

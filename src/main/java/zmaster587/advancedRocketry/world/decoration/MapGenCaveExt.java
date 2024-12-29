@@ -32,8 +32,7 @@ public class MapGenCaveExt extends MapGenCaves {
     {
         if (biome == BiomeGenBase.mushroomIsland) return true;
         if (biome == BiomeGenBase.beach) return true;
-        if (biome == BiomeGenBase.desert) return true;
-        return false;
+        return biome == BiomeGenBase.desert;
     }
     
     @Override

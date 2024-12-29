@@ -111,19 +111,13 @@ public abstract class SatelliteBase {
 	 * @param world World of which to assign to the satellite
 	 */
 	public void setDimensionId(@NotNull World world) {
-		int newId = world.provider.dimensionId;
-		if(dimId != -1) {
-			//TODO: handle dim change
-		}
-		dimId = newId;
+        //TODO: handle dim change
+        dimId = world.provider.dimensionId;
 	}
 	
 	public void setDimensionId(int world) {
-		int newId = world;
-		if(dimId != -1) {
-			//TODO: handle dim change
-		}
-		dimId = newId;
+        //TODO: handle dim change
+        dimId = world;
 	}
 	
 	/**

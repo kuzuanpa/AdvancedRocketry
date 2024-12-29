@@ -18,10 +18,8 @@ import zmaster587.advancedRocketry.api.IRocketEngine;
 import zmaster587.advancedRocketry.api.fuel.FuelRegistry.FuelType;
 import zmaster587.advancedRocketry.block.BlockRocketMotor;
 import zmaster587.advancedRocketry.block.BlockSeat;
-import zmaster587.advancedRocketry.entity.EntityRocket;
 import zmaster587.advancedRocketry.entity.EntityStationDeployedRocket;
 import zmaster587.advancedRocketry.tile.TileRocketBuilder.ErrorCodes;
-import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
 import zmaster587.advancedRocketry.util.StorageChunk;
 import zmaster587.libVulpes.block.RotatableBlock;
 import zmaster587.libVulpes.interfaces.INetworkEntity;
@@ -45,52 +43,49 @@ public class TileStationDeployedAssembler extends TileRocketBuilder {
 	public AxisAlignedBB getRocketPadBounds(World world,int x, int y, int z) {
 		ForgeDirection direction = RotatableBlock.getFront(world.getBlockMetadata(x, y, z)).getOpposite();
 		int xMin, zMin, xMax, zMax, yMax, yMin;
-		int yCurrent = y;
-		int xCurrent = x;
-		int zCurrent = z;
-		xMax = xMin = xCurrent;
-		zMax = zMin = zCurrent;
+        xMax = xMin = x;
+		zMax = zMin = z;
 		int xSize, zSize;
 
 		yMax = ZUtils.getContinuousBlockLength(world, ForgeDirection.UP, this.xCoord, this.yCoord + 1, this.zCoord, MAX_SIZE_Y, AdvancedRocketryBlocks.blockStructureTower);
 
 		//Get min and maximum Z/X bounds
 		if(direction.offsetX != 0) {
-			xSize = ZUtils.getContinuousBlockLength(world, direction, xCurrent, yCurrent + yMax, zCurrent, MAX_SIZE, AdvancedRocketryBlocks.blockStructureTower);
-			zMin = ZUtils.getContinuousBlockLength(world, ForgeDirection.NORTH, xCurrent, yCurrent, zCurrent-1, MAX_SIZE, AdvancedRocketryBlocks.blockStructureTower) + 1;
-			zMax = ZUtils.getContinuousBlockLength(world, ForgeDirection.SOUTH, xCurrent, yCurrent, zCurrent+1, MAX_SIZE - zMin, AdvancedRocketryBlocks.blockStructureTower);
+			xSize = ZUtils.getContinuousBlockLength(world, direction, x, y + yMax, z, MAX_SIZE, AdvancedRocketryBlocks.blockStructureTower);
+			zMin = ZUtils.getContinuousBlockLength(world, ForgeDirection.NORTH, x, y, z -1, MAX_SIZE, AdvancedRocketryBlocks.blockStructureTower) + 1;
+			zMax = ZUtils.getContinuousBlockLength(world, ForgeDirection.SOUTH, x, y, z +1, MAX_SIZE - zMin, AdvancedRocketryBlocks.blockStructureTower);
 			zSize = zMin + zMax;
 
-			zMin = zCurrent - zMin +1;
-			zMax = zCurrent + zMax;
+			zMin = z - zMin +1;
+			zMax = z + zMax;
 
 			if(direction.offsetX > 0) {
-				xMax = xCurrent + xSize - 1;
+				xMax = x + xSize - 1;
 				xMin++;
 			}
 
 			if(direction.offsetX < 0) {
-				xMin = xCurrent - xSize+1;
+				xMin = x - xSize+1;
 				xMax--;
 			}
 		}
 		else {
-			zSize = ZUtils.getContinuousBlockLength(world, direction, xCurrent, yCurrent + yMax, zCurrent, MAX_SIZE, AdvancedRocketryBlocks.blockStructureTower);
-			xMin = ZUtils.getContinuousBlockLength(world, ForgeDirection.WEST, xCurrent - 1, yCurrent, zCurrent, MAX_SIZE, AdvancedRocketryBlocks.blockStructureTower) + 1;
-			xMax = ZUtils.getContinuousBlockLength(world, ForgeDirection.EAST, xCurrent + 1, yCurrent, zCurrent, MAX_SIZE - xMin, AdvancedRocketryBlocks.blockStructureTower);
+			zSize = ZUtils.getContinuousBlockLength(world, direction, x, y + yMax, z, MAX_SIZE, AdvancedRocketryBlocks.blockStructureTower);
+			xMin = ZUtils.getContinuousBlockLength(world, ForgeDirection.WEST, x - 1, y, z, MAX_SIZE, AdvancedRocketryBlocks.blockStructureTower) + 1;
+			xMax = ZUtils.getContinuousBlockLength(world, ForgeDirection.EAST, x + 1, y, z, MAX_SIZE - xMin, AdvancedRocketryBlocks.blockStructureTower);
 			xSize = xMin + xMax;
 
-			xMin = xCurrent - xMin +1;
-			xMax = xCurrent + xMax;
+			xMin = x - xMin +1;
+			xMax = x + xMax;
 
 
 			if(direction.offsetZ > 0) {
-				zMax = zCurrent + zSize - 1;
+				zMax = z + zSize - 1;
 				zMin++;
 			}
 
 			if(direction.offsetZ < 0) {
-				zMin = zCurrent - zSize+1;
+				zMin = z - zSize+1;
 				zMax --;
 			}
 		}
@@ -100,7 +95,7 @@ public class TileStationDeployedAssembler extends TileRocketBuilder {
 			return null;
 		}
 
-		return AxisAlignedBB.getBoundingBox(xMin, yCurrent, zMin, xMax, yCurrent + yMax - 1, zMax);
+		return AxisAlignedBB.getBoundingBox(xMin, y, zMin, xMax, y + yMax - 1, zMax);
 	}
 
 	public void assembleRocket() {
@@ -146,7 +141,7 @@ public class TileStationDeployedAssembler extends TileRocketBuilder {
 		NBTTagCompound nbtdata = new NBTTagCompound();
 
 		rocket.writeToNBT(nbtdata);
-		PacketHandler.sendToNearby(new PacketEntity((INetworkEntity)rocket, (byte)0, nbtdata), rocket.worldObj.provider.dimensionId, xCoord, yCoord, zCoord, 64);
+		PacketHandler.sendToNearby(new PacketEntity(rocket, (byte)0, nbtdata), rocket.worldObj.provider.dimensionId, xCoord, yCoord, zCoord, 64);
 
 		stats.reset();
 		this.status = ErrorCodes.UNSCANNED;
@@ -229,9 +224,9 @@ public class TileStationDeployedAssembler extends TileRocketBuilder {
 							if(block instanceof BlockSeat) {
 
 								if(stats.hasSeat()) 
-									stats.addPassengerSeat((int)(xCurr - actualMinX - ((actualMaxX - actualMinX)/2f)) , (int)(yCurr  -actualMinY), (int)(zCurr - actualMinZ - ((actualMaxZ - actualMinZ)/2f)));
+									stats.addPassengerSeat((int)(xCurr - actualMinX - ((actualMaxX - actualMinX)/2f)) , yCurr  -actualMinY, (int)(zCurr - actualMinZ - ((actualMaxZ - actualMinZ)/2f)));
 								else
-									stats.setSeatLocation((int)(xCurr - actualMinX - ((actualMaxX - actualMinX)/2f)) , (int)(yCurr  -actualMinY), (int)(zCurr - actualMinZ - ((actualMaxZ - actualMinZ)/2f)));
+									stats.setSeatLocation((int)(xCurr - actualMinX - ((actualMaxX - actualMinX)/2f)) , yCurr  -actualMinY, (int)(zCurr - actualMinZ - ((actualMaxZ - actualMinZ)/2f)));
 							}
 
 							if(block instanceof IMiningDrill) {
@@ -243,12 +238,8 @@ public class TileStationDeployedAssembler extends TileRocketBuilder {
 							}
 
 							TileEntity tile= world.getTileEntity(xCurr, yCurr, zCurr);
-							if(tile instanceof TileSatelliteHatch)
-								hasSatellite = true;
-							if(tile instanceof TileGuidanceComputer)
-								hasGuidance = true;
-							
-							if(tile instanceof IFluidHandler) {
+
+                            if(tile instanceof IFluidHandler) {
 								for(FluidTankInfo info : ((IFluidHandler)tile).getTankInfo(ForgeDirection.UNKNOWN))
 									fluidCapacity += info.capacity;
 							}
@@ -268,7 +259,7 @@ public class TileStationDeployedAssembler extends TileRocketBuilder {
 			//if(!stats.hasSeat() && !hasSatellite) 
 			//status = ErrorCodes.NOSEAT;
 			/*else*/
-			if(getFuel() < getNeededFuel()*(1 + fluidCapacity/1000)) 
+			if(getFuel() < getNeededFuel()*(1 + (float) fluidCapacity /1000))
 				status = ErrorCodes.NOFUEL;
 			else if(getThrust() < getNeededThrust()) 
 				status = ErrorCodes.NOENGINES;
@@ -284,7 +275,7 @@ public class TileStationDeployedAssembler extends TileRocketBuilder {
 
 	//No additional scanning is needed
 	@Override
-	protected boolean verifyScan(AxisAlignedBB bb, World world) {
+	protected boolean verifyScan(@NotNull AxisAlignedBB bb, World world) {
 		return true;
 	}
 

@@ -67,7 +67,7 @@ public class TileWarpCore extends TileMultiBlock {
 		for(IInventory inv : itemInPorts) {
 			for(int i = 0; i < inv.getSizeInventory(); i++) {
 				ItemStack stack = inv.getStackInSlot(i);
-				int amt = 0;
+				int amt;
 				if(stack != null && Arrays.stream(OreDictionary.getOreIDs(stack)).anyMatch(id -> id == OreDictionary.getOreID("gemDilithium"))) {
 					int stackSize = stack.stackSize;
 					if(!worldObj.isRemote)

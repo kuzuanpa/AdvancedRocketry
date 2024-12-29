@@ -29,6 +29,7 @@ import static gregapi.block.multitileentity.MultiTileEntityRegistry.getRegistry;
 import static gregapi.data.CS.OPOS;
 import static org.lwjgl.opengl.GL11.*;
 
+
 public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 
 	private static final RenderBlocks renderBlocks = RenderBlocks.getInstance();
@@ -44,7 +45,7 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 
 			if (tileGhost.getReplacedTileEntity() != null && !(tileGhost.getReplacedTileEntity() instanceof TileMultiBlock) && TileEntityRendererDispatcher.instance.hasSpecialRenderer(tileGhost.getReplacedTileEntity())) {
 				GL11.glEnable(GL11.GL_BLEND);
-				glBlendFunc(GL11.GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA);
+				GL11.glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA);
 				GL11.glColor4f(1f, 1f, 1f, 0.7f);
 				TileEntityRendererDispatcher.instance.renderTileEntityAt(tileGhost.getReplacedTileEntity(), x, y, z, t);
 				GL11.glDisable(GL11.GL_BLEND);
@@ -83,10 +84,6 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 				renderBlocks.blockAccess = tileGhost.getWorldObj();
 				renderBlocks.renderAllFaces = true;
 
-
-				GL11.glEnable(GL11.GL_BLEND);
-				net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
-				GL11.glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA);
 				Tessellator.instance.startDrawingQuads();
 
 				if (block.getRenderType() == 0) {
@@ -94,11 +91,13 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 					renderBlocks.setRenderBoundsFromBlock(block);
 					RenderHelper.renderStandardBlockWithColorMultiplierAndBrightness(block, 0, 0, 0, 1, 1, 1, 0.2f, (ti.getWorldObj().getLightBrightnessForSkyBlocks(ti.xCoord, ti.yCoord, ti.zCoord, 0) / 2) + 4);
 				} else {
-					net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
+					Minecraft.getMinecraft().entityRenderer.disableLightmap(1);
+					GL11.glTranslatef(0.5F,0.5F,0.5F);
+					GL11.glScalef(0.6f,0.6f,0.6f);
+					GL11.glTranslatef(-0.5F,-0.5F,-0.5F);
 					renderBlocks.renderBlockByRenderType(block, 0, 0, 0);
 				}
 				Tessellator.instance.draw();
-				GL11.glDisable(GL11.GL_BLEND);
 				GL11.glPopMatrix();
 			}
 
@@ -128,8 +127,10 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 						ItemStack stack = ti.getWorldObj().getBlock(ti.xCoord, ti.yCoord, ti.zCoord).getPickBlock(movingObjPos, Minecraft.getMinecraft().theWorld, movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ, Minecraft.getMinecraft().thePlayer);
 						if (stack != null) displayName = stack.getDisplayName();
 					}
+					GL11.glDisable(GL_DEPTH_TEST);
 					if (displayName != null && !displayName.isEmpty())
-						RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), displayName, x, y, z, 10);
+						RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), displayName, x, y, z, 8);
+					GL11.glEnable(GL_DEPTH_TEST);
 				}
 				if (tileGhost instanceof TileSchematic && block instanceof MultiTileEntityBlock && ((TileSchematic) tileGhost).getReplacedGTTile() != null)
 					((MultiTileEntityBlock) block).overrideTileEntity = null;

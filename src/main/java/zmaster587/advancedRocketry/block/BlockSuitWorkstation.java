@@ -1,7 +1,6 @@
 package zmaster587.advancedRocketry.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -45,11 +44,11 @@ public class BlockSuitWorkstation extends BlockTile {
 					}
 
 					itemstack.stackSize -= j1;
-					entityitem = new EntityItem(world, (double)(x + f), (double)(y + f1), (double)(z + f2), new ItemStack(itemstack.getItem(), j1, itemstack.getItemDamage()));
+					entityitem = new EntityItem(world, x + f, y + f1, z + f2, new ItemStack(itemstack.getItem(), j1, itemstack.getItemDamage()));
 					float f3 = 0.05F;
-					entityitem.motionX = (double)((float)world.rand.nextGaussian() * f3);
-					entityitem.motionY = (double)((float)world.rand.nextGaussian() * f3 + 0.2F);
-					entityitem.motionZ = (double)((float)world.rand.nextGaussian() * f3);
+					entityitem.motionX = (float)world.rand.nextGaussian() * f3;
+					entityitem.motionY = (float)world.rand.nextGaussian() * f3 + 0.2F;
+					entityitem.motionZ = (float)world.rand.nextGaussian() * f3;
 
 					if (itemstack.hasTagCompound())
 					{

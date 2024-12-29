@@ -1,13 +1,10 @@
 package zmaster587.advancedRocketry.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import org.jetbrains.annotations.NotNull;
-import zmaster587.libVulpes.block.BlockMeta;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,9 +19,9 @@ public class AsteroidSmall {
 	public float richnessVariability;		//variability of richness
 	public float probability;				//probability of the asteroid spawning
 	public float timeMultiplier;
-	public List<Float> stackProbabilites;	//
-	public List<ItemStack> itemStacks;
-	public static Random rand = new Random();
+	public final List<Float> stackProbabilites;	//
+	public final List<ItemStack> itemStacks;
+	public static final Random rand = new Random();
 	private static final int precision = 1000;
 	
 	
@@ -85,8 +82,8 @@ public class AsteroidSmall {
 			
 			for(Float prob : stackProbabilites) {
 				if(probability <= currentLocation + prob/normFactor && currentLocation <= probability) {
-					item = itemStacks.get(counter).getItem();
-					break;
+                    itemStacks.get(counter).getItem();
+                    break;
 				}
 				
 				counter++;

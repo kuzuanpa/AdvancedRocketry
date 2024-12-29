@@ -18,12 +18,13 @@ import zmaster587.libVulpes.block.RotatableBlock;
 import zmaster587.libVulpes.tile.multiblock.TileMultiblockMachine;
 
 public class RendererRollingMachine extends TileEntitySpecialRenderer {
-	IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/rollingMachine.obj"));
+	final IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/rollingMachine.obj"));
 
 	@NotNull
+    final
     ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/models/rollingMachine.png");
-	ResourceLocation coilSide = new ResourceLocation("libvulpes:textures/blocks/coilSide.png");
-	static int i = MaterialRegistry.getMaterialFromName("Copper").getColor();
+	final ResourceLocation coilSide = new ResourceLocation("libvulpes:textures/blocks/coilSide.png");
+	static final int i = MaterialRegistry.getMaterialFromName("Copper").getColor();
 	private static int bodyList;
 
 	public RendererRollingMachine() {

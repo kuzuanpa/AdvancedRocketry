@@ -10,7 +10,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 public class BiomeGenCrystal extends BiomeGenBase  {
 	
-	WorldGenerator crystalGenerator;
+	final WorldGenerator crystalGenerator;
 	
 	public BiomeGenCrystal(int biomeId, boolean register) {
 		super(biomeId, register);
@@ -38,10 +38,8 @@ public class BiomeGenCrystal extends BiomeGenBase  {
 		super.decorate(world, rand, x, z);
 		
 		if(rand.nextInt(100) == 0) {
-			int xCoord = x;
-			int zCoord = z;
-			
-			crystalGenerator.generate(world, rand, xCoord, world.getTopSolidOrLiquidBlock(xCoord, zCoord), zCoord);
+
+            crystalGenerator.generate(world, rand, x, world.getTopSolidOrLiquidBlock(x, z), z);
 		}
 	}
 }

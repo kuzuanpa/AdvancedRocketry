@@ -1,8 +1,5 @@
 package zmaster587.advancedRocketry.inventory.modules;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -15,7 +12,7 @@ import zmaster587.libVulpes.inventory.modules.ModuleBase;
 public class ModulePanetImage extends ModuleBase {
 
 	DimensionProperties properties;
-	float width;
+	final float width;
 
 	public ModulePanetImage(int locX, int locY, float size, DimensionProperties icon) {
 		super(locX, locY);
@@ -32,7 +29,7 @@ public class ModulePanetImage extends ModuleBase {
 		//GL11.glTranslatef(xPosition, 100 + this.zLevel, yPosition);
 		float newWidth = width/2f;
 
-		RenderPlanetarySky.renderPlanetPubHelper(Tessellator.instance, properties.getPlanetIcon(), (int)(x + this.offsetX + newWidth), (int)(y + this.offsetY + newWidth), (double)-0.1, newWidth, 1f, properties.getSolarTheta(), properties.hasAtmosphere(), properties.skyColor, properties.ringColor, properties.isGasGiant(), properties.hasRings());
+		RenderPlanetarySky.renderPlanetPubHelper(Tessellator.instance, properties.getPlanetIcon(), (int)(x + this.offsetX + newWidth), (int)(y + this.offsetY + newWidth), -0.1, newWidth, 1f, properties.getSolarTheta(), properties.hasAtmosphere(), properties.skyColor, properties.ringColor, properties.isGasGiant(), properties.hasRings());
 		GL11.glPopMatrix();
 	}
 	

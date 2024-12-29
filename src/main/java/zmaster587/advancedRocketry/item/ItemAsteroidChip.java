@@ -2,8 +2,6 @@ package zmaster587.advancedRocketry.item;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.libVulpes.LibVulpes;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
