@@ -8,9 +8,6 @@
 /resourcepacks
 /saves
 screenshots
-/gradle
-/asm
-/blueprints
 *.xcf
 /libs
 /models

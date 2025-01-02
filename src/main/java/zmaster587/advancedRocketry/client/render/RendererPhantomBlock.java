@@ -127,10 +127,8 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 						ItemStack stack = ti.getWorldObj().getBlock(ti.xCoord, ti.yCoord, ti.zCoord).getPickBlock(movingObjPos, Minecraft.getMinecraft().theWorld, movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ, Minecraft.getMinecraft().thePlayer);
 						if (stack != null) displayName = stack.getDisplayName();
 					}
-					GL11.glDisable(GL_DEPTH_TEST);
 					if (displayName != null && !displayName.isEmpty())
-						RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), displayName, x, y, z, 8);
-					GL11.glEnable(GL_DEPTH_TEST);
+						RenderHelper.renderTag(Minecraft.getMinecraft().thePlayer.getDistanceSq(movingObjPos.blockX, movingObjPos.blockY, movingObjPos.blockZ), displayName, x+0.5, y+0.8, z+0.5, 8);
 				}
 				if (tileGhost instanceof TileSchematic && block instanceof MultiTileEntityBlock && ((TileSchematic) tileGhost).getReplacedGTTile() != null)
 					((MultiTileEntityBlock) block).overrideTileEntity = null;
