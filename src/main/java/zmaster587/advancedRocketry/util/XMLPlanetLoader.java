@@ -293,7 +293,7 @@ public class XMLPlanetLoader {
 				try {
 					properties.orbitalPhi = (Integer.parseInt(planetPropertyNode.getTextContent()) % 360);
 				} catch (NumberFormatException e) {
-					AdvancedRocketry.logger.warn("Invalid orbitalTheta specified"); //TODO: more detailed error msg
+					AdvancedRocketry.logger.warn("Invalid orbitalPhi specified"); //TODO: more detailed error msg
 				}
 			}
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("oreGen")) {
@@ -701,7 +701,7 @@ public class XMLPlanetLoader {
 		}
 
 		for(ItemStack stack : properties.getRequiredArtifacts()) {
-			outputString.append(tabLen).append("\t<artifact>").append(Item.itemRegistry.getNameForObject(stack.getItem())).append(" ").append(stack.getItemDamage()).append(" ").append(stack.stackSize).append("</artifact>\n");
+			outputString.append(tabLen).append("\t<artifact>").append(Item.itemRegistry.getNameForObject(stack.getItem())).append(";").append(stack.getItemDamage()).append(";").append(stack.stackSize).append("</artifact>\n");
 		}
 		
 		for(Integer properties2 : properties.getChildPlanets()) {
@@ -730,10 +730,10 @@ public class XMLPlanetLoader {
 
 	
 	public static ItemStack getStack(@NotNull String text) {
-		String[] splitStr = text.split(" ");
+		String[] splitStr = text.split(";");
 		int meta = 0;
 		int size = 1;
-		//format: "name meta size"
+		//format: "name;meta;size"
 		if(splitStr.length > 1) {
 			try {
 				meta = Integer.parseInt(splitStr[1]);
