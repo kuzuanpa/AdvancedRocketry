@@ -812,6 +812,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 		int i1= f10>180?90: (int) (f10 / 2);
 		if(sun!=null&&sun.dysonSphere!=null)sun.dysonSphere.drawFrontLayer(0,100, i1,0,90,i1/500F,0.4F,(System.currentTimeMillis() % 36000) / 100F);
 		if(sun!=null&&sun.dysonSphere!=null)sun.dysonSphere.drawBehindLayer(0,100, i1,0,90,i1/500F,0.4F,(System.currentTimeMillis() % 36000) / 100F);
+		if(sun!=null&&sun.dysonCloud!=null)sun.dysonCloud.draw(0,100, i1,0,90,i1/500F,0.4F,(System.currentTimeMillis() % 36000) / 100F);
 
 		mc.renderEngine.bindTexture(TextureResources.locationSunNew);
 		//Set sun color and distance

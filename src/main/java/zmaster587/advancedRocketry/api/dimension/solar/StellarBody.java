@@ -6,6 +6,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
+import zmaster587.advancedRocketry.api.stations.DysonCloud;
 import zmaster587.advancedRocketry.api.stations.DysonSphere;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
@@ -27,6 +28,7 @@ public class StellarBody {
 	float starSeperation;
 
 	public DysonSphere dysonSphere;
+	public DysonCloud dysonCloud = new DysonCloud();
 
 	public StellarBody() {
 		planets = new HashMap<>();
@@ -221,7 +223,8 @@ public class StellarBody {
 		nbt.setFloat("size", size);
 		nbt.setFloat("seperation", starSeperation);
 		try{if(this.dysonSphere!=null)nbt.setTag("dysonSphere", this.dysonSphere.writeToNBT());}catch (Exception e){e.printStackTrace();}
-		
+		try{if(this.dysonCloud!=null)nbt.setTag("dysonCloud", this.dysonCloud.writeToNBT());}catch (Exception e){e.printStackTrace();}
+
 		NBTTagList list = new NBTTagList();
 		
 		for(StellarBody body : subStars) {
@@ -241,6 +244,7 @@ public class StellarBody {
 		posX = nbt.getShort("posX");
 		posZ = nbt.getShort("posZ");
 		try{if(nbt.hasKey("dysonSphere"))dysonSphere=new DysonSphere().readFromNBT(nbt.getCompoundTag("dysonSphere"));}catch (Exception e){e.printStackTrace();}
+		try{if(nbt.hasKey("dysonCloud"))dysonCloud=new DysonCloud().readFromNBT(nbt.getCompoundTag("dysonCloud"));}catch (Exception e){e.printStackTrace();}
 		if(nbt.hasKey("size"))
 			size = nbt.getFloat("size");
 		

@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
@@ -107,7 +108,7 @@ public class RendererPhantomBlock extends TileEntitySpecialRenderer {
 				if (Minecraft.getMinecraft().objectMouseOver != null && movingObjPos.blockX == ti.xCoord && movingObjPos.blockY == ti.yCoord && movingObjPos.blockZ == ti.zCoord) {
 					String displayName = "";
 					if (tileGhost instanceof TileSchematic && !((TileSchematic) tileGhost).getReplacedBlockOverrideName().isEmpty())
-						displayName = ((TileSchematic) tileGhost).getReplacedBlockOverrideName();
+						displayName = StatCollector.translateToLocal(((TileSchematic) tileGhost).getReplacedBlockOverrideName());
 					else if (tileGhost.getReplacedBlock() instanceof MultiTileEntityBlock && ((MultiTileEntityBlock) tileGhost.getReplacedBlock()).overrideTileEntity != null) {
 						TileEntity til = ((MultiTileEntityBlock) tileGhost.getReplacedBlock()).overrideTileEntity;
 						if (til instanceof TileEntityBase03MultiTileEntities && getRegistry(((TileEntityBase03MultiTileEntities) til).getMultiTileEntityRegistryID()) == null) {
