@@ -1,16 +1,21 @@
 package zmaster587.advancedRocketry.client.render.planet;
 
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.IRenderHandler;
+import net.minecraftforge.client.model.AdvancedModelLoader;
+import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -26,6 +31,10 @@ import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.libVulpes.util.Vector3F;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -33,6 +42,7 @@ import java.util.Random;
 public class RenderPlanetarySky extends IRenderHandler {
 
 	private static int bodyList;
+	private static int sunList;
 
 	final int starGLCallList;
 	final int glSkyList;
@@ -44,6 +54,11 @@ public class RenderPlanetarySky extends IRenderHandler {
 	//TODO: make usable on other planets
 	public RenderPlanetarySky() {
 		axis = new Vector3F<>(1f, 0f, 0f);
+
+		GL11.glNewList(sunList = GL11.glGenLists(1), GL11.GL_COMPILE);
+		sunModel.renderPart("Cube");
+		GL11.glEndList();
+		loadSunTexture();
 
 		this.starGLCallList = GLAllocation.generateDisplayLists(3);
 		GL11.glPushMatrix();
@@ -804,31 +819,91 @@ public class RenderPlanetarySky extends IRenderHandler {
 			GL11.glPopMatrix();
 		}
 	}
-
+	IModelCustom sunModel = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/star.obj"));
+	ResourceLocation sunTexture = new ResourceLocation("advancedrocketry:textures/env/sunLEO.png");
+	int sunTextureID = -1;
+	public void loadSunTexture(){
+		try (InputStream inputstream = Minecraft.getMinecraft().getResourceManager().getResource(sunTexture).getInputStream())
+		{
+			if (this.sunTextureID != -1) {
+				TextureUtil.deleteTexture(this.sunTextureID);
+				this.sunTextureID = -1;
+			}
+			BufferedImage bufferedimage = ImageIO.read(inputstream);
+			sunTextureID=TextureUtil.uploadTextureImage(sunTextureID, bufferedimage);
+		}catch (IOException ioexception)
+		{
+			FMLLog.log(Level.WARN,"Failed to load texture: " + sunTexture.toString());
+			ioexception.printStackTrace();
+		}
+	}
 	protected void drawStar(Tessellator buffer, @Nullable StellarBody sun, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3 sunColor, float multiplier) {
-		GL11.glDepthMask(true);
-
-		float f10 = sunSize*15f*AstronomicalBodyHelper.getBodySizeMultiplier(solarOrbitalDistance);
-		int i1= f10>180?90: (int) (f10 / 2);
-		if(sun!=null&&sun.dysonSphere!=null)sun.dysonSphere.drawFrontLayer(0,100, i1,0,90,i1/500F,0.4F,(System.currentTimeMillis() % 36000) / 100F);
-		if(sun!=null&&sun.dysonSphere!=null)sun.dysonSphere.drawBehindLayer(0,100, i1,0,90,i1/500F,0.4F,(System.currentTimeMillis() % 36000) / 100F);
-		if(sun!=null&&sun.dysonCloud!=null)sun.dysonCloud.draw(0,100, i1,0,90,i1/500F,0.4F,(System.currentTimeMillis() % 36000) / 100F);
-
-		mc.renderEngine.bindTexture(TextureResources.locationSunNew);
-		//Set sun color and distance
 		GL11.glPushMatrix();
-		GL11.glColor4f((float)sunColor.xCoord, (float)sunColor.yCoord , (float)sunColor.zCoord , (float) Math.min(0.9,multiplier));
-		buffer.startDrawingQuads();
-		//multiplier = 2;
-		buffer.addVertexWithUV(-f10, 100.0D, -f10, 0.0D, 0.0D);
-		buffer.addVertexWithUV(f10, 100.0D, -f10, 1.0D, 0.0D);
-		buffer.addVertexWithUV(f10, 100.0D, f10, 1.0D, 1.0D);
-		buffer.addVertexWithUV(-f10, 100.0D, f10, 0.0D, 1.0D);
-		buffer.draw();
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDepthMask(true);
+		float f10 = sunSize*15f*AstronomicalBodyHelper.getBodySizeMultiplier(solarOrbitalDistance);
+		int i1=  (int) (f10 * 0.4F);
+		GL11.glColor4f((float) Math.min(1.0F, sunColor.xCoord*1.5F), (float)Math.min(1.0F, sunColor.yCoord*1.5F) , (float)Math.min(1.0F, sunColor.zCoord*1.5F) , (float) Math.min(0.9,multiplier));
+        if(sun!=null&&sun.dysonSphere!=null)sun.dysonSphere.draw(0,100, i1,0,90,i1/500F,0.8F,(System.currentTimeMillis() % 36000) / 100F / (sun.dysonSphere.size+1));
+
+		//Set sun color
+		GL11.glColor4f((float)sunColor.xCoord, (float)sunColor.yCoord , (float)sunColor.zCoord , 1.0F);
+
+		boolean enable3DSun = true;
+		GL11.glPushMatrix();
+		if(enable3DSun) {
+			mc.getTextureManager().bindTexture(new ResourceLocation("advancedrocketry:textures/env/starLight.png"));
+			buffer.startDrawingQuads();
+			//multiplier = 2;
+			buffer.addVertexWithUV(-f10 * 0.5F, 100.0D, -f10 * 0.5F, 0.0D, 0.0D);
+			buffer.addVertexWithUV(f10 * 0.5F, 100.0D, -f10 * 0.5F, 1.0D, 0.0D);
+			buffer.addVertexWithUV(f10 * 0.5F, 100.0D, f10 * 0.5F, 1.0D, 1.0D);
+			buffer.addVertexWithUV(-f10 * 0.5F, 100.0D, f10 * 0.5F, 0.0D, 1.0D);
+			buffer.draw();
+			GL11.glPopMatrix();
+
+
+			GL11.glPushMatrix();
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, sunTextureID);
+			GL11.glTranslatef(0, 100, 0);
+			GL11.glRotated(90, 0, 0, 1);
+
+			GL11.glRotated(-(System.currentTimeMillis() % 360000) / 1000F, 0, 1, 0);
+			GL11.glScalef(f10 * 0.3F, f10 * 0.3F, f10 * 0.3F);
+			GL11.glCallList(sunList);
+		}
+		else {
+			mc.renderEngine.bindTexture(TextureResources.locationSunNew);
+			//Set sun color and distance
+			GL11.glColor4f((float)sunColor.xCoord, (float)sunColor.yCoord , (float)sunColor.zCoord , (float) Math.min(0.9,multiplier));
+			buffer.startDrawingQuads();
+			//multiplier = 2;
+			buffer.addVertexWithUV(-f10, 100.0D, -f10, 0.0D, 0.0D);
+			buffer.addVertexWithUV(f10, 100.0D, -f10, 1.0D, 0.0D);
+			buffer.addVertexWithUV(f10, 100.0D, f10, 1.0D, 1.0D);
+			buffer.addVertexWithUV(-f10, 100.0D, f10, 0.0D, 1.0D);
+			buffer.draw();
+		}
+		GL11.glPopMatrix();
+
+		GL11.glColor4f((float) Math.min(1.0F, sunColor.xCoord*1.5F), (float)Math.min(1.0F, sunColor.yCoord*1.5F) , (float)Math.min(1.0F, sunColor.zCoord*1.5F) , (float) Math.min(0.9,multiplier));
+
+		if(sun!=null&&sun.dysonCloud!=null)sun.dysonCloud.draw(0,100, i1,0,90,i1/500F,0.5F,(System.currentTimeMillis() % 36000) / 100F);
+
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glDepthMask(false);
 
 		GL11.glPopMatrix();
 
+	}
+	public static void drawTextureRect(Tessellator tessellator, int x, int y, int z, int u, int v, int width, int height){
+		final float f = 0.00390625F;
+		final float f1 = 0.00390625F;
+		tessellator.startDrawingQuads();
+		tessellator.addVertexWithUV(x, y + height, z, (u * f), (v + height) * f1);
+		tessellator.addVertexWithUV(x + width, y + height, z, (u + width) * f, (v + height) * f1);
+		tessellator.addVertexWithUV(x + width, y, z, (u + width) * f, v * f1);
+		tessellator.addVertexWithUV(x, y, z, (u * f), v * f1);
+		tessellator.draw();
 	}
 }
