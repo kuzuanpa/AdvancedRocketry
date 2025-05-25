@@ -354,25 +354,19 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	protected boolean interact(EntityPlayer player) {
 		//Actual interact code needs to be moved to a packet receive on the server
 
-		if(!worldObj.isRemote) return false;
-
 		ItemStack heldItem = player.getHeldItem();
 
-		if(heldItem != null && (heldItem.getItem() instanceof ItemLinker)){
-			String err = onLinkerUsed(heldItem, player);
-			if(err != null) player.addChatMessage(new ChatComponentText(I18n.format(err)));
-			return true;
-		}
+		//Handle linkers and right-click with fuel
+		if(heldItem == null){
+			if(player.isSneaking()) {
+				openGui(player);
+				return true;
+			}
 
-		//If player is holding shift open GUI
-		if(player.isSneaking()) {
-			openGui(player);
-			return true;
-		}
-
-		if(stats.hasSeat()) { //If pilot seat is open mount entity there
-			if(stats.hasSeat() && this.riddenByEntity == null) {
-				player.mountEntity(this);
+			//If pilot seat is open mount entity there
+			if (stats.hasSeat() && this.riddenByEntity == null) {
+				if (!worldObj.isRemote) player.mountEntity(this);
+				return true;
 			}
 			/*else if(stats.getNumPassengerSeats() > 0) { //If a passenger seat exists and one is empty, mount the player to it
 				for(int i = 0; i < stats.getNumPassengerSeats(); i++) {
@@ -383,7 +377,28 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 					}
 				}
 			}*/
+			return false;
 		}
+		if(heldItem.getItem() instanceof ItemLinker) {
+			if (!ItemLinker.isSet(heldItem)) return sendMessage(player, "Nothing to be linked");
+			TileEntity tile = this.worldObj.getTileEntity(ItemLinker.getMasterX(heldItem), ItemLinker.getMasterY(heldItem), ItemLinker.getMasterZ(heldItem));
+			if (!(tile instanceof IInfrastructure)) return sendMessage(player,"This cannot be linked to a rocket!");
+
+			IInfrastructure infrastructure = (IInfrastructure) tile;
+
+			if (this.getDistance(ItemLinker.getMasterX(heldItem), this.posY, ItemLinker.getMasterZ(heldItem)) >= infrastructure.getMaxLinkDistance() + Math.max(storage.getSizeX(), storage.getSizeZ())) return sendMessage(player, "The object you are trying to link is too far away");
+			if (connectedInfrastructure.contains(tile)) return sendMessage(player, "Already linked!");
+			linkInfrastructure(infrastructure);
+
+			if (!worldObj.isRemote) player.addChatMessage(new ChatComponentText("Linked Sucessfully"));
+
+			ItemLinker.resetPosition(heldItem);
+			return true;
+		}
+		return true;
+	}
+	public boolean sendMessage(EntityPlayer player, String string) {
+		if (!worldObj.isRemote) player.addChatMessage(new ChatComponentText(string));
 		return true;
 	}
 
