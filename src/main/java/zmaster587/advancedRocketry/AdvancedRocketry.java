@@ -209,7 +209,8 @@ public class AdvancedRocketry {
 
 		AtmosphereVacuum.damageValue = config.get(Configuration.CATEGORY_GENERAL, "vacuumDamage", 1, "Amount of damage taken every second in a vacuum").getInt();
 		zmaster587.advancedRocketry.api.Configuration.buildSpeedMultiplier = (float) config.get(Configuration.CATEGORY_GENERAL, "buildSpeedMultiplier", 1f, "Multiplier for the build speed of the Rocket Builder (0.5 is twice as fast 2 is half as fast").getDouble();
-		zmaster587.advancedRocketry.api.Configuration.spaceDimId = config.get(Configuration.CATEGORY_GENERAL,"spaceStationId" , -2,"Dimension ID to use for space stations").getInt();
+		zmaster587.advancedRocketry.api.Configuration.stationDimId = config.get(Configuration.CATEGORY_GENERAL,"spaceStationId" , -2,"Dimension ID to use for space stations").getInt();
+		zmaster587.advancedRocketry.api.Configuration.spaceDimId = config.get(Configuration.CATEGORY_GENERAL,"spaceSpaceId" , -3,"Dimension ID to use for space").getInt();
 		zmaster587.advancedRocketry.api.Configuration.enableNausea = config.get(Configuration.CATEGORY_GENERAL, "EnableAtmosphericNausea", true, "If true, allows players to experience nausea with low oxygen").getBoolean();
 		zmaster587.advancedRocketry.api.Configuration.enableOxygen = config.get(Configuration.CATEGORY_GENERAL, "EnableAtmosphericEffects", true, "If true, allows players being hurt due to lack of oxygen and allows effects from non-standard atmosphere types").getBoolean();
 		zmaster587.advancedRocketry.api.Configuration.allowMakingItemsForOtherMods = config.get(Configuration.CATEGORY_GENERAL, "makeMaterialsForOtherMods", true, "If true the machines from AdvancedRocketry will produce things like plates/rods for other mods even if Advanced Rocketry itself does not use the material (This can increase load time)").getBoolean();
@@ -371,7 +372,8 @@ public class AdvancedRocketry {
 
 		AdvancedRocketryBlocks.blockLaunchpad = new BlockLinkedHorizontalTexture(Material.rock).setBlockName("launchpad").setCreativeTab(tabAdvRocketry).setBlockTextureName("advancedrocketry:rocketPad").setHardness(2f).setResistance(10f);
 		AdvancedRocketryBlocks.blockStructureTower = new BlockAlphaTexture(Material.rock).setBlockName("structuretower").setCreativeTab(tabAdvRocketry).setBlockTextureName("advancedrocketry:structuretower").setHardness(2f);
-		AdvancedRocketryBlocks.blockGenericSeat = new BlockSeat(Material.cloth).setBlockName("seat").setCreativeTab(tabAdvRocketry).setBlockTextureName("minecraft:wool_colored_silver").setHardness(0.5f);
+		AdvancedRocketryBlocks.blockGenericSeat = new BlockSeat(Material.cloth, TileModelRender.models.SEAT.ordinal()).setBlockName("seat").setCreativeTab(tabAdvRocketry).setBlockTextureName("advancedrocketry:clear").setHardness(0.5f);
+		AdvancedRocketryBlocks.blockGenericSeatUp = new BlockSeatUp(Material.cloth).setBlockName("seatUp").setBlockUnbreakable().setResistance(6000000.0F).setBlockTextureName("advancedrocketry:clear");
 		AdvancedRocketryBlocks.blockEngine = new BlockRocketMotor(Material.rock).setBlockName("rocket").setCreativeTab(tabAdvRocketry).setHardness(2f);
 		AdvancedRocketryBlocks.blockAdvEngine = new BlockAdvRocketMotor(Material.rock).setBlockName("advRocket").setCreativeTab(tabAdvRocketry).setHardness(2f);
 		AdvancedRocketryBlocks.blockEngineDivider = new BlockDividerRockerMotor(Material.rock).setBlockName("rocketDivider").setCreativeTab(tabAdvRocketry).setHardness(2f);
@@ -674,6 +676,7 @@ public class AdvancedRocketry {
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockRocketBuilder, "rocketBuilder");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockStructureTower, "structureTower");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockGenericSeat, "seat");
+		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockGenericSeatUp, "seatUp");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockEngine, "rocketmotor");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockEngineDivider, "rocketmotorDivider");
 		GameRegistry.registerBlock(AdvancedRocketryBlocks.blockAdvEngineDivider, "rocketmotorAdvDivider");
@@ -1368,9 +1371,11 @@ public class AdvancedRocketry {
 		}
 
 		//Register space dimension
+		net.minecraftforge.common.DimensionManager.registerProviderType(zmaster587.advancedRocketry.api.Configuration.stationDimId, WorldProviderSpace.class, true);
+		net.minecraftforge.common.DimensionManager.registerDimension(zmaster587.advancedRocketry.api.Configuration.stationDimId,zmaster587.advancedRocketry.api.Configuration.stationDimId);
+
 		net.minecraftforge.common.DimensionManager.registerProviderType(zmaster587.advancedRocketry.api.Configuration.spaceDimId, WorldProviderSpace.class, true);
 		net.minecraftforge.common.DimensionManager.registerDimension(zmaster587.advancedRocketry.api.Configuration.spaceDimId,zmaster587.advancedRocketry.api.Configuration.spaceDimId);
-
 		//Register fuels
 		logger.info("Start registering liquid rocket fuels");
 		for(String str : liquidRocketFuel) {
@@ -1807,6 +1812,7 @@ public class AdvancedRocketry {
 		DimensionManager.dimOffset = dimOffset;
 		
 		DimensionManager.getInstance().knownPlanets.addAll(zmaster587.advancedRocketry.api.Configuration.initiallyKnownPlanets);
+
 	}
 
 

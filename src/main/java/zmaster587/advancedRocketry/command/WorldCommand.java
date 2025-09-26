@@ -288,12 +288,12 @@ public class WorldCommand implements ICommand {
 								sender.addChatMessage(new ChatComponentText("Dimension does not exist"));
 						}
 						else if(string[1].equalsIgnoreCase("station")) {
-							dim = Configuration.spaceDimId;
+							dim = Configuration.stationDimId;
 							int stationId = Integer.parseInt(string[2]);
 							ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStation(stationId);
 
 							if(object != null) {
-								if(player.worldObj.provider.dimensionId != Configuration.spaceDimId)
+								if(player.worldObj.provider.dimensionId != Configuration.stationDimId)
 									MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player,  dim , new TeleporterNoPortal((WorldServer)player.worldObj));
 								BlockPosition vec = object.getSpawnLocation();
 								player.setPositionAndUpdate(vec.x, vec.y, vec.z);

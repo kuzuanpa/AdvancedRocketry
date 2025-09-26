@@ -7,7 +7,7 @@ import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
-import zmaster587.advancedRocketry.client.render.planet.RenderSpaceSky;
+import zmaster587.advancedRocketry.client.render.planet.RenderStationSpaceSky;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
@@ -45,11 +45,16 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	@SideOnly(Side.CLIENT)
 	public IRenderHandler getSkyRenderer() {
 		if(Configuration.stationSkyOverride)
-			return skyRender == null ? skyRender = new RenderSpaceSky() : skyRender;
+			return skyRender == null ? skyRender = new RenderStationSpaceSky() : skyRender;
 		
 		return super.getSkyRenderer();
 	}
-	
+
+	@Override
+	public float getSunBrightness(float partialTicks) {
+		return 1.0F;
+	}
+
 	@Override
 	public float getAtmosphereDensity(int x, int z) {
 		return 0;

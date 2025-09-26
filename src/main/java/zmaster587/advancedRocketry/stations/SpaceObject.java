@@ -185,7 +185,7 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	}
 
 	private long getWorldTime() {
-		return AdvancedRocketry.proxy.getWorldTimeUniversal(Configuration.spaceDimId);
+		return AdvancedRocketry.proxy.getWorldTimeUniversal(Configuration.stationDimId);
 	}
 
 
@@ -508,9 +508,9 @@ public class SpaceObject implements ISpaceObject, IPlanetDefiner {
 	@Override
 	public void onModuleUnpack(IStorageChunk chunk) {
 
-		if(DimensionManager.isDimensionRegistered(Configuration.spaceDimId) &&  DimensionManager.getWorld(Configuration.spaceDimId) == null)
-			DimensionManager.initDimension(Configuration.spaceDimId);
-		World worldObj = DimensionManager.getWorld(Configuration.spaceDimId);
+		if(DimensionManager.isDimensionRegistered(Configuration.stationDimId) &&  DimensionManager.getWorld(Configuration.stationDimId) == null)
+			DimensionManager.initDimension(Configuration.stationDimId);
+		World worldObj = DimensionManager.getWorld(Configuration.stationDimId);
 
 		//If this is the first module sent up
 		if(!created) {

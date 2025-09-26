@@ -193,7 +193,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 
 	@SubscribeEvent
 	public void onRocketDismantle(RocketDismantleEvent event) {
-		if(!worldObj.isRemote && worldObj.provider.dimensionId == Configuration.spaceDimId) {
+		if(!worldObj.isRemote && worldObj.provider.dimensionId == Configuration.stationDimId) {
 
 			EntityRocketBase rocket = (EntityRocketBase)event.entity;
 			AxisAlignedBB bbCache = AxisAlignedBB.getBoundingBox(this.xCoord - 1, this.yCoord, this.zCoord - 1, this.xCoord + 1, this.yCoord + 2, this.zCoord + 1);
@@ -210,7 +210,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	public void registerTileWithStation(World world, int x, int y, int z) {
-		if(!world.isRemote && world.provider.dimensionId == Configuration.spaceDimId) {
+		if(!world.isRemote && world.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 
 			if(spaceObj instanceof SpaceObject) {
@@ -226,7 +226,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	public void unregisterTileWithStation(World world, int x, int y, int z) {
-		if(!world.isRemote && world.provider.dimensionId == Configuration.spaceDimId) {
+		if(!world.isRemote && world.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 			if(spaceObj instanceof SpaceObject)
 				spaceObj.removeLandingPad(x, z);
@@ -234,7 +234,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 	}
 
 	public void setAllowAutoLand(World world, int x, int z, boolean allow) {
-		if(!world.isRemote && world.provider.dimensionId == Configuration.spaceDimId) {
+		if(!world.isRemote && world.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x,z);
 
 			if(spaceObj instanceof SpaceObject) {
@@ -347,7 +347,7 @@ public class TileLandingPad extends TileInventoryHatch implements ILinkableTile,
 			NBTTagCompound nbt) {
 		if(id == 0) {
 			name = nbt.getString("id");
-			if(!worldObj.isRemote && worldObj.provider.dimensionId == Configuration.spaceDimId) {
+			if(!worldObj.isRemote && worldObj.provider.dimensionId == Configuration.stationDimId) {
 				ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(xCoord, zCoord);
 
 				if(spaceObj instanceof SpaceObject) {

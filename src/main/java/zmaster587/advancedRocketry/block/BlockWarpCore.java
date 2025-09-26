@@ -26,7 +26,7 @@ public class BlockWarpCore extends BlockMultiblockMachine {
 		super.onBlockPlacedBy(world, x, y, z,
 				player, items);
 		
-		if(!world.isRemote && world.provider.dimensionId == Configuration.spaceDimId) {
+		if(!world.isRemote && world.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 		
 			if(spaceObj instanceof SpaceObject)
@@ -40,7 +40,7 @@ public class BlockWarpCore extends BlockMultiblockMachine {
 		super.onBlockPreDestroy(world, x, y, z,
 				oldMeta);
 		
-		if(world.provider.dimensionId == Configuration.spaceDimId) {
+		if(world.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 			if(spaceObj instanceof SpaceObject)
 				((SpaceObject)spaceObj).removeWarpCore(new BlockPosition(x,y,z));

@@ -125,7 +125,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 		//redrawSystem();
 
 		if(clickablePlanetList != null&&clickablePlanetList.isEnabled()) clickablePlanetList.onScroll(dwheel);
-		else zoomToGo = Math.max(zoomToGo + dwheel/4000.0, 0.36);
+		else zoomToGo = Math.max(zoomToGo + dwheel/1000.0, 0.36);
 
 	}
 
@@ -209,8 +209,8 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 			if(planetDefiner != null && !planetDefiner.isPlanetKnown(properties))
 				continue;
 
-			if(!properties.isMoon()&&!properties.isSun())
-				renderPlanets((DimensionProperties)properties, offsetX + displaySize/2, offsetY + displaySize/2, displaySize, distanceZoomMultiplier,planetSizeMultiplier);
+			if(!properties.isMoon()&&!properties.isSun()) renderPlanets((DimensionProperties)properties, offsetX + displaySize/2, offsetY + displaySize/2, displaySize, distanceZoomMultiplier,planetSizeMultiplier);
+
 		}
 
 		moduleList.addAll(planetList);
@@ -558,7 +558,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 					if(planetDefiner != null && !planetDefiner.isPlanetKnown(properties))
 						continue;
 
-					if(!properties.isMoon() &&!properties.isSun()&& properties.getId() != Configuration.spaceDimId) {
+					if(!properties.isMoon() &&!properties.isSun()&& properties.getId() != Configuration.stationDimId) {
 						ModuleButton button = new ModuleButton(0, i*18, properties.getId(), properties.getName(), this, zmaster587.advancedRocketry.inventory.TextureResources.buttonGeneric, 128, 18);
 						list2.add(button);
 

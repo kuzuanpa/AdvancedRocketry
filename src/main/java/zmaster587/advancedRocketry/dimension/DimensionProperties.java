@@ -50,9 +50,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class DimensionProperties implements Cloneable, IDimensionProperties {
-
-
-
 	/**
 	 * Contains standardized temperature ranges for planets
 	 * where 100 is earthlike, larger values are hotter
@@ -365,6 +362,11 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		return getStar().getColor();
 	}
 
+	@Override
+	public float[] getSkyColor() {
+		return skyColor;
+	}
+
 	/**
 	 * Sets the host star for the planet
 	 * @param star the star to set as the host for this planet
@@ -397,6 +399,11 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		
 	public boolean isGasGiant() {
 		return isGasGiant;
+	}
+
+	@Override
+	public boolean hasRing() {
+		return hasRings;
 	}
 
 	public boolean isSun(){
@@ -993,7 +1000,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 	/**
 	 * Adds a biome to the list of biomes allowed to spawn on this planet
-	 * @param biome biome to be added as viable
+	 * @param biomeId biome to be added as viable
 	 * @return true if the biome was added sucessfully, false otherwise
 	 */
 	public boolean addBiome(int biomeId) {
@@ -1509,11 +1516,19 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		return orbitTheta;
 	}
 
+	public double getOrbitPhi() {
+		return orbitalPhi;
+	}
+
 	@Override
 	public int getOrbitalDist() {
 		return orbitalDist;
 	}
-	
+
+	public float[] getRingColor() {
+		return ringColor;
+	}
+
 	public int getSeaLevel() {
 		return this.seaLevel;
 	}

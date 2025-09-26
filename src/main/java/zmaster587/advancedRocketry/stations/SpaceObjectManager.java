@@ -1,21 +1,5 @@
 package zmaster587.advancedRocketry.stations;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.advancedRocketry.api.AdvancedRocketryAPI;
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.api.ISpaceObjectManager;
-import zmaster587.advancedRocketry.api.stations.ISpaceObject;
-import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.network.PacketSpaceStationInfo;
-import zmaster587.advancedRocketry.network.PacketStationUpdate;
-import zmaster587.libVulpes.network.PacketHandler;
-import zmaster587.libVulpes.util.BlockPosition;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -26,6 +10,18 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
+import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.AdvancedRocketryAPI;
+import zmaster587.advancedRocketry.api.Configuration;
+import zmaster587.advancedRocketry.api.ISpaceObjectManager;
+import zmaster587.advancedRocketry.api.stations.ISpaceObject;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.network.PacketSpaceStationInfo;
+import zmaster587.advancedRocketry.network.PacketStationUpdate;
+import zmaster587.libVulpes.network.PacketHandler;
+import zmaster587.libVulpes.util.BlockPosition;
+
+import java.util.*;
 
 public class SpaceObjectManager implements ISpaceObjectManager {
 	private int nextId = 1;
@@ -242,7 +238,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 	 */
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event) {
-		if(event.player.worldObj.provider.dimensionId == Configuration.spaceDimId) {
+		if(event.player.worldObj.provider.dimensionId == Configuration.stationDimId) {
 
 			if(event.player.posY < 0 && !event.player.worldObj.isRemote) {
 				ISpaceObject object = getSpaceStationFromBlockCoords((int)event.player.posX, (int)event.player.posZ);
@@ -292,11 +288,9 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
+		if(DimensionManager.getWorld(Configuration.stationDimId) == null) return;
 		
-		if(DimensionManager.getWorld(Configuration.spaceDimId) == null)
-			return;
-		
-		long worldTime = DimensionManager.getWorld(Configuration.spaceDimId).getTotalWorldTime();
+		long worldTime = DimensionManager.getWorld(Configuration.stationDimId).getTotalWorldTime();
 		//Assuming server
 		//If no dim undergoing transition then nextTransitionTick = -1
 		if((nextStationTransitionTick != -1 && worldTime >= nextStationTransitionTick && spaceStationOrbitMap.get(WARPDIMID) != null) || (nextStationTransitionTick == -1 && spaceStationOrbitMap.get(WARPDIMID) != null && !spaceStationOrbitMap.get(WARPDIMID).isEmpty())) {
@@ -326,13 +320,13 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 	/*@SubscribeEvent
 	public void onPlayerTransition(PlayerEvent.PlayerChangedDimensionEvent event) {
 		
-		if(event.toDim == Configuration.spaceDimId && getSpaceStationFromBlockCoords((int)event.player.posX, (int)event.player.posZ) != null &&
+		if(event.toDim == Configuration.stationDimId && getSpaceStationFromBlockCoords((int)event.player.posX, (int)event.player.posZ) != null &&
 				temporaryDimensions.containsKey(getSpaceStationFromBlockCoords((int)event.player.posX, (int)event.player.posZ))) {
 			int stationId = getSpaceStationFromBlockCoords((int)event.player.posX, (int)event.player.posZ).getId();
 			
 			temporaryDimensionPlayerNumber.put(stationId, temporaryDimensionPlayerNumber.get(stationId)+1);
 		}
-		if(event.fromDim != Configuration.spaceDimId) 
+		if(event.fromDim != Configuration.stationDimId)
 			return;
 		
 		ISpaceObject spaceObj = getSpaceStationFromBlockCoords((int)event.player.posX, (int)event.player.posZ);
@@ -406,7 +400,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 
 
 		((DimensionProperties)station.getProperties()).setAtmosphereDensityDirect(0);
-		nextStationTransitionTick = (int)(Configuration.travelTimeMultiplier*timeDelta) + DimensionManager.getWorld(Configuration.spaceDimId).getTotalWorldTime();
+		nextStationTransitionTick = (int)(Configuration.travelTimeMultiplier*timeDelta) + DimensionManager.getWorld(Configuration.stationDimId).getTotalWorldTime();
 		station.beginTransition(nextStationTransitionTick);
 		
 	}
@@ -450,7 +444,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 				if(tag.hasKey("expireTime")) {
 					long expireTime = tag.getLong("expireTime");
 					int numPlayers = tag.getInteger("numPlayers");
-					if (DimensionManager.getWorld(Configuration.spaceDimId).getTotalWorldTime() >= expireTime && numPlayers == 0)
+					if (DimensionManager.getWorld(Configuration.stationDimId).getTotalWorldTime() >= expireTime && numPlayers == 0)
 						continue;
 					temporaryDimensions.put(object.getId(), expireTime);
 					temporaryDimensionPlayerNumber.put(object.getId(), numPlayers);

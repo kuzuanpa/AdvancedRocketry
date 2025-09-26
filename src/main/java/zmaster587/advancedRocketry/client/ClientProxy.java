@@ -104,7 +104,8 @@ import zmaster587.libVulpes.tile.TileSchematic;
 public class ClientProxy extends CommonProxy {
 
 	public static int transcieverRenderType;
-	
+	public static int seatRenderType;
+
 	@Override
 	public void registerRenderers() {
 		
@@ -142,6 +143,7 @@ public class ClientProxy extends CommonProxy {
 		RendererModelBlock blockRenderer = new RendererModelBlock();
 
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvancedRocketryBlocks.blockSawBlade), blockRenderer);
+		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvancedRocketryBlocks.blockGenericSeat), blockRenderer);
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvancedRocketryBlocks.blockAdvEngine), blockRenderer);
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvancedRocketryBlocks.blockEngine), blockRenderer);
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvancedRocketryBlocks.blockAdvEngineDivider), blockRenderer);
@@ -162,7 +164,7 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityUIStar.class, new RenderStarUIEntity());
 		RenderingRegistry.registerEntityRenderingHandler(EntityUIButton.class, new RenderButtonUIEntity());
 		RenderingRegistry.registerEntityRenderingHandler(EntityElevatorCapsule.class, new RenderElevatorCapsule());
-		
+
 		transcieverRenderType = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(transcieverRenderType, (ISimpleBlockRenderingHandler) AdvancedRocketryBlocks.blockTransciever);
 	}

@@ -220,7 +220,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		if(storage != null) {
 			int dimid = storage.getDestinationDimId(this.worldObj.provider.dimensionId, (int)posX, (int)posZ);
 
-			if(dimid == Configuration.spaceDimId) {
+			if(dimid == Configuration.stationDimId) {
 				Vector3F<Float> vec = storage.getDestinationCoordinates(dimid, false);
 				if(vec != null) {
 
@@ -575,7 +575,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		//If the rocket falls out of the world while in orbit either fall back to earth or die
 		int dimId = worldObj.provider.dimensionId;
 
-		if(dimId == Configuration.spaceDimId) {
+		if(dimId == Configuration.stationDimId) {
 
 			ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)this.posX, (int)this.posZ);
 
@@ -766,7 +766,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			setInOrbit(true);
 			//If going to a station or something make sure to set coords accordingly
 			//If in space land on the planet, if on the planet go to space
-			if((destinationDimId == Configuration.spaceDimId || this.worldObj.provider.dimensionId == Configuration.spaceDimId) && this.worldObj.provider.dimensionId != destinationDimId) {
+			if((destinationDimId == Configuration.stationDimId || this.worldObj.provider.dimensionId == Configuration.stationDimId) && this.worldObj.provider.dimensionId != destinationDimId) {
 				Vector3F<Float> pos = storage.getDestinationCoordinates(destinationDimId, true);
 				storage.setDestinationCoordinates(new Vector3F<>((float) this.posX, (float) this.posY, (float) this.posZ), this.worldObj.provider.dimensionId);
 				if(pos != null) {
@@ -903,7 +903,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		}
 
 		int finalDest = destinationDimId;
-		if(destinationDimId == Configuration.spaceDimId) {
+		if(destinationDimId == Configuration.stationDimId) {
 			ISpaceObject obj = null;
 			Vector3F<Float> vec = storage.getDestinationCoordinates(destinationDimId,false);
 			if(vec != null)
@@ -919,7 +919,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 		//If we're on a space station get the id of the planet, not the station
 		int thisDimId = this.worldObj.provider.dimensionId;
-		if(this.worldObj.provider.dimensionId == Configuration.spaceDimId) {
+		if(this.worldObj.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)this.posX, (int)this.posZ);
 			if(object != null)
 				thisDimId = object.getProperties().getParentProperties().getId();
@@ -932,7 +932,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		}
 
 		//TODO: Clean this logic a bit?
-		if(!stats.hasSeat() || ((DimensionManager.getInstance().isDimensionCreated(destinationDimId)) || destinationDimId == Configuration.spaceDimId || destinationDimId == 0) ) { //Abort if destination is invalid
+		if(!stats.hasSeat() || ((DimensionManager.getInstance().isDimensionCreated(destinationDimId)) || destinationDimId == Configuration.stationDimId || destinationDimId == 0) ) { //Abort if destination is invalid
 
 
 			setInFlight(true);

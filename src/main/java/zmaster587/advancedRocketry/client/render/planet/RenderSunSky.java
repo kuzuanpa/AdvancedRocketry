@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
@@ -15,22 +16,38 @@ import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.libVulpes.render.RenderHelper;
 import zmaster587.libVulpes.util.Vector3F;
 
-import java.util.List;
-
 public class RenderSunSky extends RenderPlanetarySky {
-
-	//Mostly vanilla code
-	//TODO: make usable on other planets
 	public RenderSunSky() {
 		super();
 	}
 
 	final Minecraft mc = Minecraft.getMinecraft();
+
 	@Override
-	protected void renderPlanet2(Tessellator tessellator1, ResourceLocation icon, int locationX, int locationY, double zLevel, float planetOrbitalDistance, float alphaMultiplier, double angle, boolean hasAtmosphere, float[] atmColor, float[] ringColor, boolean isGasgiant, boolean hasRings, Vec3 sunColor)  {
+	protected void rotateAroundAxis() {
+		Vector3F<Float> axis = getRotateAxis();
+		//GL11.glRotatef(90f, axis.x, axis.y, axis.z);
+		ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)mc.thePlayer.posX, (int)mc.thePlayer.posZ);
+		if(obj != null)
+		{
+		GL11.glRotated(obj.getRotation(ForgeDirection.UP)*360, 0, 1, 0);
+		GL11.glRotated(obj.getRotation(ForgeDirection.EAST)*360, 1, 0, 0);
+		}
+		
+		//GL11.glRotated(360, obj.getRotation(EnumFacing.EAST), obj.getRotation(EnumFacing.UP), obj.getRotation(EnumFacing.NORTH));
+		
+	}
 
 
-		planetOrbitalDistance = 0.8f;
+	@Override
+	protected ResourceLocation getTextureForPlanet(DimensionProperties properties) {
+		return TextureResources.locationSunLEO;
+	}
+
+	@Override
+	protected void drawStar(Tessellator tessellator1, float partialTicks, @Nullable StellarBody sun, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3 sunColor, float multiplier) {
+
+		float planetOrbitalDistance = 0.8F;
 
 		GL11.glPushMatrix();
 		//GL11.glDisable(GL11.GL_BLEND);
@@ -41,7 +58,7 @@ public class RenderSunSky extends RenderPlanetarySky {
 		//GL11.glDisable(GL11.GL_LIGHTING);
 
 		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
-		mc.renderEngine.bindTexture(icon);
+		mc.renderEngine.bindTexture(TextureResources.locationSunLEO);
 
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
@@ -50,7 +67,7 @@ public class RenderSunSky extends RenderPlanetarySky {
 		//int i1 = k / 4 % 2;
 
 		//Set planet Orbiting distance; size
-		float f10 = 2F*AstronomicalBodyHelper.getBodySizeMultiplier(planetOrbitalDistance);
+		float f10 = 2F* AstronomicalBodyHelper.getBodySizeMultiplier(planetOrbitalDistance);
 
 		float Xoffset = (float)((System.currentTimeMillis()/200000d % 1));
 
@@ -63,7 +80,7 @@ public class RenderSunSky extends RenderPlanetarySky {
 
 		tessellator1.startDrawingQuads();
 
-		tessellator1.setColorRGBA_F((float) sunColor.xCoord, (float) sunColor.yCoord, (float) sunColor.zCoord, alphaMultiplier);
+		tessellator1.setColorRGBA_F((float) sunColor.xCoord, (float) sunColor.yCoord, (float) sunColor.zCoord, 1F);
 
 		tessellator1.addVertexWithUV(-f10, -10.0D, f10, f16, f17);
 		tessellator1.addVertexWithUV(f10, -10.0D, f10, f14, f17);
@@ -121,28 +138,5 @@ public class RenderSunSky extends RenderPlanetarySky {
 		GL11.glEnable(GL11.GL_FOG);
 		//GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();
-	}
-
-	@Override
-	protected void rotateAroundAxis() {
-		Vector3F<Float> axis = getRotateAxis();
-		//GL11.glRotatef(90f, axis.x, axis.y, axis.z);
-		ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)mc.thePlayer.posX, (int)mc.thePlayer.posZ);
-		if(obj != null)
-		{
-		GL11.glRotated(obj.getRotation(ForgeDirection.UP)*360, 0, 1, 0);
-		GL11.glRotated(obj.getRotation(ForgeDirection.EAST)*360, 1, 0, 0);
-		}
-		
-		//GL11.glRotated(360, obj.getRotation(EnumFacing.EAST), obj.getRotation(EnumFacing.UP), obj.getRotation(EnumFacing.NORTH));
-		
-	}
-
-
-	@Override
-	protected ResourceLocation getTextureForPlanet(DimensionProperties properties) {
-		return TextureResources.locationSunLEO;
-	}
-	protected void drawStarAndSubStars(Tessellator tessellator1, StellarBody primaryStar, List<StellarBody> subStars, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3 sunColor, float multiplier){
 	}
 }

@@ -57,7 +57,7 @@ public class SpaceObjectAsteroid extends SpaceObjectBase implements IDataHandler
 	
 	public void registerWithSpaceObjectManager() {
 		
-		SpaceObjectManager.getSpaceManager().registerTemporarySpaceObject(this, -1,net.minecraftforge.common.DimensionManager.getWorld(Configuration.spaceDimId).getTotalWorldTime() + 100000);
+		SpaceObjectManager.getSpaceManager().registerTemporarySpaceObject(this, -1,net.minecraftforge.common.DimensionManager.getWorld(Configuration.stationDimId).getTotalWorldTime() + 100000);
 	}
 	
 	public static void generateAsteroid(World world, int x, int y, int z) {

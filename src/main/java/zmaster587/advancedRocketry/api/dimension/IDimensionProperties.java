@@ -21,7 +21,12 @@ public interface IDimensionProperties {
 	 * @return the color of the sun as an array of floats represented as  {r,g,b}
 	 */
     float[] getSunColor();
-	
+
+	/**
+	 * @return the color of the sun as an array of floats represented as  {r,g,b}
+	 */
+	float[] getSkyColor();
+
 	/**
 	 * @return the host star for this planet
 	 */
@@ -119,7 +124,9 @@ public interface IDimensionProperties {
 	/**
 	 * @return true if the dimension is a gas giant
 	 */
-    boolean isGasGiant();
+	boolean isGasGiant();
+
+	boolean hasRing();
 
 	/**
 	 * @param posY height
@@ -150,8 +157,13 @@ public interface IDimensionProperties {
 	/**
 	 * @return the location along the orbit in radians
 	 */
-    double getOrbitTheta();
+	double getOrbitTheta();
 
+	float[] getRingColor();
+	/**
+	 * @return the location along the orbit in radians
+	 */
+	double getOrbitPhi();
 	/**
 	 * @return distance of the planet from sun or moon in the range 0 to 200
 	 */

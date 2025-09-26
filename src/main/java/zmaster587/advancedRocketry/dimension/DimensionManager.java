@@ -47,7 +47,6 @@ public class DimensionManager implements IGalaxy {
 	public boolean hasBeenInitiallized = true;
 	public static String prevBuild;
 
-
 	//Stat tracking
 	public static boolean hasReachedMoon;
 	public static boolean hasReachedWarp;
@@ -483,7 +482,7 @@ public class DimensionManager implements IGalaxy {
 	@Override
 	public @NotNull DimensionProperties getDimensionProperties(int dimId) {
 		DimensionProperties properties = dimensionList.get(dimId);
-		if(dimId == Configuration.spaceDimId || dimId == Integer.MIN_VALUE) {
+		if(dimId == Configuration.stationDimId || dimId == Integer.MIN_VALUE) {
 			return defaultSpaceDimensionProperties;
 		}
 		return properties == null ? overworldProperties : properties;
@@ -635,7 +634,7 @@ public class DimensionManager implements IGalaxy {
 	 * @return true if the dimension exists and is registered
 	 */
 	public boolean isDimensionCreated( int dimId) {
-		return dimensionList.containsKey(dimId) || dimId == Configuration.spaceDimId;
+		return dimensionList.containsKey(dimId) || dimId == Configuration.stationDimId;
 	}
 
 	/**
@@ -771,7 +770,7 @@ public class DimensionManager implements IGalaxy {
 	
 	public static DimensionProperties getEffectiveDimId(int dimId, int x, int z) {
 
-		if(dimId == Configuration.spaceDimId) {
+		if(dimId == Configuration.stationDimId) {
 			ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 			if(obj != null)
 				return (DimensionProperties) obj.getProperties().getParentProperties();
@@ -784,7 +783,7 @@ public class DimensionManager implements IGalaxy {
 	public static DimensionProperties getEffectiveDimId(World world, int x, int z) {
 		int dimId = world.provider.dimensionId;
 
-		if(dimId == Configuration.spaceDimId) {
+		if(dimId == Configuration.stationDimId) {
 			ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 			if(obj != null)
 				return (DimensionProperties) obj.getProperties().getParentProperties();

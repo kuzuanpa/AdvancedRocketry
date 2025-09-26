@@ -138,7 +138,7 @@ public abstract class SpaceObjectBase implements ISpaceObject {
 	}
 
 	private long getWorldTime() {
-		return AdvancedRocketry.proxy.getWorldTimeUniversal(Configuration.spaceDimId);
+		return AdvancedRocketry.proxy.getWorldTimeUniversal(Configuration.stationDimId);
 	}
 	
 	/**
@@ -222,7 +222,7 @@ public abstract class SpaceObjectBase implements ISpaceObject {
 	 * @param chunk
 	 */
 	public void onModuleUnpack(IStorageChunk chunk) {
-		World worldObj = DimensionManager.getWorld(Configuration.spaceDimId);
+		World worldObj = DimensionManager.getWorld(Configuration.stationDimId);
 		chunk.pasteInWorld(worldObj, spawnLocation.x - chunk.getSizeX()/2, spawnLocation.y - chunk.getSizeY()/2, spawnLocation.z - chunk.getSizeZ()/2);
 
 	}

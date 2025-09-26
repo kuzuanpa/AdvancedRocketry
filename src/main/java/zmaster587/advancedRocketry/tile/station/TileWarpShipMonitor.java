@@ -93,7 +93,7 @@ public class TileWarpShipMonitor extends TileEntity implements IModularInventory
 
 
 	private SpaceObject getSpaceObject() {
-		if(station == null && worldObj.provider.dimensionId == Configuration.spaceDimId) {
+		if(station == null && worldObj.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(xCoord, zCoord);
 			if(object instanceof SpaceObject)
 				station = (SpaceObject) object;

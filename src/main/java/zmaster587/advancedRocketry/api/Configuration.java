@@ -1,14 +1,10 @@
 package zmaster587.advancedRocketry.api;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
+import net.minecraft.block.Block;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.util.AsteroidSmall;
-import net.minecraft.block.Block;
+
+import java.util.*;
 
 /**
  * Stores config variables
@@ -19,7 +15,8 @@ public class Configuration {
 	
 	public static final int orbit = 1000;
 	public static int MoonId = -1;
-	public static int spaceDimId = -2;
+	public static int stationDimId = -2;
+	public static int spaceDimId = -3;
 	public static final int fuelPointsPer10Mb = 10;
 	public static int stationSize = 1024;
 	

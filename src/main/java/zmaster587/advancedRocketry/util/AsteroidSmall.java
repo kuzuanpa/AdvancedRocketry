@@ -1,13 +1,13 @@
 package zmaster587.advancedRocketry.util;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.world.WorldUtil;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-
-import org.jetbrains.annotations.NotNull;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 public class AsteroidSmall {
 	public String ID;
@@ -55,15 +55,16 @@ public class AsteroidSmall {
 		int numOres = (int) (myMass*(richness + rand.nextFloat()*richnessVariability - richnessVariability/2f));
 		
 		StackEntry entry = new StackEntry();
-		entry.stack = new ItemStack(Blocks.cobblestone, myMass - numOres);
+		entry.stack = WorldUtil.getAllValidCobbleStones().get(rand.nextInt(WorldUtil.getAllValidCobbleStonesAmount()));
+		entry.stack.stackSize = myMass - numOres;
 		entry.variablility = (int)(uncertainty*entry.stack.stackSize);
 		entry.midpoint =  (int)(entry.variablility*rand.nextFloat() - uncertainty*entry.variablility/2f);
-		
+
 		if(entry.midpoint + myMass - numOres < entry.variablility)
 			entry.midpoint = entry.variablility;
 		else
 			entry.midpoint += myMass - numOres;
-		entries.add(entry);
+		if(entry.stack.stackSize > 0)entries.add(entry);
 		
 		int[] ores = new int[itemStacks.size()];
 		
@@ -98,7 +99,7 @@ public class AsteroidSmall {
 			
 			int num = ores[i];
 			
-			if(num == 0)
+			if(num <= 0)
 				continue;
 			
 			ItemStack stack = new ItemStack(itemStacks.get(i).getItem(), num, itemStacks.get(i).getItemDamage());
@@ -113,8 +114,8 @@ public class AsteroidSmall {
 				entry.midpoint = entry.variablility;
 			else
 				entry.midpoint += num;
-			
-			entries.add(entry);
+
+			if(entry.stack.stackSize > 0)entries.add(entry);
 		}
 		
 		return entries;

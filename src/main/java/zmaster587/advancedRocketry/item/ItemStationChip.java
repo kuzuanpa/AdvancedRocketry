@@ -94,7 +94,7 @@ public class ItemStationChip extends ItemIdWithName {
 			list.add(EnumChatFormatting.GREEN + LibVulpes.proxy.getLocalizedString("msg.stationchip.sation") + getUUID(stack));
 			super.addInformation(stack, player, list, bool);
 			
-			if(player.worldObj.provider.dimensionId == Configuration.spaceDimId) {
+			if(player.worldObj.provider.dimensionId == Configuration.stationDimId) {
 				ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)player.posX, (int)player.posZ);
 				
 				if(obj != null) {

@@ -1,33 +1,34 @@
 package zmaster587.advancedRocketry.block;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.entity.EntityDummy;
+import zmaster587.libVulpes.block.BlockRotatableModel;
 
 import java.util.List;
 
-public class BlockSeat extends Block {
+public class BlockSeat extends BlockRotatableModel {
 
-	public BlockSeat(@NotNull Material mat) {
-		super(mat);
-		this.maxY = 0.2f;
+	public BlockSeat(Material par2Material, int modelId) {
+		super(par2Material, modelId);
+	}
+	@Override
+	public int onBlockPlaced(World world, int x, int y, int z, int side, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_) {
+		super.onBlockPlaced(world, x, y, z, side, p_149660_6_, p_149660_7_, p_149660_8_, p_149660_9_);
+		world.setBlock(x,y+1,z, AdvancedRocketryBlocks.blockGenericSeatUp);
+		return p_149660_9_;
 	}
 
 	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+		return AxisAlignedBB.getBoundingBox(x + this.minX, y + this.minY, z + this.minZ, x + this.maxX, y + 0.1F, z + this.maxZ);
 	}
-	
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
-	
+
 	//If the block is destroyed remove any mounting associated with it
 	@Override
 	public void onBlockPreDestroy(World world, int x,
@@ -42,8 +43,9 @@ public class BlockSeat extends Block {
 				e.setDead();
 			}
 		}
+		if(world.getBlock(x,y+1,z) instanceof BlockSeatUp)world.setBlockToAir(x,y+1,z);
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(@NotNull World world, int x, int y, int z, @NotNull EntityPlayer player, int a, float b, float c, float d) {
 		if(!world.isRemote) {

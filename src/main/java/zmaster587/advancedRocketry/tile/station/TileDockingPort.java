@@ -128,7 +128,7 @@ public class TileDockingPort extends TileEntity implements IModularInventory, IG
 
 
 	public void registerTileWithStation(World world, int x, int y, int z) {
-		if(!world.isRemote && world.provider.dimensionId == Configuration.spaceDimId) {
+		if(!world.isRemote && world.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 
 			if(spaceObj instanceof SpaceObject) {
@@ -138,7 +138,7 @@ public class TileDockingPort extends TileEntity implements IModularInventory, IG
 	}
 
 	public void unregisterTileWithStation(World world, int x, int y, int z) {
-		if(!world.isRemote && world.provider.dimensionId == Configuration.spaceDimId) {
+		if(!world.isRemote && world.provider.dimensionId == Configuration.stationDimId) {
 			ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 			if(spaceObj instanceof SpaceObject)
 				((SpaceObject)spaceObj).removeDockingPosition(x, y, z);
@@ -185,7 +185,7 @@ public class TileDockingPort extends TileEntity implements IModularInventory, IG
 			NBTTagCompound nbt) {
 		if(id == 0) {
 			myIdStr = nbt.getString("id");
-			if(!worldObj.isRemote && worldObj.provider.dimensionId == Configuration.spaceDimId) {
+			if(!worldObj.isRemote && worldObj.provider.dimensionId == Configuration.stationDimId) {
 				ISpaceObject spaceObj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(xCoord, zCoord);
 
 				if(spaceObj instanceof SpaceObject) {

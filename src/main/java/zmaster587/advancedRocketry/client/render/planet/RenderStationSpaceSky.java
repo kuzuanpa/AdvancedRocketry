@@ -13,11 +13,11 @@ import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.libVulpes.render.RenderHelper;
 import zmaster587.libVulpes.util.Vector3F;
 
-public class RenderSpaceSky extends RenderPlanetarySky {
+public class RenderStationSpaceSky extends RenderPlanetarySky {
 
 	//Mostly vanilla code
 	//TODO: make usable on other planets
-	public RenderSpaceSky() {
+	public RenderStationSpaceSky() {
 		super();
 	}
 	float oldRotateX,oldRotateY;
