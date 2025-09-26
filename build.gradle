@@ -16,13 +16,14 @@ buildscript {
 }
 
 plugins {
+    id 'maven-publish'
 }
 
 apply plugin: 'java'
 apply plugin: 'forge'
 
 group= "zmaster587.advancedRocketry" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "AdvancedRocketry"
+archivesBaseName = "AdvancedRocketry-TFRU"
 sourceCompatibility = 8
 targetCompatibility = 8
 
@@ -141,4 +142,43 @@ task deobfJar(type: Jar) {
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
      mustRunAfter "jar" 
+}
+
+// This task creates a .jar file containing the source code of this mod.
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+}
+
+// This task creates a .jar file containing a deobfuscated version of this mod, for other developers to use in a development environment.
+task devJar(type: Jar) {
+    classifier = "dev"
+    from sourceSets.main.output
+}
+
+// This block configures any maven publications you want to make.
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'cn.kuzuanpa'
+
+            artifactId = 'AdvancedRocketry-TFRU'
+            // Add any other artifacts here that you would like to publish!
+            artifact(jar) {
+                builtBy build
+            }
+            artifact(sourcesJar) {
+                builtBy sourcesJar
+            }
+            artifact(devJar) {
+                builtBy devJar
+            }
+        }
+    }
+
+    // This block selects the repositories you want to publish to.
+    repositories {
+        mavenLocal()
+        // Add the repositories you want to publish to here.
+    }
 }
