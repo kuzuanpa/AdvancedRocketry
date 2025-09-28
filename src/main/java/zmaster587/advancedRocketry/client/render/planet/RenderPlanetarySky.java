@@ -426,6 +426,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 			}
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
+
 		if(primaryStar != null){
 
 			List<IDimensionProperties> moons = new ArrayList<>();
@@ -446,10 +447,10 @@ public class RenderPlanetarySky extends IRenderHandler {
 					orbitDistance = Math.abs(orbitDistance - current.getSolarOrbitalDistance());
 					if(orbitDistance < 4) {
 						orbitDistance += 4;
-						if (moon.isMoon())orbitDistance += moon.getParentOrbitalDistance() / 10F;
+						if (moon.isMoon())orbitDistance += moon.getParentOrbitalDistance() / 4F;
 					}
 				}
-				orbitDistance*=2F;
+				orbitDistance*=4F;
 
 				GL11.glPushMatrix();
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1f);
@@ -491,7 +492,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 		}
 
-		if(selectedPlanetID != -1) {
+		if(selectedPlanetID != -1 && false/*TODO: remove this after all things about space travel done*/) {
 			GL11.glPushMatrix();
 
 			double pointerRotateX = -(Minecraft.getMinecraft().thePlayer.rotationPitch - 90) % 360;
