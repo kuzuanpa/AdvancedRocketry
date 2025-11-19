@@ -1,9 +1,5 @@
 package zmaster587.advancedRocketry.tile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,6 +23,10 @@ import zmaster587.libVulpes.inventory.modules.ModuleBase;
 import zmaster587.libVulpes.tile.multiblock.hatch.TileInventoryHatch;
 import zmaster587.libVulpes.util.BlockPosition;
 import zmaster587.libVulpes.util.Vector3F;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TileGuidanceComputer extends TileInventoryHatch implements IModularInventory {
 
@@ -82,7 +82,20 @@ public class TileGuidanceComputer extends TileInventoryHatch implements IModular
 		}
 		return -1;
 	}
-	
+	public int getTaskType(){
+		ItemStack stack = getStackInSlot(0);
+
+		if(stack != null){
+			Item itemType = stack.getItem();
+			if (itemType instanceof ItemPlanetIdentificationChip) return 1;
+
+			else if(itemType instanceof ItemStationChip)return 2;
+
+			else if(itemType instanceof ItemAsteroidChip) return 1;
+			else if(itemType instanceof ItemSatelliteIdentificationChip) return 3;
+		}
+		return 0;
+	}
 	/**
 	 * Gets the dimension to travel to if applicable
 	 * @return The dimension to travel to or -1 if not valid

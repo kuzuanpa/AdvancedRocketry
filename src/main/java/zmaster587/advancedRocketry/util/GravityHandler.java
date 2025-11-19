@@ -8,7 +8,7 @@ import zmaster587.advancedRocketry.api.AdvancedRocketryAPI;
 import zmaster587.advancedRocketry.api.IGravityManager;
 import zmaster587.advancedRocketry.api.IPlanetaryProvider;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
-import zmaster587.advancedRocketry.world.provider.WorldProviderSpace;
+import zmaster587.advancedRocketry.world.provider.WorldProviderStation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -48,7 +48,7 @@ public class GravityHandler implements IGravityManager {
 					entity.motionY += multiplier;
 					
 				}
-				else if(DimensionManager.getInstance().isDimensionCreated(entity.worldObj.provider.dimensionId) || entity.worldObj.provider instanceof WorldProviderSpace) {
+				else if(DimensionManager.getInstance().isDimensionCreated(entity.worldObj.provider.dimensionId) || entity.worldObj.provider instanceof WorldProviderStation) {
 					double gravMult;
 					if(entity.worldObj.provider instanceof IPlanetaryProvider)
 						gravMult = ((IPlanetaryProvider)entity.worldObj.provider).getGravitationalMultiplier((int)entity.posX, (int)entity.posZ);

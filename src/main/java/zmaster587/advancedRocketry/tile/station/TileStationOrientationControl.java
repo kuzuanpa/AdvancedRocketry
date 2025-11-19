@@ -15,7 +15,7 @@ import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.network.PacketStationUpdate;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
-import zmaster587.advancedRocketry.world.provider.WorldProviderSpace;
+import zmaster587.advancedRocketry.world.provider.WorldProviderStation;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.inventory.modules.IModularInventory;
 import zmaster587.libVulpes.inventory.modules.ISliderBar;
@@ -85,7 +85,7 @@ public class TileStationOrientationControl extends TileEntity implements IModula
 	public void updateEntity() {
 		super.updateEntity();
 
-		if(this.worldObj.provider instanceof WorldProviderSpace) {
+		if(this.worldObj.provider instanceof WorldProviderStation) {
 			if(!worldObj.isRemote) {
 				ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(this.xCoord, this.zCoord);
 				boolean update = false;

@@ -9,15 +9,15 @@ import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.client.render.planet.RenderPlanetarySky;
+import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.client.render.planet.RenderStationSpaceSky;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.world.ChunkProviderSpace;
 
-public class WorldProviderSpace extends WorldProviderPlanet {
+public class WorldProviderStation extends WorldProviderPlanet {
 	private IRenderHandler skyRender;
-	private final DimensionProperties properties = (DimensionProperties) DimensionManager.defaultSpaceDimensionProperties.clone();
 	
 	@Override
 	public double getHorizon() {
@@ -50,12 +50,21 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 		return super.getSkyRenderer();
 	}
 
+	@Override
+	public float getSunBrightness(float partialTicks) {
+		return 1.0F;
+	}
 
 	@Override
 	public float getAtmosphereDensity(int x, int z) {
 		return 0;
 	}
-
+	
+	@Override
+	public float calculateCelestialAngle(long worldTime, float p_76563_3_) {
+		return AdvancedRocketry.proxy.calculateCelestialAngleSpaceStation();
+	}
+	
 	@Override
 	protected void registerWorldChunkManager() {
 		worldObj.getWorldInfo().setTerrainType(AdvancedRocketry.spaceWorldType);
@@ -65,8 +74,8 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	
 	@Override
 	public @NotNull DimensionProperties getDimensionProperties(int x , int z) {
-		properties.setParentPlanet(DimensionManager.getInstance().getDimensionProperties(RenderPlanetarySky.lastPlanet), false);
-		return properties;
-
+		ISpaceObject object = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
+		if(object != null) return (DimensionProperties)object.getProperties();
+		return DimensionManager.defaultSpaceDimensionProperties;
 	}
 }

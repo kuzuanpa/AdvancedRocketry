@@ -117,6 +117,7 @@ import zmaster587.advancedRocketry.world.decoration.MapGenLander;
 import zmaster587.advancedRocketry.world.ore.OreGenerator;
 import zmaster587.advancedRocketry.world.provider.WorldProviderPlanet;
 import zmaster587.advancedRocketry.world.provider.WorldProviderSpace;
+import zmaster587.advancedRocketry.world.provider.WorldProviderStation;
 import zmaster587.advancedRocketry.world.type.WorldTypePlanetGen;
 import zmaster587.advancedRocketry.world.type.WorldTypeSpace;
 import zmaster587.libVulpes.LibVulpes;
@@ -1371,7 +1372,7 @@ public class AdvancedRocketry {
 		}
 
 		//Register space dimension
-		net.minecraftforge.common.DimensionManager.registerProviderType(zmaster587.advancedRocketry.api.Configuration.stationDimId, WorldProviderSpace.class, true);
+		net.minecraftforge.common.DimensionManager.registerProviderType(zmaster587.advancedRocketry.api.Configuration.stationDimId, WorldProviderStation.class, true);
 		net.minecraftforge.common.DimensionManager.registerDimension(zmaster587.advancedRocketry.api.Configuration.stationDimId,zmaster587.advancedRocketry.api.Configuration.stationDimId);
 
 		net.minecraftforge.common.DimensionManager.registerProviderType(zmaster587.advancedRocketry.api.Configuration.spaceDimId, WorldProviderSpace.class, true);

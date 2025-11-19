@@ -25,6 +25,7 @@ import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.entity.EntityRocket;
 import zmaster587.advancedRocketry.event.RocketEventHandler;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.stations.SpaceObject;
@@ -43,7 +44,9 @@ public class RenderPlanetarySky extends IRenderHandler {
 	public static int selectedPlanetID = -1;
 	private static int bodyList;
 	private static int sunList;
+	public static int lastPlanet = Configuration.spaceDimId;
 
+	public static float planetPosOffset = 0;
 	final int starGLCallList;
 	final int glSkyList;
 	final int glSkyList2;
@@ -192,7 +195,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 	protected ResourceLocation getTextureForPlanet(DimensionProperties properties) {
 		return properties.getPlanetIcon();
 	}
-	protected float getSkyRotationAmount() {return celestialAngle;}
+	protected float getSkyRotationAmount() {return celestialAngle + planetPosOffset/4000F;}
 	protected Vector3F<Float> getRotateAxis() { return axis;}
 
 	protected void rotateAroundAxis() {
@@ -226,7 +229,8 @@ public class RenderPlanetarySky extends IRenderHandler {
 		List<StellarBody> subStars = new LinkedList<>();
 		StellarBody primaryStar;
 		celestialAngle = mc.theWorld.getCelestialAngle(partialTicks);
-
+		if(mc.theWorld.provider.dimensionId != Configuration.spaceDimId && mc.theWorld.provider.dimensionId != Configuration.stationDimId)lastPlanet = mc.theWorld.provider.dimensionId;
+		if(lastPlanet == Configuration.spaceDimId && mc.thePlayer.ridingEntity instanceof EntityRocket)lastPlanet = ((EntityRocket) mc.thePlayer.ridingEntity).comeFromDimID;
 		Vec3 sunColor;
 		setupDimProperties:{
 			if (mc.theWorld.provider instanceof IPlanetaryProvider) {
@@ -394,6 +398,8 @@ public class RenderPlanetarySky extends IRenderHandler {
 			if (f18 > 0.0F) {
 				GL11.glColor4f(f18, f18, f18, f18);
 				GL11.glPushMatrix();
+				GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+				if(!isWarp) rotateAroundAxis();
 				if (isWarp) {
 					for (int i = -3; i < 5; i++) {
 						GL11.glPushMatrix();
@@ -463,7 +469,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 				float multiplier = (2 - atmosphere) / 2f;//atmosphere > 1 ? (2-atmosphere) : 1f;
 				multiplier *= 1 - mc.theWorld.getRainStrength(partialTicks);
 				double rotateX = rot % 360;
-				double rotateY = (myRotationalPhi - 90F) % 360;
+				double rotateY = (myRotationalPhi - 90F) % 360 ;
 
 				GL11.glRotated(rotateY, 0f, 1f, 0f);
 				GL11.glRotated(rotateX, 1f, 0f, 0f);
@@ -489,10 +495,9 @@ public class RenderPlanetarySky extends IRenderHandler {
 					selectedPlanetID = moon.getId();
 				}
 			}
-
 		}
 
-		if(selectedPlanetID != -1 && false/*TODO: remove this after all things about space travel done*/) {
+		if(selectedPlanetID != -1 && world.provider.dimensionId == Configuration.spaceDimId) {
 			GL11.glPushMatrix();
 
 			double pointerRotateX = -(Minecraft.getMinecraft().thePlayer.rotationPitch - 90) % 360;
@@ -618,6 +623,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 			OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, 1, 0);
 		}
+
 		if(!isWarp) rotateAroundAxis();
 
 		mc.renderEngine.bindTexture(TextureResources.locationSunPng);
@@ -625,15 +631,15 @@ public class RenderPlanetarySky extends IRenderHandler {
 		//--------------------------- Draw the suns --------------------
 		if(!isWarp) {
 			drawStarAndSubStars(tessellator1, partialTicks,primaryStar,subStars,properties,solarOrbitalDistance,sunSize,sunColor,multiplier);
-
 		}
+		GL11.glPopMatrix();
 
+		drawExtra(tessellator1, properties, multiplier, sunColor);
 		GL11.glEnable(GL11.GL_FOG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 
-		GL11.glPopMatrix();
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glColor3f(0.0F, 0.0F, 0.0F);
 
@@ -684,6 +690,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDepthMask(true);
 		float f10 = sunSize*15f*AstronomicalBodyHelper.getBodySizeMultiplier(solarOrbitalDistance);
+
 		int i1=  (int) (f10 * 0.4F);
 		GL11.glColor4f((float) Math.min(1.0F, sunColor.xCoord*1.5F), (float)Math.min(1.0F, sunColor.yCoord*1.5F) , (float)Math.min(1.0F, sunColor.zCoord*1.5F) , (float) Math.min(0.9,multiplier));
         if(sun.dysonSphere != null)sun.dysonSphere.draw(0,100, i1,0,90,i1/500F,0.8F,(System.currentTimeMillis() % 36000) / 100F / (sun.dysonSphere.size+1));
@@ -739,6 +746,9 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 	}
 
+	protected void drawExtra(Tessellator buffer, DimensionProperties properties, float alphaMultiplier, Vec3 sunColor){
+
+	}
 	protected void renderPlanet(Tessellator buffer, ResourceLocation icon, float planetOrbitalDistance, float alphaMultiplier, double shadowAngle, boolean hasAtmosphere, float[] skyColor, float[] ringColor, boolean gasGiant, boolean hasRing, Vec3 sunColor) {
 		renderPlanet2(buffer, icon, 0, 0, -100, 10f*AstronomicalBodyHelper.getBodySizeMultiplier(planetOrbitalDistance), alphaMultiplier, shadowAngle, hasAtmosphere, skyColor, ringColor, gasGiant, hasRing, sunColor);
 	}

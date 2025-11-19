@@ -32,7 +32,7 @@ import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.satellite.SatelliteLaser;
 import zmaster587.advancedRocketry.satellite.SatelliteLaserNoDrill;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
-import zmaster587.advancedRocketry.world.provider.WorldProviderSpace;
+import zmaster587.advancedRocketry.world.provider.WorldProviderStation;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.api.LibVulpesBlocks;
 import zmaster587.libVulpes.block.RotatableBlock;
@@ -525,8 +525,8 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 	}
 
 	private boolean isAllowedToRun() {
-		return !(glassPanel == null || batteries.getEnergyStored() == 0 || !(this.worldObj.provider instanceof WorldProviderSpace) || !zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().canTravelTo(((WorldProviderSpace)this.worldObj.provider).getDimensionProperties(xCoord, zCoord).getParentPlanet()) ||
-				Configuration.laserBlackListDims.contains(((WorldProviderSpace)this.worldObj.provider).getDimensionProperties(xCoord, zCoord).getParentPlanet()));
+		return !(glassPanel == null || batteries.getEnergyStored() == 0 || !(this.worldObj.provider instanceof WorldProviderStation) || !zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().canTravelTo(((WorldProviderStation)this.worldObj.provider).getDimensionProperties(xCoord, zCoord).getParentPlanet()) ||
+				Configuration.laserBlackListDims.contains(((WorldProviderStation)this.worldObj.provider).getDimensionProperties(xCoord, zCoord).getParentPlanet()));
 	}
 
 	/**
@@ -543,7 +543,7 @@ public class TileSpaceLaser extends TileMultiPowerConsumer implements ISidedInve
 		} else if(!laserSat.isAlive() && !finished && !laserSat.getJammed() && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord) && canMachineSeeEarth()) {
 
 			//Laser will be on at this point
-			int orbitDimId = ((WorldProviderSpace)this.worldObj.provider).getDimensionProperties(xCoord, zCoord).getParentPlanet();
+			int orbitDimId = ((WorldProviderStation)this.worldObj.provider).getDimensionProperties(xCoord, zCoord).getParentPlanet();
 			if(orbitDimId == SpaceObjectManager.WARPDIMID)
 				return;
 			WorldServer orbitWorld = DimensionManager.getWorld(orbitDimId);

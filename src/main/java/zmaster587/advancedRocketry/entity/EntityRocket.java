@@ -9,7 +9,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -22,9 +21,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import zmaster587.advancedRocketry.AdvancedRocketry;
-import zmaster587.advancedRocketry.achievements.ARAchivements;
 import zmaster587.advancedRocketry.api.*;
 import zmaster587.advancedRocketry.api.RocketEvent.RocketLaunchEvent;
 import zmaster587.advancedRocketry.api.RocketEvent.RocketPreLaunchEvent;
@@ -42,18 +39,14 @@ import zmaster587.advancedRocketry.inventory.IPlanetDefiner;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.inventory.modules.ModulePlanetSelector;
 import zmaster587.advancedRocketry.inventory.modules.ModuleStellarBackground;
-import zmaster587.advancedRocketry.item.ItemAsteroidChip;
 import zmaster587.advancedRocketry.item.ItemPackedStructure;
 import zmaster587.advancedRocketry.item.ItemPlanetIdentificationChip;
 import zmaster587.advancedRocketry.item.ItemStationChip;
-import zmaster587.advancedRocketry.mission.MissionOreMining;
-import zmaster587.advancedRocketry.network.PacketSatellite;
 import zmaster587.advancedRocketry.stations.SpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
 import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
 import zmaster587.advancedRocketry.tile.multiblock.TileWarpCore;
-import zmaster587.advancedRocketry.util.AsteroidSmall;
 import zmaster587.advancedRocketry.util.StationLandingLocation;
 import zmaster587.advancedRocketry.util.StorageChunk;
 import zmaster587.advancedRocketry.util.TransitionEntity;
@@ -103,6 +96,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	private int autoDescendTimer;
 	private WeakReference<Entity>[] mountedEntities;
 	protected ModulePlanetSelector container;
+	public int comeFromDimID = Configuration.spaceDimId;
 
 	public enum PacketType {
 		RECEIVE_NBT,
@@ -623,209 +617,40 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	public void onOrbitReached() {
 		super.onOrbitReached();
 
-		//TODO: support multiple riders and rider/satellite combo
-		long targetSatellite;
-		TileGuidanceComputer guidanceComputer = storage.getFirstTileEntity(TileGuidanceComputer.class);
-		if(guidanceComputer == null){
-			return;
-		}
-		if((targetSatellite = guidanceComputer.getTargetSatellite()) != -1L) {
-			SatelliteBase sat = DimensionManager.getInstance().getSatellite(targetSatellite);
-			for(TileEntity tile : storage.getTileEntityList()) {
-				if(tile instanceof TileSatelliteHatch && ((IInventory)tile).getStackInSlot(0) == null) {
-					((IInventory)tile).setInventorySlotContents(0, sat.getItemStackFromSatellite());
-					DimensionManager.getInstance().getDimensionProperties(sat.getDimensionId()).removeSatellite(targetSatellite);
-					break;
-				}
-			}
-			this.motionY = -this.motionY;
-			setInOrbit(true);
-			
-		}
-		else if(!stats.hasSeat()) {
-			if(guidanceComputer.getStackInSlot(0) != null &&
-					guidanceComputer.getStackInSlot(0).getItem() instanceof ItemAsteroidChip) {
-				//make it 30 minutes with one drill
-				float drillingPower = stats.getDrillingPower();
-				
-				float asteroidDrillingMult = 1f;
-				
-				ItemStack stack = guidanceComputer.getStackInSlot(0);
-
-				AsteroidSmall asteroid = Configuration.asteroidTypes.get(((ItemAsteroidChip)stack.getItem()).getType(stack));
-
-				if(asteroid != null) {
-					asteroidDrillingMult = asteroid.timeMultiplier;
-				}
-				
-				MissionOreMining miningMission = new MissionOreMining((long)(asteroidDrillingMult*Configuration.asteroidMiningTimeMult*(drillingPower == 0f ? 36000 : 360/stats.getDrillingPower())), this, connectedInfrastructure);
-				DimensionProperties properties = DimensionManager.getEffectiveDimId(worldObj, (int)posX, (int)posZ);
-
-				miningMission.setDimensionId(worldObj);
-				properties.addSatallite(miningMission, worldObj);
-
-				if(!worldObj.isRemote)
-					PacketHandler.sendToAll(new PacketSatellite(miningMission));
-
-				for(IInfrastructure i : connectedInfrastructure) {
-					i.linkMission(miningMission);
-				}
-
-				this.setDead();
-				//TODO: Move tracking stations over to the mission handler
-			}
-			else {
-				unpackSatellites();
-			}
-
-			destinationDimId = storage.getDestinationDimId(this.worldObj.provider.dimensionId, (int)this.posX, (int)this.posZ);
-			if(destinationDimId == this.worldObj.provider.dimensionId) {
-				@Nullable Vector3F<Float> pos = storage.getDestinationCoordinates(destinationDimId, true);
-				storage.setDestinationCoordinates(new Vector3F<>((float) this.posX, (float) this.posY, (float) this.posZ), this.worldObj.provider.dimensionId);
-				if(pos != null) {
-					this.setInOrbit(true);
-					this.motionY = -this.motionY;
-					
-					//unlink any connected tiles
-					Iterator<IInfrastructure> connectedTiles = connectedInfrastructure.iterator();
-					while(connectedTiles.hasNext()) {
-						connectedTiles.next().unlinkRocket();
-						connectedTiles.remove();
-					}
-					
-					this.setPosition(pos.x, Configuration.orbit, pos.z);
-
-				}
-				else {
-
-					//Make player confirm deorbit if a player is riding the rocket
-					if(this.riddenByEntity != null) {
-						setInFlight(false);
-					}
-					this.setInOrbit(true);
-					this.motionY = -this.motionY;
-					//unlink any connected tiles
-					
-					Iterator<IInfrastructure> connectedTiles = connectedInfrastructure.iterator();
-					while(connectedTiles.hasNext()) {
-						connectedTiles.next().unlinkRocket();
-						connectedTiles.remove();
-					}
-					
-					this.setPosition(this.posX, Configuration.orbit, this.posZ);
-				}
-				
-			}
-			else if(DimensionManager.getInstance().canTravelTo(destinationDimId)) {
-				Vector3F<Float> pos = storage.getDestinationCoordinates(destinationDimId, true);
-				storage.setDestinationCoordinates(new Vector3F<>((float) this.posX, (float) this.posY, (float) this.posZ), this.worldObj.provider.dimensionId);
-				if(pos != null) {
-					this.setInOrbit(true);
-					this.motionY = -this.motionY;
-					this.travelToDimension(destinationDimId, pos.x, Configuration.orbit, pos.z);
-				}
-				else {
-
-					//Make player confirm deorbit if a player is riding the rocket
-					if(this.riddenByEntity != null) {
-						setInFlight(false);
-
-					}
-					this.setInOrbit(true);
-					this.motionY = -this.motionY;
-					
-					this.travelToDimension(destinationDimId, this.posX, Configuration.orbit, this.posZ);
-				}
-			}
-			else {
-				//Make rocket return semi nearby
-				int offX = (worldObj.rand.nextInt() % 256) - 128;
-				int offZ = (worldObj.rand.nextInt() % 256) - 128;
-				this.setInOrbit(true);
-				this.motionY = -this.motionY;
-				this.setPosition(posX + offX, posY, posZ + offZ);
-				
-				//unlink any connected tiles
-				Iterator<IInfrastructure> connectedTiles = connectedInfrastructure.iterator();
-				while(connectedTiles.hasNext()) {
-					connectedTiles.next().unlinkRocket();
-					connectedTiles.remove();
-				}
-
-				//this.setDead();
-				//TODO: satellite event?
-			}
-			//TODO: satellite event?
-		}
-		else {
-
+		if(!stats.hasSeat()) {
 			unpackSatellites();
 
-			//TODO: maybe add orbit dimension
+			Vector3F<Float> targetPos = new Vector3F<>((float) this.posX, (float) this.posY, (float) this.posZ);
+
+			storage.setDestinationCoordinates(targetPos, this.worldObj.provider.dimensionId);
+
+			this.setInOrbit(true);
 			this.motionY = -this.motionY;
-			setInOrbit(true);
-			//If going to a station or something make sure to set coords accordingly
-			//If in space land on the planet, if on the planet go to space
-			if((destinationDimId == Configuration.stationDimId || this.worldObj.provider.dimensionId == Configuration.stationDimId) && this.worldObj.provider.dimensionId != destinationDimId) {
-				Vector3F<Float> pos = storage.getDestinationCoordinates(destinationDimId, true);
-				storage.setDestinationCoordinates(new Vector3F<>((float) this.posX, (float) this.posY, (float) this.posZ), this.worldObj.provider.dimensionId);
-				if(pos != null) {
 
-					//Make player confirm deorbit if a player is riding the rocket
-					if(this.riddenByEntity != null) {
-						setInFlight(false);
-						pos.y = (float) Configuration.orbit;
-					}
-
-					this.travelToDimension(destinationDimId, pos.x, pos.y, pos.z);
-					return;
-				}
+			//unlink any connected tiles
+			Iterator<IInfrastructure> connectedTiles = connectedInfrastructure.iterator();
+			while(connectedTiles.hasNext()) {
+				connectedTiles.next().unlinkRocket();
+				connectedTiles.remove();
 			}
-			
-			
-			//if coordinates are overridden, make sure we grab them
-			Vector3F<Float> destPos = storage.getDestinationCoordinates(destinationDimId, true);
-			if(destPos == null)
-				destPos = new Vector3F<>((float) posX, (float) Configuration.orbit, (float) posZ);
-			
-			if(this.riddenByEntity != null) {
-				//Make player confirm deorbit if a player is riding the rocket
-				setInFlight(false);
-
-				if(DimensionManager.getInstance().getDimensionProperties(destinationDimId).getName().equals("Luna")) {
-
-					if(this.riddenByEntity instanceof EntityPlayer) {
-						((EntityPlayer)this.riddenByEntity).triggerAchievement(ARAchivements.moonLanding);
-						if(!DimensionManager.hasReachedMoon)
-							((EntityPlayer)this.riddenByEntity).triggerAchievement(ARAchivements.oneSmallStep);
-					}
-
-					DimensionManager.hasReachedMoon = true;
-				}
-			}
-			
-			//Reset override coords
-			setOverriddenCoords(-1, 0, 0, 0);
-			
-			if(destinationDimId != this.worldObj.provider.dimensionId)
-				this.travelToDimension(!DimensionManager.getInstance().isDimensionCreated(this.worldObj.provider.dimensionId) ? 0 : destinationDimId, destPos.x, destPos.y, destPos.z);
-			else
-			{
-				this.setPosition(destPos.x, destPos.y, destPos.z);
-				if(this.riddenByEntity != null) {
-					
-					Entity rider = this.riddenByEntity;
-					rider.mountEntity(null);
-					rider.setPosition(destPos.x, destPos.y, destPos.z);
-					
-					this.setPosition(destPos.x, destPos.y, destPos.z);
-					
-					this.ticksExisted = 0;
-					((WorldServer)worldObj).resetUpdateEntityTick();
-					rider.mountEntity(this);
-				}
-			}
+			this.setPosition(targetPos.x, Configuration.orbit, targetPos.z);
+			return;
 		}
+		unpackSatellites();
+		setInOrbit(true);
+
+		//if coordinates are overridden, make sure we grab them
+		Vector3F<Float> destPos = storage.getDestinationCoordinates(destinationDimId, true);
+		if(destPos == null) destPos = new Vector3F<>((float) posX, (float) Configuration.orbit, (float) posZ);
+
+		if(this.riddenByEntity != null) {
+			//Make player confirm deorbit if a player is riding the rocket
+			setInFlight(false);
+		}
+
+		//Reset override coords
+		setOverriddenCoords(-1, 0, 0, 0);
+		this.travelToDimension(storage.getFirstTileEntity(TileGuidanceComputer.class).getTaskType()==1?Configuration.spaceDimId: destinationDimId, destPos.x, Configuration.orbit, destPos.z);
 	}
 
 	private void unpackSatellites() {
@@ -1092,6 +917,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		setInOrbit(isInOrbit = nbt.getBoolean("orbit"));
 		stats.readFromNBT(nbt);
 
+		this.comeFromDimID = nbt.getInteger("comeFromDimID");
+
 		mountedEntities = new WeakReference[stats.getNumPassengerSeats()];
 
 		setFuelAmount(stats.getFuelAmount(FuelType.LIQUID));
@@ -1134,6 +961,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		nbt.setBoolean("orbit", isInOrbit());
 		nbt.setBoolean("flight", isInFlight());
 		stats.writeToNBT(nbt);
+
+		nbt.setInteger("comeFromDimID", comeFromDimID);
 
 		if(!infrastructureCoords.isEmpty()) {
 			NBTTagList itemList = new NBTTagList();
@@ -1190,6 +1019,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			storage = new StorageChunk();
 			storage.setEntity(this);
 			storage.readFromNetwork(in);
+			comeFromDimID = in.readInt();
 		}
 		else if(packetId == PacketType.SEND_PLANET_DATA.ordinal()) {
 			nbt.setInteger("selection", in.readInt());
@@ -1201,6 +1031,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 		if(id == PacketType.RECEIVE_NBT.ordinal()) {
 			storage.writeToNetwork(out);
+			out.writeInt(comeFromDimID);
 		}
 		else if(id == PacketType.SEND_PLANET_DATA.ordinal()) {
 			if(worldObj.isRemote)
