@@ -36,7 +36,12 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	public @NotNull IChunkProvider createChunkGenerator() {
 		return new ChunkProviderSpace(this.worldObj, this.worldObj.getSeed());
 	}
-	
+
+	@Override
+	public float getStarBrightness(float par1) {
+		return 1.0F;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IRenderHandler getSkyRenderer() {
@@ -66,6 +71,6 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	
 	@Override
 	public @NotNull DimensionProperties getDimensionProperties(int x , int z) {
-		return DimensionManager.defaultSpaceDimensionProperties;
+		return properties;
 	}
 }

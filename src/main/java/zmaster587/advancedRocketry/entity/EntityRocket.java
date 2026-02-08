@@ -1,5 +1,6 @@
 package zmaster587.advancedRocketry.entity;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -16,10 +17,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.*;
@@ -35,6 +38,7 @@ import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
 import zmaster587.advancedRocketry.client.SoundRocketEngine;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.dimension.sim.SimUniverse;
 import zmaster587.advancedRocketry.event.PlanetEventHandler;
 import zmaster587.advancedRocketry.inventory.IPlanetDefiner;
 import zmaster587.advancedRocketry.inventory.TextureResources;
@@ -69,7 +73,8 @@ import zmaster587.libVulpes.util.Vector3F;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-//TODO: Rewrite this whole buggy and crashy mess
+import static zmaster587.advancedRocketry.api.Configuration.spaceDimId;
+
 public class EntityRocket extends EntityRocketBase implements INetworkEntity, IDismountHandler, IModularInventory, IProgressBar, IButtonInventory, ISelectionNotify,IPlanetDefiner, ISpaceTraveler {
 
 	//true if the rocket is on decent
@@ -97,7 +102,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	private int autoDescendTimer;
 	private WeakReference<Entity>[] mountedEntities;
 	protected ModulePlanetSelector container;
-	public int comeFromDimID = Configuration.spaceDimId;
+	public int comeFromDimID = spaceDimId;
 
 
 	public enum PacketType {
@@ -525,29 +530,35 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 				//if the player holds the forward key then decelerate
 				if(isInOrbit() && (burningFuel || descentPhase)) {
-					float vel = descentPhase ? 1f : player.moveForward;
-					this.motionY -= this.motionY*vel/50f;
-				}
-				this.velocityChanged = true;
+					float vel =  player.moveForward/100F;
+					Vec3 look = player.getLook(0.01F);
+					double precision = 100.0D; // 保留两位小数
+					double lookX = Math.round(look.xCoord * precision) / precision;
+					double lookY = Math.round(look.yCoord * precision) / precision;
+					double lookZ = Math.round(look.zCoord * precision) / precision;
 
+					this.motionX += lookX * vel;
+					this.motionY += lookY * vel;
+					this.motionZ += lookZ * vel;
+
+					this.velocityChanged = true;
+				}
+				this.isAirBorne = true;
 			}
 			else if(isInOrbit() && descentPhase) { //For unmanned rockets
 				this.motionY -= this.motionY/50f;
 				this.velocityChanged = true;
 			}
+			//If out of fuel or descending then accelerate downwards
+			if(isInOrbit() || !burningFuel) {
+				if(this.worldObj.provider.dimensionId != spaceDimId) this.motionY = Math.min(this.motionY - 0.1, 1);
+			} else
+				this.motionY += stats.getAcceleration() * deltaTime;
 
 			if(!worldObj.isRemote) {
-				//If out of fuel or descending then accelerate downwards
-				if(isInOrbit() || !burningFuel) {
-					this.motionY = Math.min(this.motionY - 0.001, 1);
-				} else
-					//this.motionY = Math.min(this.motionY + 0.001, 1);
-					this.motionY += stats.getAcceleration() * deltaTime;
-
-
 				double lastPosY = this.posY;
 				double prevMotion = this.motionY;
-				this.moveEntity(0, prevMotion*deltaTime, 0);
+				this.moveEntity(this.motionX, prevMotion, this.motionZ);
 
 				//Check to see if it's landed
 				if((isInOrbit() || !burningFuel) && isInFlight() && lastPosY + prevMotion != this.posY && this.posY < 256) {
@@ -561,17 +572,26 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 					onOrbitReached();
 				}
 
-				if(this.posY < 0) onRockedFallsOutOfWorld();
+				if(this.posY < 0 && this.worldObj.provider.dimensionId != spaceDimId) onRockedFallsOutOfWorld();
 			}
-			else this.moveEntity(0, this.motionY, 0);
+			else this.moveEntity(this.motionX, this.motionY, this.motionZ);
 		}
 	}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void setVelocity(double x, double y, double z) {super.setVelocity(x, y, z);
+	}
 
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int p_70056_9_) {
+		super.setPositionAndRotation2(x, y, z, yaw, pitch, p_70056_9_);
+	}
 	public void onRockedFallsOutOfWorld() {
 		//If the rocket falls out of the world while in orbit either fall back to earth or die
 		int dimId = worldObj.provider.dimensionId;
 
-		if(dimId == Configuration.stationDimId) {
+		if(dimId == Configuration.stationDimId || dimId == spaceDimId) {
 
 			ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords((int)this.posX, (int)this.posZ);
 
@@ -645,14 +665,28 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		Vector3F<Float> destPos = storage.getDestinationCoordinates(destinationDimId, true);
 		if(destPos == null) destPos = new Vector3F<>((float) posX, (float) Configuration.orbit, (float) posZ);
 
-		if(this.riddenByEntity != null) {
-			//Make player confirm deorbit if a player is riding the rocket
-			setInFlight(false);
-		}
 
+		this.motionX = 0;
+		this.motionY = 0;
+		this.motionZ = 0;
 		//Reset override coords
 		setOverriddenCoords(-1, 0, 0, 0);
-		this.travelToDimension(storage.getFirstTileEntity(TileGuidanceComputer.class).getTaskType()==1?Configuration.spaceDimId: destinationDimId, destPos.x, Configuration.orbit, destPos.z);
+		if(storage.getFirstTileEntity(TileGuidanceComputer.class).getTaskType()==1){
+			SimUniverse.SimBody body = SimUniverse.getInstance().getBody(String.valueOf( this.worldObj.provider.dimensionId));
+			if(body == null){
+				FMLLog.log(Level.FATAL, "Cannot get current SimUniverse body! This is a bug!");
+				this.travelToDimension(this.worldObj.provider.dimensionId, destPos.x, Configuration.orbit, destPos.z);
+				return;
+			}
+			this.travelToDimension(spaceDimId, body.x, body.y, body.z);
+		}
+		else {
+			this.travelToDimension(destinationDimId, destPos.x, Configuration.orbit, destPos.z);
+			if(this.riddenByEntity != null) {
+				//Make player confirm deorbit if a player is riding the rocket
+				setInFlight(false);
+			}
+		}
 	}
 
 	@Override
@@ -1191,7 +1225,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				//Conditional b/c for some reason client/server positions do not match
 				float xOffset = this.storage.getSizeX() % 2 == 0 ? 0.5f : 0f;
 				float zOffset = this.storage.getSizeZ() % 2 == 0 ? 0.5f : 0f;
-				this.riddenByEntity.setPosition(this.posX  + stats.getSeatX() + xOffset, this.posY + stats.getSeatY() + (worldObj.isRemote && this.riddenByEntity.equals(Minecraft.getMinecraft().thePlayer) ? 1.5 : -0.25), this.posZ + stats.getSeatZ() + zOffset );
+				this.riddenByEntity.setPosition(this.posX  + stats.getSeatX(), this.posY + stats.getSeatY() + (worldObj.isRemote && this.riddenByEntity.equals(Minecraft.getMinecraft().thePlayer) ? 1.5 : -0.25), this.posZ + stats.getSeatZ() );
 			}
 			else
 				this.riddenByEntity.setPosition(this.posX , this.posY , this.posZ );
@@ -1364,6 +1398,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	@Override
 	public void handleDismount(Entity entity) {
 
+		if(worldObj.provider.dimensionId == spaceDimId)return;
 		//Attempt to dismount passengers first, else dismount pilot
 		for(int i = 0; i < mountedEntities.length; i++) {
 

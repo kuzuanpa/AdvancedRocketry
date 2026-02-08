@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.IPlanetaryProvider;
+import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.client.render.entity.RenderCelestialBody;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
@@ -38,7 +39,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import static zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact.debugMode;
 
@@ -430,18 +434,16 @@ public class RenderPlanetarySky extends IRenderHandler {
 			GL11.glShadeModel(GL11.GL_FLAT);
 		}
 
-		drawRandomStars: {
-			if (atmosphere > 0)
-				f6 = 1.0F - (mc.theWorld.getRainStrength(partialTicks) * (atmosphere / 100f));
-			else
-				f6 = 1f;
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			float f18 = mc.theWorld.getStarBrightness(partialTicks) * f6 * (atmosphere) + (1 - atmosphere);
-			if (mc.theWorld.isRaining())
-				f18 *= 1 - mc.theWorld.getRainStrength(partialTicks);
+		float atmosphereRainAlpha = 1.0F;
+		if (atmosphere > 0) atmosphereRainAlpha = 1.0F - (mc.theWorld.getRainStrength(partialTicks) * (atmosphere / 100f));
 
-			if (f18 > 0.0F) {
-				GL11.glColor4f(f18, f18, f18, f18);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+		float starBrightness = mc.theWorld.getStarBrightness(partialTicks) * atmosphereRainAlpha * (atmosphere) + (1 - atmosphere);
+		if (mc.theWorld.isRaining()) starBrightness *= 1 - mc.theWorld.getRainStrength(partialTicks);
+
+		drawRandomStars: {
+			if (starBrightness > 0.0F) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, starBrightness);
 				GL11.glPushMatrix();
 				GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
 				if(!isWarp) rotateAroundAxis();
@@ -455,23 +457,10 @@ public class RenderPlanetarySky extends IRenderHandler {
 					}
 					//GL11.glTranslated(((System.currentTimeMillis()/10) + 50) % 100, 0, 0);
 				} else {
+					GL11.glColor4f(1.0F, 1.0F, 1.0F, starBrightness);
 					GL11.glCallList(this.starGLCallList);
-					//Extra stars for low ATM
-					if (atmosphere < 0.5) {
-						GL11.glColor4f(f18, f18, f18, f18 / 2f);
-						GL11.glPushMatrix();
-						GL11.glRotatef(-90, 0, 1, 0);
-						GL11.glCallList(this.starGLCallList);
-						GL11.glPopMatrix();
-					}
-					if (atmosphere < 0.25) {
-						GL11.glColor4f(f18, f18, f18, f18 / 4f);
-						GL11.glPushMatrix();
-						GL11.glRotatef(90, 0, 1, 0);
-						GL11.glCallList(this.starGLCallList);
-						GL11.glPopMatrix();
-					}
-					GL11.glColor4f(f18, f18, f18, f18);
+					GL11.glRotatef(-90,1,0,0);
+					GL11.glCallList(this.starGLCallList);
 				}
 				GL11.glPopMatrix();
 			}
@@ -501,41 +490,48 @@ public class RenderPlanetarySky extends IRenderHandler {
         });
 
 		for (SimUniverse.SimBody body : sortedList) {
+
 			if(body.getConfig() == null)continue; //It shouldn't be null...
             double dx = body.x/(debugMode?10F:1F) - playerPos.x;
             double dy = body.y/(debugMode?10F:1F) - playerPos.y;
             double dz = body.z/(debugMode?10F:1F) - playerPos.z;
             double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 			if(dist <= 0.1)continue;
+			float stellarBright = (float) Math.max(starBrightness, -dist/100F+1F);
+
+			if(stellarBright < 0.01F)continue;
 			double depthOffset = Math.min(dist / 100.0, 90);
 
-			double scale = (10F+ depthOffset) / dist;
+			double scale = (4F+ depthOffset) / dist;
 			double renderX = dx * scale;
 			double renderY = dy * scale;
 			double renderZ = dz * scale;
-			float multiplier = (2-atmosphere)/2.2f;//atmosphere > 1 ? (2-atmosphere) : 1f;
 
-			multiplier *= 1-mc.theWorld.getRainStrength(partialTicks);
-			multiplier *= (float) Math.max(mc.theWorld.getStarBrightness(partialTicks), 8F/dist);
 
 			double renderSize = Math.max((body.getConfig().getSize() / dist) * 8f, 0.01f);
 
 			StellarBody stellar = DimensionManager.getInstance().getStar(Integer.parseInt(body.getConfig().getID()));
-			GL11.glColor4f(1.0F,1.0F,1.0F,multiplier);
+			GL11.glColor4f(1.0F,1.0F,1.0F,stellarBright);
 
-			mc.renderEngine.bindTexture(TextureResources.locationSunLODFar); // 实际应根据 body 类型绑定不同贴图
 			if(body.getConfig().isStar() && stellar != null){
 				float[] stellarColorArray = stellar.getColor();
 				Vec3 stellarColor = Vec3.createVectorHelper(stellarColorArray[0], stellarColorArray[1], stellarColorArray[2]);
 
 				if(renderSize > .05F){
-					drawStar(tessellator,(float)renderX,(float)renderY,(float)renderZ, solarOrbitalDistance, (float) (renderSize/ 8.0F),stellarColor, partialTicks, properties, stellar, multiplier);
+					drawStar(tessellator,(float)renderX,(float)renderY,(float)renderZ, solarOrbitalDistance, (float) (renderSize/ 8.0F),stellarColor, partialTicks, properties, stellar, stellarBright);
 				}else{
-					GL11.glColor4f((float) Math.min(1.0F, stellarColor.xCoord*1.2F), (float)Math.min(1.0F, stellarColor.yCoord*1.2F) , (float)Math.min(1.0F, stellarColor.zCoord*1.2F) , multiplier);
+					GL11.glColor4f((float) Math.min(1.0F, stellarColor.xCoord*1.2F), (float)Math.min(1.0F, stellarColor.yCoord*1.2F) , (float)Math.min(1.0F, stellarColor.zCoord*1.2F) , stellarBright);
+					mc.renderEngine.bindTexture(TextureResources.locationSunLODFar);
 					RenderCelestialBody.drawFacedRect(tessellator, renderX, renderY, renderZ, renderSize);
 				}
 			}
-			else RenderCelestialBody.drawFacedRect(tessellator, renderX, renderY, renderZ, renderSize);
+			else {
+				IDimensionProperties dim = DimensionManager.getInstance().getDimensionProperties(Integer.parseInt(body.getConfig().getID()));
+
+				mc.renderEngine.bindTexture(dim.getPlanetIcon());
+
+				RenderCelestialBody.drawFacedRect(tessellator, renderX, renderY, renderZ, renderSize);
+			}
 		}
 
 
@@ -552,7 +548,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 		f7 = 0.0F;
 		f8 = 0.0F;
 		f9 = 0.0F;
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, f6);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, starBrightness);
 		GL11.glTranslatef(f7, f8, f9);
 		GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
 

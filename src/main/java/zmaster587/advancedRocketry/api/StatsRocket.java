@@ -1,17 +1,17 @@
 package zmaster587.advancedRocketry.api;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
 import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.api.fuel.FuelRegistry;
 import zmaster587.advancedRocketry.api.fuel.FuelRegistry.FuelType;
 import zmaster587.libVulpes.util.BlockPosition;
 import zmaster587.libVulpes.util.Vector3F;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagInt;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class StatsRocket {
 
@@ -50,7 +50,7 @@ public class StatsRocket {
 		fuelLiquid = 0;
 		drillingPower = 0f;
 		pilotSeatPos = new BlockPosition(0,0,0);
-		pilotSeatPos.x = -1;
+		pilotSeatPos.x = Integer.MIN_VALUE;
 		engineLoc = new ArrayList<>();
 		statTags = new HashMap<>();
 	}
@@ -311,7 +311,7 @@ public class StatsRocket {
 	 * @return true if a seat exists on this stat
 	 */
 	public boolean hasSeat() {
-		return pilotSeatPos.x != -1;
+		return pilotSeatPos.x != Integer.MIN_VALUE;
 	}
 
 	/**
@@ -329,7 +329,7 @@ public class StatsRocket {
 		}
 
 		fuelLiquid = 0;
-		pilotSeatPos.x = -1;
+		pilotSeatPos.x = Integer.MIN_VALUE;
 		clearEngineLocations();
 		passengerSeats.clear();
 		statTags.clear();

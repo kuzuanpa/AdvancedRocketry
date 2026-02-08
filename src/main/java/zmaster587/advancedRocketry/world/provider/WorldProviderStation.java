@@ -31,6 +31,10 @@ public class WorldProviderStation extends WorldProviderPlanet {
 		return false;
 	}
 
+	@Override
+	public float getStarBrightness(float par1) {
+		return 1.0F;
+	}
 	
 	public int getAverageGroundLevel() {
 		return 0;

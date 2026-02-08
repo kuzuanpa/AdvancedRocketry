@@ -81,8 +81,8 @@ public class StellarBody {
 		posY = y;
 	}
 
-	public void setPosZ(int x) {
-		posZ = x;
+	public void setPosZ(int z) {
+		posZ = z;
 	}
 
 	public int getPosX() {
@@ -256,6 +256,7 @@ public class StellarBody {
 		temperature = nbt.getInteger("temperature");
 		name = nbt.getString("name");
 		posX = nbt.getShort("posX");
+		posY = nbt.getShort("posY");
 		posZ = nbt.getShort("posZ");
 		try{if(nbt.hasKey("dysonSphere"))dysonSphere=new DysonSphere().readFromNBT(nbt.getCompoundTag("dysonSphere"));}catch (Exception e){e.printStackTrace();}
 		try{if(nbt.hasKey("dysonCloud"))dysonCloud=new DysonCloud().readFromNBT(nbt.getCompoundTag("dysonCloud"));}catch (Exception e){e.printStackTrace();}
