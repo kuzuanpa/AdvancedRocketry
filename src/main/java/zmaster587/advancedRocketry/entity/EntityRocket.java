@@ -530,7 +530,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 				//if the player holds the forward key then decelerate
 				if(isInOrbit() && (burningFuel || descentPhase)) {
-					float vel =  player.moveForward/100F;
+					float vel =  player.moveForward/1000F;
 					Vec3 look = player.getLook(0.01F);
 					double precision = 100.0D; // 保留两位小数
 					double lookX = Math.round(look.xCoord * precision) / precision;
@@ -540,6 +540,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 					this.motionX += lookX * vel;
 					this.motionY += lookY * vel;
 					this.motionZ += lookZ * vel;
+
+					this.motionX = Math.max(-0.1F, Math.min(this.motionX, 0.1F));
+					this.motionY = Math.max(-0.1F, Math.min(this.motionY, 0.1F));
+					this.motionZ = Math.max(-0.1F, Math.min(this.motionZ, 0.1F));
 
 					this.velocityChanged = true;
 				}
