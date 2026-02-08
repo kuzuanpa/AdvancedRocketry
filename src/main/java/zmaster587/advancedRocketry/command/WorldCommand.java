@@ -672,7 +672,7 @@ public class WorldCommand implements ICommand {
 									}
 								}
 								else if(string[2].equalsIgnoreCase("pos")) {
-									sender.addChatMessage(new ChatComponentText("Pos: " + star.getPosX() + "," + star.getPosZ()));
+									sender.addChatMessage(new ChatComponentText("Pos: " + star.getPosX() + "," + star.getPosY() +"," + star.getPosZ()));
 								}
 							}// end star existance validation
 						} catch (NumberFormatException e) {

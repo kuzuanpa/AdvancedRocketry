@@ -1691,6 +1691,7 @@ public class AdvancedRocketry {
 
 				star.setName(star.getName());
 				star.setPosX(star.getPosX());
+				star.setPosY(star.getPosY());
 				star.setPosZ(star.getPosZ());
 				star.setSize(star.getSize());
 				star.setTemperature(star.getTemperature());
