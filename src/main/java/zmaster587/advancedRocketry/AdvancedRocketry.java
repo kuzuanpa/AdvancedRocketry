@@ -72,10 +72,11 @@ import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.dimension.DimensionProperties.AtmosphereTypes;
 import zmaster587.advancedRocketry.dimension.DimensionProperties.Temps;
+import zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact;
 import zmaster587.advancedRocketry.enchant.EnchantmentSpaceBreathing;
 import zmaster587.advancedRocketry.entity.*;
 import zmaster587.advancedRocketry.event.BucketHandler;
-import zmaster587.advancedRocketry.event.CableTickHandler;
+import zmaster587.advancedRocketry.event.TickHandler;
 import zmaster587.advancedRocketry.event.PlanetEventHandler;
 import zmaster587.advancedRocketry.event.WorldEvents;
 import zmaster587.advancedRocketry.integration.CompatibilityMgr;
@@ -893,7 +894,8 @@ public class AdvancedRocketry {
 		EntityRegistry.registerModEntity(EntityUIButton.class, "ARPlanetUIButton", 6, this, 64, 20, false);
 		EntityRegistry.registerModEntity(EntityUIStar.class, "ARStarUIButton", 7, this, 64, 20, false);
 		EntityRegistry.registerModEntity(EntityElevatorCapsule.class, "ARSpaceElevatorCapsule", 8, this, 64, 20, true);
-		
+		EntityRegistry.registerModEntity(EntityCelestialBody.class, "ARCelestialBody", 9, this, 64, 1, false);
+
 		//TileEntity Registration ---------------------------------------------------------------------------------------------
 		GameRegistry.registerTileEntity(TileRocketBuilder.class, "ARrocketBuilder");
 		GameRegistry.registerTileEntity(TileWarpCore.class, "ARwarpCore");
@@ -1332,9 +1334,9 @@ public class AdvancedRocketry {
 		MinecraftForge.ORE_GEN_BUS.register(handle);
 		MinecraftForge.EVENT_BUS.register(new BucketHandler());
 
-		CableTickHandler cable = new CableTickHandler();
-		FMLCommonHandler.instance().bus().register(cable);
-		MinecraftForge.EVENT_BUS.register(cable);
+		TickHandler tick = new TickHandler();
+		FMLCommonHandler.instance().bus().register(tick);
+		MinecraftForge.EVENT_BUS.register(tick);
 
 		InputSyncHandler inputSync = new InputSyncHandler();
 		FMLCommonHandler.instance().bus().register(inputSync);
@@ -1814,6 +1816,7 @@ public class AdvancedRocketry {
 		
 		DimensionManager.getInstance().knownPlanets.addAll(zmaster587.advancedRocketry.api.Configuration.initiallyKnownPlanets);
 
+		AdvanceRocketrySimulateUniverseCompact.init();
 	}
 
 
@@ -1829,6 +1832,8 @@ public class AdvancedRocketry {
 		DimensionManager.getInstance().knownPlanets.clear();
 		if(!zmaster587.advancedRocketry.api.Configuration.lockUI)
 			proxy.saveUILayout(config);
+
+		AdvanceRocketrySimulateUniverseCompact.stop();
 	}
 
 	@SubscribeEvent

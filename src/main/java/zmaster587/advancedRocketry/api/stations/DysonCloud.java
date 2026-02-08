@@ -39,7 +39,7 @@ public class DysonCloud implements IDysonSphere{
     int bodyList = -1;
     float lastDrawListArgument = 0;
     ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/env/dyson_sphere_front.png");
-    public void draw (int x,int y,int distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
+    public void draw (int x,int y,float distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
         int layerCount = 8;
         GL11.glPushMatrix();
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
@@ -47,38 +47,32 @@ public class DysonCloud implements IDysonSphere{
         GL11.glTranslatef(x, y, z);
         GL11.glRotatef(offsetRotateZ, 0, 0, 1);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        if(lastDrawListArgument != distanceFromStarBase * distanceFromStarMultiplier * scale) {
-            if (bodyList != -1) GL11.glDeleteLists(bodyList, layerCount);
-            bodyList = GL11.glGenLists(layerCount);
-            for (int layer = 0; layer < layerCount; layer++) {
-                GL11.glNewList(bodyList + layer, GL11.GL_COMPILE);
-                for (int i = 0; i < Math.min(Math.pow(count, 0.9), 32768) / layerCount; i++) {
-                    GL11.glPushMatrix();
-
-                    int size = 1;
-                    float s = (layer * 1F / layerCount) * 0.2F;
-                    float angle = rng.nextFloat() * 360;
-                    float nodeY = 4.8F + rng.nextFloat() * 1.8F;
-
-                    GL11.glRotatef(angle, 0, 1, 0);
-                    float f1 = (distanceFromStarBase + distanceFromStarMultiplier * size * distanceFromStarBase / 2F);
-                    GL11.glTranslatef(0, (f1 * (nodeY / 12)) - f1 / 2F, -f1 * (0.2F - s) * (float) Math.sin(3.14F * (nodeY + 0.5F) / (12)));
-                    GL11.glRotatef(90 * ((nodeY + 1 - 12 / 2F) / 12), 1, 0, 0);
-                    GL11.glScalef(scale, scale, 1);
-                    GL11.glTranslatef(-16, -16, -f1 / 2);
-                    //if(drawNodesCoord)fontRendererObj.drawString(nodeX+","+nodeY, 2,3,0x44aaff);
-                    drawTextureRect(tessellator, 0, 0, 0, 0, 0, 8, 8);
-                    GL11.glPopMatrix();
-                }
-                lastDrawListArgument = distanceFromStarBase * distanceFromStarMultiplier * scale;
-                GL11.glEndList();
-            }
-        }
+        GL11.glDisable(GL_CULL_FACE);
 
         for (int layer = 0; layer < layerCount; layer++) {
             GL11.glRotatef( (-180- rotate)/16f, 0, 1, 0);
-            GL11.glCallList(bodyList+layer);
+            for (int i = 0; i < Math.min(Math.pow(count, 0.9), 32768) / layerCount; i++) {
+                GL11.glPushMatrix();
+
+                int size = 1;
+                float s = (layer * 1F / layerCount) * 0.4F;
+                float angle = rng.nextFloat() * 360;
+                float nodeY = 4.8F + rng.nextFloat() * 1.8F;
+
+                GL11.glRotatef(angle, 0, 1, 0);
+                float f1 = (distanceFromStarBase + distanceFromStarMultiplier * size * distanceFromStarBase / 2F);
+                GL11.glTranslatef(0, (f1 * (nodeY / 12)) - f1 / 2F, -f1 * (0.2F - s) * (float) Math.sin(3.14F * (nodeY + 0.5F) / (12)));
+                GL11.glRotatef(90 * ((nodeY + 1 - 12 / 2F) / 12), 1, 0, 0);
+                GL11.glScalef(scale, scale, 1);
+                GL11.glTranslatef(-16, -16, -f1 / 2);
+                //if(drawNodesCoord)fontRendererObj.drawString(nodeX+","+nodeY, 2,3,0x44aaff);
+                drawTextureRect(tessellator, 0, 0, 0, 0, 0, 8, 8);
+                GL11.glPopMatrix();
+            }
+            lastDrawListArgument = distanceFromStarBase * distanceFromStarMultiplier * scale;
         }
+        GL11.glEnable(GL_CULL_FACE);
+
         GL11.glPopMatrix();
     }
 

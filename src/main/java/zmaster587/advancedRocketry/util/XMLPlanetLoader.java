@@ -235,6 +235,14 @@ public class XMLPlanetLoader {
 					AdvancedRocketry.logger.warn("Invalid orbitalDist specified"); //TODO: more detailed error msg
 				}
 			}
+			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("mass")) {
+
+				try {
+					properties.mass = Float.parseFloat(planetPropertyNode.getTextContent());
+				} catch (NumberFormatException e) {
+					AdvancedRocketry.logger.warn("Invalid orbitalDist specified"); //TODO: more detailed error msg
+				}
+			}
 			else if(planetPropertyNode.getNodeName().equalsIgnoreCase("orbitaltheta")) {
 
 				try {
@@ -461,12 +469,21 @@ public class XMLPlanetLoader {
 
 			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
 				try {
-					star.setPosZ(Integer.parseInt(nameNode.getNodeValue()));
+					star.setPosY(Integer.parseInt(nameNode.getNodeValue()));
 				} catch (NumberFormatException e) {
-                    AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
+					AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
 				}
 			}
 
+			nameNode = planetNode.getAttributes().getNamedItem("z");
+
+			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
+				try {
+					star.setPosZ(Integer.parseInt(nameNode.getNodeValue()));
+				} catch (NumberFormatException e) {
+					AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
+				}
+			}
 			nameNode = planetNode.getAttributes().getNamedItem("numPlanets");
 
 			try {
@@ -607,7 +624,7 @@ public class XMLPlanetLoader {
 		Collection<StellarBody> stars = galaxy.getStars();
 
 		for(StellarBody star : stars) {
-			outputString.append("\t<star name=\"").append(star.getName()).append("\" id=\"").append(star.getId()).append("\" temp=\"").append(star.getTemperature()).append("\" x=\"").append(star.getPosX()).append("\" y=\"").append(star.getPosZ()).append("\" size=\"").append(star.getSize()).append("\" numPlanets=\"0\" numGasGiants=\"0\">\n");
+			outputString.append("\t<star name=\"").append(star.getName()).append("\" id=\"").append(star.getId()).append("\" temp=\"").append(star.getTemperature()).append("\" x=\"").append(star.getPosX()).append("\" y=\"").append(star.getPosY()).append("\" z=\"").append(star.getPosZ()).append("\" mass=\"").append(star.getMass()).append("\" size=\"").append(star.getSize()).append("\" numPlanets=\"0\" numGasGiants=\"0\">\n");
 
 			for(StellarBody star2 : star.getSubStars()) {
 				outputString.append("\t\t<star temp=\"").append(star2.getTemperature()).append("\" size=\"").append(star2.getSize()).append("\" seperation=\"").append(star2.getStarSeperation()).append("\" />\n");
@@ -670,6 +687,7 @@ public class XMLPlanetLoader {
 		outputString.append(tabLen).append("\t<orbitalDistance>").append(properties.getOrbitalDist()).append("</orbitalDistance>\n");
 		outputString.append(tabLen).append("\t<orbitalTheta>").append((int) (properties.baseOrbitTheta * 180d / Math.PI)).append("</orbitalTheta>\n");
 		outputString.append(tabLen).append("\t<solarInsolationMult>").append(properties.peakInsolationMultiplier).append("</solarInsolationMult>\n");
+		outputString.append(tabLen).append("\t<mass>").append(properties.mass).append("</mass>\n");
 		outputString.append(tabLen).append("\t<avgTemperature>").append(properties.averageTemperature).append("</avgTemperature>\n");
 		outputString.append(tabLen).append("\t<orbitalPhi>").append((int) (properties.orbitalPhi)).append("</orbitalPhi>\n");
 		outputString.append(tabLen).append("\t<rotationalPeriod>").append(properties.rotationalPeriod).append("</rotationalPeriod>\n");

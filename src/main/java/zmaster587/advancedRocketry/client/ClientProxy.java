@@ -28,11 +28,7 @@ import zmaster587.advancedRocketry.client.render.RendererPhantomBlock;
 import zmaster587.advancedRocketry.client.render.RendererRocketBuilder;
 import zmaster587.advancedRocketry.client.render.RendererRocket;
 import zmaster587.advancedRocketry.client.render.RendererPipe;
-import zmaster587.advancedRocketry.client.render.entity.RenderButtonUIEntity;
-import zmaster587.advancedRocketry.client.render.entity.RenderElevatorCapsule;
-import zmaster587.advancedRocketry.client.render.entity.RenderPlanetUIEntity;
-import zmaster587.advancedRocketry.client.render.entity.RenderStarUIEntity;
-import zmaster587.advancedRocketry.client.render.entity.RendererItem;
+import zmaster587.advancedRocketry.client.render.entity.*;
 import zmaster587.advancedRocketry.client.render.item.RendererBucket;
 import zmaster587.advancedRocketry.client.render.item.RendererLaserGun;
 import zmaster587.advancedRocketry.client.render.multiblocks.RenderBiomeScanner;
@@ -52,14 +48,7 @@ import zmaster587.advancedRocketry.client.render.multiblocks.RendererPrecisionAs
 import zmaster587.advancedRocketry.client.render.multiblocks.RendererSpaceElevator;
 import zmaster587.advancedRocketry.client.render.multiblocks.RendererWarpCore;
 import zmaster587.advancedRocketry.common.CommonProxy;
-import zmaster587.advancedRocketry.entity.EntityElevatorCapsule;
-import zmaster587.advancedRocketry.entity.EntityItemAbducted;
-import zmaster587.advancedRocketry.entity.EntityLaserNode;
-import zmaster587.advancedRocketry.entity.EntityRocket;
-import zmaster587.advancedRocketry.entity.EntityUIButton;
-import zmaster587.advancedRocketry.entity.EntityUIPlanet;
-import zmaster587.advancedRocketry.entity.EntityUIStar;
-import zmaster587.advancedRocketry.entity.FxSkyLaser;
+import zmaster587.advancedRocketry.entity.*;
 import zmaster587.advancedRocketry.entity.fx.FxElectricArc;
 import zmaster587.advancedRocketry.entity.fx.FxGravityEffect;
 import zmaster587.advancedRocketry.entity.fx.FxLaser;
@@ -164,6 +153,7 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityUIStar.class, new RenderStarUIEntity());
 		RenderingRegistry.registerEntityRenderingHandler(EntityUIButton.class, new RenderButtonUIEntity());
 		RenderingRegistry.registerEntityRenderingHandler(EntityElevatorCapsule.class, new RenderElevatorCapsule());
+		RenderingRegistry.registerEntityRenderingHandler(EntityCelestialBody.class, new RenderCelestialBody());
 
 		transcieverRenderType = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(transcieverRenderType, (ISimpleBlockRenderingHandler) AdvancedRocketryBlocks.blockTransciever);

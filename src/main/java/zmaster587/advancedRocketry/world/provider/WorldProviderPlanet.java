@@ -99,7 +99,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 
 		if(getAtmosphereDensity(0,0) > 75)
 			super.updateWeather();
-		else {
+		else if(worldObj.isRemote){
 			worldObj.setRainStrength(0);
 			worldObj.setThunderStrength(0);
 		}

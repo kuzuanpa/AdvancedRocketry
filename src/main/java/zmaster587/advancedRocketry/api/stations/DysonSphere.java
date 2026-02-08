@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.client.render.planet.RenderPlanetarySky;
 
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+
 public class DysonSphere implements IDysonSphere{
     public final static boolean T=true;
     public final static boolean F=false;
@@ -205,39 +207,11 @@ public class DysonSphere implements IDysonSphere{
     public int getNodeBuildingProgress(int nodeX,int nodeY){
         return this.nodesBuildingProgress[nodeY][nodeX];
     }
-    public void draw(int x,int y,int distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
-        //Because we need to let the quad always face to the player. We cannot just rotate the whole sphere
-        drawFrontLayer(x, y, distanceFromStarBase, z, offsetRotateZ, scale, distanceFromStarMultiplier, rotate);
-        drawBackLayer(x, y, distanceFromStarBase, z, offsetRotateZ, scale, distanceFromStarMultiplier, rotate);
-    }
+
     ResourceLocation textureFront =new ResourceLocation("advancedrocketry:textures/env/dyson_sphere_front.png");
-    ResourceLocation textureBack =new ResourceLocation("advancedrocketry:textures/env/dyson_sphere_back.png");
-    void drawBackLayer(int x, int y, int distanceFromStarBase, int z, int offsetRotateZ, float scale, float distanceFromStarMultiplier, float rotate) {
-        for(int nodeY=0;nodeY<DysonSphere.lengthYFromSize[size];nodeY++)for(int nodeX=0;nodeX<DysonSphere.getValidNodesInARow(size, nodeY);nodeX++) {
-            GL11.glPushMatrix();
-            GL11.glTranslatef(x, y, z);
-            GL11.glRotatef(offsetRotateZ, 0, 0, 1);
-            GL11.glRotatef(-180-rotate, 0, 1, 0);
-            float angle=(360.0F / DysonSphere.getValidNodesInARow(size, nodeY)) * nodeX;
-            if(angle>360){
-                GL11.glPopMatrix();
-                continue;
-            }
-            GL11.glRotatef(angle, 0, 1, 0);
-            float f1=(distanceFromStarBase+distanceFromStarMultiplier*(size + 0.5F) * distanceFromStarBase/2F);
-            GL11.glTranslatef(0,(f1 *((float)(nodeY) / DysonSphere.lengthYFromSize[size]))-f1/2F, -f1*0.4F*(float) Math.sin(3.14F* (nodeY+0.5F)/ (DysonSphere.lengthYFromSize[size])));
-            GL11.glRotatef(90*((nodeY+1-DysonSphere.lengthYFromSize[size]/2F) / DysonSphere.lengthYFromSize[size]),1,0,0);
-            GL11.glScalef(scale,-scale,1);
-            GL11.glTranslatef(-16, -16, -f1/2);
-            //if(drawNodesCoord)fontRendererObj.drawString(nodeX+","+nodeY, 2,3,0x44aaff);
-            Minecraft.getMinecraft().getTextureManager().bindTexture(textureBack);
-            RenderPlanetarySky.drawTextureRect(Tessellator.instance, 0, 0, 0, 8, 0, 32, 32);
+    public void draw(int x,int y,float distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
+        GL11.glDisable(GL_CULL_FACE);
 
-            GL11.glPopMatrix();
-
-        }
-    }
-    void drawFrontLayer(int x,int y,int distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
         for(int nodeY=0;nodeY<DysonSphere.lengthYFromSize[size];nodeY++)for(int nodeX=0;nodeX<DysonSphere.getValidNodesInARow(size, nodeY);nodeX++) {
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, z);
@@ -261,6 +235,8 @@ public class DysonSphere implements IDysonSphere{
             GL11.glPopMatrix();
 
         }
+        GL11.glEnable(GL_CULL_FACE);
+
     }
 
     public DysonSphere init(byte size){

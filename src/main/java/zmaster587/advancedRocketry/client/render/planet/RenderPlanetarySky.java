@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
@@ -21,11 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.IPlanetaryProvider;
-import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
+import zmaster587.advancedRocketry.client.render.entity.RenderCelestialBody;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
-import zmaster587.advancedRocketry.entity.EntityRocket;
+import zmaster587.advancedRocketry.dimension.sim.SimUniverse;
 import zmaster587.advancedRocketry.event.RocketEventHandler;
 import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.stations.SpaceObject;
@@ -39,14 +40,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact.debugMode;
+
 public class RenderPlanetarySky extends IRenderHandler {
 
-	public static int selectedPlanetID = -1;
-	private static int bodyList;
 	private static int sunList;
-	public static int lastPlanet = Configuration.spaceDimId;
-
-	public static float planetPosOffset = 0;
 	final int starGLCallList;
 	final int glSkyList;
 	final int glSkyList2;
@@ -195,15 +193,18 @@ public class RenderPlanetarySky extends IRenderHandler {
 	protected ResourceLocation getTextureForPlanet(DimensionProperties properties) {
 		return properties.getPlanetIcon();
 	}
-	protected float getSkyRotationAmount() {return celestialAngle + planetPosOffset/4000F;}
+	protected float getSkyRotationAmount() {return celestialAngle;}
 	protected Vector3F<Float> getRotateAxis() { return axis;}
-
+	private static final ResourceLocation STAR_TEXTURE = new ResourceLocation("yourmod", "textures/sky/star_body.png");
 	protected void rotateAroundAxis() {
 		Vector3F<Float> axis = getRotateAxis();
 		GL11.glRotatef(getSkyRotationAmount() * 360.0F, axis.x, axis.y, axis.z);
 	}
 
-	
+	public Vector3F<Double> getPlayerPos(float partialTicks, EntityPlayer player){
+		SimUniverse.SimBody stellar = SimUniverse.getInstance().getBody(String.valueOf(Minecraft.getMinecraft().theWorld.provider.dimensionId));
+		return new Vector3F<>(stellar.x / (debugMode?10F : 1F),stellar.y/ (debugMode?10F : 1F),stellar.z/ (debugMode?10F : 1F));
+	}
 	@Override
 	public void render(float partialTicks, @NotNull WorldClient world, @NotNull Minecraft mc) {
 
@@ -229,8 +230,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 		List<StellarBody> subStars = new LinkedList<>();
 		StellarBody primaryStar;
 		celestialAngle = mc.theWorld.getCelestialAngle(partialTicks);
-		if(mc.theWorld.provider.dimensionId != Configuration.spaceDimId && mc.theWorld.provider.dimensionId != Configuration.stationDimId)lastPlanet = mc.theWorld.provider.dimensionId;
-		if(lastPlanet == Configuration.spaceDimId && mc.thePlayer.ridingEntity instanceof EntityRocket)lastPlanet = ((EntityRocket) mc.thePlayer.ridingEntity).comeFromDimID;
+
 		Vec3 sunColor;
 		setupDimProperties:{
 			if (mc.theWorld.provider instanceof IPlanetaryProvider) {
@@ -368,6 +368,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 		f3 *= atmosphere;
 
 		GL11.glColor3f(f1, f2, f3);
+		GL11.glColor3f(1.0F,1.0F,1.0F);
 		Tessellator tessellator1 = Tessellator.instance;
 		GL11.glDepthMask(false);
 
@@ -384,8 +385,52 @@ public class RenderPlanetarySky extends IRenderHandler {
 		float f8;
 		float f9;
 		float f10;
-		drawRandomStars:
-		{
+
+
+		drawSunRiseSetColor: if (sunriseSunsetColors != null) {
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glShadeModel(GL11.GL_SMOOTH);
+			GL11.glPushMatrix();
+			GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
+			GL11.glRotatef(MathHelper.sin(mc.theWorld.getCelestialAngleRadians(partialTicks)) < 0.0F ? 180.0F : 0.0F, 0.0F, 0.0F, 1.0F);
+			GL11.glRotatef(90.0F, 0.0F, 0.0F, 1.0F);
+
+			//Sim atmospheric thickness
+			f6 = sunriseSunsetColors[0];
+			f7 = sunriseSunsetColors[1];
+			f8 = sunriseSunsetColors[2];
+			float f11;
+
+			//3D Effect
+			if (this.mc.gameSettings.anaglyph) {
+				f9 = (f6 * 30.0F + f7 * 59.0F + f8 * 11.0F) / 100.0F;
+				f10 = (f6 * 30.0F + f7 * 70.0F) / 100.0F;
+				f11 = (f6 * 30.0F + f8 * 70.0F) / 100.0F;
+				f6 = f9;
+				f7 = f10;
+				f8 = f11;
+			}
+
+			tessellator1.startDrawing(6);
+			tessellator1.setColorRGBA_F(f6, f7, f8, sunriseSunsetColors[3] * atmosphere);
+			tessellator1.addVertex(0.0D, 100.0D, 0.0D);
+			byte b0 = 16;
+			tessellator1.setColorRGBA_F(sunriseSunsetColors[0], sunriseSunsetColors[1], sunriseSunsetColors[2], 0.0F);
+
+			for (int j = 0; j <= b0; ++j)
+			{
+				f11 = (float)j * (float)Math.PI * 2.0F / (float)b0;
+				float f12 = MathHelper.sin(f11);
+				float f13 = MathHelper.cos(f11);
+				tessellator1.addVertex(f12 * 120.0F, f13 * 120.0F, -f13 * 40.0F * sunriseSunsetColors[3]);
+			}
+
+			tessellator1.draw();
+			GL11.glPopMatrix();
+			GL11.glShadeModel(GL11.GL_FLAT);
+		}
+
+		drawRandomStars: {
 			if (atmosphere > 0)
 				f6 = 1.0F - (mc.theWorld.getRainStrength(partialTicks) * (atmosphere / 100f));
 			else
@@ -433,138 +478,71 @@ public class RenderPlanetarySky extends IRenderHandler {
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
 
-		if(primaryStar != null){
+		EntityPlayer player = mc.thePlayer;
 
-			List<IDimensionProperties> moons = new ArrayList<>();
-            Queue<IDimensionProperties> moonsQueue = new ArrayDeque<>(primaryStar.getPlanets());
-			IDimensionProperties current = DimensionManager.getInstance().getDimensionProperties(Minecraft.getMinecraft().theWorld.provider.dimensionId);
+		GL11.glDisable(GL11.GL_FOG);
+		GL11.glDisable(GL11.GL_ALPHA_TEST);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-			while (!moonsQueue.isEmpty()){
-				IDimensionProperties properties1 = moonsQueue.poll();
-				if(properties1.isSun() || properties1.equals(current))continue;
-				moons.add(properties1);
-				properties1.getChildPlanets().forEach(p-> moonsQueue.add(DimensionManager.getInstance().getDimensionProperties(p)));
-			}
-			selectedPlanetID = -1;
-			for (IDimensionProperties moon : moons) {
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthMask(true);
+		Vector3F<Double> playerPos = getPlayerPos(partialTicks,player);
 
-				float orbitDistance = moon.getSolarOrbitalDistance();
-				if (Minecraft.getMinecraft().theWorld.provider.dimensionId != Configuration.stationDimId && Minecraft.getMinecraft().theWorld.provider.dimensionId != Configuration.spaceDimId) {
-					orbitDistance = Math.abs(orbitDistance - current.getSolarOrbitalDistance());
-					if(orbitDistance < 4) {
-						orbitDistance += 4;
-						if (moon.isMoon())orbitDistance += moon.getParentOrbitalDistance() / 4F;
-					}
-				}
-				orbitDistance*=4F;
+		Tessellator tessellator = Tessellator.instance;
+		GL11.glPushMatrix();
+		List<SimUniverse.SimBody> sortedList = new ArrayList<>(SimUniverse.getInstance().getAllBodies());
+		if(!isWarp) rotateAroundAxis();
 
-				GL11.glPushMatrix();
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1f);
+		sortedList.sort((b1, b2) -> {
+            double d1 = Math.pow(b1.x/(debugMode?10F:1F) - playerPos.x, 2) + Math.pow(b1.y/(debugMode?10F:1F) - playerPos.y, 2) + Math.pow(b1.z/(debugMode?10F:1F) - playerPos.z, 2);
+            double d2 = Math.pow(b2.x/(debugMode?10F:1F) - playerPos.x, 2) + Math.pow(b2.y/(debugMode?10F:1F) - playerPos.y, 2) + Math.pow(b2.z/(debugMode?10F:1F) - playerPos.z, 2);
+            return Double.compare(d2, d1);
+        });
 
-				double rot = (moon.getOrbitTheta() * 180F / Math.PI) + getSkyRotationAmount() * 360.0F;
+		for (SimUniverse.SimBody body : sortedList) {
+			if(body.getConfig() == null)continue; //It shouldn't be null...
+            double dx = body.x/(debugMode?10F:1F) - playerPos.x;
+            double dy = body.y/(debugMode?10F:1F) - playerPos.y;
+            double dz = body.z/(debugMode?10F:1F) - playerPos.z;
+            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			if(dist <= 0.1)continue;
+			double depthOffset = Math.min(dist / 100.0, 90);
 
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
-				GL11.glEnable(GL11.GL_BLEND);
+			double scale = (10F+ depthOffset) / dist;
+			double renderX = dx * scale;
+			double renderY = dy * scale;
+			double renderZ = dz * scale;
+			float multiplier = (2-atmosphere)/2.2f;//atmosphere > 1 ? (2-atmosphere) : 1f;
 
-				float multiplier = (2 - atmosphere) / 2f;//atmosphere > 1 ? (2-atmosphere) : 1f;
-				multiplier *= 1 - mc.theWorld.getRainStrength(partialTicks);
-				double rotateX = rot % 360;
-				double rotateY = (myRotationalPhi - 90F) % 360 ;
+			multiplier *= 1-mc.theWorld.getRainStrength(partialTicks);
+			multiplier *= (float) Math.max(mc.theWorld.getStarBrightness(partialTicks), 8F/dist);
 
-				GL11.glRotated(rotateY, 0f, 1f, 0f);
-				GL11.glRotated(rotateX, 1f, 0f, 0f);
+			double renderSize = Math.max((body.getConfig().getSize() / dist) * 8f, 0.01f);
 
+			StellarBody stellar = DimensionManager.getInstance().getStar(Integer.parseInt(body.getConfig().getID()));
+			GL11.glColor4f(1.0F,1.0F,1.0F,multiplier);
 
-				float phiAngle = (float) ((moon.getOrbitPhi()) * Math.PI / 180f);
-				double x = -MathHelper.sin(phiAngle) * MathHelper.cos((float) moon.getOrbitTheta());
-				double y = MathHelper.sin((float) moon.getOrbitTheta());
-				double rotation = -Math.PI / 2f + Math.atan2(x, y) - (moon.getOrbitTheta() - Math.PI) * MathHelper.sin(phiAngle);
+			mc.renderEngine.bindTexture(TextureResources.locationSunLODFar); // 实际应根据 body 类型绑定不同贴图
+			if(body.getConfig().isStar() && stellar != null){
+				float[] stellarColorArray = stellar.getColor();
+				Vec3 stellarColor = Vec3.createVectorHelper(stellarColorArray[0], stellarColorArray[1], stellarColorArray[2]);
 
-				renderPlanet(tessellator1, moon.getPlanetIcon(), orbitDistance, multiplier, rotation, moon.hasAtmosphere(), moon.getSunColor(), moon.getRingColor(), moon.isGasGiant(), moon.hasRing(), sunColor);
-				GL11.glPopMatrix();
-
-				double pointerRotateX = -(Minecraft.getMinecraft().thePlayer.rotationPitch - 90) % 360;
-				double pointerRotateY = -(Minecraft.getMinecraft().thePlayer.rotationYaw + 180) % 360;
-
-				double checkPointerX = (pointerRotateX + 360) % 360;
-				double checkPointerY = (pointerRotateY + 360) % 360;
-				double checkX = (rotateX + 360) % 360;
-				double checkY = (rotateY + 360) % 360;
-				float f = 200F / orbitDistance;
-				if (((Math.abs(checkX - checkPointerX) < f && Math.abs(checkY - checkPointerY) < f) || (Math.abs(checkX + checkPointerX - 360) < f && Math.abs(checkY + checkPointerY - 360) < f))) {
-					selectedPlanetID = moon.getId();
+				if(renderSize > .05F){
+					drawStar(tessellator,(float)renderX,(float)renderY,(float)renderZ, solarOrbitalDistance, (float) (renderSize/ 8.0F),stellarColor, partialTicks, properties, stellar, multiplier);
+				}else{
+					GL11.glColor4f((float) Math.min(1.0F, stellarColor.xCoord*1.2F), (float)Math.min(1.0F, stellarColor.yCoord*1.2F) , (float)Math.min(1.0F, stellarColor.zCoord*1.2F) , multiplier);
+					RenderCelestialBody.drawFacedRect(tessellator, renderX, renderY, renderZ, renderSize);
 				}
 			}
-		}
-
-		if(selectedPlanetID != -1 && world.provider.dimensionId == Configuration.spaceDimId) {
-			GL11.glPushMatrix();
-
-			double pointerRotateX = -(Minecraft.getMinecraft().thePlayer.rotationPitch - 90) % 360;
-			double pointerRotateY = -(Minecraft.getMinecraft().thePlayer.rotationYaw + 180) % 360;
-
-			GL11.glRotated(pointerRotateY, 0f, 1f, 0f);
-			GL11.glRotated(pointerRotateX, 1f, 0f, 0f);
-
-			GL11.glTranslated(0, -100, 0);
-
-			f10 = 50;
-			mc.renderEngine.bindTexture(DimensionProperties.planetRings);
-			GL11.glColor4f(ringColor[0], ringColor[1], ringColor[2], 0.8F);
-			tessellator1.startDrawing(GL11.GL_QUADS);
-			tessellator1.addVertexWithUV(f10, 0, -f10, 1.0D, 0.0D);
-			tessellator1.addVertexWithUV(-f10, 0, -f10, 0.0D, 0.0D);
-			tessellator1.addVertexWithUV(-f10, 0, f10, 0.0D, 1.0D);
-			tessellator1.addVertexWithUV(f10, 0, f10, 1.0D, 1.0D);
-			tessellator1.draw();
-
-
-			GL11.glPopMatrix();
+			else RenderCelestialBody.drawFacedRect(tessellator, renderX, renderY, renderZ, renderSize);
 		}
 
 
-		drawSunRiseSetColor: if (sunriseSunsetColors != null) {
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			GL11.glShadeModel(GL11.GL_SMOOTH);
-			GL11.glPushMatrix();
-			GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
-			GL11.glRotatef(MathHelper.sin(mc.theWorld.getCelestialAngleRadians(partialTicks)) < 0.0F ? 180.0F : 0.0F, 0.0F, 0.0F, 1.0F);
-			GL11.glRotatef(90.0F, 0.0F, 0.0F, 1.0F);
+		GL11.glPopMatrix();
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
 
-			//Sim atmospheric thickness
-			f6 = sunriseSunsetColors[0];
-			f7 = sunriseSunsetColors[1];
-			f8 = sunriseSunsetColors[2];
-			float f11;
-
-			//3D Effect
-			if (this.mc.gameSettings.anaglyph) {
-				f9 = (f6 * 30.0F + f7 * 59.0F + f8 * 11.0F) / 100.0F;
-				f10 = (f6 * 30.0F + f7 * 70.0F) / 100.0F;
-				f11 = (f6 * 30.0F + f8 * 70.0F) / 100.0F;
-				f6 = f9;
-				f7 = f10;
-				f8 = f11;
-			}
-
-			tessellator1.startDrawing(6);
-			tessellator1.setColorRGBA_F(f6, f7, f8, sunriseSunsetColors[3] * atmosphere);
-			tessellator1.addVertex(0.0D, 100.0D, 0.0D);
-			byte b0 = 16;
-			tessellator1.setColorRGBA_F(sunriseSunsetColors[0], sunriseSunsetColors[1], sunriseSunsetColors[2], 0.0F);
-
-			for (int j = 0; j <= b0; ++j)
-			{
-				f11 = (float)j * (float)Math.PI * 2.0F / (float)b0;
-				float f12 = MathHelper.sin(f11);
-				float f13 = MathHelper.cos(f11);
-				tessellator1.addVertex(f12 * 120.0F, f13 * 120.0F, -f13 * 40.0F * sunriseSunsetColors[3]);
-			}
-
-			tessellator1.draw();
-			GL11.glPopMatrix();
-			GL11.glShadeModel(GL11.GL_FLAT);
-		}
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		OpenGlHelper.glBlendFunc(770, 1, 1, 0);
@@ -626,12 +604,6 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 		if(!isWarp) rotateAroundAxis();
 
-		mc.renderEngine.bindTexture(TextureResources.locationSunPng);
-
-		//--------------------------- Draw the suns --------------------
-		if(!isWarp) {
-			drawStarAndSubStars(tessellator1, partialTicks,primaryStar,subStars,properties,solarOrbitalDistance,sunSize,sunColor,multiplier);
-		}
 		GL11.glPopMatrix();
 
 		drawExtra(tessellator1, properties, multiplier, sunColor);
@@ -659,88 +631,55 @@ public class RenderPlanetarySky extends IRenderHandler {
 		GL11.glPopMatrix();*/
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glDepthMask(true);
 
 		RocketEventHandler.onPostWorldRender(partialTicks);
 	}
-
-	protected void drawStarAndSubStars(Tessellator tessellator1, float partialTicks, StellarBody primaryStar, @Nullable List<StellarBody> subStars, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3 sunColor, float multiplier){
-		drawStar(tessellator1, partialTicks, primaryStar,properties,solarOrbitalDistance, sunSize, sunColor, multiplier);
-
-		if(subStars != null && !subStars.isEmpty()) {
-			GL11.glPushMatrix();
-			float phaseInc = 360f/subStars.size();
-
-			for(StellarBody subStar : subStars) {
-				GL11.glRotatef(phaseInc, 0, 1, 0);
-				GL11.glPushMatrix();
-
-				GL11.glRotatef(subStar.getStarSeperation()*AstronomicalBodyHelper.getBodySizeMultiplier(solarOrbitalDistance), 1, 0, 0);
-				Vec3 color = Vec3.createVectorHelper(subStar.getColor()[0],subStar.getColor()[1],subStar.getColor()[2]);
-				drawStar(tessellator1, partialTicks, primaryStar,properties,solarOrbitalDistance, subStar.getSize(), color, multiplier);
-				GL11.glPopMatrix();
-			}
-			GL11.glPopMatrix();
-		}
-	}
-
-	protected void drawStar(Tessellator buffer, float partialTicks, @Nullable StellarBody sun, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3 sunColor, float multiplier) {
+	protected void drawStar(Tessellator buffer, float x, float y, float z, int solarOrbitalDistance, float sunSize, Vec3 sunColor, float partialTicks, DimensionProperties properties, @Nullable StellarBody sun, float multiplier) {
 		if(sun == null)return;
 		GL11.glPushMatrix();
+		GL11.glTranslated(x,y,z);
 		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDepthMask(true);
-		float f10 = sunSize*15f*AstronomicalBodyHelper.getBodySizeMultiplier(solarOrbitalDistance);
 
-		int i1=  (int) (f10 * 0.4F);
-		GL11.glColor4f((float) Math.min(1.0F, sunColor.xCoord*1.5F), (float)Math.min(1.0F, sunColor.yCoord*1.5F) , (float)Math.min(1.0F, sunColor.zCoord*1.5F) , (float) Math.min(0.9,multiplier));
-        if(sun.dysonSphere != null)sun.dysonSphere.draw(0,100, i1,0,90,i1/500F,0.8F,(System.currentTimeMillis() % 36000) / 100F / (sun.dysonSphere.size+1));
+		float f10 = sunSize*15f;
+		float i1= f10 * 0.6F;
+        if(sun.dysonSphere != null)sun.dysonSphere.draw(0,0, i1,0,90,i1/500F,0.8F,(System.currentTimeMillis() % 36000) / 100F / (sun.dysonSphere.size+1));
 
 		//Set sun color
-		GL11.glColor4f((float)sunColor.xCoord, (float)sunColor.yCoord , (float)sunColor.zCoord , 1.0F);
-
+		GL11.glColor4f((float)sunColor.xCoord, (float)sunColor.yCoord , (float)sunColor.zCoord , multiplier);
+		GL11.glColor4f((float) Math.min(1.0F, sunColor.xCoord*1.2F), (float)Math.min(1.0F, sunColor.yCoord*1.2F) , (float)Math.min(1.0F, sunColor.zCoord*1.2F) , (float) Math.min(0.9,multiplier));
+		GL11.glDepthMask(false);
 		boolean enable3DSun = true;
-		GL11.glPushMatrix();
 		if(enable3DSun) {
-			mc.getTextureManager().bindTexture(new ResourceLocation("advancedrocketry:textures/env/starLight.png"));
-			buffer.startDrawingQuads();
-			//multiplier = 2;
-			buffer.addVertexWithUV(-f10 * 0.5F, 100.0D, -f10 * 0.5F, 0.0D, 0.0D);
-			buffer.addVertexWithUV(f10 * 0.5F, 100.0D, -f10 * 0.5F, 1.0D, 0.0D);
-			buffer.addVertexWithUV(f10 * 0.5F, 100.0D, f10 * 0.5F, 1.0D, 1.0D);
-			buffer.addVertexWithUV(-f10 * 0.5F, 100.0D, f10 * 0.5F, 0.0D, 1.0D);
-			buffer.draw();
-			GL11.glPopMatrix();
-
-
 			GL11.glPushMatrix();
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, sunTextureID);
-			GL11.glTranslatef(0, 100, 0);
 			GL11.glRotated(90, 0, 0, 1);
 
 			GL11.glRotated(-(System.currentTimeMillis() % 360000) / 1000F, 0, 1, 0);
 			GL11.glScalef(f10 * 0.3F, f10 * 0.3F, f10 * 0.3F);
 			GL11.glCallList(sunList);
+
+			GL11.glPopMatrix();
 		}
 		else {
 			mc.renderEngine.bindTexture(TextureResources.locationSunNew);
 			//Set sun color and distance
 			GL11.glColor4f((float)sunColor.xCoord, (float)sunColor.yCoord , (float)sunColor.zCoord , (float) Math.min(0.9,multiplier));
-			buffer.startDrawingQuads();
-			//multiplier = 2;
-			buffer.addVertexWithUV(-f10, 100.0D, -f10, 0.0D, 0.0D);
-			buffer.addVertexWithUV(f10, 100.0D, -f10, 1.0D, 0.0D);
-			buffer.addVertexWithUV(f10, 100.0D, f10, 1.0D, 1.0D);
-			buffer.addVertexWithUV(-f10, 100.0D, f10, 0.0D, 1.0D);
-			buffer.draw();
+			RenderCelestialBody.drawFacedRect(buffer,x *.9F,y *.9F,z *.9F,sunSize*32);
 		}
+		if(sun.dysonCloud != null)sun.dysonCloud.draw(0,0, i1,0,90,i1/500F,1.2F,(System.currentTimeMillis() % 36000) / 100F);
+
 		GL11.glPopMatrix();
+		GL11.glPushMatrix();
+		GL11.glColor4f((float) Math.min(1.0F, sunColor.xCoord*1.2F), (float)Math.min(1.0F, sunColor.yCoord*1.2F) , (float)Math.min(1.0F, sunColor.zCoord*1.2F) , (float) (multiplier* 1.2F));
 
-		GL11.glColor4f((float) Math.min(1.0F, sunColor.xCoord*1.5F), (float)Math.min(1.0F, sunColor.yCoord*1.5F) , (float)Math.min(1.0F, sunColor.zCoord*1.5F) , (float) Math.min(0.9,multiplier));
+		mc.getTextureManager().bindTexture(new ResourceLocation("advancedrocketry:textures/env/starLight.png"));
+		RenderCelestialBody.drawFacedRect(buffer,x *.9F,y *.9F,z *.9F,sunSize*8);
 
-		if(sun.dysonCloud != null)sun.dysonCloud.draw(0,100, i1,0,90,i1/500F,0.5F,(System.currentTimeMillis() % 36000) / 100F);
+		GL11.glDepthMask(true);
 
-		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glDepthMask(false);
+
 
 		GL11.glPopMatrix();
 

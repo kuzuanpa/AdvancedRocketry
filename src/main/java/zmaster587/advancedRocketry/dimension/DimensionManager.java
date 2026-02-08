@@ -118,6 +118,9 @@ public class DimensionManager implements IGalaxy {
 		return dimensionList.keySet().toArray(ret);
 	}
 
+	public Collection<DimensionProperties> getDimensionProperties() {
+		return dimensionList.values();
+	}
 	/**
 	 * @return array of dimensions registered with this manager that are currently loaded on the server/integrated server
 	 */

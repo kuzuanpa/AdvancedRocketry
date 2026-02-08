@@ -40,7 +40,10 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.achievements.ARAchivements;
-import zmaster587.advancedRocketry.api.*;
+import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
+import zmaster587.advancedRocketry.api.AdvancedRocketryItems;
+import zmaster587.advancedRocketry.api.Configuration;
+import zmaster587.advancedRocketry.api.IPlanetaryProvider;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
 import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
@@ -72,11 +75,15 @@ public class PlanetEventHandler {
 	public static long time = 0;
 	private static long endTime, duration;
 	private static final @NotNull Map<Long,TransitionEntity> transitionMap = new HashMap<>();
+	private static final @NotNull Map<Runnable, Long> delayedMap = new HashMap<>();
 
 	public static void addDelayedTransition(long tick, TransitionEntity entity) {
 		transitionMap.put(tick, entity);
 	}
 
+	public static void addDelayedMount(long tick, Runnable run) {
+		delayedMap.put(run, tick);
+	}
 	@SubscribeEvent
 	public void sleepEvent(PlayerSleepInBedEvent event) {
 
@@ -270,6 +277,16 @@ public class PlanetEventHandler {
 					}
 				}
 			}
+			if(delayedMap.isEmpty())return;
+
+			List<Runnable> runnedList = new ArrayList<>();
+			delayedMap.forEach((k,v)-> {
+				if(MinecraftServer.getServer().getTickCounter() >= v){
+					runnedList.add(k);
+					k.run();
+				}
+			});
+			runnedList.forEach(delayedMap::remove);
 		}
 	}
 
@@ -367,8 +384,7 @@ public class PlanetEventHandler {
 
 	@SubscribeEvent
 	public void worldUnloadEvent(WorldEvent.@NotNull Unload event) {
-		if(!event.world.isRemote)
-			AtmosphereHandler.unregisterWorld(event.world.provider.dimensionId);
+		if(!event.world.isRemote) AtmosphereHandler.unregisterWorld(event.world.provider.dimensionId);
 	}
 
 	/**

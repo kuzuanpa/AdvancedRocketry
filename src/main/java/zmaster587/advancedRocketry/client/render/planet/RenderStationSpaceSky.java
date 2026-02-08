@@ -2,6 +2,7 @@ package zmaster587.advancedRocketry.client.render.planet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
@@ -24,7 +25,13 @@ public class RenderStationSpaceSky extends RenderPlanetarySky {
 	float oldRotateX,oldRotateY;
 
 	final Minecraft mc = Minecraft.getMinecraft();
-	
+
+	public Vector3F<Double> getPlayerPos(float partialTicks, EntityPlayer player){
+		double px = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+		double py = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
+		double pz = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+		return new Vector3F<>(px,py,pz);
+	}
 	@Override
 	protected void drawExtra(Tessellator tessellator1, DimensionProperties properties, float alphaMultiplier, Vec3 sunColor)  {
 		if(!(mc.theWorld.provider instanceof IPlanetaryProvider))return;
@@ -34,7 +41,7 @@ public class RenderStationSpaceSky extends RenderPlanetarySky {
 
 		properties = (DimensionProperties) stationProperties.getParentProperties();
 
-		float planetOrbitalDistance = 2;
+		float planetOrbitalDistance = 2 + 0.1F;
 
 		GL11.glPushMatrix();
 		//GL11.glDisable(GL11.GL_BLEND);
@@ -46,7 +53,6 @@ public class RenderStationSpaceSky extends RenderPlanetarySky {
 
 		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
 		mc.renderEngine.bindTexture(properties.getPlanetIconLEO());
-		planetPosOffset ++;
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 		//int k = mc.theWorld.getMoonPhase();
@@ -56,7 +62,7 @@ public class RenderStationSpaceSky extends RenderPlanetarySky {
 		//Set planet Orbiting distance; size
 		float f10 = 2F*AstronomicalBodyHelper.getBodySizeMultiplier(planetOrbitalDistance);
 
-		float Xoffset = (float)((System.currentTimeMillis()%1000000/1000000d % 1) - planetPosOffset/2000f);
+		float Xoffset = (float)((System.currentTimeMillis()%1000000/1000000d % 1));
 
 		float f14 = 1f + Xoffset;
 		float f15 = 0f + Xoffset;
@@ -81,7 +87,7 @@ public class RenderStationSpaceSky extends RenderPlanetarySky {
 			double scalingMult = 1D - 2*(planetOrbitalDistance)/200D;
 			
 			int maxAmt = 6;
-			float lng = (float) (Minecraft.getSystemTime()%100000/100000d % 1)+ planetPosOffset/1000f;
+			float lng = (float) (Minecraft.getSystemTime()%100000/100000d % 1);
 			for(int i = 0; i < maxAmt; i++) {
 				tessellator1.setColorRGBA_F(0.05f*(maxAmt-i/6f), .4f*(i/6f), 1f, 0.4f);
 
@@ -130,7 +136,7 @@ public class RenderStationSpaceSky extends RenderPlanetarySky {
 			mc.renderEngine.bindTexture(DimensionProperties.getAtmosphereLEOResource());
 			tessellator1.setColorRGBA_F(1f, 1f, 1f, .8f);
 
-			Xoffset = (float)((System.currentTimeMillis()%100000/100000d % 1)- planetPosOffset/1000f);
+			Xoffset = (float)((System.currentTimeMillis()%100000/100000d % 1));
 
 			f14 = 1f + Xoffset;
 			f15 = 0f + Xoffset;

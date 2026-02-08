@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBiomes;
 import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.client.render.planet.RenderPlanetarySky;
-import zmaster587.advancedRocketry.client.render.planet.RenderStationSpaceSky;
+import zmaster587.advancedRocketry.client.render.planet.RenderSpaceSky;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.world.ChunkProviderSpace;
@@ -23,15 +22,12 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	public double getHorizon() {
 		return 0;
 	}
-	
-	//TODO: figure out celestial angle from coords
-	
+
 	@Override
 	public boolean isPlanet() {
 		return false;
 	}
-	
-	
+
 	public int getAverageGroundLevel() {
 		return 0;
 	}
@@ -45,11 +41,16 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	@SideOnly(Side.CLIENT)
 	public IRenderHandler getSkyRenderer() {
 		if(Configuration.stationSkyOverride)
-			return skyRender == null ? skyRender = new RenderStationSpaceSky() : skyRender;
+			return skyRender == null ? skyRender = new RenderSpaceSky() : skyRender;
 		
 		return super.getSkyRenderer();
 	}
 
+
+	@Override
+	public float getSunBrightness(float partialTicks) {
+		return 1.0F;
+	}
 
 	@Override
 	public float getAtmosphereDensity(int x, int z) {
@@ -65,8 +66,6 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	
 	@Override
 	public @NotNull DimensionProperties getDimensionProperties(int x , int z) {
-		properties.setParentPlanet(DimensionManager.getInstance().getDimensionProperties(RenderPlanetarySky.lastPlanet), false);
-		return properties;
-
+		return DimensionManager.defaultSpaceDimensionProperties;
 	}
 }

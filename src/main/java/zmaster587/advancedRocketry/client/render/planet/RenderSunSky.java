@@ -5,9 +5,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
-import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.inventory.TextureResources;
@@ -45,15 +43,16 @@ public class RenderSunSky extends RenderPlanetarySky {
 	}
 
 	@Override
-	protected void drawStar(Tessellator tessellator1, float partialTicks, @Nullable StellarBody sun, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3 sunColor, float multiplier) {
+	protected void drawExtra(Tessellator buffer, DimensionProperties properties, float alphaMultiplier, Vec3 sunColor) {
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
 		float planetOrbitalDistance = 0.8F;
 
 		GL11.glPushMatrix();
-		//GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_BLEND);
 
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDisable(GL11.GL_FOG);
+		GL11.glDisable(GL11.GL_ALPHA_TEST);
 
 		//GL11.glDisable(GL11.GL_LIGHTING);
 
@@ -78,28 +77,27 @@ public class RenderSunSky extends RenderPlanetarySky {
 
 		//TODO: draw sky planets
 
-		tessellator1.startDrawingQuads();
+		buffer.startDrawingQuads();
 
-		tessellator1.setColorRGBA_F((float) sunColor.xCoord, (float) sunColor.yCoord, (float) sunColor.zCoord, 1F);
+		buffer.setColorRGBA_F((float) sunColor.xCoord, (float) sunColor.yCoord, (float) sunColor.zCoord, 1F);
 
-		tessellator1.addVertexWithUV(-f10, -10.0D, f10, f16, f17);
-		tessellator1.addVertexWithUV(f10, -10.0D, f10, f14, f17);
-		tessellator1.addVertexWithUV(f10, -10.0D, -f10, f14, f15);
-		tessellator1.addVertexWithUV(-f10, -10.0D, -f10, f16, f15);
+		buffer.addVertexWithUV(-f10, -10.0D, f10, f16, f17);
+		buffer.addVertexWithUV(f10, -10.0D, f10, f14, f17);
+		buffer.addVertexWithUV(f10, -10.0D, -f10, f14, f15);
+		buffer.addVertexWithUV(-f10, -10.0D, -f10, f16, f15);
 
 
 
-		tessellator1.draw();
-		GL11.glPopAttrib();
+		buffer.draw();
 
 		//Draw atmosphere
 		{
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 			//GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
-			tessellator1.startDrawingQuads();
+			buffer.startDrawingQuads();
 			mc.renderEngine.bindTexture(DimensionProperties.getAtmosphereLEOResource());
-			tessellator1.setColorRGBA_F((float) sunColor.xCoord, (float) sunColor.yCoord, (float) sunColor.zCoord, .8f);
+			buffer.setColorRGBA_F((float) sunColor.xCoord, (float) sunColor.yCoord, (float) sunColor.zCoord, .8f);
 
 			Xoffset = (float) ((System.currentTimeMillis() / 20000d % 1));
 
@@ -108,33 +106,33 @@ public class RenderSunSky extends RenderPlanetarySky {
 			f16 = f15;
 			f17 = f14;
 
-			RenderHelper.renderTopFaceWithUV(tessellator1, -10D, -f10, -f10, 0, 0, f14, f15, f16, f17);
-			RenderHelper.renderTopFaceWithUV(tessellator1, -10D, 0, 0, f10, f10, f14, f15, f16, f17);
-			RenderHelper.renderTopFaceWithUV(tessellator1, -10D, -f10, 0, 0, f10, f14, f15, f16, f17);
-			RenderHelper.renderTopFaceWithUV(tessellator1, -10D, 0, -f10, f10, 0, f14, f15, f16, f17);
+			RenderHelper.renderTopFaceWithUV(buffer, -9D, -f10, -f10, 0, 0, f14, f15, f16, f17);
+			RenderHelper.renderTopFaceWithUV(buffer, -9D, 0, 0, f10, f10, f14, f15, f16, f17);
+			RenderHelper.renderTopFaceWithUV(buffer, -9D, -f10, 0, 0, f10, f14, f15, f16, f17);
+			RenderHelper.renderTopFaceWithUV(buffer, -9D, 0, -f10, f10, 0, f14, f15, f16, f17);
 
-			tessellator1.draw();
+			buffer.draw();
 
 
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			//GL11.glDisable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-			tessellator1.startDrawingQuads();
-			tessellator1.setColorRGBA_F((float) sunColor.xCoord, (float) sunColor.yCoord, (float) sunColor.zCoord, 0.08f);
+			buffer.startDrawingQuads();
+			buffer.setColorRGBA_F((float) sunColor.xCoord, (float) sunColor.yCoord, (float) sunColor.zCoord, 0.08f);
 
 			double dist = -5D - 4 * (planetOrbitalDistance) / 200D;
 			double scalingMult = 1D - 0.9 * (planetOrbitalDistance) / 200D;
 			for (int i = 0; i < 5; i++) {
-				RenderHelper.renderTopFaceWithUV(tessellator1, dist + i * scalingMult, -f10, -f10, 0, 0, f14, f15, f16, f17);
-				RenderHelper.renderTopFaceWithUV(tessellator1, dist + i * scalingMult, 0, 0, f10, f10, f14, f15, f16, f17);
-				RenderHelper.renderTopFaceWithUV(tessellator1, dist + i * scalingMult, -f10, 0, 0, f10, f14, f15, f16, f17);
-				RenderHelper.renderTopFaceWithUV(tessellator1, dist + i * scalingMult, 0, -f10, f10, 0, f14, f15, f16, f17);
+				RenderHelper.renderTopFaceWithUV(buffer, dist + i * scalingMult, -f10, -f10, 0, 0, f14, f15, f16, f17);
+				RenderHelper.renderTopFaceWithUV(buffer, dist + i * scalingMult, 0, 0, f10, f10, f14, f15, f16, f17);
+				RenderHelper.renderTopFaceWithUV(buffer, dist + i * scalingMult, -f10, 0, 0, f10, f14, f15, f16, f17);
+				RenderHelper.renderTopFaceWithUV(buffer, dist + i * scalingMult, 0, -f10, f10, 0, f14, f15, f16, f17);
 			}
-			tessellator1.draw();
+			buffer.draw();
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
-		tessellator1.setColorRGBA_F(1f,1f,1f,1f);
+		buffer.setColorRGBA_F(1f,1f,1f,1f);
 		GL11.glEnable(GL11.GL_FOG);
 		//GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();

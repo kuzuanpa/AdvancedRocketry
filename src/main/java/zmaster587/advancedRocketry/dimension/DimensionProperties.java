@@ -196,6 +196,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	public float[] fogColor;
 	public float[] ringColor;
 	public float gravitationalMultiplier;
+	public float mass;
 	public int orbitalDist;
 	public boolean hasOxygen;
 	private int atmosphereDensity;
@@ -575,6 +576,9 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		return orbitalDist;
 	}
 
+	public float getMass(){
+		return mass;
+	}
 	/**
 	 * @return if a planet, the same as getParentOrbitalDistance(), if a moon, the moon's distance from the host star
 	 */
@@ -1223,6 +1227,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 		gravitationalMultiplier = nbt.getFloat("gravitationalMultiplier");
 		orbitalDist = nbt.getInteger("orbitalDist");
+		mass = nbt.getFloat("mass");
 		orbitTheta = nbt.getDouble("orbitTheta");
 		baseOrbitTheta = nbt.getDouble("baseOrbitTheta");
 		hasOxygen = nbt.getBoolean("hasOxygen");
@@ -1395,6 +1400,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		nbt.setFloat("gravitationalMultiplier", gravitationalMultiplier);
 		nbt.setInteger("orbitalDist", orbitalDist);
 		nbt.setDouble("orbitTheta", orbitTheta);
+		nbt.setFloat("mass", mass);
 		nbt.setDouble("baseOrbitTheta", baseOrbitTheta);
 		nbt.setBoolean("hasOxygen", hasOxygen);
 		nbt.setInteger("atmosphereDensity", atmosphereDensity);

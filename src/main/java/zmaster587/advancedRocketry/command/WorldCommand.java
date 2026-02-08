@@ -694,15 +694,17 @@ public class WorldCommand implements ICommand {
 									} catch(NumberFormatException e) {
 										sender.addChatMessage(new ChatComponentText("star set temp <starId> <temp>"));
 									}
-								} else if(string.length > 5 && string[2].equalsIgnoreCase("pos")) {
+								} else if(string.length > 6 && string[2].equalsIgnoreCase("pos")) {
 									try {
 										int x= Integer.parseInt(string[4]);
-										int z = Integer.parseInt(string[5]);
+										int y = Integer.parseInt(string[5]);
+										int z = Integer.parseInt(string[6]);
 										star.setPosX(x);
+										star.setPosY(y);
 										star.setPosZ(z);
-										sender.addChatMessage(new ChatComponentText("Position set to " + x + "," + z));
+										sender.addChatMessage(new ChatComponentText("Position set to " + x + "," + y + "," + z));
 									} catch(NumberFormatException e) {
-										sender.addChatMessage(new ChatComponentText("star set pos <starId> <x> <y>"));
+										sender.addChatMessage(new ChatComponentText("star set pos <starId> <x> <y> <z>"));
 									}
 								}
 							}// end star existance validation

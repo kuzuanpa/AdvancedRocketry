@@ -30,6 +30,7 @@ import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.api.fuel.FuelRegistry.FuelType;
 import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
+import zmaster587.advancedRocketry.api.stations.ISpaceTraveler;
 import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
 import zmaster587.advancedRocketry.client.SoundRocketEngine;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
@@ -69,7 +70,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 //TODO: Rewrite this whole buggy and crashy mess
-public class EntityRocket extends EntityRocketBase implements INetworkEntity, IDismountHandler, IModularInventory, IProgressBar, IButtonInventory, ISelectionNotify,IPlanetDefiner {
+public class EntityRocket extends EntityRocketBase implements INetworkEntity, IDismountHandler, IModularInventory, IProgressBar, IButtonInventory, ISelectionNotify,IPlanetDefiner, ISpaceTraveler {
 
 	//true if the rocket is on decent
 	private boolean isInOrbit;
@@ -97,6 +98,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	private WeakReference<Entity>[] mountedEntities;
 	protected ModulePlanetSelector container;
 	public int comeFromDimID = Configuration.spaceDimId;
+
 
 	public enum PacketType {
 		RECEIVE_NBT,
@@ -653,6 +655,22 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		this.travelToDimension(storage.getFirstTileEntity(TileGuidanceComputer.class).getTaskType()==1?Configuration.spaceDimId: destinationDimId, destPos.x, Configuration.orbit, destPos.z);
 	}
 
+	@Override
+	public void travelTo(int dimID, int distance) {
+		unpackSatellites();
+		setInOrbit(true);
+		//if coordinates are overridden, make sure we grab them
+		Vector3F<Float> destPos = storage.getDestinationCoordinates(destinationDimId, true);
+		if(destPos == null) destPos = new Vector3F<>((float) posX, (float) Configuration.orbit, (float) posZ);
+
+		if(this.riddenByEntity != null) {
+			//Make player confirm deorbit if a player is riding the rocket
+			setInFlight(false);
+		}
+
+		setOverriddenCoords(-1, 0, 0, 0);
+		this.travelToDimension(dimID, destPos.x, Configuration.orbit, destPos.z);
+	}
 	private void unpackSatellites() {
 		List<TileSatelliteHatch> satelliteHatches = storage.getSatelliteHatches();
 
@@ -1049,7 +1067,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	}
 
 	@Override
-	public void useNetworkData(EntityPlayer player, Side side, byte id,
+	public void useNetworkData2(EntityPlayer player, Side side, byte id,
 			NBTTagCompound nbt) {
 
 

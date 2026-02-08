@@ -25,7 +25,7 @@ public class StellarBody {
 	float[] color;
 	int id;
 	String name;
-	short posX, posZ;
+	int posX, posY, posZ;
 	float size;
 	public final List<StellarBody> subStars;
 	float starSeperation;
@@ -42,6 +42,9 @@ public class StellarBody {
 	
 	public List<StellarBody> getSubStars() {
 		return subStars;
+	}
+	public float getMass() {
+		return (float) Math.pow(size, 2);
 	}
 
 	public void addSubStar(StellarBody star) {
@@ -71,17 +74,24 @@ public class StellarBody {
 	}
 	
 	public void setPosX(int x) {
-		posX = (short)x;
+		posX = x;
+	}
+
+	public void setPosY(int y) {
+		posY = y;
 	}
 
 	public void setPosZ(int x) {
-		posZ = (short)x;
+		posZ = x;
 	}
 
 	public int getPosX() {
 		return posX;
 	}
 
+	public int getPosY() {
+		return posY;
+	}
 	public int getPosZ() {
 		return posZ;
 	}
@@ -221,8 +231,9 @@ public class StellarBody {
 		nbt.setInteger("id", this.id);
 		nbt.setInteger("temperature", temperature);
 		nbt.setString("name", name);
-		nbt.setShort("posX", posX);
-		nbt.setShort("posZ", posZ);
+		nbt.setInteger("posX", posX);
+		nbt.setInteger("posY", posY);
+		nbt.setInteger("posZ", posZ);
 		nbt.setFloat("size", size);
 		nbt.setFloat("seperation", starSeperation);
 		try{if(this.dysonSphere!=null)nbt.setTag("dysonSphere", this.dysonSphere.writeToNBT());}catch (Exception e){e.printStackTrace();}

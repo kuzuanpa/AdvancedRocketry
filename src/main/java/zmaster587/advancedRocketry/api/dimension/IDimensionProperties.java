@@ -52,7 +52,8 @@ public interface IDimensionProperties {
 	 * @return if a planet, the same as getParentOrbitalDistance(), if a moon, the moon's distance from the host star
 	 */
     int getSolarOrbitalDistance();
-	
+
+	float getMass();
 	/**
 	 * @return true if the planet has moons
 	 */

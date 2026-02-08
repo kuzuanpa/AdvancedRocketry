@@ -30,7 +30,7 @@ public class WorldProviderStation extends WorldProviderPlanet {
 	public boolean isPlanet() {
 		return false;
 	}
-	
+
 	
 	public int getAverageGroundLevel() {
 		return 0;
