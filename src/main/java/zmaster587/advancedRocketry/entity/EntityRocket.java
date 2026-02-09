@@ -5,25 +5,22 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.api.*;
 import zmaster587.advancedRocketry.api.RocketEvent.RocketLaunchEvent;
@@ -54,8 +51,7 @@ import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
 import zmaster587.advancedRocketry.tile.multiblock.TileWarpCore;
 import zmaster587.advancedRocketry.util.StationLandingLocation;
 import zmaster587.advancedRocketry.util.StorageChunk;
-import zmaster587.advancedRocketry.util.TransitionEntity;
-import zmaster587.advancedRocketry.world.util.TeleporterNoPortal;
+import zmaster587.advancedRocketry.util.TeleportHelper;
 import zmaster587.libVulpes.LibVulpes;
 import zmaster587.libVulpes.api.IDismountHandler;
 import zmaster587.libVulpes.client.util.ProgressBarImage;
@@ -530,7 +526,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 				//if the player holds the forward key then decelerate
 				if(isInOrbit() && (burningFuel || descentPhase)) {
-					float vel =  player.moveForward/1000F;
+					float vel =  player.moveForward/100F;
 					Vec3 look = player.getLook(0.01F);
 					double precision = 100.0D; // 保留两位小数
 					double lookX = Math.round(look.xCoord * precision) / precision;
@@ -541,9 +537,9 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 					this.motionY += lookY * vel;
 					this.motionZ += lookZ * vel;
 
-					this.motionX = Math.max(-0.1F, Math.min(this.motionX, 0.1F));
-					this.motionY = Math.max(-0.1F, Math.min(this.motionY, 0.1F));
-					this.motionZ = Math.max(-0.1F, Math.min(this.motionZ, 0.1F));
+					this.motionX = Math.max(-1F, Math.min(this.motionX, 1F));
+					this.motionY = Math.max(-1F, Math.min(this.motionY, 1F));
+					this.motionZ = Math.max(-1F, Math.min(this.motionZ, 1F));
 
 					this.velocityChanged = true;
 				}
@@ -682,7 +678,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				this.travelToDimension(this.worldObj.provider.dimensionId, destPos.x, Configuration.orbit, destPos.z);
 				return;
 			}
-			this.travelToDimension(spaceDimId, body.x, body.y, body.z);
+			this.travelToDimension(spaceDimId, body.x, body.y + 5, body.z);
 		}
 		else {
 			this.travelToDimension(destinationDimId, destPos.x, Configuration.orbit, destPos.z);
@@ -862,7 +858,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		}
 
 		if(worldObj.isRemote && storage != null && storage.world.glListID != -1) {
-			GLAllocation.deleteDisplayLists(storage.world.glListID);
+			GL11.glDeleteLists(storage.world.glListID, 1);
 		}
 	}
 
@@ -906,59 +902,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 			lastDimensionFrom = this.worldObj.provider.dimensionId;
 
-            Entity rider = this.riddenByEntity;
-			if(rider != null)
-				rider.mountEntity(null);
+			TeleportHelper.teleportEntityWithRiding(this, newDimId, posX,y,posZ);
 
-			this.worldObj.theProfiler.startSection("changeDimension");
-			MinecraftServer minecraftserver = MinecraftServer.getServer();
-			int j = this.dimension;
-			WorldServer worldserver = minecraftserver.worldServerForDimension(j);
-			WorldServer worldserver1 = minecraftserver.worldServerForDimension(newDimId);
-			this.dimension = newDimId;
-
-			//this.worldObj.removeEntity(this);
-			this.isDead = false;
-			this.worldObj.theProfiler.startSection("reposition");
-
-			//transfer the rocket to the other dim without creating a nether portal
-			minecraftserver.getConfigurationManager().transferEntityToWorld(this, j, worldserver, worldserver1,new TeleporterNoPortal(worldserver1));
-			this.worldObj.theProfiler.endStartSection("reloading");
-			Entity entity = EntityList.createEntityByName(EntityList.getEntityString(this), worldserver1);
-
-
-			if (entity != null)
-			{
-				entity.copyDataFrom(this, true);
-
-				entity.forceSpawn = true;
-
-				entity.setLocationAndAngles(posX, y, posZ, this.rotationYaw, this.rotationPitch);
-				worldserver1.spawnEntityInWorld(entity);
-				//worldserver1.updateEntityWithOptionalForce(entity, true);
-
-				if(rider != null) {
-					//Fix that darn random crash?
-					//worldserver.resetUpdateEntityTick();
-					//worldserver1.resetUpdateEntityTick();
-					//Transfer the player if applicable
-
-					PlanetEventHandler.addDelayedTransition(worldserver.getTotalWorldTime() + 1, new TransitionEntity(worldserver.getTotalWorldTime() + 1, rider, dimension, new BlockPosition((int)posX, Configuration.orbit, (int)posZ), entity));
-
-					//minecraftserver.getConfigurationManager().transferPlayerToDimension((EntityPlayerMP)rider, newDimId, new TeleporterNoPortal(worldserver1));
-
-					//rider.setLocationAndAngles(x, Configuration.orbit, z, this.rotationYaw, this.rotationPitch);
-					//rider.mountEntity(entity);
-
-				}
-			}
-
-			setDead();
-
-			this.worldObj.theProfiler.endSection();
-			worldserver.resetUpdateEntityTick();
-			worldserver1.resetUpdateEntityTick();
-			this.worldObj.theProfiler.endSection();
 		}
 	}
 

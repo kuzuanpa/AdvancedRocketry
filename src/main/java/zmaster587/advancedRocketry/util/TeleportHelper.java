@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public class TeleportHelper {
-    public static void teleportPlayerWithRiding(EntityPlayerMP player, int targetDimId, double x, double y, double z) {
-        Entity root = getRootEntity(player);
+    public static void teleportEntityWithRiding(Entity entity, int targetDimId, double x, double y, double z) {
+        Entity root = getRootEntity(entity);
         List<Entity> chain = new ArrayList<>();
         Entity current = root;
         while (current != null) {

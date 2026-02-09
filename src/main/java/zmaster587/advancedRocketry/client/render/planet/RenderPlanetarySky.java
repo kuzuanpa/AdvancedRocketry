@@ -497,18 +497,19 @@ public class RenderPlanetarySky extends IRenderHandler {
             double dz = body.z/(debugMode?10F:1F) - playerPos.z;
             double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 			if(dist <= 0.1)continue;
-			float stellarBright = (float) Math.max(starBrightness, -dist/100F+1F);
+			dist = 40;
+			float stellarBright = (float) Math.max(starBrightness, -dist/500F+1F);
 
 			if(stellarBright < 0.01F)continue;
-			double depthOffset = Math.min(dist / 100.0, 90);
+			double depthOffset = Math.min(dist / 100.0, 75);
 
-			double scale = (4F+ depthOffset) / dist;
+			double scale = (25F+ depthOffset) / dist;
 			double renderX = dx * scale;
 			double renderY = dy * scale;
 			double renderZ = dz * scale;
 
 
-			double renderSize = Math.max((body.getConfig().getSize() / dist) * 8f, 0.01f);
+			double renderSize = Math.max((body.getConfig().getSize() / dist) * 16f, 0.01f);
 
 			StellarBody stellar = DimensionManager.getInstance().getStar(Integer.parseInt(body.getConfig().getID()));
 			GL11.glColor4f(1.0F,1.0F,1.0F,stellarBright);

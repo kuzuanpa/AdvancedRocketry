@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.dimension.sim.SimUniverse;
 import zmaster587.advancedRocketry.util.TeleportHelper;
 
@@ -61,14 +62,16 @@ public class EntityCelestialBody extends Entity implements IEntityAdditionalSpaw
 
     private void checkPlayerProximity() {
         double physicalRadius = data.getConfig().getSize();
-        double triggerRadius = physicalRadius * 2.0;
+        double triggerRadius = physicalRadius * 16.0;
 
-        List<EntityPlayer> players = worldObj.getEntitiesWithinAABB(
-                EntityPlayer.class,
+        List<Entity> players = worldObj.getEntitiesWithinAABB(
+                Entity.class,
                 this.boundingBox.expand(triggerRadius, triggerRadius, triggerRadius)
         );
 
-        for (EntityPlayer player : players) {
+        for (Entity player : players) {
+            if(player instanceof EntityCelestialBody)continue;
+
             double distSq = this.getDistanceSqToEntity(player);
 
             if (distSq < triggerRadius * triggerRadius) {
@@ -77,23 +80,17 @@ public class EntityCelestialBody extends Entity implements IEntityAdditionalSpaw
         }
     }
 
-    private void onPlayerEnterOrbit(EntityPlayer player, double distSq, double radius) {
+    private void onPlayerEnterOrbit(Entity entity, double distSq, double radius) {
         double dist = Math.sqrt(distSq);
 
-        if (dist > radius) {
-            double pullStrength = 1;
-            player.motionX += (this.posX - player.posX) / dist * pullStrength;
-            player.motionY += (this.posY - player.posY) / dist * pullStrength;
-            player.motionZ += (this.posZ - player.posZ) / dist * pullStrength;
-        }
 
-        if (dist <= radius + 2.0) {
-            handleLanding(player);
+        if (dist <= radius + 0.1 && entity instanceof EntityPlayer) {
+            handleLanding((EntityPlayer) entity);
         }
     }
 
     private void handleLanding(EntityPlayer player) {
-        TeleportHelper.teleportPlayerWithRiding((EntityPlayerMP) player,Integer.parseInt(data.getConfig().getID()), rand.nextDouble()* 1000F, rand.nextDouble()* 1000F, rand.nextDouble()* 1000F);
+        TeleportHelper.teleportEntityWithRiding((EntityPlayerMP) player,Integer.parseInt(data.getConfig().getID()), rand.nextDouble()* 1000F, Configuration.orbit, rand.nextDouble()* 1000F);
 
     }
     private void updateFromSim() {
