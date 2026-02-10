@@ -207,6 +207,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 	public Vector3F<Double> getPlayerPos(float partialTicks, EntityPlayer player){
 		SimUniverse.SimBody stellar = SimUniverse.getInstance().getBody(String.valueOf(Minecraft.getMinecraft().theWorld.provider.dimensionId));
+		if(stellar == null)return new Vector3F<>(0.0,0.0,0.0);
 		return new Vector3F<>(stellar.x / (debugMode?10F : 1F),stellar.y/ (debugMode?10F : 1F),stellar.z/ (debugMode?10F : 1F));
 	}
 	@Override
