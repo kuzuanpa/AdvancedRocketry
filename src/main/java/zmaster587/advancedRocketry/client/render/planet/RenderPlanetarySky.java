@@ -498,7 +498,7 @@ public class RenderPlanetarySky extends IRenderHandler {
             double dz = body.z/(debugMode?10F:1F) - playerPos.z;
             double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 			if(dist <= 0.1)continue;
-			dist = 40;
+			
 			float stellarBright = (float) Math.max(starBrightness, -dist/500F+1F);
 
 			if(stellarBright < 0.01F)continue;
