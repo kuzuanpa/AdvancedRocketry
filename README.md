@@ -1,5 +1,57 @@
-# AdvancedRocketry
-A mod about space, exploration, and resources
+# AdvancedRocketry-TFRU 群峦传说-峦屿梦星群
+
+AdvancedRocketry for TFRU, contains huge modificaions between original 1.7.10 AdvancedRocketry
+
+峦屿梦星群整合专用的高级火箭，进行了大量修改
+# License 协议
+
+This mod is licensed under GNU AGPL v3
+
+该项目遵循GNU AGPL v3开源协议进行开源
+# Attention 注意事项
+
+This project contains plenty of changes, is not suitable for update from original AR, please use it at your own risk.
+
+该项目涉及大量魔改，并非延续官方版本的更新，慎用。
+# Differences 差别
+
+Simulate the universe for render, update and travel
+
+players experience real travel in space
+
+fix some zh_CN l10n
+
+FTL engine use oredict to burn Dilithium
+
+Dyson sphere and dyson cloud APIs (builder is in ktfruaddon)
+
+Dimension for every star to build dyson sphere, and skybox render for star surface
+
+Multiblock structure projector now supports GT6 machines if they use ktfruaddon API
+
+optimize GUIs
+
+fix some crashes
+
+/
+
+宇宙模拟系统以渲染，更新和旅行
+
+玩家体验在宇宙中的真实航行
+
+修复部分中文翻译
+
+跃迁引擎使用矿词检测双锂
+
+戴森球和戴森云API（建造代码在ktfruaddon）
+
+为每个恒星注册维度以放置戴森球，及对应的恒星表面渲染
+
+多方块结构投影仪支持gt6多方块，如果使用了ktfruaddon的API
+
+优化GUI
+
+修复崩溃
 
 # How to build for Minecraft 1.7.10:
 

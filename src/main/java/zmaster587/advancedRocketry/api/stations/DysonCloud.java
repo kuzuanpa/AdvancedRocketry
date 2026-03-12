@@ -49,13 +49,30 @@ public class DysonCloud implements IDysonSphere{
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GL11.glDisable(GL_CULL_FACE);
 
-        for (int layer = 0; layer < layerCount; layer++) {
-            GL11.glRotatef( (-180- rotate)/16f, 0, 1, 0);
+        GL11.glRotatef( (-180- rotate)/16f, 0, 1, 0);
+
+        if(bodyList == -1)redrawList(layerCount,distanceFromStarBase,scale,distanceFromStarMultiplier,rotate);
+        GL11.glScalef(distanceFromStarBase * 0.3F, distanceFromStarBase* 0.3F, distanceFromStarBase* 0.3F);
+
+        GL11.glCallList(bodyList);
+
+        GL11.glEnable(GL_CULL_FACE);
+
+        GL11.glPopMatrix();
+    }
+
+    public void redrawList(int layerCount, float distanceFromStarBase,float scale,float distanceFromStarMultiplier,float rotate) {
+        if (bodyList != -1) GL11.glDeleteLists(bodyList, 1);
+        bodyList = GL11.glGenLists(1);
+
+        GL11.glNewList(bodyList, GL11.GL_COMPILE);
+            GL11.glRotatef((-180 - rotate) / 16f, 0, 1, 0);
+
             for (int i = 0; i < Math.min(Math.pow(count, 0.9), 32768) / layerCount; i++) {
                 GL11.glPushMatrix();
 
                 int size = 1;
-                float s = (layer * 1F / layerCount) * 0.4F;
+                float s = (rng.nextFloat() * 8F / layerCount) * 0.4F;
                 float angle = rng.nextFloat() * 360;
                 float nodeY = 4.8F + rng.nextFloat() * 1.8F;
 
@@ -65,15 +82,10 @@ public class DysonCloud implements IDysonSphere{
                 GL11.glRotatef(90 * ((nodeY + 1 - 12 / 2F) / 12), 1, 0, 0);
                 GL11.glScalef(scale, scale, 1);
                 GL11.glTranslatef(-16, -16, -f1 / 2);
-                //if(drawNodesCoord)fontRendererObj.drawString(nodeX+","+nodeY, 2,3,0x44aaff);
-                drawTextureRect(tessellator, 0, 0, 0, 0, 0, 8, 8);
+                drawTextureRect(Tessellator.instance, 0, 0, 0, 0, 0, 8, 8);
                 GL11.glPopMatrix();
             }
             lastDrawListArgument = distanceFromStarBase * distanceFromStarMultiplier * scale;
-        }
-        GL11.glEnable(GL_CULL_FACE);
-
-        GL11.glPopMatrix();
+        GL11.glEndList();
     }
-
 }
