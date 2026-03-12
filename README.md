@@ -1,6 +1,6 @@
 # AdvancedRocketry-TFRU 群峦传说-峦屿梦星群
 
-AdvancedRocketry for TFRU, contains huge modificaions between original 1.7.10 AdvancedRocketry
+AdvancedRocketry for TFRU, forked form [AdvancedRocketry](https://github.com/Advanced-Rocketry/AdvancedRocketry), contains huge modificaions between original 1.7.10 AdvancedRocketry
 
 峦屿梦星群整合专用的高级火箭，进行了大量修改
 # License 协议
