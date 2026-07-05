@@ -1,13 +1,11 @@
 package zmaster587.advancedRocketry.client.render.planet;
 
-import cpw.mods.fml.common.FMLLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -16,7 +14,6 @@ import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -35,10 +32,6 @@ import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.libVulpes.util.Vector3F;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,7 +50,6 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 	IModelCustom sunModel = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/star.obj"));
 	ResourceLocation sunTexture = new ResourceLocation("advancedrocketry:textures/env/sunLEO.png");
-	int sunTextureID = -1;
 
 	final Minecraft mc = Minecraft.getMinecraft();
 
@@ -67,7 +59,6 @@ public class RenderPlanetarySky extends IRenderHandler {
 		GL11.glNewList(sunList = GL11.glGenLists(1), GL11.GL_COMPILE);
 		sunModel.renderPart("Cube");
 		GL11.glEndList();
-		loadSunTexture();
 
 		this.starGLCallList = GLAllocation.generateDisplayLists(3);
 		GL11.glPushMatrix();
@@ -166,21 +157,6 @@ public class RenderPlanetarySky extends IRenderHandler {
 		}
 
 		tessellator.draw();
-	}
-	protected void loadSunTexture() {
-		try (InputStream inputstream = Minecraft.getMinecraft().getResourceManager().getResource(sunTexture).getInputStream())
-		{
-			if (this.sunTextureID != -1) {
-				TextureUtil.deleteTexture(this.sunTextureID);
-				this.sunTextureID = -1;
-			}
-			BufferedImage bufferedimage = ImageIO.read(inputstream);
-			sunTextureID=TextureUtil.uploadTextureImage(sunTextureID, bufferedimage);
-		}catch (IOException ioexception)
-		{
-			FMLLog.log(Level.WARN,"Failed to load texture: " + sunTexture.toString());
-			ioexception.printStackTrace();
-		}
 	}
 
 	public static void drawTextureRect(Tessellator tessellator, int x, int y, int z, int u, int v, int width, int height){
@@ -651,7 +627,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 		boolean enable3DSun = true;
 		if(enable3DSun) {
 			GL11.glPushMatrix();
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, sunTextureID);
+			mc.getTextureManager().bindTexture(sunTexture);
 			GL11.glRotated(90, 0, 0, 1);
 
 			GL11.glRotated(-(System.currentTimeMillis() % 360000) / 1000F, 0, 1, 0);
