@@ -27,6 +27,8 @@ public class WorldDummy extends World {
 	
 	
 	public int glListID = -1;
+	/**Set when the blocks changed so RendererRocket recompiles the display list into the same id*/
+	public boolean glListDirty = false;
 
 	public WorldDummy(Profiler p_i45368_5_, StorageChunk storage) {
 		super(new DummySaveHandler(), "dummy", new WorldSettings(0, WorldSettings.GameType.SURVIVAL, false, false, WorldType.FLAT), dummyProvider, p_i45368_5_);

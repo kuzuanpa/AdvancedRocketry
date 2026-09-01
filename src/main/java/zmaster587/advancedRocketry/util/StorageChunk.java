@@ -116,10 +116,11 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 		blocks.forEach((pos,block)->this.blocks[pos.x-finalMinX][pos.y-finalMinY][pos.z-finalMinZ]=block);
 		metas.forEach((pos,meta)->this.metas[pos.x-finalMinX][pos.y-finalMinY][pos.z-finalMinZ]=meta);
-		NBTTagCompound nbt = new NBTTagCompound();
 
 		tiles.forEach(entity->{
 			if(entity==null)return;
+			//A fresh tag per tile, sharing one would leak keys from the previous tile into createAndLoadEntity
+			NBTTagCompound nbt = new NBTTagCompound();
 			entity.writeToNBT(nbt);
 
 			//Transform tileEntity coords
@@ -293,7 +294,10 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 	public Block getBlock(int x, int y, int z) {
 		if(x < 0 || x >= sizeX || y < 0 || y >= sizeY || z < 0 || z >= sizeZ) return Blocks.air;
 
-		return blocks[x][y][z];
+		//A chunk split off a rocket is not a solid box: the Map constructor only fills the cells it was
+		//given, so the rest stay null. pasteInWorld skips those, everything else goes through here.
+		Block block = blocks[x][y][z];
+		return block == null ? Blocks.air : block;
 	}
 
 	public void setBlockMeta(int x, int y, int z, int meta) {
@@ -333,7 +337,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		for(int x = 0; x < sizeX; x++) {
 			for(int y = 0; y < sizeY; y++) {
 				for(int z = 0; z < sizeZ; z++) {
-					blockId[z + (sizeZ*y) + (sizeZ*sizeY*x)] = Block.getIdFromBlock(blocks[x][y][z]);
+					blockId[z + (sizeZ*y) + (sizeZ*sizeY*x)] = Block.getIdFromBlock(getBlock(x, y, z));
 					metasId[z + (sizeZ*y) + (sizeZ*sizeY*x)] = metas[x][y][z];
 				}
 			}
@@ -632,9 +636,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 
 	@Override
 	public boolean isAirBlock(int x, int y, int z) {
-		if(x >= blocks.length || y >= blocks[0].length || z >= blocks[0][0].length)
-			return true;
-		return blocks[x][y][z] == Blocks.air;
+		return getBlock(x, y, z) == Blocks.air;
 	}
 
 	@Override
@@ -659,7 +661,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		if(x < 0 || x >= sizeX || y < 0 || y >= sizeY || z < 0 || z >= sizeZ  || x + side.offsetX < 0 || x + side.offsetX >= sizeX || y + side.offsetY < 0 || y + side.offsetY >= sizeY || z + side.offsetZ < 0 || z + side.offsetZ >= sizeZ)
 			return false;
 
-		return blocks[x + side.offsetX][y + side.offsetY][z + side.offsetZ].isBlockSolid(this, x, y, z, metas[x][y][z]);
+		return getBlock(x + side.offsetX, y + side.offsetY, z + side.offsetZ).isBlockSolid(this, x, y, z, metas[x][y][z]);
 	}
 
 	public static @NotNull StorageChunk cutWorldBB(World worldObj, AxisAlignedBB bb) {
@@ -792,7 +794,7 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		for(int x = 0; x < sizeX; x++) {
 			for(int y = 0; y < sizeY; y++) {
 				for(int z = 0; z < sizeZ; z++) {
-					buffer.writeInt(Block.getIdFromBlock(this.blocks[x][y][z]));
+					buffer.writeInt(Block.getIdFromBlock(getBlock(x, y, z)));
 					buffer.writeShort(this.metas[x][y][z]);
 				}
 			}
@@ -870,5 +872,27 @@ public class StorageChunk implements IBlockAccess, IStorageChunk {
 		HashMap<BlockPosition, Short> blockMetas = new HashMap<>();
 		positions.forEach(pos->blockMetas.put(pos, (short) storageChunkToDivide.getBlockMetadata(pos.x,pos.y,pos.z)));
 		return new StorageChunk(blocks,blockMetas,tiles);
+	}
+
+	/**
+	 * Drops the given blocks out of this chunk, used when a rocket stage separates.
+	 *
+	 * The chunk keeps its original dimensions so that tile, seat and engine coordinates all stay valid -
+	 * a rocket's bounding box already contains plenty of air, so a few more empty cells change nothing.
+	 */
+	public void removeBlocks(@NotNull Collection<BlockPosition> positions) {
+		Set<BlockPosition> removed = new HashSet<>(positions);
+
+		for(BlockPosition pos : removed) {
+			if(pos.x < 0 || pos.x >= sizeX || pos.y < 0 || pos.y >= sizeY || pos.z < 0 || pos.z >= sizeZ)
+				continue;
+
+			blocks[pos.x][pos.y][pos.z] = Blocks.air;
+			metas[pos.x][pos.y][pos.z] = 0;
+		}
+
+		tileEntities.removeIf(tile -> removed.contains(new BlockPosition(tile.xCoord, tile.yCoord, tile.zCoord)));
+		inventoryTiles.removeIf(tile -> removed.contains(new BlockPosition(tile.xCoord, tile.yCoord, tile.zCoord)));
+		liquidTiles.removeIf(tile -> removed.contains(new BlockPosition(tile.xCoord, tile.yCoord, tile.zCoord)));
 	}
 }

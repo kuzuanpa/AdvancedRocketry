@@ -477,6 +477,11 @@ public class StatsRocket {
 			pilotSeatPos.y = (short)stats.getInteger("playerYPos");
 			pilotSeatPos.z = stats.getInteger("playerZPos");
 
+			//Reading replaces the stat rather than adding to it - a rocket is re-synced mid flight when a
+			//stage separates, and appending would pile up stale engines and seats
+			clearEngineLocations();
+			passengerSeats.clear();
+
 			if(stats.hasKey("engineLoc")) {
 				int[] locations = stats.getIntArray("engineLoc");
 

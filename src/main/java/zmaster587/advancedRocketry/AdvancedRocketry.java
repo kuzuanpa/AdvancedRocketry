@@ -1042,6 +1042,9 @@ public class AdvancedRocketry {
 		GameRegistry.addRecipe(new ShapedOreRecipe(AdvancedRocketryBlocks.blockStructureTower, "ooo", " o ", "ooo", 'o', "stickSteel"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(AdvancedRocketryBlocks.blockEngine, "sss", " t ","t t", 's', "ingotSteel", 't', "plateTitanium"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(AdvancedRocketryBlocks.blockAdvEngine, "sss", " t ","t t", 's', "ingotTitaniumAluminide", 't', "plateTitaniumIridium"));
+		//Separating variants, the gunpowder is the explosive bolt that lets the stage below drop away
+		GameRegistry.addRecipe(new ShapedOreRecipe(AdvancedRocketryBlocks.blockEngineDivider, "sss", "gtg","t t", 's', "ingotSteel", 't', "plateTitanium", 'g', Items.gunpowder));
+		GameRegistry.addRecipe(new ShapedOreRecipe(AdvancedRocketryBlocks.blockAdvEngineDivider, "sss", "gtg","t t", 's', "ingotTitaniumAluminide", 't', "plateTitaniumIridium", 'g', Items.gunpowder));
 		GameRegistry.addRecipe(new ShapedOreRecipe(AdvancedRocketryBlocks.blockFuelTank, "s s", "p p", "s s", 'p', "plateSteel", 's', "stickSteel"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(LibVulpesItems.itemBattery,4,0), " c ","prp", "prp", 'c', "stickIron", 'r', "dustRedstone", 'p', "plateTin"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(LibVulpesItems.itemBattery,1,1), "bpb", "bpb", 'b', smallBattery, 'p', "plateCopper"));

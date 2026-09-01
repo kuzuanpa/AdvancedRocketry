@@ -83,9 +83,12 @@ public class RendererRocket extends Render {
 
 		//Initial setup
 
-		if(storage.world.glListID == -1) {
+		if(storage.world.glListID == -1 || storage.world.glListDirty) {
 			GL11.glPushMatrix();
-			storage.world.glListID  = GLAllocation.generateDisplayLists(1);
+			//Recompiling into the existing id avoids leaking a list every time a stage separates
+			if(storage.world.glListID == -1)
+				storage.world.glListID  = GLAllocation.generateDisplayLists(1);
+			storage.world.glListDirty = false;
 			GL11.glNewList(storage.world.glListID, GL11.GL_COMPILE);
 			net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
 

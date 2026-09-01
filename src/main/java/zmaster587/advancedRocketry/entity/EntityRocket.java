@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -17,6 +18,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
@@ -46,9 +48,11 @@ import zmaster587.advancedRocketry.item.ItemPlanetIdentificationChip;
 import zmaster587.advancedRocketry.item.ItemStationChip;
 import zmaster587.advancedRocketry.stations.SpaceObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
+import zmaster587.advancedRocketry.thread.RocketStructureThread;
 import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
 import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
 import zmaster587.advancedRocketry.tile.multiblock.TileWarpCore;
+import zmaster587.advancedRocketry.util.StageLayout;
 import zmaster587.advancedRocketry.util.StationLandingLocation;
 import zmaster587.advancedRocketry.util.StorageChunk;
 import zmaster587.advancedRocketry.util.TeleportHelper;
@@ -82,6 +86,12 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	
 	public StorageChunk storage;
 	public ArrayList<LeveledRocketPart> LeveledRocketParts=new ArrayList<>();
+	/**Which stage each block belongs to, empty until the structure thread reports back*/
+	private StageLayout stageLayout;
+	/**The stage currently burning, counts down to 0 as stages separate*/
+	private int currentStageLevel;
+	/**True while the structure thread still owes us a layout for this rocket*/
+	private boolean stagesPending;
 	private String errorStr;
 	private long lastErrorTime = Long.MIN_VALUE;
 	private static final long ERROR_DISPLAY_TIME = 100;
@@ -138,11 +148,15 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	}
 	public EntityRocket(@NotNull World world, @NotNull StorageChunk storage, @NotNull StatsRocket stats, double x, double y, double z) {
 		this(world);
-		AdvancedRocketry.rocketStructureDivider.addATask(this.entityUniqueID,storage);
 	    this.stats = stats;
 		this.setPosition(x, y, z);
 		this.storage = storage;
 		this.storage.setEntity(this);
+		//Debris has no guidance computer, so there is nothing to divide and no point queueing work
+		if(!world.isRemote && storage.getGuidanceComputer() != null) {
+			stagesPending = true;
+			AdvancedRocketry.rocketStructureDivider.addATask(this.entityUniqueID, storage);
+		}
 		initFromBounds();
 		isInFlight = false;
 		mountedEntities = new WeakReference[stats.getNumPassengerSeats()];
@@ -459,7 +473,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if((this.LeveledRocketParts==null||this.LeveledRocketParts.isEmpty())&&AdvancedRocketry.rocketStructureDivider.isTaskCompleted(entityUniqueID))LeveledRocketParts = AdvancedRocketry.rocketStructureDivider.getResultAndRemove(entityUniqueID);
+		if(stagesPending && AdvancedRocketry.rocketStructureDivider.isTaskCompleted(entityUniqueID)) {
+			stageLayout = AdvancedRocketry.rocketStructureDivider.getResultAndRemove(entityUniqueID);
+			stagesPending = false;
+		}
 		long deltaTime = worldObj.getTotalWorldTime() - lastWorldTickTicked;
 		lastWorldTickTicked = worldObj.getTotalWorldTime();
 
@@ -496,6 +513,9 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			boolean burningFuel = isBurningFuel();
 
 			boolean descentPhase = isDescentPhase();
+
+			//Drop spent stages on the way up only, a rocket coming back down has nothing left to shed
+			if(!worldObj.isRemote && !isInOrbit()) separateSpentStages();
 
 			if(burningFuel || descentPhase) {
 				//Burn the rocket fuel
@@ -811,6 +831,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		//TODO: Clean this logic a bit?
 		if(!stats.hasSeat() || ((DimensionManager.getInstance().isDimensionCreated(destinationDimId)) || destinationDimId == Configuration.stationDimId || destinationDimId == 0) ) { //Abort if destination is invalid
 
+			prepareStaging();
 
 			setInFlight(true);
 			Iterator<IInfrastructure> connectedTiles = connectedInfrastructure.iterator();
@@ -827,6 +848,197 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				}
 			}
 		}
+	}
+
+	/**
+	 * Works out the per-stage thrust, fuel use and separation points just before liftoff.
+	 *
+	 * Runs on both sides: getFuelAmount reads the datawatcher, which is already in sync, so client and
+	 * server reach the same answer without an extra packet.
+	 *
+	 * The rocket keeps a single shared fuel pool - splitting it per stage would mean touching the fueling
+	 * infrastructure, the GUI gauge and the datawatcher. Instead the pool is notionally handed out to the
+	 * stages bottom-up, which gives each one the fuel level at which it runs dry and lets go.
+	 */
+	private void prepareStaging() {
+		LeveledRocketParts.clear();
+		currentStageLevel = 0;
+
+		if(stagesPending) {
+			AdvancedRocketry.rocketStructureDivider.cancelTask(entityUniqueID);
+			stagesPending = false;
+		}
+
+		//Both sides compute this from the same blocks, so the flight model agrees without an extra packet.
+		//The worker usually has it ready on the server; the client has never been told, and recomputing is
+		//cheaper than shipping the layout separately.
+		if(stageLayout == null || stageLayout.isEmpty()
+				|| !stageLayout.matches(storage.getSizeX(), storage.getSizeY(), storage.getSizeZ()))
+			stageLayout = RocketStructureThread.computeLayout(storage);
+
+		//No dividers means a conventional rocket, leave the stats exactly as the assembler measured them
+		if(stageLayout.isEmpty() || stageLayout.maxLevel < 1) return;
+
+		int stageCount = stageLayout.maxLevel + 1;
+		int[] thrust = new int[stageCount], fuelRate = new int[stageCount],
+				fuelCapacity = new int[stageCount], blockCount = new int[stageCount];
+		List<List<Vector3F<Float>>> engines = new ArrayList<>();
+		for(int i = 0; i < stageCount; i++) engines.add(new ArrayList<>());
+
+		float halfX = storage.getSizeX()/2f, halfZ = storage.getSizeZ()/2f;
+
+		for(int x = 0; x < storage.getSizeX(); x++) {
+			for(int y = 0; y < storage.getSizeY(); y++) {
+				for(int z = 0; z < storage.getSizeZ(); z++) {
+					int level = stageLayout.getLevel(x, y, z);
+					if(level < 0 || level >= stageCount) continue;
+
+					Block block = storage.getBlock(x, y, z);
+					blockCount[level]++;
+
+					if(block instanceof IRocketEngine) {
+						thrust[level] += ((IRocketEngine)block).getThrust(storage.world, x, y, z);
+						fuelRate[level] += ((IRocketEngine)block).getFuelConsumptionRate(storage.world, x, y, z);
+						//Same framing as TileRocketBuilder.scanRocket: centred horizontally, measured up from the base
+						engines.get(level).add(new Vector3F<>(x - halfX, (float)y, z - halfZ));
+					}
+
+					if(block instanceof IFuelTank)
+						fuelCapacity[level] += ((IFuelTank)block).getMaxFill(storage.world, x, y, z, storage.getBlockMetadata(x, y, z));
+				}
+			}
+		}
+
+		//Hand the fuel out from the bottom stage up, a stage separates once everything below it is spent.
+		//Capacity is the raw sum: that is what StatsRocket.addFuelAmount caps refuelling at.
+		int remaining = getFuelAmount();
+		int[] threshold = new int[stageCount];
+		for(int level = stageCount - 1; level >= 0; level--) {
+			remaining -= Math.min(remaining, fuelCapacity[level]);
+			threshold[level] = remaining;
+		}
+
+		for(int level = 0; level < stageCount; level++)
+			LeveledRocketParts.add(new LeveledRocketPart(level, thrust[level], fuelRate[level], fuelCapacity[level], blockCount[level], threshold[level]));
+
+		currentStageLevel = stageLayout.maxLevel;
+		applyStageStats(currentStageLevel, engines.get(currentStageLevel));
+	}
+
+	/**
+	 * Points the flight model at one stage's engines. Weight stays the whole rocket, so shedding a stage
+	 * raises acceleration by removing mass rather than by adding thrust.
+	 */
+	private void applyStageStats(int level, List<Vector3F<Float>> engineLocations) {
+		LeveledRocketPart part = getStage(level);
+		if(part == null) return;
+
+		stats.setThrust(part.thrust);
+		stats.setFuelRate(FuelType.LIQUID, part.fuelRate);
+		stats.clearEngineLocations();
+		if(engineLocations != null)
+			for(Vector3F<Float> vec : engineLocations)
+				stats.addEngineLocation(vec.x, vec.y, vec.z);
+	}
+
+	private LeveledRocketPart getStage(int level) {
+		for(LeveledRocketPart part : LeveledRocketParts)
+			if(part.level == level) return part;
+
+		return null;
+	}
+
+	/**
+	 * Drops every stage that has run out of fuel. Each becomes its own rocket entity with no engines and
+	 * no guidance, so it simply falls, lands and can be taken apart for its blocks.
+	 */
+	private void separateSpentStages() {
+		if(currentStageLevel < 1 || stageLayout == null || stageLayout.isEmpty() || storage == null) return;
+
+		LeveledRocketPart spent = getStage(currentStageLevel);
+		if(spent == null || getFuelAmount() > spent.separationThreshold) return;
+
+		ArrayList<BlockPosition> positions = new ArrayList<>();
+		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
+
+		//Every group at this level goes at once, which is what makes side-mounted boosters work
+		for(int x = 0; x < storage.getSizeX(); x++) {
+			for(int y = 0; y < storage.getSizeY(); y++) {
+				for(int z = 0; z < storage.getSizeZ(); z++) {
+					if(stageLayout.getLevel(x, y, z) != currentStageLevel) continue;
+
+					positions.add(new BlockPosition(x, y, z));
+					minX = Math.min(minX, x);
+					minY = Math.min(minY, y);
+					minZ = Math.min(minZ, z);
+				}
+			}
+		}
+
+		int nextLevel = currentStageLevel - 1;
+
+		//An empty group can happen for a divider with nothing below it, just move on to the next level
+		if(!positions.isEmpty()) {
+			StorageChunk debrisStorage = StorageChunk.divideStorage(storage, positions);
+
+			StatsRocket debrisStats = new StatsRocket();
+			debrisStats.setWeight(spent.blockCount);
+
+			//divideStorage rebases the split chunk onto its own bounding box, and the entity origin sits at
+			//the horizontal centre of the base, so shift by half of each size
+			double debrisX = posX - storage.getSizeX()/2f + minX + debrisStorage.getSizeX()/2f;
+			double debrisY = posY + minY;
+			double debrisZ = posZ - storage.getSizeZ()/2f + minZ + debrisStorage.getSizeZ()/2f;
+
+			storage.removeBlocks(positions);
+
+			EntityRocket debris = new EntityRocket(worldObj, debrisStorage, debrisStats, debrisX, debrisY, debrisZ);
+			debris.setInFlight(true);
+			worldObj.spawnEntityInWorld(debris);
+
+			//Same handshake TileRocketBuilder.assembleRocket uses to get the blocks onto the clients
+			NBTTagCompound debrisNbt = new NBTTagCompound();
+			debris.writeToNBT(debrisNbt);
+			PacketHandler.sendToNearby(new PacketEntity(debris, (byte)0, debrisNbt), worldObj.provider.dimensionId, (int)posX, (int)posY, (int)posZ, 64);
+		}
+
+		currentStageLevel = nextLevel;
+		applyStageStats(currentStageLevel, collectEngineLocations(currentStageLevel));
+		stats.setWeight(countRemainingBlocks());
+
+		//The clients need the shortened rocket and the new engine positions
+		NBTTagCompound nbt = new NBTTagCompound();
+		writeNetworkableNBT(nbt);
+		PacketHandler.sendToPlayersTrackingEntity(new PacketEntity(this, (byte)PacketType.RECEIVE_NBT.ordinal(), nbt), this);
+	}
+
+	private List<Vector3F<Float>> collectEngineLocations(int level) {
+		List<Vector3F<Float>> locations = new ArrayList<>();
+		if(stageLayout == null || stageLayout.isEmpty()) return locations;
+
+		float halfX = storage.getSizeX()/2f, halfZ = storage.getSizeZ()/2f;
+
+		for(int x = 0; x < storage.getSizeX(); x++) {
+			for(int y = 0; y < storage.getSizeY(); y++) {
+				for(int z = 0; z < storage.getSizeZ(); z++) {
+					if(stageLayout.getLevel(x, y, z) != level) continue;
+
+					if(storage.getBlock(x, y, z) instanceof IRocketEngine)
+						locations.add(new Vector3F<>(x - halfX, (float)y, z - halfZ));
+				}
+			}
+		}
+		return locations;
+	}
+
+	private int countRemainingBlocks() {
+		int count = 0;
+		for(int x = 0; x < storage.getSizeX(); x++)
+			for(int y = 0; y < storage.getSizeY(); y++)
+				for(int z = 0; z < storage.getSizeZ(); z++)
+					if(!storage.isAirBlock(x, y, z)) count++;
+
+		return count;
 	}
 
 	/**
@@ -856,6 +1068,9 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			connectedTiles.next().unlinkRocket();
 			connectedTiles.remove();
 		}
+
+		if(!worldObj.isRemote)
+			AdvancedRocketry.rocketStructureDivider.cancelTask(entityUniqueID);
 
 		if(worldObj.isRemote && storage != null && storage.world.glListID != -1) {
 			GL11.glDeleteLists(storage.world.glListID, 1);
@@ -936,10 +1151,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			storage.setEntity(this);
 			this.setSize(Math.max(storage.getSizeX(), storage.getSizeZ()), storage.getSizeY());
 		}
-		for (int i=0;i<Integer.MAX_VALUE;i++){
-			if(Objects.equals(nbt.getCompoundTag("part." + i), new NBTTagCompound()))break;
-			this.LeveledRocketParts.add(LeveledRocketPart.readFromNBT(nbt.getCompoundTag("part."+i)));
-		}
+		readStagingNBT(nbt);
 		if(nbt.hasKey("infrastructure")) {
 			NBTTagList tagList = nbt.getTagList("infrastructure", 10);
 			for (int i = 0; i < tagList.tagCount(); i++) {
@@ -980,6 +1192,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 		nbt.setInteger("destinationDimId", destinationDimId);
 
+		writeStagingNBT(nbt);
+
 		//Satallite
 		if(satallite != null) {
 			NBTTagCompound satalliteNbt = new NBTTagCompound();
@@ -987,6 +1201,47 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			satalliteNbt.setString("DataType",SatelliteRegistry.getKey(satallite.getClass()));
 
 			nbt.setTag("satallite", satalliteNbt);
+		}
+	}
+
+	/**
+	 * Staging data goes through writeNetworkableNBT rather than writeEntityToNBT because that is what
+	 * RECEIVE_NBT carries - the client needs the stage list to render the right engine flames.
+	 */
+	private void writeStagingNBT(@NotNull NBTTagCompound nbt) {
+		//Nothing worth saving until the layout arrives, readEntityFromNBT re-queues the work on load
+		if(stageLayout == null || stageLayout.isEmpty()) return;
+
+		stageLayout.writeToNBT(nbt);
+		nbt.setInteger("currentStageLevel", currentStageLevel);
+
+		NBTTagList stages = new NBTTagList();
+		for(LeveledRocketPart part : LeveledRocketParts)
+			stages.appendTag(part.writeToNBT());
+
+		nbt.setTag("stages", stages);
+	}
+
+	private void readStagingNBT(@NotNull NBTTagCompound nbt) {
+		LeveledRocketParts.clear();
+		stageLayout = StageLayout.readFromNBT(nbt);
+		currentStageLevel = nbt.getInteger("currentStageLevel");
+
+		NBTTagList stages = nbt.getTagList("stages", NBT.TAG_COMPOUND);
+		for(int i = 0; i < stages.tagCount(); i++)
+			LeveledRocketParts.add(LeveledRocketPart.readFromNBT(stages.getCompoundTagAt(i)));
+
+		//A layout that does not describe the storage we just loaded is worse than none at all
+		if(storage != null && !stageLayout.isEmpty() && !stageLayout.matches(storage.getSizeX(), storage.getSizeY(), storage.getSizeZ())) {
+			stageLayout = StageLayout.EMPTY;
+			LeveledRocketParts.clear();
+			currentStageLevel = 0;
+		}
+
+		//Recompute in the background if we were saved before the layout was ready
+		if(!worldObj.isRemote && stageLayout.isEmpty() && storage != null && storage.getGuidanceComputer() != null) {
+			stagesPending = true;
+			AdvancedRocketry.rocketStructureDivider.addATask(entityUniqueID, storage);
 		}
 	}
 
@@ -1007,7 +1262,6 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			storage.writeToNBT(blocks);
 			nbt.setTag("data", blocks);
 		}
-		if(this.LeveledRocketParts!=null)this.LeveledRocketParts.forEach(part->nbt.setTag("part."+part.level,part.writeToNBT()));
 		nbt.setInteger("lastDimensionFrom", lastDimensionFrom);
 
 		//TODO handle non tile Infrastructure
@@ -1017,10 +1271,21 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	public void readDataFromNetwork(ByteBuf in, byte packetId,
 			NBTTagCompound nbt) {
 		if(packetId == PacketType.RECEIVE_NBT.ordinal()) {
+			int oldGlListID = -1;
+			if(worldObj.isRemote && storage != null)
+				oldGlListID = storage.world.glListID;
+
 			storage = new StorageChunk();
 			storage.setEntity(this);
 			storage.readFromNetwork(in);
 			comeFromDimID = in.readInt();
+
+			//Hand the display list to the replacement chunk instead of leaking it - this runs on the netty
+			//thread, so the list can only be flagged for recompile here, not deleted
+			if(oldGlListID != -1) {
+				storage.world.glListID = oldGlListID;
+				storage.world.glListDirty = true;
+			}
 		}
 		else if(packetId == PacketType.SEND_PLANET_DATA.ordinal()) {
 			nbt.setInteger("selection", in.readInt());
@@ -1096,7 +1361,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			player.openGui(LibVulpes.instance, GuiHandler.guiId.MODULARFULLSCREEN.ordinal(), player.worldObj, this.getEntityId(), -1,0);
 		}
 		else if(id == PacketType.SEND_PLANET_DATA.ordinal()) {
-			ItemStack stack = storage.getGuidanceComputer().getStackInSlot(0);
+			TileGuidanceComputer guidanceComputer = storage.getGuidanceComputer();
+			ItemStack stack = guidanceComputer == null ? null : guidanceComputer.getStackInSlot(0);
 			if(stack != null && stack.getItem() == AdvancedRocketryItems.itemPlanetIdChip) {
 				((ItemPlanetIdentificationChip)AdvancedRocketryItems.itemPlanetIdChip).setDimensionId(stack, nbt.getInteger("selection"));
 
@@ -1140,7 +1406,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	}
 
 	private void setDestLandingPad(int padIndex) {
-		ItemStack slot0 = storage.getGuidanceComputer().getStackInSlot(0);
+		TileGuidanceComputer guidanceComputer = storage.getGuidanceComputer();
+		if(guidanceComputer == null) return;
+
+		ItemStack slot0 = guidanceComputer.getStackInSlot(0);
 		int uuid;
 		//Station location select
 		if( slot0 != null && slot0.getItem() instanceof ItemStationChip && (uuid = (int)ItemStationChip.getUUID(slot0)) != 0) {
@@ -1149,13 +1418,13 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			if(obj instanceof SpaceObject) {
 
 				if(padIndex == -1) {
-					storage.getGuidanceComputer().setLandingLocation(uuid, null);
+					guidanceComputer.setLandingLocation(uuid, null);
 				}
 				else {
 
 					StationLandingLocation location = ((SpaceObject) obj).getLandingPads().get(padIndex);
 					if(location != null && !location.getOccupied())
-						storage.getGuidanceComputer().setLandingLocation(uuid, location);
+						guidanceComputer.setLandingLocation(uuid, location);
 				}
 			}
 
@@ -1228,7 +1497,11 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			//modules.add(new ModuleText(180, 114, "Inventories", 0x404040));
 		}
 		else {
-			ItemStack slot0 = storage.getGuidanceComputer().getStackInSlot(0);
+			TileGuidanceComputer guidanceComputer = storage.getGuidanceComputer();
+			//Debris has no computer and so no destination to select
+			if(guidanceComputer == null) return modules;
+
+			ItemStack slot0 = guidanceComputer.getStackInSlot(0);
 			int uuid;
 			//Station location select
 			if( slot0 != null && slot0.getItem() instanceof ItemStationChip && (uuid = (int)ItemStationChip.getUUID(slot0)) != 0) {
@@ -1259,7 +1532,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				ModuleContainerPan pan = new ModuleContainerPan(25, 25, list2, new LinkedList<>(), null, 256, 256, 0, -48, 258, 256);
 				modules.add(pan);
 
-				StationLandingLocation location = storage.getGuidanceComputer().getLandingLocation(uuid);
+				StationLandingLocation location = guidanceComputer.getLandingLocation(uuid);
 
 				landingPadDisplayText.setText(location != null ? location.toString() : LibVulpes.proxy.getLocalizedString("msg.entity.rocket.none"));
 				modules.add(landingPadDisplayText);
