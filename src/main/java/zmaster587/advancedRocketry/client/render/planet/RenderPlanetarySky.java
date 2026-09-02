@@ -19,9 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.api.IPlanetaryProvider;
-import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
-import zmaster587.advancedRocketry.client.render.entity.RenderCelestialBody;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.dimension.sim.SimUniverse;
@@ -33,11 +31,11 @@ import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.libVulpes.util.Vector3F;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-
-import static zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact.debugMode;
 
 public class RenderPlanetarySky extends IRenderHandler {
 
@@ -50,6 +48,9 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 	IModelCustom sunModel = AdvancedModelLoader.loadModel(new ResourceLocation("advancedrocketry:models/star.obj"));
 	ResourceLocation sunTexture = new ResourceLocation("advancedrocketry:textures/env/sunLEO.png");
+
+	/** Scratch list for depth sorting the simulated bodies, reused every frame */
+	private final List<SimUniverse.SimBody> sortedBodies = new ArrayList<>();
 
 	final Minecraft mc = Minecraft.getMinecraft();
 
@@ -160,12 +161,20 @@ public class RenderPlanetarySky extends IRenderHandler {
 	}
 
 	public static void drawTextureRect(Tessellator tessellator, int x, int y, int z, int u, int v, int width, int height){
+		drawTextureRect(tessellator, x, y, z, u, v, width, height, width, height);
+	}
+
+	/**
+	 * Same as {@link #drawTextureRect} but lets the quad be a different size to the sampled region, so a
+	 * 32x32 atlas glyph can be drawn as a small speck without stretching the UVs.
+	 */
+	public static void drawTextureRect(Tessellator tessellator, int x, int y, int z, int u, int v, int uWidth, int vHeight, int width, int height){
 		final float f = 0.00390625F;
 		final float f1 = 0.00390625F;
 		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(x, y + height, z, (u * f), (v + height) * f1);
-		tessellator.addVertexWithUV(x + width, y + height, z, (u + width) * f, (v + height) * f1);
-		tessellator.addVertexWithUV(x + width, y, z, (u + width) * f, v * f1);
+		tessellator.addVertexWithUV(x, y + height, z, (u * f), (v + vHeight) * f1);
+		tessellator.addVertexWithUV(x + width, y + height, z, (u + uWidth) * f, (v + vHeight) * f1);
+		tessellator.addVertexWithUV(x + width, y, z, (u + uWidth) * f, v * f1);
 		tessellator.addVertexWithUV(x, y, z, (u * f), v * f1);
 		tessellator.draw();
 	}
@@ -175,16 +184,19 @@ public class RenderPlanetarySky extends IRenderHandler {
 	}
 	protected float getSkyRotationAmount() {return celestialAngle;}
 	protected Vector3F<Float> getRotateAxis() { return axis;}
-	private static final ResourceLocation STAR_TEXTURE = new ResourceLocation("yourmod", "textures/sky/star_body.png");
 	protected void rotateAroundAxis() {
 		Vector3F<Float> axis = getRotateAxis();
 		GL11.glRotatef(getSkyRotationAmount() * 360.0F, axis.x, axis.y, axis.z);
 	}
 
-	public Vector3F<Double> getPlayerPos(float partialTicks, EntityPlayer player){
-		SimUniverse.SimBody stellar = SimUniverse.getInstance().getBody(String.valueOf(Minecraft.getMinecraft().theWorld.provider.dimensionId));
-		if(stellar == null)return new Vector3F<>(0.0,0.0,0.0);
-		return new Vector3F<>(stellar.x / (debugMode?10F : 1F),stellar.y/ (debugMode?10F : 1F),stellar.z/ (debugMode?10F : 1F));
+	/**
+	 * Where in the simulated universe the camera is, in sim block coordinates.  On a planet that is the body
+	 * itself; subclasses standing somewhere else (in space, on a station) override this.
+	 */
+	public Vector3F<Double> getViewpoint(float partialTicks, EntityPlayer player){
+		SimUniverse.SimBody body = SimUniverse.getInstance().getBodyForDim(mc.theWorld.provider.dimensionId);
+		if(body == null) return null;
+		return new Vector3F<>(body.x, body.y, body.z);
 	}
 	@Override
 	public void render(float partialTicks, @NotNull WorldClient world, @NotNull Minecraft mc) {
@@ -348,8 +360,6 @@ public class RenderPlanetarySky extends IRenderHandler {
 		f2 *= atmosphere;
 		f3 *= atmosphere;
 
-		GL11.glColor3f(f1, f2, f3);
-		GL11.glColor3f(1.0F,1.0F,1.0F);
 		Tessellator tessellator1 = Tessellator.instance;
 		GL11.glDepthMask(false);
 
@@ -453,62 +463,78 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(true);
-		Vector3F<Double> playerPos = getPlayerPos(partialTicks,player);
+		final Vector3F<Double> viewpoint = getViewpoint(partialTicks, player);
 
 		Tessellator tessellator = Tessellator.instance;
 		GL11.glPushMatrix();
-		List<SimUniverse.SimBody> sortedList = new ArrayList<>(SimUniverse.getInstance().getAllBodies());
 		if(!isWarp) rotateAroundAxis();
 
-		sortedList.sort((b1, b2) -> {
-            double d1 = Math.pow(b1.x/(debugMode?10F:1F) - playerPos.x, 2) + Math.pow(b1.y/(debugMode?10F:1F) - playerPos.y, 2) + Math.pow(b1.z/(debugMode?10F:1F) - playerPos.z, 2);
-            double d2 = Math.pow(b2.x/(debugMode?10F:1F) - playerPos.x, 2) + Math.pow(b2.y/(debugMode?10F:1F) - playerPos.y, 2) + Math.pow(b2.z/(debugMode?10F:1F) - playerPos.z, 2);
-            return Double.compare(d2, d1);
-        });
+		//A null viewpoint means we are somewhere the simulation does not know about, so there is nothing to
+		//draw the sky relative to; the random star field above still gives a backdrop
+		drawSimulatedBodies: if(viewpoint != null) {
+			//Reused between frames: this runs every frame and the body count is fixed
+			sortedBodies.clear();
+			sortedBodies.addAll(SimUniverse.getInstance().getAllBodies());
 
-		for (SimUniverse.SimBody body : sortedList) {
-
-			if(body.getConfig() == null)continue; //It shouldn't be null...
-            double dx = body.x/(debugMode?10F:1F) - playerPos.x;
-            double dy = body.y/(debugMode?10F:1F) - playerPos.y;
-            double dz = body.z/(debugMode?10F:1F) - playerPos.z;
-            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-			if(dist <= 0.1)continue;
-			
-			float stellarBright = (float) Math.max(starBrightness, -dist/500F+1F);
-
-			if(stellarBright < 0.01F)continue;
-			double depthOffset = Math.min(dist / 100.0, 75);
-
-			double scale = (25F+ depthOffset) / dist;
-			double renderX = dx * scale;
-			double renderY = dy * scale;
-			double renderZ = dz * scale;
-
-
-			double renderSize = Math.max((body.getConfig().getSize() / dist) * 16f, 0.01f);
-
-			StellarBody stellar = DimensionManager.getInstance().getStar(Integer.parseInt(body.getConfig().getID()));
-			GL11.glColor4f(1.0F,1.0F,1.0F,stellarBright);
-
-			if(body.getConfig().isStar() && stellar != null){
-				float[] stellarColorArray = stellar.getColor();
-				Vec3 stellarColor = Vec3.createVectorHelper(stellarColorArray[0], stellarColorArray[1], stellarColorArray[2]);
-
-				if(renderSize > .05F){
-					drawStar(tessellator,(float)renderX,(float)renderY,(float)renderZ, solarOrbitalDistance, (float) (renderSize/ 8.0F),stellarColor, partialTicks, properties, stellar, stellarBright);
-				}else{
-					GL11.glColor4f((float) Math.min(1.0F, stellarColor.xCoord*1.2F), (float)Math.min(1.0F, stellarColor.yCoord*1.2F) , (float)Math.min(1.0F, stellarColor.zCoord*1.2F) , stellarBright);
-					mc.renderEngine.bindTexture(TextureResources.locationSunLODFar);
-					RenderCelestialBody.drawFacedRect(tessellator, renderX, renderY, renderZ, renderSize);
+			//Farthest first, so nearer bodies paint over them
+			Collections.sort(sortedBodies, new Comparator<SimUniverse.SimBody>() {
+				@Override
+				public int compare(SimUniverse.SimBody b1, SimUniverse.SimBody b2) {
+					return Double.compare(b2.distanceSqTo(viewpoint.x, viewpoint.y, viewpoint.z),
+							b1.distanceSqTo(viewpoint.x, viewpoint.y, viewpoint.z));
 				}
-			}
-			else {
-				IDimensionProperties dim = DimensionManager.getInstance().getDimensionProperties(Integer.parseInt(body.getConfig().getID()));
+			});
 
-				mc.renderEngine.bindTexture(dim.getPlanetIcon());
+			for (SimUniverse.SimBody body : sortedBodies) {
+				double dx = body.x - viewpoint.x;
+				double dy = body.y - viewpoint.y;
+				double dz = body.z - viewpoint.z;
+				double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-				RenderCelestialBody.drawFacedRect(tessellator, renderX, renderY, renderZ, renderSize);
+				//The body we are standing on
+				if(dist <= 0.1) continue;
+
+				//Nearby bodies stay lit even in full daylight; distant ones fade with the star field
+				float stellarBright = (float) Math.max(starBrightness, 1F - dist/500F);
+				if(stellarBright < 0.01F) continue;
+
+				//Everything is painted onto a shell around the camera.  Farther bodies get pushed slightly
+				//further out so a planet can never be drawn in front of the star it orbits.
+				double depthOffset = Math.min(dist / 100.0, 75);
+				double scale = (25F + depthOffset) / dist;
+				double renderX = dx * scale;
+				double renderY = dy * scale;
+				double renderZ = dz * scale;
+
+				double renderSize = Math.max((body.getRadius() / dist) * 2f, 0.01f);
+
+				GL11.glColor4f(1.0F, 1.0F, 1.0F, stellarBright);
+
+				if(body.isStar()) {
+					StellarBody stellar = DimensionManager.getInstance().getStar(body.getConfig().getStarId());
+					if(stellar == null) continue;
+
+					float[] colorArray = stellar.getColor();
+					Vec3 stellarColor = Vec3.createVectorHelper(colorArray[0], colorArray[1], colorArray[2]);
+
+					if(renderSize > .05F) {
+						drawStar(tessellator, (float)renderX, (float)renderY, (float)renderZ, solarOrbitalDistance, (float)(renderSize / 8.0F), stellarColor, partialTicks, properties, stellar, stellarBright);
+					} else {
+						//Too small for the model to be worth it - a coloured speck reads the same
+						GL11.glColor4f((float) Math.min(1.0F, stellarColor.xCoord*1.2F), (float)Math.min(1.0F, stellarColor.yCoord*1.2F), (float)Math.min(1.0F, stellarColor.zCoord*1.2F), stellarBright);
+						mc.renderEngine.bindTexture(TextureResources.locationSunLODFar);
+						SkyBillboard.drawFacing(tessellator, renderX, renderY, renderZ, renderSize);
+					}
+				}
+				else {
+					//getPropertiesId, not getLandingDimId: a gas giant has an icon to draw even though there is
+					//nowhere on it to land
+					int dimId = body.getConfig().getPropertiesId();
+					if(dimId == SimUniverse.NO_DIMENSION) continue;
+
+					mc.renderEngine.bindTexture(DimensionManager.getInstance().getDimensionProperties(dimId).getPlanetIcon());
+					SkyBillboard.drawFacing(tessellator, renderX, renderY, renderZ, renderSize);
+				}
 			}
 		}
 
@@ -605,6 +631,9 @@ public class RenderPlanetarySky extends IRenderHandler {
 		GL11.glPopMatrix();*/
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		//Vanilla clears depth, draws the sky, then draws terrain.  The bodies above are drawn with depth writes
+		//on so the 3D star model self-occludes, which would then cull any terrain further away than the shell
+		//they sit on - so hand the terrain pass a clean buffer.
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glDepthMask(true);
 
@@ -640,7 +669,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 			mc.renderEngine.bindTexture(TextureResources.locationSunNew);
 			//Set sun color and distance
 			GL11.glColor4f((float)sunColor.xCoord, (float)sunColor.yCoord , (float)sunColor.zCoord , (float) Math.min(0.9,multiplier));
-			RenderCelestialBody.drawFacedRect(buffer,x *.9F,y *.9F,z *.9F,sunSize*32);
+			SkyBillboard.drawFacing(buffer,x *.9F,y *.9F,z *.9F,sunSize*32);
 		}
 		if(sun.dysonCloud != null)sun.dysonCloud.draw(0,0, i1,0,90,i1/500F,1.2F,(System.currentTimeMillis() % 36000) / 100F);
 
@@ -648,8 +677,8 @@ public class RenderPlanetarySky extends IRenderHandler {
 		GL11.glPushMatrix();
 		GL11.glColor4f((float) Math.min(1.0F, sunColor.xCoord*1.2F), (float)Math.min(1.0F, sunColor.yCoord*1.2F) , (float)Math.min(1.0F, sunColor.zCoord*1.2F) , (float) (multiplier* 1.2F));
 
-		mc.getTextureManager().bindTexture(new ResourceLocation("advancedrocketry:textures/env/starLight.png"));
-		RenderCelestialBody.drawFacedRect(buffer,x *.9F,y *.9F,z *.9F,sunSize*8);
+		mc.getTextureManager().bindTexture(TextureResources.locationStarLight);
+		SkyBillboard.drawFacing(buffer,x *.9F,y *.9F,z *.9F,sunSize*8);
 
 		GL11.glDepthMask(true);
 

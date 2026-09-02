@@ -3,17 +3,15 @@ package zmaster587.advancedRocketry.event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import zmaster587.advancedRocketry.AdvancedRocketry;
+import zmaster587.advancedRocketry.api.Configuration;
 import zmaster587.advancedRocketry.cable.NetworkRegistry;
 import zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact;
-import zmaster587.advancedRocketry.dimension.sim.SimUniverse;
-import zmaster587.advancedRocketry.entity.EntityCelestialBody;
+import zmaster587.advancedRocketry.dimension.sim.SpaceTravelHandler;
 import zmaster587.advancedRocketry.tile.cables.TilePipe;
 
 import java.util.ConcurrentModificationException;
@@ -31,61 +29,25 @@ public class TickHandler {
 				NetworkRegistry.energyNetwork.tickAllNetworks();
 				NetworkRegistry.liquidNetwork.tickAllNetworks();
 			}
-			if(tick.phase == Phase.START){
-				AdvanceRocketrySimulateUniverseCompact.tick();
-			}
 		} catch (ConcurrentModificationException e) {
 			AdvancedRocketry.logger.error(e);
 		}
 	}
 
-	private static final double SPAWN_RANGE = 1000.0D;
-	private static final double DESPAWN_RANGE = 1200.0D;
-
 	@SubscribeEvent
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
-		if (event.phase != TickEvent.Phase.START || event.world.isRemote) return;
+		if (event.world.isRemote) return;
 
-		if (event.world.provider.dimensionId != -3) return;
-		if (event.world.playerEntities.isEmpty()) return;
-
-		SimUniverse universe = SimUniverse.getInstance();
-
-		for (SimUniverse.SimBody body : universe.getAllBodies()) {
-			if (body.hasEntity()) {
-				EntityCelestialBody existing = body.getEntity();
-				if (existing.isDead || existing.worldObj != event.world) {
-					body.setEntity(null);
-				}
-			}
-
-			boolean playerNearby = isPlayerNearby(event.world, body);
-
-			if (playerNearby && !body.hasEntity()) {
-				int cx = (int)Math.floor(body.x) >> 4;
-				int cz = (int)Math.floor(body.z) >> 4;
-				if (!event.world.getChunkProvider().chunkExists(cx, cz)) {
-					event.world.getChunkProvider().loadChunk(cx, cz);
-				}
-
-				EntityCelestialBody entity = new EntityCelestialBody(event.world, body);
-				event.world.spawnEntityInWorld(entity);
-				body.setEntity(entity);
-			}
-			else if (!playerNearby && body.hasEntity()) {
-				body.getEntity().setDead();
-				body.setEntity(null);
-			}
+		if (event.phase == TickEvent.Phase.START) {
+			//Positions have to be up to date before anything reads them, and they are derived from this world's
+			//clock, so they are refreshed here rather than from the global server tick
+			AdvanceRocketrySimulateUniverseCompact.tick(event.world.getTotalWorldTime());
+			return;
 		}
-	}
 
-	private boolean isPlayerNearby(World world, SimUniverse.SimBody body) {
-		for (Object obj : world.playerEntities) {
-			EntityPlayer player = (EntityPlayer) obj;
-			double distSq = player.getDistanceSq(body.x, body.y, body.z);
-			if (distSq < SPAWN_RANGE * SPAWN_RANGE) return true;
-		}
-		return false;
+		//Capture is checked after entities have moved for the tick
+		if (event.world.provider.dimensionId == Configuration.spaceDimId)
+			SpaceTravelHandler.tickWorld(event.world);
 	}
 
 	@SubscribeEvent

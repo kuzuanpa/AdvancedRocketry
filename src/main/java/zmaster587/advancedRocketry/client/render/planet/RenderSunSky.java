@@ -44,7 +44,9 @@ public class RenderSunSky extends RenderPlanetarySky {
 
 	@Override
 	protected void drawExtra(Tessellator buffer, DimensionProperties properties, float alphaMultiplier, Vec3 sunColor) {
-		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+		//The star's own surface has to sit in front of everything the base sky drew, and the base class clears
+		//depth again afterwards, so nothing here needs to write to it
+		GL11.glDepthMask(false);
 
 		float planetOrbitalDistance = 0.8F;
 
@@ -136,5 +138,6 @@ public class RenderSunSky extends RenderPlanetarySky {
 		GL11.glEnable(GL11.GL_FOG);
 		//GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();
+		GL11.glDepthMask(true);
 	}
 }

@@ -24,6 +24,7 @@ public class TextureResources {
 	public static final  ResourceLocation locationSunPng = new ResourceLocation("advancedrocketry:textures/env/sun.png");
 	public static final  ResourceLocation locationSunNew = new ResourceLocation("advancedrocketry:textures/env/sun0.png");
 	public static final  ResourceLocation locationSunLODFar = new ResourceLocation("advancedrocketry:textures/env/sunLodFar.png");
+	public static final  ResourceLocation locationStarLight = new ResourceLocation("advancedrocketry:textures/env/starLight.png");
 	public static final  ResourceLocation locationSunLEO = new ResourceLocation("advancedrocketry:textures/env/sunLEO.png");
 	public static final  ResourceLocation locationBlackHole = new ResourceLocation("advancedrocketry:textures/env/blackhole.png");
 	public static final  ResourceLocation selectionCircle = new ResourceLocation("advancedrocketry:textures/gui/Selection.png");

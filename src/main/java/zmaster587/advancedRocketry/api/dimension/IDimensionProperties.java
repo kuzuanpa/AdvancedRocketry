@@ -53,7 +53,13 @@ public interface IDimensionProperties {
 	 */
     int getSolarOrbitalDistance();
 
-	float getMass();
+	/**
+	 * @return mass in earth masses.  Defaults to the gravity multiplier, which is the same thing for a body
+	 * of earthlike density and is the only figure the generator actually fills in.
+	 */
+	default float getMass() {
+		return getGravitationalMultiplier();
+	}
 	/**
 	 * @return true if the planet has moons
 	 */

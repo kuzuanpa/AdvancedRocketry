@@ -99,7 +99,9 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 
 		if(getAtmosphereDensity(0,0) > 75)
 			super.updateWeather();
-		else if(worldObj.isRemote){
+		else {
+			//No air, no weather.  This has to run on the server too: WorldClient.updateWeatherBody is a
+			//no-op, so a client-only reset leaves the server's rain timer stuck wherever it was
 			worldObj.setRainStrength(0);
 			worldObj.setThunderStrength(0);
 		}

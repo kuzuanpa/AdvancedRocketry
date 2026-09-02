@@ -576,8 +576,12 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		return orbitalDist;
 	}
 
+	/**
+	 * @return mass in earth masses.  Nothing in the generator writes this field, so fall back to the gravity
+	 * multiplier - equivalent for an earthlike density and the only figure that is always populated.
+	 */
 	public float getMass(){
-		return mass;
+		return mass > 0f ? mass : gravitationalMultiplier;
 	}
 	/**
 	 * @return if a planet, the same as getParentOrbitalDistance(), if a moon, the moon's distance from the host star
@@ -871,11 +875,27 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 	public void updateOrbit() {
 		this.prevOrbitalTheta = orbitTheta;
+		this.orbitTheta = computeOrbitTheta();
+	}
+
+	/**
+	 * Where along its orbit this body is, in radians.  A pure function of the world clock, so anything that
+	 * needs a position can call it directly instead of depending on when {@link #updateOrbit()} last ran - which
+	 * is what lets the simulated universe agree between the client and the server without being synced.
+	 */
+	public double computeOrbitTheta() {
+		//A zero orbital distance gives a zero period, and the theta calculation divides by it
+		if (orbitalDist <= 0) return baseOrbitTheta;
+
 		if (this.isMoon()) {
-			this.orbitTheta = AstronomicalBodyHelper.getMoonOrbitalTheta(orbitalDist, getParentProperties().gravitationalMultiplier) + baseOrbitTheta;
-		} else if (!this.isMoon()) {
-			this.orbitTheta = AstronomicalBodyHelper.getOrbitalTheta(orbitalDist, getStar().getSize()) + baseOrbitTheta;
+			DimensionProperties parent = getParentProperties();
+			if (parent == null || parent.gravitationalMultiplier <= 0) return baseOrbitTheta;
+			return AstronomicalBodyHelper.getMoonOrbitalTheta(orbitalDist, parent.gravitationalMultiplier) + baseOrbitTheta;
 		}
+
+		StellarBody star = getStar();
+		if (star == null || star.getSize() <= 0) return baseOrbitTheta;
+		return AstronomicalBodyHelper.getOrbitalTheta(orbitalDist, star.getSize()) + baseOrbitTheta;
 	}
 
 

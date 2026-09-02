@@ -27,6 +27,8 @@ public class StellarBody {
 	String name;
 	int posX, posY, posZ;
 	float size;
+	/** 0 means "not specified", in which case the mass is derived from the radius */
+	float mass;
 	public final List<StellarBody> subStars;
 	float starSeperation;
 
@@ -39,12 +41,21 @@ public class StellarBody {
 		subStars = new LinkedList<>();
 		starSeperation = 5f;
 	}
-	
+
 	public List<StellarBody> getSubStars() {
 		return subStars;
 	}
+
+	/**
+	 * @return mass in solar masses.  Falls back to size^2, which is roughly right for main sequence stars
+	 * and is what the generator has always assumed.
+	 */
 	public float getMass() {
-		return (float) Math.pow(size, 2);
+		return mass > 0f ? mass : (float) Math.pow(size, 2);
+	}
+
+	public void setMass(float mass) {
+		this.mass = mass;
 	}
 
 	public void addSubStar(StellarBody star) {
@@ -235,6 +246,7 @@ public class StellarBody {
 		nbt.setInteger("posY", posY);
 		nbt.setInteger("posZ", posZ);
 		nbt.setFloat("size", size);
+		nbt.setFloat("mass", mass);
 		nbt.setFloat("seperation", starSeperation);
 		try{if(this.dysonSphere!=null)nbt.setTag("dysonSphere", this.dysonSphere.writeToNBT());}catch (Exception e){e.printStackTrace();}
 		try{if(this.dysonCloud!=null)nbt.setTag("dysonCloud", this.dysonCloud.writeToNBT());}catch (Exception e){e.printStackTrace();}
@@ -255,13 +267,15 @@ public class StellarBody {
 		id = nbt.getInteger("id");
 		temperature = nbt.getInteger("temperature");
 		name = nbt.getString("name");
-		posX = nbt.getShort("posX");
-		posY = nbt.getShort("posY");
-		posZ = nbt.getShort("posZ");
+		posX = nbt.getInteger("posX");
+		posY = nbt.getInteger("posY");
+		posZ = nbt.getInteger("posZ");
 		try{if(nbt.hasKey("dysonSphere"))dysonSphere=new DysonSphere().readFromNBT(nbt.getCompoundTag("dysonSphere"));}catch (Exception e){e.printStackTrace();}
 		try{if(nbt.hasKey("dysonCloud"))dysonCloud=new DysonCloud().readFromNBT(nbt.getCompoundTag("dysonCloud"));}catch (Exception e){e.printStackTrace();}
 		if(nbt.hasKey("size"))
 			size = nbt.getFloat("size");
+
+		mass = nbt.getFloat("mass");
 		
 		if(nbt.hasKey("seperation"))
 			starSeperation = nbt.getFloat("seperation");

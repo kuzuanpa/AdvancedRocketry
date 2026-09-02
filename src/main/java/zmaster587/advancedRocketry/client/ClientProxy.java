@@ -153,7 +153,7 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityUIStar.class, new RenderStarUIEntity());
 		RenderingRegistry.registerEntityRenderingHandler(EntityUIButton.class, new RenderButtonUIEntity());
 		RenderingRegistry.registerEntityRenderingHandler(EntityElevatorCapsule.class, new RenderElevatorCapsule());
-		RenderingRegistry.registerEntityRenderingHandler(EntityCelestialBody.class, new RenderCelestialBody());
+		//EntityCelestialBody is legacy and removes itself on load; it has nothing to draw
 
 		transcieverRenderType = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(transcieverRenderType, (ISimpleBlockRenderingHandler) AdvancedRocketryBlocks.blockTransciever);

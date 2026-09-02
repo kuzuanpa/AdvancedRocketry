@@ -10,6 +10,7 @@ import zmaster587.advancedRocketry.api.IPlanetaryProvider;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.dimension.sim.SimUniverse;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.libVulpes.render.RenderHelper;
@@ -26,11 +27,21 @@ public class RenderStationSpaceSky extends RenderPlanetarySky {
 
 	final Minecraft mc = Minecraft.getMinecraft();
 
-	public Vector3F<Double> getPlayerPos(float partialTicks, EntityPlayer player){
-		double px = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
-		double py = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
-		double pz = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
-		return new Vector3F<>(px,py,pz);
+	/**
+	 * A station's own coordinates are an index into the station grid, not a place in the universe, so the sky is
+	 * drawn from the body it orbits.  The parent planet itself is drawn separately by {@link #drawExtra}.
+	 */
+	@Override
+	public Vector3F<Double> getViewpoint(float partialTicks, EntityPlayer player){
+		if(!(mc.theWorld.provider instanceof IPlanetaryProvider)) return null;
+
+		IDimensionProperties stationProperties = ((IPlanetaryProvider) mc.theWorld.provider).getDimensionProperties((int)mc.thePlayer.posX, (int)mc.thePlayer.posZ);
+		if(stationProperties == null || stationProperties.getParentProperties() == null) return null;
+
+		SimUniverse.SimBody body = SimUniverse.getInstance().getBodyForDim(stationProperties.getParentProperties().getId());
+		if(body == null) return null;
+
+		return new Vector3F<>(body.x, body.y, body.z);
 	}
 	@Override
 	protected void drawExtra(Tessellator tessellator1, DimensionProperties properties, float alphaMultiplier, Vec3 sunColor)  {

@@ -4,21 +4,22 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import zmaster587.advancedRocketry.api.Configuration;
-import zmaster587.advancedRocketry.dimension.sim.SimUniverse;
-import zmaster587.advancedRocketry.util.TeleportHelper;
 
-import java.util.List;
-
-import static zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact.debugMode;
-
+/**
+ * Legacy marker for a celestial body that used to be spawned into the space dimension as a collision proxy.
+ *
+ * Bodies are hundreds to thousands of blocks apart, far beyond any entity tracking range, so a proxy entity
+ * could never stay in sync with the client.  Positions are now recomputed identically on both sides
+ * ({@link zmaster587.advancedRocketry.dimension.sim.SimUniverse}) and arrival is a distance test done in
+ * {@link zmaster587.advancedRocketry.dimension.sim.SpaceTravelHandler}.
+ *
+ * The class stays registered only so worlds saved with the old system still load; any instance removes itself.
+ */
 public class EntityCelestialBody extends Entity implements IEntityAdditionalSpawnData {
-    private String bodyID;
-    public SimUniverse.SimBody data;
+
+    private String bodyID = "";
 
     public EntityCelestialBody(World world) {
         super(world);
@@ -27,81 +28,30 @@ public class EntityCelestialBody extends Entity implements IEntityAdditionalSpaw
         this.field_70135_K = true;
     }
 
-    public EntityCelestialBody(World world, SimUniverse.SimBody data) {
-        this(world);
-        this.bodyID = data.getConfig().getID();
-        this.data = data;
-        this.updateFromSim();
-    }
-
     @Override
     public void writeSpawnData(ByteBuf buffer) {
-        ByteBufUtils.writeUTF8String(buffer, this.bodyID);
+        ByteBufUtils.writeUTF8String(buffer, bodyID == null ? "" : bodyID);
     }
 
     @Override
     public void readSpawnData(ByteBuf additionalData) {
         this.bodyID = ByteBufUtils.readUTF8String(additionalData);
-
-        this.data = SimUniverse.getInstance().getBody(this.bodyID);
     }
+
     @Override
     public void onUpdate() {
-        if (data == null) {
-            data = SimUniverse.getInstance().getBody(bodyID);
-        }
-
-        if(worldObj.isRemote)return;
-        if (data != null) {
-            updateFromSim();
-            checkPlayerProximity();
-        } else {
-            this.setDead();
-        }
-    }
-
-    private void checkPlayerProximity() {
-        double physicalRadius = data.getConfig().getSize();
-        double triggerRadius = physicalRadius * 16.0;
-
-        List<Entity> players = worldObj.getEntitiesWithinAABB(
-                Entity.class,
-                this.boundingBox.expand(triggerRadius, triggerRadius, triggerRadius)
-        );
-
-        for (Entity player : players) {
-            if(player instanceof EntityCelestialBody)continue;
-
-            double distSq = this.getDistanceSqToEntity(player);
-
-            if (distSq < triggerRadius * triggerRadius) {
-                onPlayerEnterOrbit(player, distSq, physicalRadius);
-            }
-        }
-    }
-
-    private void onPlayerEnterOrbit(Entity entity, double distSq, double radius) {
-        double dist = Math.sqrt(distSq);
-
-
-        if (dist <= radius + 0.1 && entity instanceof EntityPlayer) {
-            handleLanding((EntityPlayer) entity);
-        }
-    }
-
-    private void handleLanding(EntityPlayer player) {
-        TeleportHelper.teleportEntityWithRiding((EntityPlayerMP) player,Integer.parseInt(data.getConfig().getID()), rand.nextDouble()* 1000F, Configuration.orbit, rand.nextDouble()* 1000F);
-
-    }
-    private void updateFromSim() {
-        if(debugMode)this.setPosition(data.x/10.0F, data.y/10.0F - 1f, data.z/10.0F );
-        else this.setPosition(data.x , data.y- 1f, data.z );
+        if(!worldObj.isRemote) setDead();
     }
 
     @Override
     protected void entityInit() {}
+
     @Override
     protected void readEntityFromNBT(NBTTagCompound nbt) { this.bodyID = nbt.getString("bodyID"); }
+
     @Override
-    protected void writeEntityToNBT(NBTTagCompound nbt) { nbt.setString("bodyID", bodyID); }
+    protected void writeEntityToNBT(NBTTagCompound nbt) {
+        //NBTTagString rejects null, which would break the whole region file on save
+        nbt.setString("bodyID", bodyID == null ? "" : bodyID);
+    }
 }

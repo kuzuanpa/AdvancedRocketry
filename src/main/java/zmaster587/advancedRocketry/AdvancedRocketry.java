@@ -1838,6 +1838,7 @@ public class AdvancedRocketry {
 			proxy.saveUILayout(config);
 
 		AdvanceRocketrySimulateUniverseCompact.stop();
+		PlanetEventHandler.clearDelayedTasks();
 	}
 
 	@SubscribeEvent

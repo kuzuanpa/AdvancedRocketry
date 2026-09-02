@@ -23,6 +23,7 @@ import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact;
 import zmaster587.advancedRocketry.item.ItemData;
 import zmaster587.advancedRocketry.item.ItemMultiData;
 import zmaster587.advancedRocketry.item.ItemStationChip;
@@ -694,14 +695,20 @@ public class WorldCommand implements ICommand {
 									} catch(NumberFormatException e) {
 										sender.addChatMessage(new ChatComponentText("star set temp <starId> <temp>"));
 									}
-								} else if(string.length > 6 && string[2].equalsIgnoreCase("pos")) {
-									try {
+								} else if(string[2].equalsIgnoreCase("pos")) {
+									if(string.length <= 6) {
+										sender.addChatMessage(new ChatComponentText("star set pos <starId> <x> <y> <z>"));
+									}
+									else try {
 										int x= Integer.parseInt(string[4]);
 										int y = Integer.parseInt(string[5]);
 										int z = Integer.parseInt(string[6]);
 										star.setPosX(x);
 										star.setPosY(y);
 										star.setPosZ(z);
+										//Star moved, the simulated universe has to be rebuilt around it
+										AdvanceRocketrySimulateUniverseCompact.markDirty();
+										PacketHandler.sendToAll(new PacketStellarInfo(star.getId(), star));
 										sender.addChatMessage(new ChatComponentText("Position set to " + x + "," + y + "," + z));
 									} catch(NumberFormatException e) {
 										sender.addChatMessage(new ChatComponentText("star set pos <starId> <x> <y> <z>"));

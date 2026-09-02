@@ -38,7 +38,9 @@ public class DysonCloud implements IDysonSphere{
     Random rng = new Random();
     int bodyList = -1;
     float lastDrawListArgument = 0;
-    ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/env/dyson_sphere_front.png");
+    static final ResourceLocation texture = new ResourceLocation("advancedrocketry:textures/env/dyson_sphere.png");
+    //Same 32x32 node glyph the sphere uses; the -16,-16 translate below centres a quad of this size
+    private static final int NODE_U = 32, NODE_V = 0, NODE_SIZE = 32;
     public void draw (int x,int y,float distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
         int layerCount = 8;
         GL11.glPushMatrix();
@@ -82,7 +84,7 @@ public class DysonCloud implements IDysonSphere{
                 GL11.glRotatef(90 * ((nodeY + 1 - 12 / 2F) / 12), 1, 0, 0);
                 GL11.glScalef(scale, scale, 1);
                 GL11.glTranslatef(-16, -16, -f1 / 2);
-                drawTextureRect(Tessellator.instance, 0, 0, 0, 0, 0, 8, 8);
+                drawTextureRect(Tessellator.instance, 0, 0, 0, NODE_U, NODE_V, NODE_SIZE, NODE_SIZE, 8, 8);
                 GL11.glPopMatrix();
             }
             lastDrawListArgument = distanceFromStarBase * distanceFromStarMultiplier * scale;

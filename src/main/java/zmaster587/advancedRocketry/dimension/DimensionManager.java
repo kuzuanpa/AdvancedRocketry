@@ -23,6 +23,7 @@ import zmaster587.advancedRocketry.api.satellite.SatelliteBase;
 import zmaster587.advancedRocketry.api.stations.ISpaceObject;
 import zmaster587.advancedRocketry.dimension.DimensionProperties.AtmosphereTypes;
 import zmaster587.advancedRocketry.dimension.DimensionProperties.Temps;
+import zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact;
 import zmaster587.advancedRocketry.network.PacketDimInfo;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
@@ -199,6 +200,9 @@ public class DimensionManager implements IGalaxy {
 	public void setDimProperties(int dimId, @NotNull DimensionProperties properties) {
 		dimensionList.put(dimId,properties);
 		if(dimId==0)overworldProperties=properties;
+		//A new body, or a body whose parent changed, means the simulated universe has to be rebuilt.  Both
+		//sides do this off their own copy of the dimension list, which is what keeps them in step.
+		AdvanceRocketrySimulateUniverseCompact.markDirty();
 	}
 
 	/**
@@ -466,6 +470,7 @@ public class DimensionManager implements IGalaxy {
 			FMLLog.log(Level.ERROR,"Not AR Native DIM be deleted! This is not supported! DIMID: "+dimId);
 		}
 		dimensionList.remove(dimId);
+		AdvanceRocketrySimulateUniverseCompact.markDirty();
 
 		//Delete World Folder
 		File file = new File(net.minecraftforge.common.DimensionManager.getCurrentSaveRootDirectory(), workingPath + "/DIM" + dimId );
@@ -478,14 +483,16 @@ public class DimensionManager implements IGalaxy {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dimId id of the dimention of which to get the properties
 	 * @return DimensionProperties representing the dimId given, return overworld properties if the dimId is not registered
 	 */
 	@Override
 	public @NotNull DimensionProperties getDimensionProperties(int dimId) {
 		DimensionProperties properties = dimensionList.get(dimId);
-		if(dimId == Configuration.stationDimId || dimId == Integer.MIN_VALUE) {
+		//Space and stations are vacuum, and are never in the dimension list.  Without this the space dimension
+		//falls through to the overworld, which makes it breathable and gives it earth gravity.
+		if(dimId == Configuration.stationDimId || dimId == Configuration.spaceDimId || dimId == Integer.MIN_VALUE) {
 			return defaultSpaceDimensionProperties;
 		}
 		return properties == null ? overworldProperties : properties;
@@ -528,6 +535,7 @@ public class DimensionManager implements IGalaxy {
 	 */
 	public void addStar(StellarBody star) {
 		starList.put(star.getId(), star);
+		AdvanceRocketrySimulateUniverseCompact.markDirty();
 	}
 
 	/**
@@ -537,6 +545,7 @@ public class DimensionManager implements IGalaxy {
 	public void removeStar(int id) {
 		//TODO: actually remove subPlanets et
 		starList.remove(id);
+		AdvanceRocketrySimulateUniverseCompact.markDirty();
 	}
 
 	/**
@@ -777,9 +786,11 @@ public class DimensionManager implements IGalaxy {
 			ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 			if(obj != null)
 				return (DimensionProperties) obj.getProperties().getParentProperties();
-			else 
+			else
 				return defaultSpaceDimensionProperties;
 		}
+		//Open space belongs to no body; the sim tracks where the player actually is
+		else if(dimId == Configuration.spaceDimId) return defaultSpaceDimensionProperties;
 		else return getInstance().getDimensionProperties(dimId);
 	}
 
@@ -790,9 +801,10 @@ public class DimensionManager implements IGalaxy {
 			ISpaceObject obj = SpaceObjectManager.getSpaceManager().getSpaceStationFromBlockCoords(x, z);
 			if(obj != null)
 				return (DimensionProperties) obj.getProperties().getParentProperties();
-			else 
+			else
 				return defaultSpaceDimensionProperties;
 		}
+		else if(dimId == Configuration.spaceDimId) return defaultSpaceDimensionProperties;
 		else return getInstance().getDimensionProperties(dimId);
 	}
 }

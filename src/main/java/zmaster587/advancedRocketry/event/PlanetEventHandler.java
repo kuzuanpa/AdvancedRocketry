@@ -12,6 +12,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
@@ -50,6 +51,7 @@ import zmaster587.advancedRocketry.atmosphere.AtmosphereTypes;
 import zmaster587.advancedRocketry.client.render.planet.RenderPlanetarySky;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.dimension.sim.AdvanceRocketrySimulateUniverseCompact;
 import zmaster587.advancedRocketry.network.PacketAsteroidInfo;
 import zmaster587.advancedRocketry.network.PacketDimInfo;
 import zmaster587.advancedRocketry.network.PacketSpaceStationInfo;
@@ -75,14 +77,34 @@ public class PlanetEventHandler {
 	public static long time = 0;
 	private static long endTime, duration;
 	private static final @NotNull Map<Long,TransitionEntity> transitionMap = new HashMap<>();
-	private static final @NotNull Map<Runnable, Long> delayedMap = new HashMap<>();
+	private static final @NotNull List<DelayedTask> delayedTasks = new ArrayList<>();
+
+	/** A runnable waiting for the server tick counter to reach {@link #tick} */
+	private static final class DelayedTask {
+		final long tick;
+		final Runnable run;
+		DelayedTask(long tick, Runnable run) {
+			this.tick = tick;
+			this.run = run;
+		}
+	}
 
 	public static void addDelayedTransition(long tick, TransitionEntity entity) {
 		transitionMap.put(tick, entity);
 	}
 
-	public static void addDelayedMount(long tick, Runnable run) {
-		delayedMap.put(run, tick);
+	/**
+	 * Runs the task once, delayTicks server ticks from now.  Safe to call from inside another delayed task -
+	 * tasks are collected before being run, so scheduling from a task no longer trips a ConcurrentModification.
+	 */
+	public static void scheduleDelayed(int delayTicks, Runnable run) {
+		delayedTasks.add(new DelayedTask(time + Math.max(0, delayTicks), run));
+	}
+
+	/** Drops any task still pending, so work queued in one world cannot fire in the next */
+	public static void clearDelayedTasks() {
+		delayedTasks.clear();
+		transitionMap.clear();
 	}
 	@SubscribeEvent
 	public void sleepEvent(PlayerSleepInBedEvent event) {
@@ -256,10 +278,14 @@ public class PlanetEventHandler {
 	//Tick dimensions, needed for satellites, and guis
 	@SubscribeEvent
 	public void tick(TickEvent.ServerTickEvent event) {
+		//Bumped at the start so anything scheduled during this tick sees the tick it is actually running in
+		if(event.phase == TickEvent.Phase.START) {
+			time++;
+			return;
+		}
 		//Tick satellites
 		if(event.phase == TickEvent.Phase.END) {
 			DimensionManager.getInstance().tickDimensions();
-			time++;
 
 			if(!transitionMap.isEmpty()) {
 				Iterator<Entry<Long, TransitionEntity>> itr = transitionMap.entrySet().iterator();
@@ -277,23 +303,52 @@ public class PlanetEventHandler {
 					}
 				}
 			}
-			if(delayedMap.isEmpty())return;
 
-			List<Runnable> runnedList = new ArrayList<>();
-			delayedMap.forEach((k,v)-> {
-				if(MinecraftServer.getServer().getTickCounter() >= v){
-					runnedList.add(k);
-					k.run();
-				}
-			});
-			runnedList.forEach(delayedMap::remove);
+			runDelayedTasks();
+		}
+	}
+
+	/**
+	 * Collect everything that is due before running any of it - a task is allowed to schedule more work
+	 * (remounting after a teleport does exactly that) and must not mutate the list we are walking.
+	 */
+	private void runDelayedTasks() {
+		if(delayedTasks.isEmpty()) return;
+
+		List<Runnable> due = null;
+		Iterator<DelayedTask> itr = delayedTasks.iterator();
+		while(itr.hasNext()) {
+			DelayedTask task = itr.next();
+			if(time >= task.tick) {
+				if(due == null) due = new ArrayList<>();
+				due.add(task.run);
+				itr.remove();
+			}
+		}
+
+		if(due == null) return;
+
+		for(Runnable run : due) {
+			try {
+				run.run();
+			} catch(Exception e) {
+				AdvancedRocketry.logger.error("Delayed task failed", e);
+			}
 		}
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void tickClient(TickEvent.@NotNull ClientTickEvent event) {
-		if(event.phase == TickEvent.Phase.END)
-			DimensionManager.getInstance().tickDimensionsClient();
+		if(event.phase != TickEvent.Phase.END) return;
+
+		DimensionManager.getInstance().tickDimensionsClient();
+
+		//The client builds its own copy of the simulation from the star and dimension data it has been sent.
+		//Both sides derive positions from the world clock, so nothing has to be synced beyond that.
+		WorldClient world = Minecraft.getMinecraft().theWorld;
+		if(world != null)
+			AdvanceRocketrySimulateUniverseCompact.tick(world.getTotalWorldTime());
 	}
 
 	//Make sure the player receives data about the dimensions

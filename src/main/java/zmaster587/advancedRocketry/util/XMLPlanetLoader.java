@@ -564,6 +564,16 @@ public class XMLPlanetLoader {
                     AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
 				}
 			}
+
+			//writeXML has always emitted this; read it back so a hand-edited mass is not silently dropped
+			nameNode = planetNode.getAttributes().getNamedItem("mass");
+			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
+				try {
+					star.setMass(Float.parseFloat(nameNode.getNodeValue()));
+				} catch (NumberFormatException e) {
+					AdvancedRocketry.logger.warn("Error Reading star {}", star.getName());
+				}
+			}
 			
 			nameNode = planetNode.getAttributes().getNamedItem("seperation");
 			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {

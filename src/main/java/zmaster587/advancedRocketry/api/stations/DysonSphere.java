@@ -208,7 +208,9 @@ public class DysonSphere implements IDysonSphere{
         return this.nodesBuildingProgress[nodeY][nodeX];
     }
 
-    ResourceLocation textureFront =new ResourceLocation("advancedrocketry:textures/env/dyson_sphere_front.png");
+    static final ResourceLocation textureFront = new ResourceLocation("advancedrocketry:textures/env/dyson_sphere.png");
+    //The atlas holds four 32x32 node glyphs in a 2x2 grid starting at (32,0); we draw the first one
+    private static final int NODE_U = 32, NODE_V = 0, NODE_SIZE = 32;
     public void draw(int x,int y,float distanceFromStarBase,int z,int offsetRotateZ,float scale,float distanceFromStarMultiplier,float rotate) {
         GL11.glDisable(GL_CULL_FACE);
 
@@ -230,7 +232,7 @@ public class DysonSphere implements IDysonSphere{
             GL11.glTranslatef(-16, -16, -f1/2);
             //if(drawNodesCoord)fontRendererObj.drawString(nodeX+","+nodeY, 2,3,0x44aaff);
             Minecraft.getMinecraft().getTextureManager().bindTexture(textureFront);
-            RenderPlanetarySky.drawTextureRect(Tessellator.instance, 0, 0, 0, 8, 0, 32, 32);
+            RenderPlanetarySky.drawTextureRect(Tessellator.instance, 0, 0, 0, NODE_U, NODE_V, NODE_SIZE, NODE_SIZE);
 
             GL11.glPopMatrix();
 

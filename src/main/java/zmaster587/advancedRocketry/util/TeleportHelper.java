@@ -42,13 +42,14 @@ public class TeleportHelper {
             Entity parent = newChainRefs.get(i);
             Entity child = newChainRefs.get(i + 1);
             if (parent != null && child != null) {
-                PlanetEventHandler.addDelayedMount(MinecraftServer.getServer().getTickCounter()+1, ()-> {
+                //A tick of slack: the client has to have been told about both entities before it can attach them
+                PlanetEventHandler.scheduleDelayed(1, ()-> {
                     child.mountEntity(parent);
                     WorldServer targetWorld = MinecraftServer.getServer().worldServerForDimension(targetDimId);
-                    if (child.riddenByEntity != null) {
-                        S1BPacketEntityAttach attachPacket = new S1BPacketEntityAttach(0, child.riddenByEntity, child);
-                        targetWorld.getEntityTracker().func_151248_b(child, attachPacket);
-                    }
+                    //Args are (leash flag, rider, ridden) - matches EntityTrackerEntry's own attach packet.
+                    //func_151248_b also delivers to the rider itself, which a teleported player needs.
+                    targetWorld.getEntityTracker().func_151248_b(child, new S1BPacketEntityAttach(0, child, parent));
+                    targetWorld.resetUpdateEntityTick();
                 });
             }
         }

@@ -1,6 +1,5 @@
 package zmaster587.advancedRocketry.entity;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -9,18 +8,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 import zmaster587.advancedRocketry.AdvancedRocketry;
@@ -37,6 +37,7 @@ import zmaster587.advancedRocketry.atmosphere.AtmosphereHandler;
 import zmaster587.advancedRocketry.client.SoundRocketEngine;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.dimension.sim.SimScale;
 import zmaster587.advancedRocketry.dimension.sim.SimUniverse;
 import zmaster587.advancedRocketry.event.PlanetEventHandler;
 import zmaster587.advancedRocketry.inventory.IPlanetDefiner;
@@ -51,7 +52,6 @@ import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.thread.RocketStructureThread;
 import zmaster587.advancedRocketry.tile.TileGuidanceComputer;
 import zmaster587.advancedRocketry.tile.hatch.TileSatelliteHatch;
-import zmaster587.advancedRocketry.tile.multiblock.TileWarpCore;
 import zmaster587.advancedRocketry.util.StageLayout;
 import zmaster587.advancedRocketry.util.StationLandingLocation;
 import zmaster587.advancedRocketry.util.StorageChunk;
@@ -96,8 +96,15 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	private long lastErrorTime = Long.MIN_VALUE;
 	private static final long ERROR_DISPLAY_TIME = 100;
 	private static final int DESCENT_TIMER = 500;
+	/** Per axis speed cap in blocks a tick, and the raised cap a warp core buys in open space */
+	private static final double BASE_MAX_SPEED = 1.0D;
+	private static final double WARP_MAX_SPEED = 8.0D;
+	/** Fuel per block jumped.  One fuel tank holds 500, so a full tank is worth about 2000 blocks of warp. */
+	private static final double WARP_FUEL_PER_BLOCK = 0.25D;
 	private static final int BUTTON_ID_OFFSET = 25;
 	private static final int STATION_LOC_OFFSET = 50;
+	/** Sits below tilebuttonOffset so it cannot collide with a tile's own button */
+	private static final int BUTTON_ID_WARP = 2;
 	private ModuleText landingPadDisplayText;
 	protected long lastWorldTickTicked;
 
@@ -106,6 +113,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	//Offset for buttons linking to the tileEntityGrid
 	private final int tilebuttonOffset = 3;
 	private int autoDescendTimer;
+	/** Ticks spent adrift in space with no fuel; drives the rescue in SpaceTravelHandler */
+	private int strandedTicks;
 	private WeakReference<Entity>[] mountedEntities;
 	protected ModulePlanetSelector container;
 	public int comeFromDimID = spaceDimId;
@@ -129,7 +138,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		MENU_CHANGE,
 		UPDATE_ATM,
 		UPDATE_ORBIT,
-		UPDATE_FLIGHT
+		UPDATE_FLIGHT,
+		SHOW_ERROR
 	}
 
 	public EntityRocket(World p_i1582_1_) {
@@ -226,6 +236,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		if(this.worldObj.getTotalWorldTime() < this.lastErrorTime + ERROR_DISPLAY_TIME)
 			return errorStr;
 
+		//Out in open space the only thing worth showing is where to steer
+		if(this.worldObj.provider.dimensionId == spaceDimId)
+			return getNavigationOverlay();
+
 		//Get destination string
 		String displayStr = LibVulpes.proxy.getLocalizedString("msg.na");
 		if(storage != null) {
@@ -239,8 +253,9 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 					if(obj != null) {
 						displayStr =  LibVulpes.proxy.getLocalizedString("msg.entity.rocket.station") + obj.getId();
-						StationLandingLocation location = storage.getGuidanceComputer().getLandingLocation(obj.getId());
-						
+						TileGuidanceComputer computer = storage.getGuidanceComputer();
+						StationLandingLocation location = computer == null ? null : computer.getLandingLocation(obj.getId());
+
 						if(location != null) {
 							displayStr = displayStr + "\n" + LibVulpes.proxy.getLocalizedString("msg.entity.rocket.pad") + location;
 						}
@@ -260,9 +275,45 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		return super.getTextOverlay();
 	}
 
+	/**
+	 * Name, range and heading of the nearest body.  Without this there is nothing to navigate by in the space
+	 * dimension - the bodies are painted onto the skybox and give no parallax to steer with.
+	 */
+	private String getNavigationOverlay() {
+		SimUniverse.SimBody target = SimUniverse.getInstance().findNearest(posX, posY, posZ);
+		if(target == null) return LibVulpes.proxy.getLocalizedString("msg.entity.rocket.nonav");
+
+		double dx = target.x - posX;
+		double dy = target.y - posY;
+		double dz = target.z - posZ;
+		double dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+		//How far off the pilot's line of sight the target sits, so "0" means dead ahead
+		Vec3 look = this.riddenByEntity != null ? this.riddenByEntity.getLookVec() : Vec3.createVectorHelper(0, 0, 1);
+		double dot = (look.xCoord*dx + look.yCoord*dy + look.zCoord*dz) / Math.max(1.0E-4D, dist);
+		int offBy = (int) Math.toDegrees(Math.acos(Math.max(-1, Math.min(1, dot))));
+
+		String name = target.getName();
+		if(name == null || name.isEmpty()) name = LibVulpes.proxy.getLocalizedString("msg.na");
+
+		return LibVulpes.proxy.getLocalizedString("msg.entity.rocket.nav") + name
+				+ "\n" + LibVulpes.proxy.getLocalizedString("msg.entity.rocket.range") + (int) dist
+				+ " / " + LibVulpes.proxy.getLocalizedString("msg.entity.rocket.bearing") + offBy + "°";
+	}
+
+	/**
+	 * Shows an error on the pilot's HUD.  errorStr is not a synced field, so a failure raised on the server has
+	 * to be pushed to whoever is aboard.
+	 */
 	private void setError(String error) {
 		this.errorStr = error;
 		this.lastErrorTime = this.worldObj.getTotalWorldTime();
+
+		if(!worldObj.isRemote && riddenByEntity instanceof EntityPlayer) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setString("error", error);
+			PacketHandler.sendToPlayer(new PacketEntity(this, (byte)PacketType.SHOW_ERROR.ordinal(), nbt), (EntityPlayer)riddenByEntity);
+		}
 	}
 
 	@Override
@@ -462,11 +513,23 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	}
 
 	public boolean isDescentPhase() {
+		//Nothing to descend to in open space, and bodies there can sit at any altitude
+		if(worldObj.provider.dimensionId == spaceDimId) return false;
 		return Configuration.automaticRetroRockets && isInOrbit() && this.posY < 300 && (this.motionY < -0.4f || worldObj.isRemote);
 	}
 
 	public boolean areEnginesRunning() {
 		return (this.motionY > 0 || isDescentPhase());
+	}
+
+	/**
+	 * Speed cap per axis, in blocks a tick.  A warp core raises it, which is what makes crossing between star
+	 * systems a couple of minutes rather than the best part of an hour.
+	 */
+	public double getMaxSpeed() {
+		if(worldObj.provider.dimensionId == spaceDimId && storage != null && storage.hasWarpCore())
+			return WARP_MAX_SPEED;
+		return BASE_MAX_SPEED;
 	}
 
 
@@ -544,7 +607,8 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				player.fallDistance = 0;
 				this.fallDistance = 0;
 
-				//if the player holds the forward key then decelerate
+				//Thrust along the pilot's line of sight.  In space this is the only way to move at all; over a
+				//planet it doubles as the retro burn.
 				if(isInOrbit() && (burningFuel || descentPhase)) {
 					float vel =  player.moveForward/100F;
 					Vec3 look = player.getLook(0.01F);
@@ -557,9 +621,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 					this.motionY += lookY * vel;
 					this.motionZ += lookZ * vel;
 
-					this.motionX = Math.max(-1F, Math.min(this.motionX, 1F));
-					this.motionY = Math.max(-1F, Math.min(this.motionY, 1F));
-					this.motionZ = Math.max(-1F, Math.min(this.motionZ, 1F));
+					double cap = getMaxSpeed();
+					this.motionX = Math.max(-cap, Math.min(this.motionX, cap));
+					this.motionY = Math.max(-cap, Math.min(this.motionY, cap));
+					this.motionZ = Math.max(-cap, Math.min(this.motionZ, cap));
 
 					this.velocityChanged = true;
 				}
@@ -576,23 +641,25 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				this.motionY += stats.getAcceleration() * deltaTime;
 
 			if(!worldObj.isRemote) {
+				boolean inSpace = this.worldObj.provider.dimensionId == spaceDimId;
 				double lastPosY = this.posY;
 				double prevMotion = this.motionY;
 				this.moveEntity(this.motionX, prevMotion, this.motionZ);
 
-				//Check to see if it's landed
-				if((isInOrbit() || !burningFuel) && isInFlight() && lastPosY + prevMotion != this.posY && this.posY < 256) {
+				//Check to see if it's landed.  There is no ground in space, and coasting there must not be
+				//mistaken for a touchdown.
+				if(!inSpace && (isInOrbit() || !burningFuel) && isInFlight() && lastPosY + prevMotion != this.posY && this.posY < 256) {
 					//Did  sending this packet cause problems?
 					PacketHandler.sendToPlayersTrackingEntity(new PacketEntity(this, (byte)PacketType.ROCKET_LAND_EVENT.ordinal()), this);
 					MinecraftForge.EVENT_BUS.post(new RocketEvent.RocketLandedEvent(this));
 					this.setInFlight(false);
 					this.setInOrbit(false);
 				}
-				if(!isInOrbit() && (this.posY > Configuration.orbit)) {
+				if(!inSpace && !isInOrbit() && (this.posY > Configuration.orbit)) {
 					onOrbitReached();
 				}
 
-				if(this.posY < 0 && this.worldObj.provider.dimensionId != spaceDimId) onRockedFallsOutOfWorld();
+				if(this.posY < 0 && !inSpace) onRockedFallsOutOfWorld();
 			}
 			else this.moveEntity(this.motionX, this.motionY, this.motionZ);
 		}
@@ -685,45 +752,157 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		Vector3F<Float> destPos = storage.getDestinationCoordinates(destinationDimId, true);
 		if(destPos == null) destPos = new Vector3F<>((float) posX, (float) Configuration.orbit, (float) posZ);
 
-
 		this.motionX = 0;
 		this.motionY = 0;
 		this.motionZ = 0;
 		//Reset override coords
 		setOverriddenCoords(-1, 0, 0, 0);
-		if(storage.getFirstTileEntity(TileGuidanceComputer.class).getTaskType()==1){
-			SimUniverse.SimBody body = SimUniverse.getInstance().getBody(String.valueOf( this.worldObj.provider.dimensionId));
-			if(body == null){
-				FMLLog.log(Level.FATAL, "Cannot get current SimUniverse body! This is a bug!");
-				this.travelToDimension(this.worldObj.provider.dimensionId, destPos.x, Configuration.orbit, destPos.z);
-				return;
-			}
-			this.travelToDimension(spaceDimId, body.x, body.y + 5, body.z);
-		}
-		else {
+
+		//A station orbits the planet it is above rather than sitting anywhere in the simulated universe, so
+		//going to or from one is still a straight dimension change
+		if(destinationDimId == Configuration.stationDimId || worldObj.provider.dimensionId == Configuration.stationDimId) {
 			this.travelToDimension(destinationDimId, destPos.x, Configuration.orbit, destPos.z);
-			if(this.riddenByEntity != null) {
-				//Make player confirm deorbit if a player is riding the rocket
-				setInFlight(false);
-			}
+			if(this.riddenByEntity != null) setInFlight(false);
+			return;
 		}
+
+		departToSpace();
 	}
 
-	@Override
-	public void travelTo(int dimID, int distance) {
-		unpackSatellites();
-		setInOrbit(true);
-		//if coordinates are overridden, make sure we grab them
-		Vector3F<Float> destPos = storage.getDestinationCoordinates(destinationDimId, true);
-		if(destPos == null) destPos = new Vector3F<>((float) posX, (float) Configuration.orbit, (float) posZ);
+	/**
+	 * Puts the rocket into the space dimension just outside the body it launched from, so the pilot can fly to
+	 * wherever they are going.  Every crewed launch goes through here - there is no direct transfer any more.
+	 */
+	private void departToSpace() {
+		SimUniverse.SimBody body = SimUniverse.getInstance().getBodyForDim(this.worldObj.provider.dimensionId);
 
-		if(this.riddenByEntity != null) {
-			//Make player confirm deorbit if a player is riding the rocket
-			setInFlight(false);
+		if(body == null) {
+			//No simulated body to launch from - a dimension another mod owns, or a universe that failed to
+			//build.  Fall back to the old behaviour rather than stranding the pilot.
+			AdvancedRocketry.logger.warn("No simulated body for dim {}, falling back to a direct transfer", this.worldObj.provider.dimensionId);
+			Vector3F<Float> destPos = storage.getDestinationCoordinates(destinationDimId, true);
+			if(destPos == null) destPos = new Vector3F<>((float) posX, (float) Configuration.orbit, (float) posZ);
+			this.travelToDimension(destinationDimId, destPos.x, Configuration.orbit, destPos.z);
+			if(this.riddenByEntity != null) setInFlight(false);
+			return;
 		}
 
+		//Head away in whatever direction the pilot is facing, so the launch heading means something.  The sim
+		//picks the actual spot: just outside the capture sphere and clear of anything else nearby.
+		float yaw = (float) Math.toRadians(this.rotationYaw);
+		double[] dest = SimUniverse.getInstance().findClearSpot(body, -Math.sin(yaw), Math.cos(yaw));
+
+		//Inherit the body's orbital motion so the rocket keeps station with it instead of being left behind.
+		//Set before the transfer: travelToDimension replaces this entity, and only NBT-backed state survives.
+		this.motionX = body.getVelX();
+		this.motionY = body.getVelY();
+		this.motionZ = body.getVelZ();
+
+		this.travelToDimension(Configuration.spaceDimId, dest[0], dest[1], dest[2]);
+	}
+
+	/**
+	 * Arrives at a body: drops out of the space dimension onto it, in orbit with the engines off so the pilot
+	 * gets the usual descent prompt rather than falling straight out of the sky.
+	 *
+	 * Reads the landing coordinates before clearing them - the fallback destination is both the pad a landing pad
+	 * linked us to and the slot that has to be reset, so the order matters.
+	 */
+	public void deorbitTo(int dimId) {
+		Vector3F<Float> dest = storage == null ? null : storage.getDestinationCoordinates(dimId, true);
+
+		destinationDimId = dimId;
+		setInOrbit(true);
+		setInFlight(false);
+		this.motionX = 0;
+		this.motionY = 0;
+		this.motionZ = 0;
 		setOverriddenCoords(-1, 0, 0, 0);
-		this.travelToDimension(dimID, destPos.x, Configuration.orbit, destPos.z);
+		strandedTicks = 0;
+
+		//Falling back to our own x/z would use space coordinates, which are the body's galactic position - a
+		//couple of thousand blocks from anywhere useful.  Spawn is a far better guess.
+		double x, z;
+		if(dest != null) {
+			x = dest.x;
+			z = dest.z;
+		}
+		else {
+			ChunkCoordinates spawn = worldObj.getSpawnPoint();
+			x = spawn.posX;
+			z = spawn.posZ;
+		}
+
+		this.travelToDimension(dimId, x, Configuration.orbit, z);
+	}
+
+	public int getLastDimensionFrom() {
+		return lastDimensionFrom;
+	}
+
+	public int incrementStrandedTimer() {
+		return ++strandedTicks;
+	}
+
+	public void resetStrandedTimer() {
+		strandedTicks = 0;
+	}
+
+	/**
+	 * Warp jump: crosses the space dimension in one step and arrives just outside the target body, from where the
+	 * pilot still has to fly in and descend.  This is what a warp core is for - flying between star systems at
+	 * the impulse speed cap would take most of an hour.
+	 *
+	 * @param dimID dimension of the body to jump to
+	 * @param distance range the client thought it was asking for; recomputed here before charging for it
+	 */
+	@Override
+	public void travelTo(int dimID, int distance) {
+		if(worldObj.isRemote) return;
+
+		if(worldObj.provider.dimensionId != spaceDimId) {
+			setError(LibVulpes.proxy.getLocalizedString("error.rocket.warpNotInSpace"));
+			return;
+		}
+
+		if(storage == null || !storage.hasWarpCore()) {
+			setError(LibVulpes.proxy.getLocalizedString("error.rocket.needWarpCore"));
+			return;
+		}
+
+		SimUniverse.SimBody target = SimUniverse.getInstance().getBodyForDim(dimID);
+		if(target == null) {
+			setError(LibVulpes.proxy.getLocalizedString("error.rocket.destinationNotExist"));
+			return;
+		}
+
+		double range = target.distanceTo(posX, posY, posZ);
+		int cost = (int) Math.ceil(range * WARP_FUEL_PER_BLOCK);
+
+		if(Configuration.rocketRequireFuel && getFuelAmount() < cost) {
+			setError(LibVulpes.proxy.getLocalizedString("error.rocket.notEnoughFuel") + cost);
+			return;
+		}
+
+		if(Configuration.rocketRequireFuel) setFuelAmount(getFuelAmount() - cost);
+
+		//Match the target's orbital motion, otherwise it drifts out from under us while we close in
+		this.motionX = target.getVelX();
+		this.motionY = target.getVelY();
+		this.motionZ = target.getVelZ();
+		this.velocityChanged = true;
+
+		//Arrive on the side we approached from, outside the capture sphere, so the pilot still makes the approach
+		double[] dest = SimUniverse.getInstance().findClearSpot(target, posX - target.x, posZ - target.z);
+		//setLocationAndAngles rather than setPosition: prevPos has to move too, or the capture sweep next tick
+		//traces a line all the way back from where we jumped and lands us on something en route
+		setLocationAndAngles(dest[0], dest[1], dest[2], rotationYaw, rotationPitch);
+
+		//Bring the passengers along; the rocket carries them but the client needs telling where they now are
+		if(this.riddenByEntity instanceof EntityPlayerMP)
+			((EntityPlayerMP) this.riddenByEntity).playerNetServerHandler.setPlayerLocation(posX, posY, posZ, riddenByEntity.rotationYaw, riddenByEntity.rotationPitch);
+
+		PacketHandler.sendToPlayersTrackingEntity(new PacketEntity(this, (byte)PacketType.ROCKET_LAND_EVENT.ordinal()), this);
 	}
 	private void unpackSatellites() {
 		List<TileSatelliteHatch> satelliteHatches = storage.getSatelliteHatches();
@@ -822,10 +1001,23 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				thisDimId = object.getProperties().getParentProperties().getId();
 		}
 
-		//Check to see if it's possible to reach
-		if(finalDest != -1 && (storage.getFirstTileEntity(TileWarpCore.class) != null || DimensionManager.getInstance().getDimensionProperties(finalDest).getStarId() != DimensionManager.getInstance().getDimensionProperties(thisDimId).getStarId()) && !DimensionManager.getInstance().areDimensionsInSamePlanetMoonSystem(finalDest, thisDimId)) {
-			setError(LibVulpes.proxy.getLocalizedString("error.rocket.notSameSystem"));
-			return;
+		//Check to see if it's possible to reach.  A crewed rocket flies there itself through the space dimension,
+		//so the only hard limit is that leaving the home star system needs a warp core; an uncrewed rocket is
+		//transferred directly and so is still confined to its own planet/moon system.
+		if(finalDest != -1) {
+			boolean sameStar = DimensionManager.getInstance().getDimensionProperties(finalDest).getStarId()
+					== DimensionManager.getInstance().getDimensionProperties(thisDimId).getStarId();
+
+			if(stats.hasSeat()) {
+				if(!sameStar && !storage.hasWarpCore()) {
+					setError(LibVulpes.proxy.getLocalizedString("error.rocket.needWarpCore"));
+					return;
+				}
+			}
+			else if(!sameStar || !DimensionManager.getInstance().areDimensionsInSamePlanetMoonSystem(finalDest, thisDimId)) {
+				setError(LibVulpes.proxy.getLocalizedString("error.rocket.notSameSystem"));
+				return;
+			}
 		}
 
 		//TODO: Clean this logic a bit?
@@ -1115,7 +1307,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				return;
 			}
 
-			lastDimensionFrom = this.worldObj.provider.dimensionId;
+			//Only record where we came from when leaving a real body, so a rescue from space aims at the last
+			//place the rocket could actually land rather than at space itself
+			if(this.worldObj.provider.dimensionId != Configuration.spaceDimId)
+				lastDimensionFrom = this.worldObj.provider.dimensionId;
 
 			TeleportHelper.teleportEntityWithRiding(this, newDimId, posX,y,posZ);
 
@@ -1386,6 +1581,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		else if(id == PacketType.ROCKET_LAND_EVENT.ordinal() && worldObj.isRemote) {
 			MinecraftForge.EVENT_BUS.post(new RocketEvent.RocketLandedEvent(this));
 		}
+		else if(id == PacketType.SHOW_ERROR.ordinal() && worldObj.isRemote) {
+			errorStr = nbt.getString("error");
+			lastErrorTime = worldObj.getTotalWorldTime();
+		}
 		else if(id >= STATION_LOC_OFFSET + BUTTON_ID_OFFSET) {
 			int id2 = id - (STATION_LOC_OFFSET + BUTTON_ID_OFFSET) - 1;
 			setDestLandingPad(id2);
@@ -1495,6 +1694,10 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 
 			modules.add(new ModuleButton(180, 114, 1, LibVulpes.proxy.getLocalizedString("msg.entity.rocket.seldst"), this,  zmaster587.libVulpes.inventory.TextureResources.buttonBuild, 64,20));
 			//modules.add(new ModuleText(180, 114, "Inventories", 0x404040));
+
+			//Warp is only offered where it can actually be used - adrift in space, with a core aboard
+			if(worldObj.provider.dimensionId == spaceDimId && storage.hasWarpCore())
+				modules.add(new ModuleButton(180, 88, BUTTON_ID_WARP, LibVulpes.proxy.getLocalizedString("msg.entity.rocket.warp"), this, zmaster587.libVulpes.inventory.TextureResources.buttonBuild, 64, 20));
 		}
 		else {
 			TileGuidanceComputer guidanceComputer = storage.getGuidanceComputer();
@@ -1538,7 +1741,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				modules.add(landingPadDisplayText);
 			}
 			else {
-				DimensionProperties properties = DimensionManager.getEffectiveDimId(worldObj, (int)this.posX, (int)this.posZ);
+				DimensionProperties properties = getSelectorOrigin();
 				while(properties.getParentProperties() != null) properties = properties.getParentProperties();
 
 				if(storage.hasWarpCore())
@@ -1550,6 +1753,29 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 			}
 		}
 		return modules;
+	}
+
+	/**
+	 * Which system the destination selector should open on.
+	 *
+	 * Out in space the rocket is not on any body, so the effective dimension is the featureless space one - the
+	 * selector would come up empty.  The nearest body is what the pilot is actually looking at, so use that.
+	 */
+	private DimensionProperties getSelectorOrigin() {
+		if(worldObj.provider.dimensionId == spaceDimId) {
+			SimUniverse.SimBody nearest = SimUniverse.getInstance().findNearest(posX, posY, posZ);
+			if(nearest != null) {
+				int dimId = nearest.getConfig().getPropertiesId();
+				if(dimId != SimUniverse.NO_DIMENSION)
+					return DimensionManager.getInstance().getDimensionProperties(dimId);
+
+				//A star: open on any of its planets, which is what the star-level selector keys off
+				StellarBody star = DimensionManager.getInstance().getStar(nearest.getConfig().getStarId());
+				if(star != null && !star.getPlanets().isEmpty())
+					return DimensionManager.getInstance().getDimensionProperties(star.getPlanets().get(0).getId());
+			}
+		}
+		return DimensionManager.getEffectiveDimId(worldObj, (int)this.posX, (int)this.posZ);
 	}
 
 	@Override
@@ -1592,6 +1818,9 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		case 1:
 			PacketHandler.sendToServer(new PacketEntity(this, (byte)EntityRocket.PacketType.OPEN_PLANET_SELECTION.ordinal()));
 			break;
+		case BUTTON_ID_WARP:
+			requestWarp();
+			break;
 		default:
 			PacketHandler.sendToServer(new PacketEntity(this, (byte)(buttonId + BUTTON_ID_OFFSET)));
 			//Minecraft.getMinecraft().thePlayer.closeScreen();
@@ -1601,6 +1830,25 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 				storage.getBlock(tile.xCoord, tile.yCoord, tile.zCoord).onBlockActivated(storage.world, tile.xCoord, tile.yCoord,  tile.zCoord, Minecraft.getMinecraft().thePlayer, 0, 0, 0, 0);
 			}
 		}
+	}
+
+	/**
+	 * Asks the server to warp to whatever the guidance computer is pointing at.  The server revalidates the
+	 * target and charges the fuel, so all this has to get right is which body the player picked.
+	 */
+	private void requestWarp() {
+		TileGuidanceComputer computer = storage == null ? null : storage.getGuidanceComputer();
+		int target = computer == null ? -1 : computer.getDestinationDimId(worldObj.provider.dimensionId, (int)posX, (int)posZ);
+
+		if(target == -1) {
+			setError(LibVulpes.proxy.getLocalizedString("error.rocket.destinationNotExist"));
+			return;
+		}
+
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setInteger(ISpaceTraveler.NBT_TARGET, target);
+		nbt.setInteger(ISpaceTraveler.NBT_DISTANCE, 0);
+		PacketHandler.sendToServer(new PacketEntity(this, ISpaceTraveler.PACKET_ID, nbt));
 	}
 
 	@Override
