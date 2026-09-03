@@ -30,12 +30,7 @@ import zmaster587.advancedRocketry.stations.SpaceObjectManager;
 import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.libVulpes.util.Vector3F;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class RenderPlanetarySky extends IRenderHandler {
 
@@ -51,6 +46,21 @@ public class RenderPlanetarySky extends IRenderHandler {
 
 	/** Scratch list for depth sorting the simulated bodies, reused every frame */
 	private final List<SimUniverse.SimBody> sortedBodies = new ArrayList<>();
+
+	/**
+	 * Fraction of its capture sphere a body is drawn at.  Below 1 so a body still reads as a disc to fly at
+	 * rather than filling the screen the moment it is reachable.
+	 */
+	private static final double BODY_APPARENT_SIZE = 0.4D;
+
+	/** Nothing is drawn wider than this share of the shell it sits on, however close we get */
+	private static final double MAX_APPARENT_SHARE = 0.5D;
+
+	/**
+	 * drawStar's sunSize ends up as a 4.5x radius on the sphere model (sunSize*15*0.3 against a unit cube), so
+	 * dividing by this turns a wanted half-width into the argument that produces it.
+	 */
+	private static final double STAR_MODEL_SCALE = 4.5D;
 
 	final Minecraft mc = Minecraft.getMinecraft();
 
@@ -477,13 +487,8 @@ public class RenderPlanetarySky extends IRenderHandler {
 			sortedBodies.addAll(SimUniverse.getInstance().getAllBodies());
 
 			//Farthest first, so nearer bodies paint over them
-			Collections.sort(sortedBodies, new Comparator<SimUniverse.SimBody>() {
-				@Override
-				public int compare(SimUniverse.SimBody b1, SimUniverse.SimBody b2) {
-					return Double.compare(b2.distanceSqTo(viewpoint.x, viewpoint.y, viewpoint.z),
-							b1.distanceSqTo(viewpoint.x, viewpoint.y, viewpoint.z));
-				}
-			});
+			Collections.sort(sortedBodies, (b1, b2) -> Double.compare(b2.distanceSqTo(viewpoint.x, viewpoint.y, viewpoint.z),
+                    b1.distanceSqTo(viewpoint.x, viewpoint.y, viewpoint.z)));
 
 			for (SimUniverse.SimBody body : sortedBodies) {
 				double dx = body.x - viewpoint.x;
@@ -501,12 +506,14 @@ public class RenderPlanetarySky extends IRenderHandler {
 				//Everything is painted onto a shell around the camera.  Farther bodies get pushed slightly
 				//further out so a planet can never be drawn in front of the star it orbits.
 				double depthOffset = Math.min(dist / 100.0, 75);
-				double scale = (25F + depthOffset) / dist;
+				double shell = 25F + depthOffset;
+				double scale = shell / dist;
 				double renderX = dx * scale;
 				double renderY = dy * scale;
 				double renderZ = dz * scale;
 
-				double renderSize = Math.max((body.getRadius() / dist) * 2f, 0.01f);
+				double renderSize = Math.min(shell * MAX_APPARENT_SHARE,
+						Math.max(body.getCaptureRadius() * scale * BODY_APPARENT_SIZE, 0.01f));
 
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, stellarBright);
 
@@ -518,7 +525,7 @@ public class RenderPlanetarySky extends IRenderHandler {
 					Vec3 stellarColor = Vec3.createVectorHelper(colorArray[0], colorArray[1], colorArray[2]);
 
 					if(renderSize > .05F) {
-						drawStar(tessellator, (float)renderX, (float)renderY, (float)renderZ, solarOrbitalDistance, (float)(renderSize / 8.0F), stellarColor, partialTicks, properties, stellar, stellarBright);
+						drawStar(tessellator, (float)renderX, (float)renderY, (float)renderZ, solarOrbitalDistance, (float)(renderSize / STAR_MODEL_SCALE), stellarColor, partialTicks, properties, stellar, stellarBright);
 					} else {
 						//Too small for the model to be worth it - a coloured speck reads the same
 						GL11.glColor4f((float) Math.min(1.0F, stellarColor.xCoord*1.2F), (float)Math.min(1.0F, stellarColor.yCoord*1.2F), (float)Math.min(1.0F, stellarColor.zCoord*1.2F), stellarBright);

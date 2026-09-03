@@ -411,6 +411,7 @@ msg.entity.rocket.none=未选中
 msg.entity.rocket.nav=最近天体:
 msg.entity.rocket.range=距离:
 msg.entity.rocket.bearing=偏离
+msg.entity.rocket.sighted=视线天体:
 msg.entity.rocket.nonav=附近没有天体
 msg.entity.rocket.stranded=燃料耗尽 - 正返回上一个天体
 error.rocket.noComputer=缺少制导计算机

@@ -49,7 +49,6 @@ public class TeleportHelper {
                     //Args are (leash flag, rider, ridden) - matches EntityTrackerEntry's own attach packet.
                     //func_151248_b also delivers to the rider itself, which a teleported player needs.
                     targetWorld.getEntityTracker().func_151248_b(child, new S1BPacketEntityAttach(0, child, parent));
-                    targetWorld.resetUpdateEntityTick();
                 });
             }
         }

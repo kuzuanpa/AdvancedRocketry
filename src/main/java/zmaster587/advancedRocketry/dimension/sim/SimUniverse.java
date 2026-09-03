@@ -288,6 +288,40 @@ public class SimUniverse {
 		return best;
 	}
 
+	/**
+	 * @return the body sitting closest to the given look direction, or null if nothing falls inside the cone.
+	 *
+	 * A cone rather than the body's drawn size: everything is a handful of skybox pixels at any real distance,
+	 * so matching the painted quad would make a body practically impossible to point at.
+	 *
+	 * @param maxAngle half angle of the cone, in radians
+	 */
+	@Nullable
+	public SimBody findLookingAt(double x, double y, double z, double lookX, double lookY, double lookZ, double maxAngle) {
+		double lookLen = Math.sqrt(lookX * lookX + lookY * lookY + lookZ * lookZ);
+		if (lookLen < 1.0E-4D) return null;
+
+		SimBody best = null;
+
+		//Compared as cosines, so the cone test and "closest to the crosshair" are the same comparison
+		double bestCos = Math.cos(maxAngle);
+
+		for (SimBody body : bodiesMap.values()) {
+			double dx = body.x - x;
+			double dy = body.y - y;
+			double dz = body.z - z;
+			double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			if (dist < 1.0E-4D) continue;
+
+			double cos = (lookX * dx + lookY * dy + lookZ * dz) / (lookLen * dist);
+			if (cos > bestCos) {
+				bestCos = cos;
+				best = body;
+			}
+		}
+		return best;
+	}
+
 	public static class SimBody {
 
 		private final ISimStellar config;
@@ -300,14 +334,12 @@ public class SimUniverse {
 		private SimBody parent;
 		private final List<SimBody> children = new ArrayList<>();
 
-		/** Both fitted to the space around the body once the tree is built; see {@link #resolveCaptureRadii()} */
-		private double radius;
+		/** Fitted to the space around the body once the tree is built; see {@link #resolveCaptureRadii()} */
 		private double captureRadius;
 
 		public SimBody(ISimStellar config) {
 			this.config = config;
-			this.radius = config.getRadius();
-			this.captureRadius = SimScale.captureRadius(radius, Double.MAX_VALUE);
+			this.captureRadius = SimScale.captureRadius(config.getRadius());
 		}
 
 		void setParent(SimBody parent) {
@@ -332,40 +364,42 @@ public class SimUniverse {
 		 * distance units out - the bundled Sol does exactly that with Mercury - and at that spacing the default
 		 * spheres would engulf each other, making which body a pilot reached a matter of rounding.
 		 *
-		 * Only the capture sphere is fitted, not the drawn radius: a star is genuinely wider than its innermost
-		 * orbit and should look it, and the sky paints bodies onto a shell where overlap is expected.
+		 * The sky draws bodies at their capture radius rather than their physical one, so a big target looks like
+		 * one; see RenderPlanetarySky.
 		 */
 		void resolveCaptureRadii() {
-			captureRadius = SimScale.captureRadius(radius, nearestNeighbourGap());
+			captureRadius = fitCaptureRadius();
 
 			for (SimBody child : children) {
 				child.resolveCaptureRadii();
 			}
 		}
 
-		/** Closest another body in the same local system can ever come to this one, in blocks */
-		private double nearestNeighbourGap() {
-			double gap = Double.MAX_VALUE;
+		/** Capture sphere shrunk until it cannot reach any neighbour's */
+		private double fitCaptureRadius() {
+			double capture = SimScale.captureRadius(config.getRadius());
 			double myOrbit = SimScale.toBlock(config.getOrbitRadius());
 
 			if (parent != null) {
-				//The parent itself
-				gap = myOrbit;
+				capture = Math.min(capture, SimScale.captureShare(config.getRadius(), parent.config.getRadius(), myOrbit));
 
 				//Siblings: two circular orbits never get closer than the difference in their radii.  Two bodies
 				//given the same orbit - easy with integer distances - can collide anywhere, so they get nothing.
 				for (SimBody sibling : parent.children) {
 					if (sibling == this) continue;
-					gap = Math.min(gap, Math.abs(SimScale.toBlock(sibling.config.getOrbitRadius()) - myOrbit));
+					double separation = Math.abs(SimScale.toBlock(sibling.config.getOrbitRadius()) - myOrbit);
+					capture = Math.min(capture, SimScale.captureShare(config.getRadius(), sibling.config.getRadius(), separation));
 				}
 			}
 
 			//Whatever orbits this body
 			for (SimBody child : children) {
-				gap = Math.min(gap, SimScale.toBlock(child.config.getOrbitRadius()));
+				double separation = SimScale.toBlock(child.config.getOrbitRadius());
+				capture = Math.min(capture, SimScale.captureShare(config.getRadius(), child.config.getRadius(), separation));
 			}
 
-			return gap;
+			//A body with no room at all still gets a point target rather than becoming unreachable
+			return Math.max(0.5D, capture);
 		}
 
 		public ISimStellar getConfig() {
@@ -381,8 +415,12 @@ public class SimUniverse {
 			return config.getName();
 		}
 
+		/**
+		 * Physical size, in blocks.  Only meaningful relative to other bodies - the sky draws to
+		 * {@link #getCaptureRadius()} instead, so that what a pilot aims at is what they see.
+		 */
 		public double getRadius() {
-			return radius;
+			return config.getRadius();
 		}
 
 		public double getCaptureRadius() {

@@ -39,24 +39,24 @@ public final class SimScale {
 	/**
 	 * How much wider than the body itself the "you have arrived" region is.  Without gravity to funnel the
 	 * player in, this is the only thing making a body hittable, so it is deliberately generous - an earthlike
-	 * world in open space is a 32 block sphere.
+	 * world with room around it is a 32 block sphere.
 	 */
 	public static final double CAPTURE_MULTIPLIER = 4.0D;
 
-	/** A capture sphere is never smaller than this, even for a body that is only a few blocks across */
-	public static final double MIN_CAPTURE = 2.0D;
+	/** A capture sphere is never smaller than this, or the body is impossible to hit at 1 block a tick */
+	public static final double MIN_CAPTURE = 4.0D;
 
 	/** Nor larger, so a big star does not swallow a whole system */
 	public static final double MAX_CAPTURE = 32.0D;
 
 	/**
-	 * Largest share of the distance to the nearest neighbouring orbit a body's capture sphere may claim.
+	 * Share of the distance between two bodies that their capture spheres may claim between them.
 	 *
 	 * The XML uses "100 = 1 AU" but nothing stops a pack from putting a planet at 8 - the bundled Sol has
-	 * Mercury there, eight blocks out.  Below half, two neighbours' spheres can never overlap, so which body a
-	 * pilot arrives at is never a matter of rounding.
+	 * Mercury there, eight blocks out.  Below 1 the two spheres cannot meet, so which body a pilot arrives at is
+	 * never a matter of rounding.
 	 */
-	public static final double MAX_CAPTURE_GAP_SHARE = 0.45D;
+	public static final double CAPTURE_GAP_SHARE = 0.9D;
 
 	/** Extra room left when a rocket departs, so it does not immediately re-enter the capture sphere */
 	public static final double DEPARTURE_MARGIN = 8.0D;
@@ -83,23 +83,24 @@ public final class SimScale {
 		return Math.max(EARTH_RADIUS, star.getSize() * STAR_RADIUS_PER_SIZE);
 	}
 
+	/** Unconstrained capture sphere, for a body with nothing near enough to crowd it */
+	public static double captureRadius(double bodyRadius) {
+		return Math.max(MIN_CAPTURE, Math.min(MAX_CAPTURE, bodyRadius * CAPTURE_MULTIPLIER));
+	}
+
 	/**
-	 * Capture sphere for a body, fitted to how much room it actually has.
+	 * Largest capture sphere this body may have without reaching a neighbour's.
 	 *
-	 * The gap share is applied after the floor, not before, so a cramped orbit always wins - overlapping spheres
-	 * would make arrival depend on iteration order.
+	 * The gap is divided in proportion to the two bodies' own sizes rather than split down the middle, so a moon
+	 * squeezed in next to a gas giant still ends up the smaller target of the two.
 	 *
-	 * @param bodyRadius the body's own radius in blocks
-	 * @param neighbourGap distance in blocks to the nearest thing it could collide with, or
-	 *                     {@link Double#MAX_VALUE} for a body with nothing near it
+	 * @param bodyRadius radius of the body being sized
+	 * @param neighbourRadius radius of the neighbour
+	 * @param separation closest the two can ever come, in blocks
 	 */
-	public static double captureRadius(double bodyRadius, double neighbourGap) {
-		double capture = Math.max(MIN_CAPTURE, Math.min(MAX_CAPTURE, bodyRadius * CAPTURE_MULTIPLIER));
-
-		if(neighbourGap < Double.MAX_VALUE)
-			capture = Math.min(capture, neighbourGap * MAX_CAPTURE_GAP_SHARE);
-
-		//Still never zero: a body with no room at all is a point target rather than an unreachable one
-		return Math.max(0.5D, capture);
+	public static double captureShare(double bodyRadius, double neighbourRadius, double separation) {
+		double total = bodyRadius + neighbourRadius;
+		if(total <= 0) return separation * CAPTURE_GAP_SHARE * 0.5D;
+		return separation * CAPTURE_GAP_SHARE * (bodyRadius / total);
 	}
 }

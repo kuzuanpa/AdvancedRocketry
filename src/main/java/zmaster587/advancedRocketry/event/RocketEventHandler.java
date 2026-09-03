@@ -129,15 +129,17 @@ public class RocketEventHandler extends Gui {
 	private void prepareOrbitalMap(RocketEvent event) {
 		mapReady = false;
 
+		//Nothing to photograph in space, on a station or on a star, and scanning 512x512 blocks of an empty
+		//world is not free
+		if(!hasGroundToMap(event.world)) {
+			destroyOrbitalTextures(event.world);
+			return;
+		}
+
 		//Attempt to generate everything on seperate thread
 		if (earth == null) {
 			earth = new ClientDynamicTexture(getImgSize,getImgSize);
 			outerBounds = new ClientDynamicTexture(outerImgSize, outerImgSize);
-		}
-
-		if(event.world.provider.dimensionId == Configuration.stationDimId) {
-			destroyOrbitalTextures(event.world);
-			return;
 		}
 
 		//Multi thread texture creation b/c it can be expensive
@@ -243,12 +245,30 @@ public class RocketEventHandler extends Gui {
 	}
 
 
+	/**
+	 * Whether a world has a surface worth baking into the orbital map.
+	 *
+	 * Space, stations and stars all report themselves as not being a planet, which covers every dimension the
+	 * map has nothing to show for; anything vanilla or from another mod is assumed to have ground.
+	 */
+	@SideOnly(Side.CLIENT)
+	private static boolean hasGroundToMap(@Nullable World world) {
+		if(world == null) return false;
+		return !(world.provider instanceof IPlanetaryProvider) || ((IPlanetaryProvider)world.provider).isPlanet();
+	}
+
 	//@SubscribeEvent
 	public static void onPostWorldRender(float partialTicks) {
 
 		if(!mapReady )
 			return;
 
+		//The map stands in for the ground falling away below the rocket, so it only belongs over a surface.  The
+		//map baked on the way up stays loaded after arrival, and space, stations and stars all use a sky renderer
+		//that calls through to here, which would otherwise paint a planet's ground under the player out there.
+		Entity viewEntity = Minecraft.getMinecraft().renderViewEntity;
+		if(viewEntity == null || !hasGroundToMap(viewEntity.worldObj))
+			return;
 
 		if(mapNeedsBinding) {
 			mapNeedsBinding = false;
@@ -359,10 +379,16 @@ public class RocketEventHandler extends Gui {
 					String[] strs = str.split("\n");
 					int numLines = 0;
 
+					//Off the longest line rather than the whole message: an extra line does not make the ones
+					//already there any wider, and shrinking the lot when one is added reads as a glitch
+					int longestLine = 0;
+					for(String partStr : strs)
+						longestLine = Math.max(longestLine, partStr.length());
+
+					float scale = longestLine < 50 ? 1f : 0.5f;
+
 					for(String partStr : strs) {
 						FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-
-						float scale = str.length() < 50 ? 1f : 0.5f;
 
 						int screenX = (int) ((event.resolution.getScaledWidth()/(scale*6) - (float) fontRenderer.getStringWidth(partStr) /2));
 						int screenY = (int) (((float) event.resolution.getScaledHeight() /18)/scale) + numLines*18;

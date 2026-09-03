@@ -412,6 +412,7 @@ msg.entity.rocket.none=None Selected
 msg.entity.rocket.nav=Nearest:
 msg.entity.rocket.range=Range:
 msg.entity.rocket.bearing=Off by
+msg.entity.rocket.sighted=Sighted:
 msg.entity.rocket.nonav=No bodies in range
 msg.entity.rocket.stranded=Out of fuel - falling back to the last body visited
 error.rocket.noComputer=No guidance computer

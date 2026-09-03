@@ -105,6 +105,12 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	private static final int STATION_LOC_OFFSET = 50;
 	/** Sits below tilebuttonOffset so it cannot collide with a tile's own button */
 	private static final int BUTTON_ID_WARP = 2;
+	/**
+	 * Half angle of the cone used to decide which body the pilot is looking at.  A body is only a few skybox
+	 * pixels across - under a degree even for a close planet - so matching its drawn size would make it
+	 * impossible to point at.  The bearing readout covers precise aiming.
+	 */
+	private static final double SIGHT_CONE = Math.toRadians(8.0D);
 	private ModuleText landingPadDisplayText;
 	protected long lastWorldTickTicked;
 
@@ -276,8 +282,9 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 	}
 
 	/**
-	 * Name, range and heading of the nearest body.  Without this there is nothing to navigate by in the space
-	 * dimension - the bodies are painted onto the skybox and give no parallax to steer with.
+	 * Name, range and heading of the nearest body, plus whatever the pilot has under the crosshair.  Without this
+	 * there is nothing to navigate by in the space dimension - the bodies are painted onto the skybox and give no
+	 * parallax to steer with.
 	 */
 	private String getNavigationOverlay() {
 		SimUniverse.SimBody target = SimUniverse.getInstance().findNearest(posX, posY, posZ);
@@ -296,9 +303,23 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, ID
 		String name = target.getName();
 		if(name == null || name.isEmpty()) name = LibVulpes.proxy.getLocalizedString("msg.na");
 
-		return LibVulpes.proxy.getLocalizedString("msg.entity.rocket.nav") + name
-				+ "\n" + LibVulpes.proxy.getLocalizedString("msg.entity.rocket.range") + (int) dist
-				+ " / " + LibVulpes.proxy.getLocalizedString("msg.entity.rocket.bearing") + offBy + "°";
+		String overlay = LibVulpes.proxy.getLocalizedString("msg.entity.rocket.nav") + " " + name
+				+ "\n" + LibVulpes.proxy.getLocalizedString("msg.entity.rocket.range") + " " + (int) dist
+				+ " / " + LibVulpes.proxy.getLocalizedString("msg.entity.rocket.bearing") + " " + offBy + "°";
+
+		//Name whatever is under the crosshair, which is usually not the nearest body.  Appended rather than
+		//prepended: it comes and goes as the pilot turns, and the lines above should not jump around with it.
+		SimUniverse.SimBody sighted = SimUniverse.getInstance().findLookingAt(posX, posY, posZ,
+				look.xCoord, look.yCoord, look.zCoord, SIGHT_CONE);
+
+		if(sighted != null) {
+			String sightedName = sighted.getName();
+			if(sightedName == null || sightedName.isEmpty()) sightedName = LibVulpes.proxy.getLocalizedString("msg.na");
+
+			overlay = overlay + "\n" + LibVulpes.proxy.getLocalizedString("msg.entity.rocket.sighted") + " " + sightedName;
+		}
+
+		return overlay;
 	}
 
 	/**
