@@ -47,20 +47,11 @@ public class RenderPlanetarySky extends IRenderHandler {
 	/** Scratch list for depth sorting the simulated bodies, reused every frame */
 	private final List<SimUniverse.SimBody> sortedBodies = new ArrayList<>();
 
-	/**
-	 * Fraction of its capture sphere a body is drawn at.  Below 1 so a body still reads as a disc to fly at
-	 * rather than filling the screen the moment it is reachable.
-	 */
-	private static final double BODY_APPARENT_SIZE = 0.4D;
+	private static final double BODY_APPARENT_SIZE = 0.3D;
 
-	/** Nothing is drawn wider than this share of the shell it sits on, however close we get */
 	private static final double MAX_APPARENT_SHARE = 0.5D;
 
-	/**
-	 * drawStar's sunSize ends up as a 4.5x radius on the sphere model (sunSize*15*0.3 against a unit cube), so
-	 * dividing by this turns a wanted half-width into the argument that produces it.
-	 */
-	private static final double STAR_MODEL_SCALE = 4.5D;
+	private static final double STAR_MODEL_SCALE = 4.0D;
 
 	final Minecraft mc = Minecraft.getMinecraft();
 

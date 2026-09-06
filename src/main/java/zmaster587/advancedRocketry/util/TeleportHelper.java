@@ -16,6 +16,16 @@ import java.util.Map;
 
 public class TeleportHelper {
     public static void teleportEntityWithRiding(Entity entity, int targetDimId, double x, double y, double z) {
+        if (entity.worldObj.isRemote) return;
+        PlanetEventHandler.scheduleDelayed(0, () -> doTeleport(entity, targetDimId, x, y, z));
+    }
+
+    private static void doTeleport(Entity entity, int targetDimId, double x, double y, double z) {
+        //A tick may have passed since this was asked for, so the entity can be gone - a rocket that was
+        //deconstructed, or one that has already been teleported by an earlier request.  Its riders must not be
+        //dragged off on their own.
+        if (entity.isDead || entity.worldObj == null || entity.worldObj.isRemote) return;
+
         Entity root = getRootEntity(entity);
         List<Entity> chain = new ArrayList<>();
         Entity current = root;
